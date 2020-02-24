@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+{% block body_block %}
+  <div class="container">
+    <div class="jumbotron bg-light">
+      {% if registered %}
+        <h1 class="display-5 font-weight-lighter">Registeration Completed</h1>
+      {% else %}
+        <h1 class="display-5 font-weight-lighter">Create a New Account</h1>
+        <div class="col-md-12 ">
+          <div class="login-or">
+              <hr class="hr-or">
+          </div>
+      </div>
+<form enctype="multipart/form-data" method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input type="submit" name="" value="Register">
+        </form>     
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+  <!-- Footer -->
+  <footer class="page-footer font-small .bg-light mt-5">
+    <!-- Footer Elements -->
+    <div class="container">
+      <hr class="mt-5">
+      <!-- Grid row-->
+      <div class="row">
+        
+        <!-- Grid column -->
+        <div class="col-sm">
+          <div class="mb-2 text-center flex-center">       
+            <!-- Home -->
+            <a class=".text-muted">
+              Home
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="mb-2 text-center flex-center">       
+            <!-- Home -->
+            <a class=".text-muted">
+              Home
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="mb-2 text-center flex-center">       
+            <!-- Home -->
+            <a class=".text-muted">
+              Home
+          </div>
+        </div>
+        <!-- Grid column -->
+  
+      </div>
+      <!-- Grid row-->
+  
+    </div>
+    <!-- Footer Elements -->
+  
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3 .text=muted">© 2020 Copyright: StuMatch
+    </div>
+    <!-- Copyright -->
+  
+  </footer>
+</body>
+</html>
