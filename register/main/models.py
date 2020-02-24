@@ -12,6 +12,7 @@ class Profile(models.Model):
     email = models.EmailField(max_length=150)
     bio = models.TextField()
     university = models.CharField(max_length=30)
+    
 
     def __str__(self):
         return self.user.username
