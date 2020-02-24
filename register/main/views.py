@@ -3,13 +3,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib import messages
 
-def index(request):
-    return render(request,'index.html')
+def main_page(request):
+    return render(request,'login.html')
+
 
 def home(request):
     return render(request,'home.html')
@@ -17,14 +18,12 @@ def home(request):
 def view(response):
     return render(response, "main/view.html", {})
 
-@login_required
-def special(request):
-    return HttpResponse("You are logged in !")
 
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('index'))
+    return redirect('main:main_page')
+    messages.info("Logged out successfully", request)
 
 def signup(request):
     if request.method == 'POST':
@@ -37,27 +36,31 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             #user_login(request, user)
-            return redirect('index')
+            return redirect('main:main_page')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            if user.is_active:
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:              
                 login(request,user)
-                return HttpResponseRedirect(reverse('index'))
+                messages.info(request, "Successfully signed in")
+                return redirect('main:home')
             else:
-                return HttpResponse('Account has been inactive')
+                message = 'Sorry, the username or password you entered is not valid please try again.'
+                return render(request, 'login.html', {'message':message})
         else:
             message = 'Sorry, the username or password you entered is not valid please try again.'
-            return render(request, 'index.html', {'message':message})
+            return render(request, 'login.html', {'message':message})
     else:
-        return render(request, 'index.html', {})
+        form=AuthenticationForm()
+        return render(request, 'login.html', {"form":form})
     
 # inside views.py
 def create(response):
