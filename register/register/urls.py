@@ -18,6 +18,7 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from main import views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +30,5 @@ urlpatterns = [
     path("<int:id>", views.user_index, name="user_index"),
     
 ]
- 
+
+urlpatterns += staticfiles_urlpatterns()
