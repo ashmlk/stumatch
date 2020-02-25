@@ -21,9 +21,9 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^$',views.main_page,name='main_page'),
-    url(r'^main/',include('main.urls')),
-    url(r'^logout/$', views.user_logout, name='logout'),
+    path('',views.main_page,name='main_page'),
+    path('main/',include('main.urls')),
+    path('logout/', views.user_logout, name='logout'),
     path('', include('django.contrib.auth.urls')),
     path("create/", views.create, name="create"),
     path("<int:id>", views.user_index, name="user_index"),

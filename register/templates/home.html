@@ -1,1 +1,5 @@
 test 1
+
+{% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}

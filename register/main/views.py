@@ -16,7 +16,7 @@ def home(request):
     return render(request,'home.html')
 
 def view(response):
-    return render(response, "main/view.html", {})
+    return render(response, 'view.html', {})
 
 
 @login_required
@@ -42,6 +42,9 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 def user_login(request):
+    '''
+    Using different method for getting username, tried this and didnt work either
+    '''
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -56,12 +59,12 @@ def user_login(request):
                 message = 'Sorry, the username or password you entered is not valid please try again.'
                 return render(request, 'login.html', {'message':message})
         else:
-            message = 'Sorry, the username or password you entered is not valid please try again.'
+            message = 'Invalid'
             return render(request, 'login.html', {'message':message})
     else:
         form=AuthenticationForm()
         return render(request, 'login.html', {"form":form})
-    
+
 # inside views.py
 def create(response):
     if response.method == "POST":
