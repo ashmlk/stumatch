@@ -21,7 +21,7 @@
           <div class="card card-signin my-auto">
             <div class="card-body">
               
-              <form method="POST" action="{% url 'main:user_login' %}/" class="form-signin">
+              <form method="POST" action="{%url 'main:user_login' %}" class="form-signin">
                 {%csrf_token%}
                 <div class="form-label-group">
                   <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>

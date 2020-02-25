@@ -7,6 +7,7 @@ app_name = 'main'
 #main:NAME goes in here - Reverse
 urlpatterns=[
     path('signup/',views.signup,name='signup'),
-    path('user_login/',views.user_login,name='user_login'),
+    path('user_login',views.user_login,name='user_login'),
     path('main_page/',views.main_page,name='main_page'),
+    path('home/',views.home,name='home'),
 ]

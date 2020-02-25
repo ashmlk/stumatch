@@ -11,7 +11,7 @@ from django.contrib import messages
 def main_page(request):
     return render(request,'login.html')
 
-
+@login_required
 def home(request):
     return render(request,'home.html')
 
@@ -45,6 +45,8 @@ def user_login(request):
     '''
     Using different method for getting username, tried this and didnt work either
     '''
+    #if request.user.is_authenticated():
+        #return HttpResponseRedirect('main:home')
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -54,12 +56,12 @@ def user_login(request):
             if user is not None:              
                 login(request,user)
                 messages.info(request, "Successfully signed in")
-                return redirect('main:home')
+                return HttpResponseRedirect('home')
             else:
                 message = 'Sorry, the username or password you entered is not valid please try again.'
                 return render(request, 'login.html', {'message':message})
         else:
-            message = 'Invalid'
+            message = 'Sorry, the username or password you entered is not valid please try again.'
             return render(request, 'login.html', {'message':message})
     else:
         form=AuthenticationForm()
@@ -82,6 +84,7 @@ def create(response):
         form = CreateNewList()
 
     return render(response, "main/create.html", {"form":form})
+
 #shows the users courses for specific users
 def user_index(response, id):
     ls = Course.objects.get(id=id)
