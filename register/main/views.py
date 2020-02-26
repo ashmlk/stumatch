@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
-from .forms import SignUpForm
+from .forms import SignUpForm, EditProfileForm, PasswordResetForm
 from django.contrib import messages
 
 def main_page(request):
@@ -68,38 +68,29 @@ def user_login(request):
         form=AuthenticationForm()
         return render(request, 'login.html', {"form":form})
 
-# inside views.py
-def create(response):
-    if response.method == "POST":
-	    form = CreateNewList(response.POST)
-
-    if form.is_valid():
-	    n = form.cleaned_data["name"]
-	    c = Course(name=n)
-	    c.save()
-	    response.user.course.add(c)  # adds the course to the current logged in user
-
-	    return HttpResponseRedirect("/%i" %c.id)
-
+def edit_profile(request):
+    if request.method=='POST':
+        form = EditProfileForm(response.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('main:home')
     else:
-        form = CreateNewList()
+        form = EditProfileForm(instance=request.user)
+        args = {'form':form}
+        return render(request, 'edit_profile.html', args)
 
-    return render(response, "main/create.html", {"form":form})
+def reset_password(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(data=request.POST, user=request.user)
 
-#shows the users courses for specific users
-def user_index(response, id):
-    ls = Course.objects.get(id=id)
- 
-    if response.method == "POST":
-	    if response.POST.get("save"):
-		    item.save()
- 
-    elif response.POST.get("newItem"):
-	    txt = response.POST.get("new")
- 
-	    if len(txt) > 2:
-	        ls.item_set.create(text=txt, complete=False)
-	    else:
-	        print("invalid")
- 
-    return render(response, "main/list.html", {"ls":ls})
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect(reverse('main:home'))
+        else:
+            return redirect(reverse('home:reset_password'))
+    else:
+        form = PasswordChangeForm(user=request.user)
+        args = {'form': form}
+        return render(request, 'main/reset_password.html', args)
+

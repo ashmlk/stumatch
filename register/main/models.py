@@ -49,8 +49,7 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(max_length=150)
-    bio = models.TextField()
-    
+    bio = models.TextField() 
     university = models.CharField(max_length=30)
     
 
@@ -64,21 +63,5 @@ def update_profile_signal(sender, instance, created, **kwargs):
     instance.profile.save()
 
 
-class Course(models.Model):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="course", null=True) # <--- added
-    course_code = models.CharField(max_length=20)
-    course_instructor = models.CharField(max_length=200)
-    date_taken = models.DateField('Academic year')
-
-    def __str__(self):
-	    return self.course_code
-
-
-class Item(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    text = models.CharField(max_length=100)
-
-    def __str__(self):
-	    return self.text
 
 
