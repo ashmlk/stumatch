@@ -1,4 +1,4 @@
-{% load static from staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -7,7 +7,6 @@
     <title></title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'main.css' %}">
 </head>
 
 <body>
@@ -15,7 +14,7 @@
 <div class="align-items-center is-responsive my-5 mx-auto">
   <h1 class="title text-center display-3 font-weight-lighter">StuMatch<br></h1>
 </div>
-  <div class="container" style="padding-top: 3%; padding-bottom: 3%;">
+  <div class="container col-lg-7" style="padding-top: 3%; padding-bottom: 3%;">
     <div class="jumbotron bg-light">
       {% if registered %}
         <h1 class="display-5 font-weight-lighter">Registeration Completed</h1>

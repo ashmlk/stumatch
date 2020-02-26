@@ -7,23 +7,23 @@
     <meta charset="utf-8">
     <title></title>
     <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static 'signup.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
 <body>
-
     <div class="container">
       <div class="row" style="height: 100vh;">
         <div class="Absolute-Center is-responsive  col-lg-5 my-auto mx-auto" style="padding-bottom: 40vh;">
-          <div class="align-items-center is-responsive my-5 mx-auto">
+          <div class="align-items-center is-responsive my-5 mx-auto ">
             <div class="my-auto align-items-center">
-            <h1 class="title text-center pr-3 display-3 font-weight-lighter"><span><img src="{% static 'stumatch_logo_main_page.png' %}"  alt="Logo" style="height:150px;"></span>StuMatch<br></h1>
+            <h1 class="title text-center pr-3 display-3 font-weight-lighter">
+              StuMatch<br></h1>
             </div>
             <h5 class="text-center mx-4">Find your friends and connect</h5>
           </div>
           <div class="card card-signin my-auto">
             <div class="card-body">
-              
               <form method="POST" action="{%url 'main:user_login' %}" class="form-signin">
                 {%csrf_token%}
                 <div class="form-label-group">
@@ -31,10 +31,8 @@
                   <br/>
                 </div>
                 <div class="form-label-group">
-                  <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                  
+                 <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
                 </div>
-  
                 <div class="custom-control custom-checkbox mb-3">
                   <input type="checkbox" class="custom-control-input" id="customCheck1">
                   <label class="custom-control-label" for="customCheck1">Remember password</label>

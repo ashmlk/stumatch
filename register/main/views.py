@@ -11,13 +11,13 @@ from django.contrib import messages
 def main_page(request):
     return render(request,'login.html')
 
+#This was added recentely
 @login_required
 def home(request):
     return render(request,'home.html')
 
 def view(response):
     return render(response, 'view.html', {})
-
 
 @login_required
 def user_logout(request):
@@ -56,7 +56,8 @@ def user_login(request):
             if user is not None:              
                 login(request,user)
                 messages.info(request, "Successfully signed in")
-                return HttpResponseRedirect('home')
+                return redirect('main:home')
+                #return HttpResponseRedirect(reverse('main:home', kwargs={'username': username})) 
             else:
                 message = 'Sorry, the username or password you entered is not valid please try again.'
                 return render(request, 'login.html', {'message':message})

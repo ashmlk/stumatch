@@ -8,6 +8,6 @@ app_name = 'main'
 urlpatterns=[
     path('signup/',views.signup,name='signup'),
     path('user_login',views.user_login,name='user_login'),
-    path('main_page/',views.main_page,name='main_page'),
-    path('home/',views.home,name='home'),
+    path('',views.main_page,name='main_page'),
+    path('home/', views.home, name='home'),
 ]

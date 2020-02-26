@@ -22,6 +22,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #removed name='main_page'
     path('',views.main_page,name='main_page'),
     path('main/',include('main.urls')),
     path('logout/', views.user_logout, name='logout'),
