@@ -1,14 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from main.models import Profile
-from .models import User
 
 class SignUpForm(UserCreationForm):
-
-    username = forms.CharField(
+	username = forms.CharField(
 		label='',
 		max_length=30,
-		min_length=5,
+		min_length=4,
 		required=True,
 		widget=forms.TextInput(
 			attrs={
@@ -18,7 +16,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    first_name = forms.CharField(
+	first_name = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -31,7 +29,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    last_name = forms.CharField(
+	last_name = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -44,7 +42,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    university = forms.CharField(
+	university = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -57,7 +55,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    email = forms.EmailField(
+	email = forms.EmailField(
 		label='',
 		max_length=255,
 		required=True,
@@ -69,7 +67,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    password1 = forms.CharField(
+	password1 = forms.CharField(
 		label='',
 		max_length=30,
 		min_length=8,
@@ -82,7 +80,7 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-    password2 = forms.CharField(
+	password2 = forms.CharField(
 		label='',
 		max_length=30,
 		min_length=8,
@@ -94,22 +92,33 @@ class SignUpForm(UserCreationForm):
 			}
 		)
 	)
+ 
 
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email','university',)
+	class Meta:
+		model = Profile
+		fields = ('username', 'first_name', 'last_name', 'email','university',) 
 
-        def save(self, commit=True):
-            user = super(UserCreationForm, self).save(commit=True)
-            user.extra_field = self.cleaned_data["university"]
-            if commit:
-               user.save()
-            return user
-
-
+		def __init__(self,*args,**kwargs):
+				super().__init__(*args,**kwargs)
+				for field in self.fields:
+						self.fields[field].widget.attrs.update({'class':'form-control','placeholder':self.fields[field].label})
+                		
 class EditProfileForm(UserChangeForm):
+    
+	username = forms.CharField(
+		label='',
+		max_length=50,
+		min_length=2,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Username",
+				"class": "form-control"
+			}
+		)
+	)
 
-    first_name = forms.CharField(
+	first_name = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -122,7 +131,7 @@ class EditProfileForm(UserChangeForm):
 		)
 	)
 
-    last_name = forms.CharField(
+	last_name = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -135,7 +144,7 @@ class EditProfileForm(UserChangeForm):
 		)
 	)
 
-    university = forms.CharField(
+	university = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -148,7 +157,7 @@ class EditProfileForm(UserChangeForm):
 		)
 	)
 
-    email = forms.EmailField(
+	email = forms.EmailField(
 		label='',
 		max_length=255,
 		required=False,
@@ -159,15 +168,31 @@ class EditProfileForm(UserChangeForm):
 			}
 		)
 	)
+    
+	bio = forms.CharField(
+		required=False,
+		widget=forms.Textarea(
+			attrs={
+				"placeholder":"Enter something about yourself",
+				"class": "form-control"
+			}
+		)
+	)
+	
 
-    password = None
+	password = None
 
-    class Meta:
-	    model = User
-	    fields = ('first_name', 'last_name', 'email','university',)
+	class Meta:
+		model = Profile
+		fields=('username','first_name','last_name','email','bio',)
+		def save(self, commit = True):
+			user = super(UserChangeForm, self).save(commit=False)
+			user.bio = self.cleaned_data['bio']
 
-
-
+			if commit:
+				user.save()
+			return user
+        
 
 class PasswordResetForm(PasswordChangeForm):
 	old_password = forms.CharField(required=True, widget=forms.PasswordInput())
@@ -175,5 +200,5 @@ class PasswordResetForm(PasswordChangeForm):
 	new_password2 = forms.CharField(required=True, widget=forms.PasswordInput())
 
 	class Meta:
-		model = User
+		model = Profile
 		fields = ('old_password','new_password1','new_password2')

@@ -1,4 +1,6 @@
 {% load static %}
+
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html>
 
@@ -30,7 +32,7 @@
     else { alert('Please indicate that you have read and agree to the Terms and Conditions and Privacy Policy'); 
       return false; }">
           {% csrf_token %}
-          {{ form.as_p }}
+          {{ form.as_p}}
           <input type="checkbox" name="checkbox" value="check" id="agree" /> I have read and agree to the <a href="#" id="signup">Terms and Conditions</a></br>
           <div class="py-3 col-sm-4">
             <input type="submit" name="" class="form-control" value="Register">

@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'main.User'
+AUTH_USER_MODEL = 'main.Profile'
 
 # Email confirmation
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
