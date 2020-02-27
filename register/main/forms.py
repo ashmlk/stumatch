@@ -195,9 +195,6 @@ class EditProfileForm(UserChangeForm):
         
 
 class PasswordResetForm(PasswordChangeForm):
-	old_password = forms.CharField(required=True, widget=forms.PasswordInput())
-	new_password1 = forms.CharField(required=True, widget=forms.PasswordInput())
-	new_password2 = forms.CharField(required=True, widget=forms.PasswordInput())
 
 	class Meta:
 		model = Profile

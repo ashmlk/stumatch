@@ -26,9 +26,8 @@ urlpatterns = [
     path('',views.main_page,name='main_page'),
     path('main/',include('main.urls')),
     path('logout/', views.user_logout, name='logout'),
-    path('', include('django.contrib.auth.urls')),
-
-    
+    #Has to be included for Forgot Password funcitonality on main page
+    path('', include('django.contrib.auth.urls')),  
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -7,7 +7,6 @@ from django.dispatch import receiver
 
 
 class Profile(AbstractUser):
-    # remove email fields
     bio = models.TextField() 
     university = models.CharField(max_length=30)
 
