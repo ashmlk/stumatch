@@ -2,8 +2,15 @@ from django.db import models
 from django.utils import timezone
 from main.models import Profile
 from django.urls import reverse
-from django.core.validators import MaxLengthValidator
+from django.core.validators import MaxLengthValidator, MinValueValidator
 
+
+def current_year():
+    return datetime.date.today().year
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value) 
+ 
 # Create your models here.
 class Post(models.Model):
     subject = models.CharField(max_length=100)
@@ -37,3 +44,19 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.name)
+
+class Course(models.Model):
+    course = models.ForeignKey(Profile,on_delete=models.CASCADE,related_name='course')
+    course_code = models.CharField(max_length=12)
+    course_university = models.CharField(max_length=50)
+    course_instructor = models.CharField(max_length=50)
+    course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), max_value_current_year])
+    course_semester = models.CharField(max_length=6)
+    
+    def __str__(self):
+        return self.course_code
+
+
+
+
+    

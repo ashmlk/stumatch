@@ -5,6 +5,8 @@ from home import views
 urlpatterns = [
     path('',views.home,name='home'), 
     url(r'^(?P<slug>[\w-]+)/$', views.PostDetail, name='post-detail'),
+    url(r'^(?P<slug>[\w-]+)/like/$', views.PostLikeToggle.as_view(), name='like-toggle'),
+    url(r'^api/(?P<slug>[\w-]+)/like/$', views.PostLikeAPIToggle.as_view(), name='like-api-toggle'),
     path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
     path('post/new/', views.PostCreateView.as_view(), name='post-create'),
