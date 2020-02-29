@@ -8,13 +8,10 @@ app_name = 'main'
 #main:NAME goes in here - Reverse
 urlpatterns=[
     path('signup/',views.signup,name='signup'),
-    #remove user_login and change to login
     path('login',views.user_login,name='user_login'),
+    path('', views.user_logout, name='user_logout'),
     path('',views.main_page,name='main_page'),
-    path('<str:username>', views.home, name='home'),
-    #replace home/edit with below
-    path('<str:username>/edit', views.edit_profile, name='edit_profile'),
-    path('<str:username>/password-reset', views.reset_password, name='reset_password'),
-    path('main/', include('django.contrib.auth.urls')),
+    path('<slug:username>/edit', views.edit_profile, name='edit_profile'),
+    path('', include('django.contrib.auth.urls')),
     
 ]

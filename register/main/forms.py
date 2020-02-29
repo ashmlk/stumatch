@@ -1,6 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from main.models import Profile
+from django.db import models
+from django.core.validators import RegexValidator
+
+
+username_regex = RegexValidator(r'^(?!.*\.{2})[0-9a-zA-Z-_]*$', 'Only alphanumeric, underscore, dash or nonconsecutive periods are allowed.')
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+
 
 class SignUpForm(UserCreationForm):
 	username = forms.CharField(
@@ -8,6 +15,7 @@ class SignUpForm(UserCreationForm):
 		max_length=30,
 		min_length=4,
 		required=True,
+  		validators=[username_regex],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Username",
@@ -21,6 +29,7 @@ class SignUpForm(UserCreationForm):
 		max_length=50,
 		min_length=2,
 		required=True,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "First name",
@@ -34,9 +43,22 @@ class SignUpForm(UserCreationForm):
 		max_length=50,
 		min_length=2,
 		required=True,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Last name",
+				"class": "form-control"
+			}
+		)
+	)
+ 
+	email = forms.EmailField(
+		label='',
+		max_length=100,
+		required=False,
+		widget=forms.EmailInput(
+			attrs={
+				"placeholder": "Email",
 				"class": "form-control"
 			}
 		)
@@ -47,21 +69,10 @@ class SignUpForm(UserCreationForm):
 		max_length=50,
 		min_length=2,
 		required=False,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "University",
-				"class": "form-control"
-			}
-		)
-	)
-
-	email = forms.EmailField(
-		label='',
-		max_length=255,
-		required=True,
-		widget=forms.EmailInput(
-			attrs={
-				"placeholder": "Email",
 				"class": "form-control"
 			}
 		)
@@ -110,6 +121,7 @@ class EditProfileForm(UserChangeForm):
 		max_length=50,
 		min_length=2,
 		required=False,
+		validators=[username_regex],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Username",
@@ -123,6 +135,7 @@ class EditProfileForm(UserChangeForm):
 		max_length=50,
 		min_length=2,
 		required=False,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "First name",
@@ -136,6 +149,7 @@ class EditProfileForm(UserChangeForm):
 		max_length=50,
 		min_length=2,
 		required=False,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Last name",
@@ -149,6 +163,7 @@ class EditProfileForm(UserChangeForm):
 		max_length=50,
 		min_length=2,
 		required=False,
+		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "University",
@@ -159,7 +174,7 @@ class EditProfileForm(UserChangeForm):
 
 	email = forms.EmailField(
 		label='',
-		max_length=255,
+		max_length=100,
 		required=False,
 		widget=forms.EmailInput(
 			attrs={
@@ -179,12 +194,13 @@ class EditProfileForm(UserChangeForm):
 		)
 	)
 	
+	image = models.ImageField(upload_to='profile_image')
 
 	password = None
 
 	class Meta:
 		model = Profile
-		fields=('username','first_name','last_name','email','bio',)
+		fields=('username','first_name','last_name','email','bio','image',)
 		def save(self, commit = True):
 			user = super(UserChangeForm, self).save(commit=False)
 			user.bio = self.cleaned_data['bio']

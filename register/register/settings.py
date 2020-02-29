@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'main',
+    'home',
     'crispy_forms',
 ]
 
@@ -137,4 +138,4 @@ MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'login.html'
-LOGOUT_REDIRECT_URL = 'index.html'
+#LOGOUT_REDIRECT_URL = 'login.html'

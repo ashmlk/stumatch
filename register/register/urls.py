@@ -19,15 +19,18 @@ from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from main import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    #removed name='main_page'
-    path('',views.main_page,name='main_page'),
-    path('main/',include('main.urls')),
-    path('logout/', views.user_logout, name='logout'),
     #Has to be included for Forgot Password funcitonality on main page
-    path('', include('django.contrib.auth.urls')),  
+    path('', include('django.contrib.auth.urls')), 
+    path('admin/', admin.site.urls),    
+    path('',views.main_page,name='main_page'),
+    path('logout/', views.user_logout, name='logout'),
+    path('',include('main.urls'),name='main'), 
+    url(r'^home/',include(('home.urls','home'), namespace='home'))
+    
 ]
 
-urlpatterns += staticfiles_urlpatterns()
+urlpatterns += staticfiles_urlpatterns() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT  )
