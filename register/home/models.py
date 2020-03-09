@@ -13,10 +13,10 @@ def max_value_current_year(value):
  
 # Create your models here.
 class Post(models.Model):
-    subject = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     content = models.TextField(validators=[MaxLengthValidator(250)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    pub_date = models.DateTimeField(auto_now_add=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
     likes= models.ManyToManyField(Profile, blank=True, related_name='post_likes')
     
@@ -24,13 +24,13 @@ class Post(models.Model):
         return self.subject
 
     def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk})
+        return reverse('home:home')
     
     def get_like_url(self):
-        return reverse("posts:like-toggle", kwargs={"slug": self.slug})
+        return reverse("home:like-toggle", kwargs={'pk': self.pk})
 
     def get_api_like_url(self):
-        return reverse("posts:like-api-toggle", kwargs={"slug": self.slug})
+        return reverse("home:like-api-toggle", kwargs={'pk': self.pk})
 
 class Comment(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
@@ -46,7 +46,7 @@ class Comment(models.Model):
         return 'Comment {} by {}'.format(self.body, self.name)
 
 class Course(models.Model):
-    course = models.ForeignKey(Profile,on_delete=models.CASCADE,related_name='course')
+    course = models.ManyToManyField(Profile,related_name='course')
     course_code = models.CharField(max_length=12)
     course_university = models.CharField(max_length=50)
     course_instructor = models.CharField(max_length=50)

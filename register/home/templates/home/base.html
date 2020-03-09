@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            #navBarSearchForm input[type=text]{width:400px !important;}
+        </style>
+        <title>Home</title>
+        <meta charset="utf-8">
+                <!-- Latest compiled and minified CSS -->
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+                <!-- jQuery library -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+                <!-- Popper JS -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+                <!-- Latest compiled JavaScript -->
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+                <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+                <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    </head>
+
+    <body class="main-bg-color">
+      <script src="{% static 'js/main.js' %}"></script>
+        <nav class="navbar navbar-expand-md navbar-light nav-header-main">
+            <span class="navbar-brand brand-home-header h1 display-1 my-0">StuMatch</span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {% if user.is_authenticated %}
+                <form class="mx-2 my-auto d-inline w-50">
+                  <div class="input-group">
+                      <input type="text" class="form-control border border-right-0" placeholder="Search">
+                      <span class="input-group-append">
+                          <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
+                              <i class="fa fa-search"></i>
+                          </button>
+                      </span>
+                  </div>
+              </form>
+                <ul class="navbar-nav ml-auto mx-4">
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Home</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Message</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="{% url 'main:user_logout' %}">Logout</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item mx-1">
+                        <a class="nav-link h5 font-weight-light" href="{% url 'main:user_login' %}">Login</a>
+                    </li>
+                    <li class="nav-item mx-1">
+                        <a class="nav-link h5 font-weight-light" href="{% url 'main:signup' %}">Signup</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+            </nav>
+        <div class="wrapper">
+            <div class="container pt-4">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="card">
+                            <img class="card-img-top" src="" alt="Profile Image">                       
+                            <div class="card-body pb-0">
+                              <h5 class="card-title font-weight-light">Welcome, {{ request.user.first_name }}!</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                            <li class="list-group-item"></li>
+                              <li class="list-group-item">
+                                <a href="#" class="card-link">Find Friends</a>
+                              </li>
+                              <li class="list-group-item">
+                                <a href="#" class="card-link">Courses</a>
+                              </li>
+                              <li class="list-group-item">
+                                <a href="#" class="card-link">Groups</a>
+                              </li>
+                              <li class="list-group-item">
+                                <a href="#" class="card-link">Events</a>
+                              </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">              
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card overflow-auto mb-2" style="height: 36rem;">
+                            <h4 class="card-title text-center pt-2 font-weight-lighter">Your Friends</h4>
+                            <hr class="my-2" >
+                            <div class="card-body">
+                                <!-- Show friends -->
+                            </div>
+                        </div>
+                        <footer class="page-footer font-small bg-light pt-2">
+                            <div class="container-fluid">
+                              <div class="row">                    
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">About</a>
+                                  </div>
+                                </div>
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">
+                                      Terms
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">
+                                      Privacy
+                                      </a>
+                                  </div>
+                                </div>
+                              </div>         
+                            </div>
+                            <div class="footer-copyright text-center text-muted">© 2020 StuMatch
+                              </div>
+                          </footer> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

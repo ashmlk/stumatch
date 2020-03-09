@@ -1,4 +1,4 @@
-from .models import Comment, Course
+from .models import Comment, Course, Post
 from django import forms
 from django.core.validators import RegexValidator
 
@@ -11,14 +11,18 @@ def year_choices():
 def current_year():
     return datetime.date.today().year
 
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title','content',)
+        
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('name', 'username', 'body')
-      
+        fields = ('body',)
+     
 class CourseForm(forms.ModelForm):
     course_code = forms.CharField(
-        normalize = lambda x: x.replace(' ','').upper(),
 		label='',
 		max_length=12,
 		min_length=5,
@@ -34,7 +38,7 @@ class CourseForm(forms.ModelForm):
     
     instructor = forms.CharField(
 		label='',
-        normalize = lambda x: x.strip(),
+        
 		max_length=50,
 		min_length=2,
 		required=True,
@@ -49,7 +53,6 @@ class CourseForm(forms.ModelForm):
     
     university = forms.CharField(
 		label='',
-        normalize = lambda x: x.strip(),
 		max_length=50,
 		min_length=2,
 		required=False,
@@ -62,10 +65,8 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
-    course_semester = forms.TypeChoiceField(
+    course_semester = forms.TypedChoiceField(
         label='',
-		max_length=5,
-		min_length=4,
 		required=False,
         choices=['spring','summer','fall','winter'],
 		validators=[alphabetical],
@@ -92,5 +93,5 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_instructor','course_semester','course_year')
+        fields=('course_code','course_instructor','course_semester','course_year',)
         

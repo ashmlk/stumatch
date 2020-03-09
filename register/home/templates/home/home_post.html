@@ -1,0 +1,35 @@
+{% for post in posts %}
+<div class="card border-light mb-3" style="max-width: 36rem; border-radius: 0 !important;">
+  <div class="card-header">
+    <h3 class="card-title">
+      <span><img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}"></span>
+      <a class="mr-2 text-dark font-weight-light" href="#">{{ post.author }}</a>
+      <small class="float-sm-right">
+      {% if post.author == request.user %}        
+        <button class="btn btn-sm btn-primary show-form-update" data-url="{% url 'home:post-update' post.id %}" style="font-size: small;">Update</a>
+        <button class="btn btn-sm btn-danger show-form-delete" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;">Remove</button>
+      {% endif %}
+      </small>
+    </h3>
+  </div>
+  <div class="card-body text-dark"> 
+    <h5 class="font-weight-light">{{ post.title }}</h5>
+    <hr>
+    <p class="card-text">{{ post.content }}</p>
+  </div>
+  <div class="card-footer">
+    <a class="mx-1" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
+    <a class="mx-1" href='#'><i class="fas fa-comment-alt"></i> Comment</a>
+    <hr>
+    <div>
+      <p class="text-muted small">{{ post.likes.count }} Likes, # Comments
+        <small class="float-sm-right">
+          {{ post.date_posted|date:"F d, Y" }}
+        </small>
+      </p>
+    </div>
+  </div>
+</div>
+{% empty %}
+<h5 class="display-5">No posts to show :(</h5>
+{% endfor %}

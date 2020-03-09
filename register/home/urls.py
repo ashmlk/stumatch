@@ -3,12 +3,12 @@ from django.urls import path, include
 from home import views
 
 urlpatterns = [
-    path('',views.home,name='home'), 
-    url(r'^(?P<slug>[\w-]+)/$', views.PostDetail, name='post-detail'),
-    url(r'^(?P<slug>[\w-]+)/like/$', views.PostLikeToggle.as_view(), name='like-toggle'),
-    url(r'^api/(?P<slug>[\w-]+)/like/$', views.PostLikeAPIToggle.as_view(), name='like-api-toggle'),
-    path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),
-    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
+    path('',views.PostListView.as_view(), name='home'),
+    path('post/<int:pk>/', views.post_detail, name='post-detail'),
+    path('<int:pk>/like/', views.PostLikeToggle.as_view(), name='like-toggle'),
+    path('api/<int:pk>/like/', views.PostLikeAPIToggle.as_view(), name='like-api-toggle'),
+    path('post/<int:id>/update/', views.post_update, name='post-update'),
+    path('post/<int:id>/delete/', views.post_delete, name='post-delete'),
     path('post/new/', views.PostCreateView.as_view(), name='post-create'),
   ]
 

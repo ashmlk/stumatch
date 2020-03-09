@@ -5,6 +5,8 @@ from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 
 from django.views.generic import (
     ListView,
@@ -16,6 +18,7 @@ from django.views.generic import (
     RedirectView
 )
 from .models import Post, Comment
+from .forms import PostForm, CommentForm, CourseForm
 
 # Create your views here.
 @login_required
@@ -32,15 +35,14 @@ class PostListView(ListView):
     ordering = ['-date_posted']  
 
 @login_required    
-def PostDetail(request, slug=None):
+def post_detail(request, id):
     template_name = 'post_detail.html'
-    post = get_object_or_404(Post, slug=slug)
+    post = get_object_or_404(Post, id=id)
     new_comment = None
     # Comment posted
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
-
             # Create Comment object but don't save to database yet
             new_comment = comment_form.save(commit=False)
             # Assign the current post to the comment
@@ -50,7 +52,7 @@ def PostDetail(request, slug=None):
     else:
         comment_form = CommentForm()
 
-    return render(request, template_name, {'post': post,
+    return render(request, 'post_detail.html', {'post': post,
                                            'comments': comments,
                                            'new_comment': new_comment,
                                            'comment_form': comment_form})
@@ -59,41 +61,62 @@ def PostDetail(request, slug=None):
 class PostCreateView(LoginRequiredMixin, CreateView):
     login_url='main:user_login'
     permission_denied_message = "Please login before continuing"
-    model  = Post
+    model = Post
+    fields = ['title', 'content']
     
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+    
+@login_required
+def save_all(request,form,template_name):
+    data = dict()
+    if request.method == 'POST':
+        if form.is_valid():      
+            form.save()
+            data['form_is_valid'] = True
+            posts = Post.objects.all()
+            data['posts'] = render_to_string('home/home_post.html',{'posts':posts})
+        else:
+            data['form_is_valid'] = False
+    context = {
+    'form':form
+	}
+    data['html_form'] = render_to_string(template_name,context,request=request)
+    return JsonResponse(data)
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Post
-    fields = ['title', 'content']
+@login_required
+def post_update(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        form = PostForm(request.POST,instance=post)
+        form.instance.author = request.user
+    else:
+        form = PostForm(instance=post)
+        form.instance.author = request.user
+    return save_all(request, form, 'home/post_update.html')
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+@login_required
+def post_delete(request, id):
+    data = dict()
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        post.delete()
+        data['form_is_valid'] = True
+        posts = Post.objects.all()
+        data['posts'] = render_to_string('home/home_post.html',{'posts':posts})
+    else:
+        context = {'post':post}
+        data['html_form'] = render_to_string('home/post_delete.html',context,request=request)
 
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Post
-    success_url = '/'
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
+    return JsonResponse(data)
+      
     
 class PostLikeToggle(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        slug = self.kwargs.get("slug")
+        pk = self.kwargs.get("pk")
         print(slug)
-        obj = get_object_or_404(Post, slug=slug)
+        obj = get_object_or_404(Post, pk=pk)
         url_ = obj.get_absolute_url()
         user = self.request.user
         if user.is_authenticated():
@@ -108,10 +131,10 @@ class PostLikeAPIToggle(APIView):
     authentication_classes = (authentication.SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, slug=None, format=None):
+    def get(self, request, pk, format=None):
         # slug = self.kwargs.get("slug")
-        obj = get_object_or_404(Post, slug=slug)
-        url_ = obj.get_absolute_url()
+        obj = get_object_or_404(Post, pk=pk)
+        url = obj.get_absolute_url()
         user = self.request.user
         updated = False
         liked = False

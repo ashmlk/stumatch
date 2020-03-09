@@ -1,0 +1,24 @@
+body {
+background-color: deepskyblue;
+}
+
+.main-bg-color {
+    background-color: rgb(252, 252, 252);
+}
+
+.nav-header-main {
+    background-color: rgb(129,193,242);
+}
+
+.brand-home-header {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: 20cpx;
+    letter-spacing: 1px;
+    word-spacing: 1.2px;
+    color: #000000;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+}

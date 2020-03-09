@@ -11,7 +11,7 @@ urlpatterns=[
     path('login',views.user_login,name='user_login'),
     path('', views.user_logout, name='user_logout'),
     path('',views.main_page,name='main_page'),
-    path('<slug:username>/edit', views.edit_profile, name='edit_profile'),
+    path('edit/', views.edit_profile, name='edit_profile'),
     path('', include('django.contrib.auth.urls')),
     
 ]
