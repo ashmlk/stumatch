@@ -32,8 +32,8 @@ class PostListView(ListView):
     model = Post
     template_name = 'home/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
-    ordering = ['-date_posted']  
-
+    ordering = ['-date_posted'] 
+    
 @login_required    
 def post_detail(request, id):
     template_name = 'post_detail.html'
@@ -58,16 +58,7 @@ def post_detail(request, id):
                                            'comment_form': comment_form})
     
     
-class PostCreateView(LoginRequiredMixin, CreateView):
-    login_url='main:user_login'
-    permission_denied_message = "Please login before continuing"
-    model = Post
-    fields = ['title', 'content']
-    
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-    
+ 
 @login_required
 def save_all(request,form,template_name):
     data = dict()
@@ -83,7 +74,15 @@ def save_all(request,form,template_name):
     'form':form
 	}
     data['html_form'] = render_to_string(template_name,context,request=request)
-    return JsonResponse(data)
+    return JsonResponse(data) 
+
+@login_required
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+    else:
+        form = PostForm()
+    return save_all(request, form, 'home/post_create.html')
 
 @login_required
 def post_update(request, id):

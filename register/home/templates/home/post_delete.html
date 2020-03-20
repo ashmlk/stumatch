@@ -1,4 +1,4 @@
-  {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 <form method="POST" data-url="{% url 'home:post-delete' post.id %}" class="delete-form">
 	{% csrf_token %}
 		<div class="modal-header">

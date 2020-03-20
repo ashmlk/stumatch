@@ -33,6 +33,10 @@ $(document).ready(function(){
 		return false;
 	}
 
+// create 
+$(".show-form-create").click(ShowForm);
+$("#modal-post").on("submit",".create-form",SaveForm);
+
 //update
 $('#post-list').on("click",".show-form-update",ShowForm);
 $('#modal-post').on("submit",".update-form",SaveForm)

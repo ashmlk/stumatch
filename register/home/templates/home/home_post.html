@@ -1,33 +1,28 @@
 {% for post in posts %}
-<div class="card border-light mb-3" style="max-width: 36rem; border-radius: 0 !important;">
-  <div class="card-header">
-    <h3 class="card-title">
-      <span><img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}"></span>
-      <a class="mr-2 text-dark font-weight-light" href="#">{{ post.author }}</a>
-      <small class="float-sm-right">
-      {% if post.author == request.user %}        
-        <button class="btn btn-sm btn-primary show-form-update" data-url="{% url 'home:post-update' post.id %}" style="font-size: small;">Update</a>
-        <button class="btn btn-sm btn-danger show-form-delete" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;">Remove</button>
-      {% endif %}
-      </small>
-    </h3>
-  </div>
-  <div class="card-body text-dark"> 
-    <h5 class="font-weight-light">{{ post.title }}</h5>
-    <hr>
+<div class="card  mt-3  mb-3" style="max-width: 36rem !important;">
+  <div class="card-body text-dark">
+    <div class="d-flex">
+      <img class="img-create-post rounded-circle mr-2" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
+        alt="Profile image">
+        <span class="align-text-top"><a class="mr-2 text-dark font-weight-bolder" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a><br><p class="font-weight-light text-muted">{{ post.title }}</p></span>
+          <div class="float-right text-right ml-auto">
+            <p class="text-muted small" style="font-size: 0.7rem;">{{ post.date_posted|date:"F d, Y" }}</p>
+          </div>     
+    </div>
     <p class="card-text">{{ post.content }}</p>
   </div>
-  <div class="card-footer">
-    <a class="mx-1" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
-    <a class="mx-1" href='#'><i class="fas fa-comment-alt"></i> Comment</a>
-    <hr>
-    <div>
-      <p class="text-muted small">{{ post.likes.count }} Likes, # Comments
+  <div class="card-footer" style="height: 5rem;">
+    <a class="mx-1 small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
+    <a class="mx-1 small" href='#'><i class="fas fa-comment-alt"></i> Comment</a>
+    <hr class="my-1">
+      <p class="text-muted small">
+        {% if post.author == request.user %}  
+        <button class="btn btn-sm text-muted show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove</button> 
+        {% endif %}
         <small class="float-sm-right">
-          {{ post.date_posted|date:"F d, Y" }}
+          {{ post.likes.count }} Likes, # Comments
         </small>
       </p>
-    </div>
   </div>
 </div>
 {% empty %}
