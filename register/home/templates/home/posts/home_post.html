@@ -1,3 +1,7 @@
+{% load static %}
+{% block javascript %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock javascript %}
 {% for post in posts %}
 <div class="card  mt-3  mb-3" style="max-width: 36rem !important;">
   <div class="card-body text-dark">
@@ -26,5 +30,7 @@
   </div>
 </div>
 {% empty %}
-<h5 class="display-5">No posts to show :(</h5>
+<div class="align-items-center">
+  <h5 class="display-5 my-3 text-muted">No posts to show :(</h5>
+</div>
 {% endfor %}

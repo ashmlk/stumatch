@@ -3,7 +3,7 @@ from django.utils import timezone
 from main.models import Profile
 from django.urls import reverse
 from django.core.validators import MaxLengthValidator, MinValueValidator
-
+import uuid
 
 def current_year():
     return datetime.date.today().year
@@ -32,6 +32,14 @@ class Post(models.Model):
     def get_api_like_url(self):
         return reverse("home:like-api-toggle", kwargs={'pk': self.pk})
 
+def image_create_uuid_p_u(instance, filename):
+    return '/'.join(['post_images', str(instance.post.id), str(uuid.uuid4().hex + ".png")]) 
+
+class Images(models.Model):
+    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='images')
+    image = models.FileField(upload_to=image_create_uuid_p_u,verbose_name='Image')
+    date_added = models.DateTimeField(auto_now_add=True)
+    
 class Comment(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
     name = models.ForeignKey(Profile, on_delete=models.CASCADE)

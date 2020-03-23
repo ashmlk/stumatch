@@ -9,13 +9,11 @@ from .forms import SignUpForm, EditProfileForm, PasswordResetForm
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
-def main_page(request):
-    return render(request,'login.html')
 
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('main:main_page'))  
+    return redirect('main:user_login')
     
 def signup(request):
     if request.method == 'POST':
@@ -24,32 +22,28 @@ def signup(request):
             user = form.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
-            return redirect('main:main_page')
+            return redirect('main:user_login')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'main/signup.html', {'form': form})
 
 def user_login(request):
+    message = ''
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:              
-                login(request,user)
-                messages.info(request, "Successfully signed in")
-                #return redirect('main:home')
-                return redirect(reverse('home:home')) 
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return redirect('home:home')
             else:
-                message = 'Sorry, the username or password you entered is not valid please try again.'
-                return render(request, 'login.html', {'message':message})
-        else:
-            message = 'Sorry, the username or password you entered is not valid please try again.'
-            return render(request, 'login.html', {'message':message})
+                HttpResponse('Account is disabled')
+        if user is None:
+            message = 'Sorry the username or password you entered is incorrect please try again'
     else:
-        form=AuthenticationForm()
-        return render(request, 'login.html', {"form":form})
+        message = ''
+    return render(request, 'main/user_login.html', {'message': message})
 
 @login_required
 def edit_profile(request):
@@ -62,7 +56,7 @@ def edit_profile(request):
     else:
         form = EditProfileForm(instance=request.user)
         args = {'form':form}
-        return render(request, 'edit_profile.html', args)
+        return render(request, 'main/edit_profile.html', args)
 
 
 # This is for handling friend requests

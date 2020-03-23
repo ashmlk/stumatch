@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            #navBarSearchForm input[type=text]{width:400px !important;}
+        </style>
+        <title>Courses</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    </head>
+    <body class="main-bg-color">
+     {% block javascript %}
+     {% endblock javascript %}
+        <nav class="navbar navbar-expand-md navbar-light sticky-top nav-header-main">
+            <span class="navbar-brand brand-home-header h1 display-1 my-0">StuMatch</span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form class="mx-2 my-auto d-inline w-50">
+                  <div class="input-group">
+                      <input type="text" class="form-control border border-right-0" placeholder="Search">
+                      <span class="input-group-append">
+                          <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
+                              <i class="fa fa-search"></i>
+                          </button>
+                      </span>
+                  </div>
+              </form>
+                <ul class="navbar-nav ml-auto mx-4">
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Home</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Message</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item mx-0">
+                        <a class="nav-link text-white" href="{% url 'main:user_logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+            </nav>
+        <div class="wrapper">
+            <div class="container pt-4">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="card">
+                            <img class="card-img-top" src="" alt="Profile Image">                       
+                            <div class="card-body pb-0">
+                              <h5 class="card-title font-weight-light">Your courses, {{ request.user.first_name }}!</h5>
+                            </div>
+                        </div>
+                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <a class="nav-link active text-secondary" id="v-pills-user-courses-tab" data-toggle="pill" href="#v-pills-user-courses" role="tab" aria-controls="v-pills-user-courses" aria-selected="true">Your courses</a>
+                            <hr class="my-1">
+                            <a class="nav-link text-secondary" id="v-pills-add-course-tab" data-toggle="pill" href="#v-pills-add-course" role="tab" aria-controls="v-pills-add-course" aria-selected="false">Add a course</a>
+                            <hr class="my-1">
+                            <a class="nav-link text-secondary" id="v-pills-somelink1-tab" data-toggle="pill" href="#v-pills-somelink1" role="tab" aria-controls="v-pills-somelink1" aria-selected="false">Link</a>
+                            <hr class="my-1">
+                            <a class="nav-link text-secondary" id="v-pills-somelink2-tab" data-toggle="pill" href="#v-pills-somelink2" role="tab" aria-controls="v-pills-somelink2" aria-selected="false">Link</a>
+                        </div>  
+                    </div>
+                    <div class="col-md-7">
+                        <div class="tab-content" id="v-pills-tabContent">
+                            <div class="tab-pane fade show active" id="v-pills-user-courses" role="tabpanel" aria-labelledby="v-pills-user-course-tab">
+                                {% block usercourses %}
+                                {% endblock usercourses %}
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-add-course" role="tabpanel" aria-labelledby="v-pills-add-course-tab">
+                                {% block addcourses %}
+                                {% endblock addcourses %}
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-somelink1" role="tabpanel" aria-labelledby="v-pills-somelink1-tab">
+                                Somthing
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-somelink2" role="tabpanel" aria-labelledby="v-pills-somelink2-tab">
+                                Something else
+                            </div>
+                          </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card border-left-0 border-right-0 overflow-auto mb-2" style="height: 36rem;"> 
+                            <div class="card-body">
+                                <!-- Some functionality -->
+                            </div>
+                        </div>
+                        <footer class="page-footer font-small bg-light pt-2">
+                            <div class="container-fluid">
+                              <div class="row">                    
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">About</a>
+                                  </div>
+                                </div>
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">
+                                      Terms
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-sm">
+                                  <div class="mb-2">       
+                                    <a href="#">
+                                      Privacy
+                                      </a>
+                                  </div>
+                                </div>
+                              </div>         
+                            </div>
+                            <div class="footer-copyright text-center text-muted">© 2020 StuMatch
+                              </div>
+                          </footer> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -26,8 +26,7 @@ urlpatterns = [
     #Has to be included for Forgot Password funcitonality on main page
     path('', include('django.contrib.auth.urls')), 
     path('admin/', admin.site.urls),    
-    path('',views.main_page,name='main_page'),
-    path('logout/', views.user_logout, name='logout'),
+    path('',views.user_login,name='user_login'),
     path('',include('main.urls'),name='main'), 
     url(r'^home/',include(('home.urls','home'), namespace='home'))
     

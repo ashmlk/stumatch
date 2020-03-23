@@ -20,17 +20,17 @@ from django.views.generic import (
 from .models import Post, Comment
 from .forms import PostForm, CommentForm, CourseForm
 
-# Create your views here.
 @login_required
 def home(request):
-    context = {
-        'posts': Post.objects.all()
-    }
-    return render(request, 'home/home.html', context)
+    posts = Post.objects.all()
+    context = {'posts':posts}
+    return render(request, 'home/homepage/home.html', context)
 
-class PostListView(ListView):
+
+class PostListView(LoginRequiredMixin,ListView):
     model = Post
-    template_name = 'home/home.html'  # <app>/<model>_<viewtype>.html
+    #redirect_field_name = 
+    template_name = 'home/homepage/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-date_posted'] 
     
@@ -57,8 +57,6 @@ def post_detail(request, id):
                                            'new_comment': new_comment,
                                            'comment_form': comment_form})
     
-    
- 
 @login_required
 def save_all(request,form,template_name):
     data = dict()
@@ -67,9 +65,10 @@ def save_all(request,form,template_name):
             form.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
-            data['posts'] = render_to_string('home/home_post.html',{'posts':posts})
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
         else:
             data['form_is_valid'] = False
+            
     context = {
     'form':form
 	}
@@ -78,11 +77,23 @@ def save_all(request,form,template_name):
 
 @login_required
 def post_create(request):
+    data = dict()
     if request.method == 'POST':
         form = PostForm(request.POST)
+        if form.is_valid():      
+            form.save()
+            data['form_is_valid'] = True
+            posts = Post.objects.all()
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
+        else:
+            data['form_is_valid'] = False
     else:
-        form = PostForm()
-    return save_all(request, form, 'home/post_create.html')
+        form = PostForm       
+    context = {
+    'form':form
+	}
+    data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
+    return JsonResponse(data) 
 
 @login_required
 def post_update(request, id):
@@ -93,7 +104,7 @@ def post_update(request, id):
     else:
         form = PostForm(instance=post)
         form.instance.author = request.user
-    return save_all(request, form, 'home/post_update.html')
+    return save_all(request, form, 'home/posts/post_update.html')
 
 @login_required
 def post_delete(request, id):
@@ -103,10 +114,10 @@ def post_delete(request, id):
         post.delete()
         data['form_is_valid'] = True
         posts = Post.objects.all()
-        data['posts'] = render_to_string('home/home_post.html',{'posts':posts})
+        data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
     else:
         context = {'post':post}
-        data['html_form'] = render_to_string('home/post_delete.html',context,request=request)
+        data['html_form'] = render_to_string('home/posts/post_delete.html',context,request=request)
 
     return JsonResponse(data)
       

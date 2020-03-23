@@ -33,10 +33,9 @@ $(document).ready(function(){
 		return false;
 	}
 
-// create 
-$(".show-form-create").click(ShowForm);
-$("#modal-post").on("submit",".create-form",SaveForm);
-
+	$('#MybtnModal').click(function(){
+		$('#Mymodal').modal('show')
+  });
 //update
 $('#post-list').on("click",".show-form-update",ShowForm);
 $('#modal-post').on("submit",".update-form",SaveForm)
@@ -46,6 +45,9 @@ $('#post-list').on("click",".show-form-delete",ShowForm);
 $('#modal-post').on("submit",".delete-form",SaveForm)
 });
 
+
+
+/*
 $(document).ready(function(){
     function updateText(btn, newCount, verb){
        btn.text(newCount + " " + verb)
@@ -88,3 +90,4 @@ function popupWindow(url, title, win, w, h) {
 	const x = win.top.outerWidth / 2 + win.top.screenX - ( w / 2);
 	return win.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+y+', left='+x);
 }
+*/
