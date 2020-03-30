@@ -5,13 +5,13 @@ from django.urls import reverse
 from django.core.validators import MaxLengthValidator, MinValueValidator
 import uuid
 
+
 def current_year():
     return datetime.date.today().year
 
 def max_value_current_year(value):
     return MaxValueValidator(current_year())(value) 
  
-# Create your models here.
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(validators=[MaxLengthValidator(250)])
@@ -36,7 +36,7 @@ def image_create_uuid_p_u(instance, filename):
     return '/'.join(['post_images', str(instance.post.id), str(uuid.uuid4().hex + ".png")]) 
 
 class Images(models.Model):
-    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='images')
+    post = models.ForeignKey(Post,on_delete=models.CASCADE)
     image = models.FileField(upload_to=image_create_uuid_p_u,verbose_name='Image')
     date_added = models.DateTimeField(auto_now_add=True)
     

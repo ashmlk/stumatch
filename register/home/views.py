@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.views import View
 
 from django.views.generic import (
     ListView,
@@ -18,44 +19,14 @@ from django.views.generic import (
     RedirectView
 )
 from .models import Post, Comment
-from .forms import PostForm, CommentForm, CourseForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm
 
 @login_required
 def home(request):
     posts = Post.objects.all()
-    context = {'posts':posts}
+    posts = Post.objects.order_by('-last_edited')
+    context = { 'posts':posts }
     return render(request, 'home/homepage/home.html', context)
-
-
-class PostListView(LoginRequiredMixin,ListView):
-    model = Post
-    #redirect_field_name = 
-    template_name = 'home/homepage/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
-    ordering = ['-date_posted'] 
-    
-@login_required    
-def post_detail(request, id):
-    template_name = 'post_detail.html'
-    post = get_object_or_404(Post, id=id)
-    new_comment = None
-    # Comment posted
-    if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            # Create Comment object but don't save to database yet
-            new_comment = comment_form.save(commit=False)
-            # Assign the current post to the comment
-            new_comment.post = post
-            # Save the comment to the database
-            new_comment.save()
-    else:
-        comment_form = CommentForm()
-
-    return render(request, 'post_detail.html', {'post': post,
-                                           'comments': comments,
-                                           'new_comment': new_comment,
-                                           'comment_form': comment_form})
     
 @login_required
 def save_all(request,form,template_name):
@@ -65,7 +36,8 @@ def save_all(request,form,template_name):
             form.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
-            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
+            posts = Post.objects.order_by('-last_edited')
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
         else:
             data['form_is_valid'] = False
             
@@ -81,10 +53,14 @@ def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():      
-            form.save()
+            post = form.save(False)
+            post.author = request.user
+            #post.likes = None
+            post.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
-            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
+            posts = Post.objects.order_by('-last_edited')
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
         else:
             data['form_is_valid'] = False
     else:
@@ -114,13 +90,31 @@ def post_delete(request, id):
         post.delete()
         data['form_is_valid'] = True
         posts = Post.objects.all()
-        data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts})
+        posts = Post.objects.order_by('-last_edited')
+        data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
     else:
         context = {'post':post}
         data['html_form'] = render_to_string('home/posts/post_delete.html',context,request=request)
 
     return JsonResponse(data)
-      
+
+class PostImageUpload(LoginRequiredMixin, View):
+    
+    def get(self, request):
+        images = Images.objects.all()
+        return render(self.request, 'home/posts/post_create.html', {'images':images} ) 
+    
+    def post(self, request):
+        data = dict()
+        form = ImageForm(self.request.POST, self.request.FILES)
+        if form.is_valid():
+            image = form.save(False)
+            image.save()
+            data = {'is_valid': True, 'name': image.file.name, 'url': image.file.url} 
+        else:
+            data['is_valid'] = False
+        return JsonResponse(data)
+
     
 class PostLikeToggle(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
@@ -161,3 +155,18 @@ class PostLikeAPIToggle(APIView):
             "liked": liked
         }
         return Response(data)
+
+
+# Course views
+def course_list(request):
+    pass
+
+def course_add(request):
+    pass
+
+def course_update(request):
+    pass
+
+def course_delete(request):
+    pass
+

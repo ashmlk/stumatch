@@ -1,6 +1,7 @@
-from .models import Comment, Course, Post
+from .models import Comment, Course, Post, Images
 from django import forms
 from django.core.validators import RegexValidator
+from django.forms import Textarea
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed.')
 alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphanumeric characters are allowed.')
@@ -12,9 +13,16 @@ def current_year():
     return datetime.date.today().year
 
 class PostForm(forms.ModelForm):
+    content= forms.CharField(widget=forms.Textarea(attrs={'rows': 5 , 'cols': 40}))
     class Meta:
         model = Post
         fields = ('title','content',)
+
+        
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Images
+        fields = ('image', )
         
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -2,7 +2,11 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block javascript %}
-<script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/image_upload.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 {% endblock javascript %}
 {% block content %}
 <div class="card">
@@ -20,7 +24,8 @@
     {% include 'home/posts/home_post.html' %}
   </div>
 </div>
-<div class="modal fade" id="modal-post">
+
+<div class="modal fade" id="modal-post" style="overflow-y: show;">
   <div class="modal-dialog">
     <div class="modal-content"></div>
   </div>

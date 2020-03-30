@@ -1,6 +1,10 @@
 {% load static %}
 {% block javascript %}
-<script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/image_upload.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 {% endblock javascript %}
 {% for post in posts %}
 <div class="card  mt-3  mb-3" style="max-width: 36rem !important;">
