@@ -1,9 +1,9 @@
 {% load crispy_forms_tags %}
 {% load static %}
 	<script src="{% static 'js/image_upload.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
 
 	<form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form">
 		{% csrf_token %}
@@ -27,7 +27,7 @@
 							data-url="{% url 'home:post-image-upload'  %}"
 							data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 			
-					<table id="image_list" class="table my-2">
+					<table id="image_list" class="table table-bordered my-2">
 					<tbody>
 						{% for image in images %}
 						<tr>

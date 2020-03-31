@@ -1,0 +1,21 @@
+<div class="modal-body">
+    {% for comment in comments %}
+        <img class="img-create-post rounded-circle mr-1" style="width: 20px;height: 20px;" src="{{ comment.name.image }}"
+        alt="Profile image">
+        <span class="align-text-top font-weight-bolder">{{ comment.name.first_name }}
+        <p class="text-muted small py-0 mx-2" style="font-size: 0.7rem;">{{ comment.created_on|date:"F d, Y f A" }}</p>
+        <p class="font-weight-light">{{ comment.body }}</p></span> 
+        <hr>
+    {% empty %}
+      <p class="font-weight-lighter text-muted">No comments to show</p>
+    {% endfor %}
+</div>
+
+<style>
+  .modal-body {
+    max-height: calc(100vh - 510px);
+    overflow-y: auto;
+  }
+</style>
+
+

@@ -18,17 +18,27 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ('title','content',)
 
-        
+    
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Images
         fields = ('image', )
         
 class CommentForm(forms.ModelForm):
+    body = forms.CharField(
+        max_length=250,
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'style':'border-radius: 1.2rem; resize:none; outline:none;',
+                'class':'form-control',
+                'placeholder':'Add a comment',
+                'rows': 1 ,
+                'cols': 45}))
     class Meta:
         model = Comment
         fields = ('body',)
-     
+    
 class CourseForm(forms.ModelForm):
     course_code = forms.CharField(
 		label='',
@@ -45,8 +55,7 @@ class CourseForm(forms.ModelForm):
 	)
     
     instructor = forms.CharField(
-		label='',
-        
+		label='', 
 		max_length=50,
 		min_length=2,
 		required=True,

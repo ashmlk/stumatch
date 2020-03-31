@@ -2,13 +2,14 @@
 {% block javascript %}
   <script src="{% static 'js/post.js' %}"></script>
   <script src="{% static 'js/image_upload.js' %}"></script>
-  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+  <script src="{% static 'js/comment.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
+	<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
 {% endblock javascript %}
 {% for post in posts %}
 <div class="card  mt-3  mb-3" style="max-width: 36rem !important;">
-  <div class="card-body text-dark">
+  <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.id %}">
     <div class="d-flex">
       <img class="img-create-post rounded-circle mr-2" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
@@ -21,14 +22,18 @@
   </div>
   <div class="card-footer" style="height: 5rem;">
     <a class="mx-1 small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
-    <a class="mx-1 small" href='#'><i class="fas fa-comment-alt"></i> Comment</a>
+    <button type="button" class="btn btn-sm comment-post-btn" data-url="{% url 'home:post-detail' post.id %}">
+      <span class="text-primary">
+        <i class="fas fa-comment-alt"></i> Comment
+      </span>
+  </button>
     <hr class="my-1">
       <p class="text-muted small">
         {% if post.author == request.user %}  
         <button class="btn btn-sm text-muted show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove</button> 
         {% endif %}
         <small class="float-sm-right">
-          {{ post.likes.count }} Likes, # Comments
+          {{ post.likes.count }} Likes, {{ post.comments.count }} Comments
         </small>
       </p>
   </div>
@@ -38,3 +43,22 @@
   <h5 class="display-5 my-3 text-muted">No posts to show :(</h5>
 </div>
 {% endfor %}
+<div class="modal fade" id="modal-post-detail">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" style="height:90%; width: 45%;">
+    <div class="modal-content"></div>
+  </div>
+</div>  
+<style>
+  .comment-post-btn:hover {
+    text-decoration: underline;
+  }
+  .post-detail-clickable-details-view:hover {
+    cursor: pointer;
+    background-color: rgb(245, 245, 245);
+
+  }
+  .modal-content {
+    min-height: (100vh - 210px);
+  }
+</style>
+

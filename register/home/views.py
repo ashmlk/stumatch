@@ -52,11 +52,14 @@ def post_create(request):
     data = dict()
     if request.method == 'POST':
         form = PostForm(request.POST)
-        if form.is_valid():      
+        if form.is_valid():    
             post = form.save(False)
             post.author = request.user
             #post.likes = None
             post.save()
+            for image in request.FILES.getlist('file'):
+                instance = Images(post=Post.objects.get(post.id),image=image)
+                instance.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
             posts = Post.objects.order_by('-last_edited')
@@ -70,6 +73,23 @@ def post_create(request):
 	}
     data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
     return JsonResponse(data) 
+
+class PostImageUpload(LoginRequiredMixin, View):
+    
+    def get(self, request):
+        images = Images.objects.all()
+        return render(self.request, 'home/posts/post_create.html', {'images':images} ) 
+    
+    def post(self, request):
+        data = dict()
+        form = ImageForm(self.request.POST, self.request.FILES)
+        if form.is_valid():
+            image = form.save(False)
+            image.save()
+            data = {'is_valid': True, 'name': image.file.name, 'url': image.file.url} 
+        else:
+            data['is_valid'] = False
+        return JsonResponse(data)
 
 @login_required
 def post_update(request, id):
@@ -98,24 +118,34 @@ def post_delete(request, id):
 
     return JsonResponse(data)
 
-class PostImageUpload(LoginRequiredMixin, View):
-    
-    def get(self, request):
-        images = Images.objects.all()
-        return render(self.request, 'home/posts/post_create.html', {'images':images} ) 
-    
-    def post(self, request):
-        data = dict()
-        form = ImageForm(self.request.POST, self.request.FILES)
+@login_required
+def post_detail(request, id):
+    data = dict()
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
         if form.is_valid():
-            image = form.save(False)
-            image.save()
-            data = {'is_valid': True, 'name': image.file.name, 'url': image.file.url} 
+            comment = form.save(False)
+            comment.post = post
+            comment.name = request.user
+            comment.save()
+            comments = post.comments.all()
+            data['form_is_valid'] = True
+            data['comments'] = render_to_string('home/posts/post_comment.html', { 'comments':comments, 'post':post }, request=request)
         else:
-            data['is_valid'] = False
-        return JsonResponse(data)
+            data['form_is_valid'] = False
+    else: 
+        form = CommentForm
+        comments = post.comments.all()
+    context  = {
+        'form': form,
+        'comments': comments,
+        'post': post
+    }
+    data['html_data'] = render_to_string('home/posts/post_detail.html', context,request=request)
+    return JsonResponse(data)
 
-    
+
 class PostLikeToggle(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get("pk")
