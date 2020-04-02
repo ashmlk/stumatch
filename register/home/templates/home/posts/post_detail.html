@@ -1,13 +1,27 @@
 {% load crispy_forms_tags %}
 {% load static %}
+<style>
+  .modal-body {
+    min-height: calc(100vh - 510px);
+    overflow-y: auto;
+  }
+  .post-border-div {
+    border: 1px solid; 
+    opacity: 0.5;
+  }
+</style>
 <script src="{% static 'js/comment.js' %}"></script>
-<div class="modal-header-sm">
-  <button type="button" class="close mx-2" data-dismiss="modal" aria-label="Close">
+<div class="modal-header" style="height: 3rem;">
+  {% if post.author == request.user %}  
+  <button class="btn btn-sm text-muted show-form-delete" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove your post</button> 
+  {% endif %}
+  <button type="button" class="close mx-1" data-dismiss="modal" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-  <div class="card mt-3 rounded-0 mb-3" style="max-width: 100rem !important; min-height: 45%;">
-    <div class="card-body text-dark">
+<div class="modal-body mx-0" style="margin: 0; padding: 0;">
+  <div class="mt-3 rounded-0" style="max-width: 100rem !important;">
+    <div class="card-body mb-1 text-dark">
       <div class="d-flex">
         <img class="img-create-post rounded-circle mr-2" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
           alt="Profile image">
@@ -20,22 +34,25 @@
         <p class="card-text">{{ post.content }}</p>
       </div>
     </div>
-    <div class="card-footer" style="height: 5rem;">
-      <a class="mx-1 small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
-      <hr class="my-1">
-        <p class="text-muted small">
-          {% if post.author == request.user %}  
-          <button class="btn btn-sm text-muted show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove</button> 
-          {% endif %}
-          <small class="float-sm-right">
-            {{ post.likes.count }} Likes, {{ post.comments.count }} Comments
-          </small>
-        </p>
-    </div>
   </div>
-  <div class="align-items-center  py-0">
-    <div class="row">
-      <img class="img-create-post rounded-circle ml-4 mr-2" style="width: 40px;height: 40px;" src="{{ request.user.image }}" alt="Profile image">
+  <hr class="mx-2 px-2">
+    <div class="d-flex px-2 mx-2 justify-content-between">
+        <a class="small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
+        <p class="text-muted small font-size-smaller">{{ post.likes.count }} Likes, {{ post.comments.count }} Comments</p>
+    </div>
+    <hr class="text-muted post-border-div">
+    <div id="post-linked-comments">
+      <div>
+        {% include 'home/posts/post_comment.html' %}
+      </div>    
+    </div>
+</div>
+<div>
+  <hr class="text-muted post-border-div">
+</div>
+  <div class="moda-footer justify-content-center py-1 mx-0">
+    <div class="row mx-2">
+      <img class="img-create-post rounded-circle ml-1 mr-1" style="width: 2.3rem;height: 2.3rem;" src="{{ request.user.image }}" alt="Profile image">
       <form method="POST" data-url="{% url 'home:post-detail' post.id %}" class="post-comment-form">
         {% csrf_token %}
           <div class="row ml-1">
@@ -45,9 +62,5 @@
       </form>     
     </div>
   </div>
-  <div id="post-linked-comments">
-    <div>
-      {% include 'home/posts/post_comment.html' %}
-    </div>    
-  </div>
+
   

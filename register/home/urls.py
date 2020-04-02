@@ -10,7 +10,6 @@ urlpatterns = [
     path('api/<int:pk>/like/', views.PostLikeAPIToggle.as_view(), name='like-api-toggle'),
     path('post/update/<int:id>/', views.post_update, name='post-update'),
     path('post/delete/<int:id>/', views.post_delete, name='post-delete'),
-    path('post/upload/image/', views.PostImageUpload.as_view(), name='post-image-upload'),
     path('courses/', views.course_list, name='courses-list'),
     path('courses/add', views.course_add, name='courses-add'),
     path('courses/delete/<int:id>', views.course_delete, name='courses-delete'),

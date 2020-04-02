@@ -13,16 +13,31 @@ def current_year():
     return datetime.date.today().year
 
 class PostForm(forms.ModelForm):
-    content= forms.CharField(widget=forms.Textarea(attrs={'rows': 5 , 'cols': 40}))
+    content= forms.CharField(
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': 'What do you want to share?',
+                'style': 'resize:none',
+                'rows': 5 ,
+                'cols': 40}))
     class Meta:
         model = Post
         fields = ('title','content',)
 
-    
+def image_create_uuid_p_u(instance, filename):
+    return '/'.join(['post_images', str(instance.post.id), str(uuid.uuid4().hex + ".png")]) 
+   
 class ImageForm(forms.ModelForm):
+    image = forms.FileField(
+        label='',
+        widget = forms.FileInput(
+        	attrs={
+                'required': False})) 
     class Meta:
         model = Images
         fields = ('image', )
+
         
 class CommentForm(forms.ModelForm):
     body = forms.CharField(
@@ -34,7 +49,7 @@ class CommentForm(forms.ModelForm):
                 'class':'form-control',
                 'placeholder':'Add a comment',
                 'rows': 1 ,
-                'cols': 45}))
+                'cols': 38}))
     class Meta:
         model = Comment
         fields = ('body',)

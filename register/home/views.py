@@ -8,7 +8,6 @@ from rest_framework import authentication, permissions
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.views import View
-
 from django.views.generic import (
     ListView,
     DetailView,
@@ -18,8 +17,10 @@ from django.views.generic import (
     TemplateView,
     RedirectView
 )
-from .models import Post, Comment
+from django.forms import modelformset_factory 
+from .models import Post, Comment, Images
 from .forms import PostForm, CommentForm, CourseForm, ImageForm
+from .post_guid import uuid2slug, slug2uuid
 
 @login_required
 def home(request):
@@ -50,16 +51,21 @@ def save_all(request,form,template_name):
 @login_required
 def post_create(request):
     data = dict()
+    ImageFormset = modelformset_factory(Images,form=ImageForm,extra=4)
     if request.method == 'POST':
         form = PostForm(request.POST)
+        formset = ImageFormset(request.POST or None, request.FILES or None)
         if form.is_valid():    
             post = form.save(False)
             post.author = request.user
             #post.likes = None
             post.save()
-            for image in request.FILES.getlist('file'):
-                instance = Images(post=Post.objects.get(post.id),image=image)
-                instance.save()
+            for f in formset:
+                try:
+                    i = Images(posts=post, image=f.cleaned_data['image'])
+                    i.save()
+                except Exception as e:
+                    break
             data['form_is_valid'] = True
             posts = Post.objects.all()
             posts = Post.objects.order_by('-last_edited')
@@ -67,29 +73,15 @@ def post_create(request):
         else:
             data['form_is_valid'] = False
     else:
-        form = PostForm       
+        form = PostForm  
+        formset = ImageFormset(queryset=Images.objects.none())     
     context = {
-    'form':form
+    'form':form,
+    'formset':formset,
 	}
     data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
     return JsonResponse(data) 
 
-class PostImageUpload(LoginRequiredMixin, View):
-    
-    def get(self, request):
-        images = Images.objects.all()
-        return render(self.request, 'home/posts/post_create.html', {'images':images} ) 
-    
-    def post(self, request):
-        data = dict()
-        form = ImageForm(self.request.POST, self.request.FILES)
-        if form.is_valid():
-            image = form.save(False)
-            image.save()
-            data = {'is_valid': True, 'name': image.file.name, 'url': image.file.url} 
-        else:
-            data['is_valid'] = False
-        return JsonResponse(data)
 
 @login_required
 def post_update(request, id):
