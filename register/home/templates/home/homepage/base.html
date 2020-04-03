@@ -39,7 +39,7 @@
           </form>
           <ul class="navbar-nav ml-auto mx-4">
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="#">Home</a>
+                  <a class="nav-link text-muted" href="{% url 'home:home' %}">Home</a>
               </li>
               <li class="nav-item mx-0">
                   <a class="nav-link text-muted" href="#">Profile</a>
@@ -57,9 +57,10 @@
       </div>
       </nav>
         <div class="wrapper">
-            <div class="container pt-4">
+            <div class="container-fluid pl-4 pt-4">
                 <div class="row">
                     <div class="col-sm-3">
+                      <div class="position-fixed" style="width: 19rem;">
                         <div class="card side-tab-link-holder border-light mb-4" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
                             <div class="card-body pb-1">
                               <img class="card-img-top" src="" alt="Profile Image">         
@@ -81,7 +82,7 @@
                             </div>
                             </div>
                         </div>
-                        <div class="card side-tab-link-holder border-light mb-2" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                        <div class="card side-tab-link-holder border-light mb-2" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192); ">           
                           <div class="card-body py-1">
                           <div class="my-3 py-1">
                               <div class="py-3">
@@ -98,6 +99,7 @@
                               </div>
                           </div>
                           </div>
+                      </div>
                       </div>
                     </div>
                     <div class="col-md-6">

@@ -26,7 +26,7 @@ class Post(models.Model):
         return self.subject
 
     def get_absolute_url(self):
-        return reverse('home:home')
+        return reverse('home:post-detail')
     
     def get_like_url(self):
         return reverse("home:like-toggle", kwargs={'id': self.id})
@@ -34,7 +34,7 @@ class Post(models.Model):
     def get_api_like_url(self):
         return reverse("home:like-api-toggle", kwargs={'id': self.id})
     
-    def is_liked(self, request):
+    def user_liked(self, request):
         return self.likes.filter(id=request.user.id).exists()
             
             

@@ -1,10 +1,5 @@
 {% load crispy_forms_tags %}
 {% load static %}
-<script src="{% static 'js/image_upload_post.js' %}"></script>
-<script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
-<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
-<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
-
 <form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
 		<div class="modal-header">
@@ -68,7 +63,7 @@
 	.modal-body {
 		overflow-y: auto;
 	}
-	</style>
+</style>
 
 			
 

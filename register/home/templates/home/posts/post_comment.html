@@ -1,4 +1,4 @@
-<div class="mt-1 mx-2 px-2">
+<div class="mx-2 pt-1 px-2">
   {% for comment in comments %}
   <div class="d-flex">
     <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="{{ comment.name.image }}"
@@ -12,4 +12,7 @@
     {% empty %}
     <p class="font-weight-lighter text-muted">No comments to show</p>
     {% endfor %}
+    {% if comments %}
+    <p class="font-weight-lighter text-muted">No more comments to show</p>
+    {% endif %}
 </div>

@@ -21,6 +21,8 @@ from django.forms import modelformset_factory
 from .models import Post, Comment, Images
 from .forms import PostForm, CommentForm, CourseForm, ImageForm
 from .post_guid import uuid2slug, slug2uuid
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 @login_required
 def home(request):
@@ -116,7 +118,6 @@ def post_delete(request, id):
     else:
         context = {'post':post}
         data['html_form'] = render_to_string('home/posts/post_delete.html',context,request=request)
-
     return JsonResponse(data)
 
 @login_required
@@ -127,40 +128,42 @@ def post_detail(request, id):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(False)
-            comment.post = post
             comment.name = request.user
+            comment.post = post
             comment.save()
             comments = post.comments.all()
-            data['form_is_valid'] = True
-            data['comments'] = render_to_string('home/posts/post_comment.html', { 'comments':comments, 'post':post }, request=request)
         else:
-            data['form_is_valid'] = False
-    else: 
+            data['is_valid'] = False
+    else:
         form = CommentForm
-        comments = post.comments.all()
-    context  = {
-        'form': form,
-        'comments': comments,
-        'post': post
-    }
-    data['html_data'] = render_to_string('home/posts/post_detail.html', context,request=request)
-    return JsonResponse(data)
-
+    comments = post.comments.all()
+    comment_count = post.comments.count()
+    context = {'post':post,
+                'form':form,
+                'comments':comments,
+                'comment_count':comment_count,
+                }
+    if request.is_ajax():
+        data['comments'] = render_to_string('home/posts/post_comment.html',{'comments':comments,'comment_count':comment_count},request=request)
+        return JsonResponse(data)
+    return render(request,'home/posts/post_detail.html',context)
+    
 
 @login_required
 def post_like(request,id):
     data = dict()
     post = get_object_or_404(Post, id=id)
     user = request.user
-    if post.likes.filter(id=user.id).exists():
-        post.likes.remove(user)
-    else:
-        post.likes.add(user)
-    data['form_is_valid'] = True
-    posts = Post.objects.all()
-    posts = Post.objects.order_by('-last_edited')
-    data['html'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
-    return JsonResponse(data)
+    if request.method == 'POST':    
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        posts = Post.objects.all()
+        posts = Post.objects.order_by('-last_edited')
+        data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+        data['posts-detail'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+        return JsonResponse(data)
 
 # Course views
 def course_list(request):

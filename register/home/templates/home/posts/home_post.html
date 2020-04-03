@@ -1,16 +1,16 @@
 {% load static %}
-{% block javascript %}
-  <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
-  <script src="{% static 'js/post.js' %}"></script>
-  <script src="{% static 'js/like-api.js' %}"></script>
-  <script src="{% static 'js/comment.js' %}"></script>
-  <script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
-{% endblock javascript %}
+<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+<script src="{% static 'js/like-api.js' %}"></script> 
 {% for post in posts %}
-<div class="card  mt-3  mb-3 post-card-home-page">
+<script>
+  $(document).on('click', '.post-detail-clickable-details-view', function () {
+    var url = $(this).attr("data-url")
+    document.location.href = url 
+});
+</script>
+<div class="card  mt-3  mb-3">
   <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.id %}">
+    <a id="post-detail-view-link" href="{% url 'home:post-detail' post.id %}"></a>
     <div class="d-flex">
       <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
@@ -22,34 +22,24 @@
     <p class="card-text">{{ post.content }}</p>
   </div>
   <div class="card-footer d-flex flex-row adjusted-card-footer-home-page">
-    <div id="like-section">
-      {% include 'home/posts/likes.html' with post=post %}
+      <div id="like-section">
+        {% include 'home/posts/likes.html' with post=post %}
+      </div>
+      <div>
+        <a class="btn btn-sm" href="{% url 'home:post-detail' post.id %}">
+          <span class="text-primary">
+            <i class="fas fa-comment-alt"></i> {{ post.comments.count }}
+          </span>
+        </a>
+      </div>
     </div>
-    <div id="comment-section">
-      <button type="button" class="btn btn-sm comment-post-btn" data-url="{% url 'home:post-detail' post.id %}">
-        <span class="text-primary">
-          <i class="fas fa-comment-alt"></i> {{ post.comments.count }}
-        </span>
-    </button>
-    </div>
-    <hr class="my-1">
-      <p class="text-muted post-remove-button-link small">
-        {% if post.author == request.user %}  
-        <button class="btn btn-sm text-muted post-remove-button-link show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}">Remove Your Post</button> 
-        {% endif %}
-      </p>
-  </div>
 </div>
 {% empty %}
 <div class="align-items-center">
   <h5 class="display-5 my-3 text-muted">No posts to show :(</h5>
 </div>
 {% endfor %}
-<div class="modal fade" id="modal-post-detail">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg adjusted-modal-detail">
-    <div class="modal-content"></div>
-  </div>
-</div>  
+
 
 
 

@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
 	var ShowForm = function(e){
 		e.stopImmediatePropagation();
 		var btn = $(this);
@@ -48,49 +49,3 @@ $('#modal-post').on("submit",".update-form",SaveForm)
 $('#post-list').on("click",".show-form-delete",ShowForm);
 $('#modal-post').on("submit",".delete-form",SaveForm)
 });
-
-
-/*
-$(document).ready(function(){
-    function updateText(btn, newCount, verb){
-       btn.text(newCount + " " + verb)
-       btn.attr("data-likes", newCount)
-}
-
-$(".like-btn").click(function(e){
-  e.preventDefault()
-  var this_ = $(this)
-  var likeUrl = this_.attr("data-href")
-  var likeCount = parseInt(this_.attr("data-likes")) | 0
-  var addLike = likeCount + 1
-  var removeLike = likeCount - 1
-  if (likeUrl){
-     $.ajax({
-      url: likeUrl,
-      method: "GET",
-      data: {},
-      success: function(data){
-        console.log(data)
-        var newLikes;
-        if (data.liked){
-            updateText(this_, addLike, "Unlike")
-        } else {
-            updateText(this_, removeLike, "Like")
-            // remove one like
-        }
-
-      }, error: function(error){
-        console.log(error)
-        console.log("error")
-      }
-    })
-  }
-})
-})
-
-function popupWindow(url, title, win, w, h) {
-	const y = win.top.outerHeight / 2 + win.top.screenY - ( h / 2);
-	const x = win.top.outerWidth / 2 + win.top.screenX - ( w / 2);
-	return win.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+y+', left='+x);
-}
-*/

@@ -4,7 +4,6 @@ $(document).ready(function(){
     });
   });
 
-
 function open_input (input_id) {
     $("#" + input_id).trigger("click");
 }

@@ -8,10 +8,6 @@
     padding: 0;
   }
 
-  .comment-post-btn:hover {
-    text-decoration: underline;
-  }
-
   .post-detail-clickable-details-view:hover {
     cursor: pointer;
     background-color: rgb(245, 245, 245);
@@ -22,7 +18,7 @@
   }
 
   .post-card-home-page {
-    max-width: 36rem !important; 
+    max-width: 38rem !important; 
   }
 
   .img-create-post {
@@ -38,10 +34,6 @@
     height: 3rem;
   }
 
-  .adjusted-modal-detail {
-    height:90%; 
-    width: 45%;
-  }
 
   .post-remove-button-link {
     font-size: 0.65rem;

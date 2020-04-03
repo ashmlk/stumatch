@@ -38,7 +38,6 @@ class ImageForm(forms.ModelForm):
         model = Images
         fields = ('image', )
 
-        
 class CommentForm(forms.ModelForm):
     body = forms.CharField(
         max_length=250,
@@ -49,7 +48,7 @@ class CommentForm(forms.ModelForm):
                 'class':'form-control',
                 'placeholder':'Add a comment',
                 'rows': 1 ,
-                'cols': 38}))
+                'cols': 50}))
     class Meta:
         model = Comment
         fields = ('body',)

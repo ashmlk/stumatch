@@ -1,20 +1,14 @@
 {% extends "home/homepage/base.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% block javascript %}
-  <script src="{% static 'js/post.js' %}"></script>
-  <script src="{% static 'js/comment.js' %}"></script>
-  <script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
-	<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
-{% endblock javascript %}
+ <script src="{% static 'js/post.js' %}"></script>
 {% block content %}
 <div class="card">
   <div class="card-body  create-post-btn"  data-url="{% url 'home:post-create' %}">
     <div class="media mb-0 align-items-center " >
       <img class="img-create-post rounded-circle my-0 mr-3" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
-          <span class="text-muted align-middle">What's new?</span>
+          <span class="text-muted align-middle" style="font-size: 1.5rem;">What's new?</span>
     </div>  
   </div>
 </div>
