@@ -5,7 +5,7 @@
 <script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
 <script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
 
-<form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form">
+<form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
 		<div class="modal-header">
 			<h5 class="modal-title" >Create a Post</h5>
@@ -23,12 +23,19 @@
 			{{ formset }}
 			<p class="mx-2 text-muted small">Add up to four images to your post</p>
 				<div class="d-flex flex-row justify-content-between px-1">
-						<div id="file-0" class="add-image align-self-center" onclick="open_input('id_form-0-image'); ap_img_to_div('file-0','id_form-0-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
-							<div id="file-1" class="add-image" onclick="open_input('id_form-1-image'); ap_img_to_div('file-1','id_form-1-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
-								<div id="file-2" class="add-image" onclick="open_input('id_form-2-image'); ap_img_to_div('file-2','id_form-2-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
-									<div id="file-3" class="add-image" onclick="open_input('id_form-3-image'); ap_img_to_div('file-3','id_form-3-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
+					<div id="img-0-content">
+						<div id="file-0" class="add-image" onclick="open_input('id_form-0-image'); ap_img_to_div('file-0','id_form-0-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
+					</div>
+					<div id="img-1-content">
+						<div id="file-1" class="add-image" onclick="open_input('id_form-1-image'); ap_img_to_div('file-1','id_form-1-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
+					</div>
+					<div id="img-2-content">
+						<div id="file-2" class="add-image" onclick="open_input('id_form-2-image'); ap_img_to_div('file-2','id_form-2-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
+					</div>
+					<div id="img-3-content">
+						<div id="file-3" class="add-image" onclick="open_input('id_form-3-image'); ap_img_to_div('file-3','id_form-3-image');"><i class="mt-2 fas fa-plus fa-6x"></i></div>
+					</div>					
 				</div>
-
 		</div>
 	</div>
 	</div>

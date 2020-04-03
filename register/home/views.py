@@ -25,9 +25,17 @@ from .post_guid import uuid2slug, slug2uuid
 @login_required
 def home(request):
     posts = Post.objects.all()
+    images = Images.objects.all()
     posts = Post.objects.order_by('-last_edited')
     context = { 'posts':posts }
     return render(request, 'home/homepage/home.html', context)
+
+@login_required
+def user_posted_home(request):
+    posts = Post.objects.filter(author=request.user).order_by('-last_edited')
+    images = Images.objects.all()
+    context = { 'posts':posts }
+    return render(request, 'home/homepage/user_posts.html', context)
     
 @login_required
 def save_all(request,form,template_name):
@@ -55,21 +63,22 @@ def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         formset = ImageFormset(request.POST or None, request.FILES or None)
-        if form.is_valid():    
+        if form.is_valid() and formset.is_valid():    
             post = form.save(False)
             post.author = request.user
             #post.likes = None
             post.save()
-            for f in formset:
+            for i in formset:
                 try:
-                    i = Images(posts=post, image=f.cleaned_data['image'])
+                    i = Images(post=post, image=f.cleaned_data.get('image'))
                     i.save()
-                except Exception as e:
+                except Exception as e:  
                     break
             data['form_is_valid'] = True
             posts = Post.objects.all()
+            images = Images.objects.all()
             posts = Post.objects.order_by('-last_edited')
-            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts,'images':images},request=request)
         else:
             data['form_is_valid'] = False
     else:
@@ -138,46 +147,20 @@ def post_detail(request, id):
     return JsonResponse(data)
 
 
-class PostLikeToggle(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        pk = self.kwargs.get("pk")
-        print(slug)
-        obj = get_object_or_404(Post, pk=pk)
-        url_ = obj.get_absolute_url()
-        user = self.request.user
-        if user.is_authenticated():
-            if user in obj.likes.all():
-                obj.likes.remove(user)
-            else:
-                obj.likes.add(user)
-        return url_
-
-#Responsible for toggling like button
-class PostLikeAPIToggle(APIView):
-    authentication_classes = (authentication.SessionAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, pk, format=None):
-        # slug = self.kwargs.get("slug")
-        obj = get_object_or_404(Post, pk=pk)
-        url = obj.get_absolute_url()
-        user = self.request.user
-        updated = False
-        liked = False
-        if user.is_authenticated():
-            if user in obj.likes.all():
-                liked = False
-                obj.likes.remove(user)
-            else:
-                liked = True
-                obj.likes.add(user)
-            updated = True
-        data = {
-            "updated": updated,
-            "liked": liked
-        }
-        return Response(data)
-
+@login_required
+def post_like(request,id):
+    data = dict()
+    post = get_object_or_404(Post, id=id)
+    user = request.user
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+    else:
+        post.likes.add(user)
+    data['form_is_valid'] = True
+    posts = Post.objects.all()
+    posts = Post.objects.order_by('-last_edited')
+    data['html'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+    return JsonResponse(data)
 
 # Course views
 def course_list(request):

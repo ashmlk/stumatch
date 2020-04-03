@@ -1,39 +1,42 @@
 {% load static %}
 {% block javascript %}
+  <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/like-api.js' %}"></script>
   <script src="{% static 'js/comment.js' %}"></script>
   <script src="{% static 'js/jquery-file-upload/js/vendor/jquery.ui.widget.js' %}"></script>
 	<script src="{% static 'js/jquery-file-upload/js/jquery.iframe-transport.js' %}"></script>
 	<script src="{% static 'js/jquery-file-upload/js/jquery.fileupload.js' %}"></script>
 {% endblock javascript %}
 {% for post in posts %}
-<div class="card  mt-3  mb-3" style="max-width: 36rem !important;">
+<div class="card  mt-3  mb-3 post-card-home-page">
   <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.id %}">
     <div class="d-flex">
-      <img class="img-create-post rounded-circle mr-2" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
+      <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
         <span class="align-text-top"><a class="mr-2 text-dark font-weight-bolder" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a><br><p class="font-weight-light text-muted">{{ post.title }}</p></span>
           <div class="float-right text-right ml-auto">
-            <p class="text-muted small" style="font-size: 0.7rem;">{{ post.date_posted|date:"F d, Y" }}</p>
+            <p class="text-muted post-card-date small">{{ post.date_posted|date:"F d, Y" }}</p>
           </div>     
     </div>
     <p class="card-text">{{ post.content }}</p>
   </div>
-  <div class="card-footer" style="height: 5rem;">
-    <a class="mx-1 small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
-    <button type="button" class="btn btn-sm comment-post-btn" data-url="{% url 'home:post-detail' post.id %}">
-      <span class="text-primary">
-        <i class="fas fa-comment-alt"></i> Comment
-      </span>
-  </button>
+  <div class="card-footer d-flex flex-row adjusted-card-footer-home-page">
+    <div id="like-section">
+      {% include 'home/posts/likes.html' with post=post %}
+    </div>
+    <div id="comment-section">
+      <button type="button" class="btn btn-sm comment-post-btn" data-url="{% url 'home:post-detail' post.id %}">
+        <span class="text-primary">
+          <i class="fas fa-comment-alt"></i> {{ post.comments.count }}
+        </span>
+    </button>
+    </div>
     <hr class="my-1">
-      <p class="text-muted small">
+      <p class="text-muted post-remove-button-link small">
         {% if post.author == request.user %}  
-        <button class="btn btn-sm text-muted show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove</button> 
+        <button class="btn btn-sm text-muted post-remove-button-link show-form-delete ml-auto" data-url="{% url 'home:post-delete' post.id %}">Remove Your Post</button> 
         {% endif %}
-        <small class="float-sm-right">
-          {{ post.likes.count }} Likes, {{ post.comments.count }} Comments
-        </small>
       </p>
   </div>
 </div>
@@ -43,21 +46,10 @@
 </div>
 {% endfor %}
 <div class="modal fade" id="modal-post-detail">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" style="height:90%; width: 45%;">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg adjusted-modal-detail">
     <div class="modal-content"></div>
   </div>
 </div>  
-<style>
-  .comment-post-btn:hover {
-    text-decoration: underline;
-  }
-  .post-detail-clickable-details-view:hover {
-    cursor: pointer;
-    background-color: rgb(245, 245, 245);
 
-  }
-  .modal-content {
-    min-height: (100vh - 210px);
-  }
-</style>
+
 

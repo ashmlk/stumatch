@@ -11,6 +11,7 @@
   }
 </style>
 <script src="{% static 'js/comment.js' %}"></script>
+<script src="{% static 'js/like-api.js' %}"></script>
 <div class="modal-header" style="height: 3rem;">
   {% if post.author == request.user %}  
   <button class="btn btn-sm text-muted show-form-delete" data-url="{% url 'home:post-delete' post.id %}" style="font-size: small;" style="height: 0rem;">Remove your post</button> 
@@ -37,8 +38,9 @@
   </div>
   <hr class="mx-2 px-2">
     <div class="d-flex px-2 mx-2 justify-content-between">
-        <a class="small" data-href='{{ post.get_api_like_url }}' data-likes='{{ post.likes.count }}' href='{{ post.get_like_url }}'><i class="fas fa-thumbs-up"></i> Like</a>
-        <p class="text-muted small font-size-smaller">{{ post.likes.count }} Likes, {{ post.comments.count }} Comments</p>
+      <div id="like-section">
+        {% include 'home/posts/likes.html' %}
+      </div>
     </div>
     <hr class="text-muted post-border-div">
     <div id="post-linked-comments">

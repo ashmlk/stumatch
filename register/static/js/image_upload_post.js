@@ -6,14 +6,11 @@ $(document).ready(function(){
 
 
 function open_input (input_id) {
-  $(".add-image").on("click", function () {
     $("#" + input_id).trigger("click");
-  })
 }
 
 function ap_img_to_div(div_id,input_id) {
   $("#" + input_id).change(function () {
-    $("#" + div_id).empty();
     $("#" + div_id).removeClass("add-image");
     $("#" + div_id).addClass("remove-image");
     var reader = new FileReader();

@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.core.validators import MaxLengthValidator, MinValueValidator
 import uuid
 import math
+from django_uuid_upload import upload_to_uuid
 
 
 def current_year():
@@ -28,17 +29,23 @@ class Post(models.Model):
         return reverse('home:home')
     
     def get_like_url(self):
-        return reverse("home:like-toggle", kwargs={'pk': self.pk})
+        return reverse("home:like-toggle", kwargs={'id': self.id})
 
     def get_api_like_url(self):
-        return reverse("home:like-api-toggle", kwargs={'pk': self.pk})
+        return reverse("home:like-api-toggle", kwargs={'id': self.id})
+    
+    def is_liked(self, request):
+        return self.likes.filter(id=request.user.id).exists()
+            
+            
+        
 
 def image_create_uuid_p_u(instance, filename):
-    return '/'.join(['post_images', str(instance.post.id), str(uuid.uuid4().hex + ".png")]) 
+    return '/'.join(['post_images', str(uuid.uuid4().hex + ".png")]) 
 
 class Images(models.Model):
-    post = models.ForeignKey(Post,on_delete=models.CASCADE)
-    image = models.FileField(upload_to=image_create_uuid_p_u,verbose_name='Image')
+    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='images')
+    image = models.FileField(upload_to=upload_to_uuid('media/post_images', make_dir=True),verbose_name='Image')
     date_added = models.DateTimeField(auto_now_add=True)
     
 class Comment(models.Model):

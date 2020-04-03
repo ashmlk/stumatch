@@ -1,0 +1,52 @@
+#comment-section {
+    margin: 0;
+    padding: 0;
+  }
+
+  #like-section {
+    margin: 0;
+    padding: 0;
+  }
+
+  .comment-post-btn:hover {
+    text-decoration: underline;
+  }
+
+  .post-detail-clickable-details-view:hover {
+    cursor: pointer;
+    background-color: rgb(245, 245, 245);
+  }
+
+  .modal-content {
+    min-height: (100vh - 210px);
+  }
+
+  .post-card-home-page {
+    max-width: 36rem !important; 
+  }
+
+  .img-create-post {
+    width: 50px;
+    height: 50px;
+  }
+
+  .post-card-date {
+    font-size: 0.7rem; 
+  }
+
+  .adjusted-card-footer-home-page {
+    height: 3rem;
+  }
+
+  .adjusted-modal-detail {
+    height:90%; 
+    width: 45%;
+  }
+
+  .post-remove-button-link {
+    font-size: 0.65rem;
+  }
+
+  .post-remove-button-link:hover {
+    text-decoration: underline;
+  }

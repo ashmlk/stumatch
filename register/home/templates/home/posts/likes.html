@@ -1,0 +1,18 @@
+{% if request.user.is_authenticated %}
+<form action="{% url 'home:post-like' post.id %}" method="POST">
+    {% csrf_token %}
+    {% if request.user in post.likes.all %}
+        <button type="submit" id="likeBtn" data-url="{% url 'home:post-like' post.id %}" data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="btn btn-sm">
+            <span class="text-primary">
+                <i class="fas fa-thumbs-down"></i> {{ post.likes.count }}
+            </span>
+        </button>
+    {% else %}
+        <button type="submit" id="likeBtn" data-url="{% url 'home:post-like' post.id %}" data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="btn btn-sm">
+            <span class="text-primary">
+                <i class="fas fa-thumbs-up"></i> {{ post.likes.count }}
+            </span>
+        </button>
+    {% endif %}
+</form>
+{% endif %}

@@ -10,12 +10,11 @@
 {% endblock javascript %}
 {% block content %}
 <div class="card">
-  <div class="card-body">
-    <div class="media mb-0 align-items-center">
+  <div class="card-body  create-post-btn"  data-url="{% url 'home:post-create' %}">
+    <div class="media mb-0 align-items-center " >
       <img class="img-create-post rounded-circle my-0 mr-3" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
           <span class="text-muted align-middle">What's new?</span>
-          <button type="button" class="btn btn-sm btn-primary create-post-btn ml-auto" data-url="{% url 'home:post-create' %}"><i class="fas fa-plus-square"></i></button> 
     </div>  
   </div>
 </div>
@@ -24,10 +23,15 @@
     {% include 'home/posts/home_post.html' %}
   </div>
 </div>
-
 <div class="modal fade" id="modal-post" style="overflow-y: show;">
   <div class="modal-dialog">
     <div class="modal-content"></div>
   </div>
 </div> 
+<style>
+  .create-post-btn:hover {
+    cursor: pointer;
+    background-color: rgb(245,245,245);
+  }
+</style>
 {% endblock content %}

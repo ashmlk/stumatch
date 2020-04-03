@@ -6,7 +6,7 @@
         <style>
             #navBarSearchForm input[type=text]{width:400px !important;}
         </style>
-        <title>Home</title>
+        <title>StuMatch</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,79 +21,93 @@
     <body class="main-bg-color">
      {% block javascript %}
      {% endblock javascript %}
-        <nav class="navbar navbar-expand-md sticky-top navbar-light nav-header-main">
-            <span class="navbar-brand brand-home-header h1 display-1 my-0">StuMatch</span>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <form class="mx-2 my-auto d-inline w-50">
-                  <div class="input-group">
-                      <input type="text" class="form-control border border-right-0" placeholder="Search">
-                      <span class="input-group-append">
-                          <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
-                              <i class="fa fa-search"></i>
-                          </button>
-                      </span>
-                  </div>
-              </form>
-                <ul class="navbar-nav ml-auto mx-4">
-                    <li class="nav-item mx-0">
-                        <a class="nav-link text-white" href="#">Home</a>
-                    </li>
-                    <li class="nav-item mx-0">
-                        <a class="nav-link text-white" href="#">Profile</a>
-                    </li>
-                    <li class="nav-item mx-0">
-                        <a class="nav-link text-white" href="#">Message</a>
-                    </li>
-                    <li class="nav-item mx-0">
-                        <a class="nav-link text-white" href="#">Settings</a>
-                    </li>
-                    <li class="nav-item mx-0">
-                        <a class="nav-link text-white" href="{% url 'main:user_logout' %}">Logout</a>
-                    </li>
-                </ul>
+     <nav class="navbar navbar-expand-lg sticky-top navbar-light nav-header-main" style="height: 3rem;">
+      <span class="navbar-brand brand-home-header h1 display-1 my-0">StuMatch</span>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <form class="mx-2 mb-1 form-inline d-inline w-50" style="height: 2rem;">
+            <div class="input-group">
+                <input type="text" class="form-control border border-right-0" placeholder="Search Stumatch" aria-label="Search">
+                <span class="input-group-append">
+                    <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
             </div>
-            </nav>
+          </form>
+          <ul class="navbar-nav ml-auto mx-4">
+              <li class="nav-item mx-0">
+                  <a class="nav-link text-muted" href="#">Home</a>
+              </li>
+              <li class="nav-item mx-0">
+                  <a class="nav-link text-muted" href="#">Profile</a>
+              </li>
+              <li class="nav-item mx-0">
+                  <a class="nav-link text-muted" href="#">Message</a>
+              </li>
+              <li class="nav-item mx-0">
+                  <a class="nav-link text-muted" href="#">Settings</a>
+              </li>
+              <li class="nav-item mx-0">
+                  <a class="nav-link text-muted" href="{% url 'main:user_logout' %}">Logout</a>
+              </li>
+          </ul>
+      </div>
+      </nav>
         <div class="wrapper">
             <div class="container pt-4">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="card">
-                            <img class="card-img-top" src="" alt="Profile Image">                       
-                            <div class="card-body pb-0">
+                        <div class="card side-tab-link-holder border-light mb-4" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                            <div class="card-body pb-1">
+                              <img class="card-img-top" src="" alt="Profile Image">         
                               <h5 class="card-title font-weight-light">Welcome, {{ request.user.first_name }}!</h5>
+                              <hr>
+                            <div class="my-3 py-1">
+                                <div class="py-3">
+                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Friends</a>
+                                </div>
+                                <div class="py-3">
+                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
+                                </div>
+                                <div class="py-3">
+                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
+                                </div>
+                                <div class="py-3">
+                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-calendar pr-2"></i>Calendar</a>
+                                </div>
                             </div>
-                            <ul class="list-group list-group-flush">
-                            <li class="list-group-item"></li>
-                              <li class="list-group-item">
-                                <a href="#" class="card-link">Find Friends</a>
-                              </li>
-                              <li class="list-group-item">
-                                <a href="#" class="card-link">Courses</a>
-                              </li>
-                              <li class="list-group-item">
-                                <a href="#" class="card-link">Groups</a>
-                              </li>
-                              <li class="list-group-item">
-                                <a href="#" class="card-link">Events</a>
-                              </li>
-                            </ul>
+                            </div>
                         </div>
+                        <div class="card side-tab-link-holder border-light mb-2" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                          <div class="card-body py-1">
+                          <div class="my-3 py-1">
+                              <div class="py-3">
+                                <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-graduation-cap pr-2"></i>News</a>
+                              </div>
+                              <div class="py-3">
+                                <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-hashtag pr-2"></i>Trends</a>      
+                              </div>
+                              <div class="py-3">
+                                <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-briefcase pr-2"></i>Jobs</a>   
+                              </div>
+                              <div class="py-3">
+                                <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-compass pr-2"></i>Connect</a>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
                     </div>
                     <div class="col-md-6">
                         {% block content %}
                         {% endblock %}
                     </div>
                     <div class="col-sm-3">
-                        <div class="card border-left-0 border-right-0 overflow-auto mb-2" style="height: 36rem;">
-                            <h4 class="card-title text-center pt-2 font-weight-lighter">Your Friends</h4>
-                            <hr class="my-2" >
-                            <div class="card-body">
-                                <!-- Show friends -->
-                            </div>
-                        </div>
+                      <div class="card">
+
+                    </div>
                         <footer class="page-footer font-small bg-light pt-2">
                             <div class="container-fluid">
                               <div class="row">                    

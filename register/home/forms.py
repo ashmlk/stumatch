@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.forms import Textarea
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed.')
-alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphanumeric characters are allowed.')
+alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
