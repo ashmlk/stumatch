@@ -1,4 +1,8 @@
 $(document).ready(function(){
+	$('textarea').keyup(function (e) {
+		var rows = $(this).val().split("\n");
+		$(this).prop('rows', rows.length);
+	  });
 	var s = 0;
 	var l = 0;
 	$("#post-comment-button-viewer").click(function(){
@@ -10,7 +14,8 @@ $(document).ready(function(){
 			s = 0;
 		}
 	  })
-	$('.inside-post-detail #likeBtn').on("click", function () {
+	$('.inside-post-detail #likeBtn').on("click", function (e) {
+		e.preventDefault();
 		if($(".inside-post-detail #likeBtn i").hasClass("fa-thumbs-up")){
 			($(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-up"))
 			($(".inside-post-detail #likeBtn i").addClass("fa-thumbs-down"))
@@ -19,8 +24,9 @@ $(document).ready(function(){
 			($(".inside-post-detail #likeBtn i").addClass("fa-thumbs-up"))
 		}
 	})
-	$(document).on("submit",".post-comment-form", function (e) {
+	$(".post-comment-form").on("submit", function (e) {
 		e.preventDefault();
+		e.stopImmediatePropagation();
 		$.ajax({
 			type:'POST',
 			url: $(this).attr('action'),

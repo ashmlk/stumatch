@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="POST" data-url="{% url 'home:post-delete' post.id %}" class="delete-form">
+<form method="POST" data-url="{% url 'home:post-delete' post.guid_url %}" class="delete-form">
 	{% csrf_token %}
 		<div class="modal-header">
 		<h5 class="modal-title" >Remove Post</h5>

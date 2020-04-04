@@ -35,9 +35,9 @@
       <hr class="mx-2 px-2">
       <div class="d-flex justify-content-center">
         <div class="mr-4">
-          <button class="btn btn-sm" type="button" id="post-comment-button-viewer">
-            <span class="text-primary">
-                <i class="fas fa-comment-alt"></i>
+          <button class="btn btn-md" type="button" id="post-comment-button-viewer">
+            <span class="text-secondary">
+                <i class="fas fa-comment"></i>
             </span>
         </button>
         </div>
@@ -48,11 +48,13 @@
         <div class="d-flex justify-content-center py-0 mx-0">
           <div class="row mx-2" id="post-comment-form-div" style="display:none;">
             <img class="img-create-post rounded-circle mx-1" style="width: 2.3rem;height: 2.3rem;" src="{{ request.user.image }}" alt="Profile image">
-            <form method="POST" action="{% url 'home:post-detail' post.id %}" class="post-comment-form" style="height: 1rem;">
+            <form method="POST" action="{% url 'home:post-detail' post.guid_url %}" class="post-comment-form" style="height: 1rem;">
               {% csrf_token %}
               <div class="input-group">
-                {{ form | crispy }}
-                <span><button class="btn btn-sm ml-1 small btn-rounded btn-primary" style="height: 2.3rem; border-radius: 2rem;" type="submit">Add</button></span>
+                {{ form }}
+                <div class="input-group-append">
+                  <button class="btn btn-sm small btn-primary" style="height: 2.3rem; border-radius: 1.2rem;" type="submit">Add</button>
+                </div>
               </div>     
             </form>
           </div>
@@ -69,7 +71,7 @@
     <div class="modal-dialog">
       <div class="modal-content"></div>
     </div>
-  </div> 
+  </div>
   <style>
     #like-count {
       display: none;

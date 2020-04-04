@@ -57,7 +57,7 @@
       </div>
       </nav>
         <div class="wrapper">
-            <div class="container-fluid pl-4 pt-4">
+            <div class="container-fluid pl-4 pr-5 pt-4">
                 <div class="row">
                     <div class="col-sm-3">
                       <div class="position-fixed" style="width: 19rem;">
@@ -68,7 +68,7 @@
                               <hr>
                             <div class="my-3 py-1">
                                 <div class="py-3">
-                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Friends</a>
+                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-user-friends pr-2"></i>Friends</a>
                                 </div>
                                 <div class="py-3">
                                   <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
@@ -107,34 +107,51 @@
                         {% endblock %}
                     </div>
                     <div class="col-sm-3">
-                      <div class="card">
-
+                      <div class="card right-pannel-base">
+                        <div class="card-header bg-transparent">
+                          <h4>Links</h4>
+                        </div>
+                        <div class="card-body">
+                          <ul id="communit-homepage-list" class="list-group list-group-flush">
+                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
+                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
+                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
+                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
+                          </ul>
+                        </div>
                     </div>
                         <footer class="page-footer font-small bg-light pt-2">
-                            <div class="container-fluid">
-                              <div class="row">                    
-                                <div class="col-sm">
-                                  <div class="mb-2">       
-                                    <a href="#">About</a>
-                                  </div>
-                                </div>
-                                <div class="col-sm">
-                                  <div class="mb-2">       
-                                    <a href="#">
-                                      Terms
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-sm">
-                                  <div class="mb-2">       
-                                    <a href="#">
-                                      Privacy
-                                      </a>
-                                  </div>
-                                </div>
-                              </div>         
+                            <div class="mx-1 row"> 
+                              <div class="mb-2">       
+                                <a class="text-muted" href="#">
+                                  Help Center
+                                  </a><span class="mx-1">·</span>
+                              </div>    
+                              <div class="mb-2">       
+                                <a class="text-muted" href="#">
+                                  About
+                                  </a><span class="mx-1">·</span>
+                              </div>    
+                              <div class="mb-2">       
+                                <a class="text-muted" href="#">
+                                  Privacy
+                                  </a><span class="mx-1">·</span>
+                              </div>                                                                   
+                                <div class="mb-2">       
+                                  <a class="text-muted" href="#">About</a>
+                                </div>                                             
+                                <div class="mb-2">       
+                                  <a class="text-muted" href="#">
+                                    Guidlines
+                                    </a><span class="mx-1">·</span>
+                                </div>                                                            
+                                <div class="mb-2">       
+                                  <a class="text-muted" href="#">
+                                    Privacy Policy
+                                    </a>
+                                </div>      
                             </div>
-                            <div class="footer-copyright text-center text-muted">© 2020 StuMatch
+                            <div class="footer-copyright small mx-1 text-muted">StuMatch © 2020. All rights reserved
                               </div>
                           </footer> 
                     </div>

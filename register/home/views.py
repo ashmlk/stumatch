@@ -93,7 +93,7 @@ def post_create(request):
     data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
     return JsonResponse(data) 
 
-
+# Do Not Change
 @login_required
 def post_update(request, id):
     post = get_object_or_404(Post, id=id)
@@ -106,9 +106,9 @@ def post_update(request, id):
     return save_all(request, form, 'home/posts/post_update.html')
 
 @login_required
-def post_delete(request, id):
+def post_delete(request, guid_url):
     data = dict()
-    post = get_object_or_404(Post, id=id)
+    post = get_object_or_404(Post, guid_url=guid_url)
     if request.method == 'POST':
         post.delete()
         data['form_is_valid'] = True
@@ -121,9 +121,9 @@ def post_delete(request, id):
     return JsonResponse(data)
 
 @login_required
-def post_detail(request, id):
+def post_detail(request, guid_url):
     data = dict()
-    post = get_object_or_404(Post, id=id)
+    post = get_object_or_404(Post, guid_url=guid_url)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -150,9 +150,9 @@ def post_detail(request, id):
     
 
 @login_required
-def post_like(request,id):
+def post_like(request,guid_url):
     data = dict()
-    post = get_object_or_404(Post, id=id)
+    post = get_object_or_404(Post, guid_url=guid_url)
     user = request.user
     if request.method == 'POST':    
         if post.likes.filter(id=user.id).exists():

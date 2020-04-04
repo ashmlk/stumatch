@@ -1,6 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <script src="{% static 'js/like-api.js' %}"></script> 
+<script src="{% static 'js/post.js' %}"></script>
 {% for post in posts %}
 <script>
   $(document).on('click', '.post-detail-clickable-details-view', function () {
@@ -8,35 +9,51 @@
     document.location.href = url 
 });
 </script>
-<div class="card  mt-3  mb-3">
-  <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.id %}">
-    <a id="post-detail-view-link" href="{% url 'home:post-detail' post.id %}"></a>
-    <div class="d-flex">
+<div class="row ml-2">
+  <div class="mb-3 mt-3">
+    <div>
       <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
-        alt="Profile image">
-        <span class="align-text-top"><a class="mr-2 text-dark font-weight-bolder" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a><br><p class="font-weight-light text-muted">{{ post.title }}</p></span>
-          <div class="float-right text-right ml-auto">
-            <p class="text-muted post-card-date small">{{ post.date_posted|date:"F d, Y" }}</p>
-          </div>     
+      alt="Profile image">
     </div>
-    <p class="card-text">{{ post.content }}</p>
+    <p class="text-muted ml-1 post-card-date small">{{ post.get_created_on }} ago</p>
   </div>
-  <div class="card-footer d-flex flex-row adjusted-card-footer-home-page">
-      <div id="like-section">
-        {% include 'home/posts/likes.html' with post=post %}
-      </div>
-      <div>
-        <a class="btn btn-sm" href="{% url 'home:post-detail' post.id %}">
-          <span class="text-primary">
-            <i class="fas fa-comment-alt"></i> {{ post.comments.count }}
-          </span>
-        </a>
-      </div>
+  <div class="card mb-3 mt-3" style="width: 36.3rem;">
+    <div class="card-header" style="height: 2.4rem;">
+      <h5 class="font-weight-light pb-3">{{ post.title }}</h5>
     </div>
+    <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.guid_url  %}">
+      <a id="post-detail-view-link" href="{% url 'home:post-detail' post.guid_url %}"></a>
+      <a class="mr-2 text-dark" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a>
+      <p class="card-text">{{ post.content }}</p>
+    </div>
+   <hr>
+      <div class="d-flex align-items-center justify-content-between" style="height: 1rem;">
+        <div class="row mx-1">
+          <div id="like-section" class="px-1 pb-3">
+            {% include 'home/posts/likes.html' with post=post %}
+          </div>
+          <div class="px-1 pb-3"> 
+            <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
+              <span class="text-secondary">
+                <i class="fas fa-comment"></i> {{ post.comments.count }}
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="pb-3"> 
+          <a class="btn btn-md" href="#">
+            <span class="text-secondary">
+              <i class="fas fa-share-square"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+  </div>
 </div>
+
 {% empty %}
-<div class="align-items-center">
-  <h5 class="display-5 my-3 text-muted">No posts to show :(</h5>
+<div class="d-flex justify-content-center">
+  <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show</h5>
 </div>
 {% endfor %}
 

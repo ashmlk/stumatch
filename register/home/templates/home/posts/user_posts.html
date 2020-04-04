@@ -1,3 +1,3 @@
 {% if post.author == request.user %}  
-<button class="btn btn-sm text-muted show-form-delete" data-url="{% url 'home:post-delete' post.id %}" style="font-size: 0.7rem;" style="height: 0rem;">Remove your post</button> 
+<button class="btn btn-sm text-muted show-form-delete" data-url="{% url 'home:post-delete' post.guid_url %}" style="font-size: 0.7rem;" style="height: 0rem;">Remove your post</button> 
 {% endif %}
