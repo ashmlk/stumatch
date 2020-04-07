@@ -1,18 +1,14 @@
-<div class="mx-2 pt-1 px-2">
+<hr style="margin:0;">
   {% for comment in comments %}
-  <div class="d-flex">
-    <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="{{ comment.name.image }}"
-    alt="Profile image">
-      <span class="align-text-top">
-        <a class="mr-2 text-dark font-weight-bolder" href="#">{{ comment.name.first_name }}</a><br>
-        <p class="text-muted small py-0 " style="font-size: 0.7rem;">{{ comment.get_created_on }}</p></span> 
-    </div>
-    <p class="font-weight-light">{{ comment.body }}</p>
-    <hr>
+  <div class="border-bottom pb-1">
+    <div class="d-flex pt-1 pl-1" style="margin-bottom: 0;">
+      <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="{{ comment.name.image }}" alt="Profile image">
+        <span class="align-text-top">
+          <a class="mr-1 text-dark font-size-smaller" href="#" style="font-weight: 500;">{{ comment.name.first_name }}</a><span class="text-muted small"> @{{ comment.name.username }}</span><br>
+          <p class="text-muted small py-0 " style="font-size: 0.7rem;">{{ comment.get_created_on }}</p></span>
+      </div>
+        <p class="font-weight-light pl-1">{{ comment.body }}</p>
+  </div>
     {% empty %}
     <p class="font-weight-lighter text-muted">No comments to show</p>
     {% endfor %}
-    {% if comments %}
-    <p class="font-weight-lighter text-muted">No more comments to show</p>
-    {% endif %}
-</div>

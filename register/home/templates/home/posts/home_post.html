@@ -9,53 +9,61 @@
     document.location.href = url 
 });
 </script>
-<div class="row ml-2">
-  <div class="mb-3 mt-3">
-    <div>
-      <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
-      alt="Profile image">
-    </div>
-    <p class="text-muted ml-1 post-card-date small">{{ post.get_created_on }} ago</p>
-  </div>
-  <div class="card mb-3 mt-3" style="width: 36.3rem;">
-    <div class="card-header" style="height: 2.4rem;">
-      <h5 class="font-weight-light pb-3">{{ post.title }}</h5>
-    </div>
-    <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.guid_url  %}">
-      <a id="post-detail-view-link" href="{% url 'home:post-detail' post.guid_url %}"></a>
-      <a class="mr-2 text-dark" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a>
-      <p class="card-text">{{ post.content }}</p>
-    </div>
-   <hr>
-      <div class="d-flex align-items-center justify-content-between" style="height: 1rem;">
-        <div class="row mx-1">
-          <div id="like-section" class="px-1 pb-3">
-            {% include 'home/posts/likes.html' with post=post %}
-          </div>
-          <div class="px-1 pb-3"> 
-            <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
-              <span class="text-secondary">
-                <i class="fas fa-comment"></i> {{ post.comments.count }}
-              </span>
-            </a>
-          </div>
+  <div class="row ml-2">
+    <div class="col-sm-2">
+      <div class="float-right mb-3 mt-3">
+        <div>
+          <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
+          alt="Profile image">
         </div>
-        <div class="pb-3"> 
-          <a class="btn btn-md" href="#">
-            <span class="text-secondary">
-              <i class="fas fa-share-square"></i>
-            </span>
-          </a>
+        <div>
+          <p class="text-muted post-card-date small mr-2">{{ post.get_created_on }} ago</p>
         </div>
       </div>
+    </div>
+    <div class="col-md-10" style="margin-left: -1.6rem;">
+      <div class="card rounded-0 mb-3 mt-3">
+        <div class="card-header" style="height: 3.4rem;">
+          <h5 style="margin-bottom: 0px;">{{ post.title }}</h5>
+          <p class="small text-muted" style="margin-top: -5px;">@{{ post.author.username }}</p> 
+        </div>
+        <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.guid_url  %}">
+          <a id="post-detail-view-link" href="{% url 'home:post-detail' post.guid_url %}"></a>
+          <p class="mr-1 text-dark font-weight-bolder">{{ post.author.first_name }} {{ post.author.last_name }}</p>
+          <hr style="margin-top: -10px;">
+          <p class="card-text pt-2" style="margin-top: -0.9rem;">{{ post.content }}</p>
+        </div>
+       <hr>
+          <div class="d-flex align-items-center justify-content-between" style="height: 1rem;">
+            <div class="row mx-1">
+              <div id="like-section" class="px-1 pb-3">
+                {% include 'home/posts/likes.html' with post=post %}
+              </div>
+              <div class="px-1 pb-3"> 
+                <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
+                  <span class="text-secondary">
+                    <i class="fas fa-comment"></i> {{ post.comments.count }}
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div class="pb-3"> 
+              <a class="btn btn-md" href="#">
+                <span class="text-secondary">
+                  <i class="fas fa-share-square"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+      </div>
+    </div>
   </div>
-</div>
-
 {% empty %}
 <div class="d-flex justify-content-center">
   <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show</h5>
 </div>
 {% endfor %}
+
 
 
 

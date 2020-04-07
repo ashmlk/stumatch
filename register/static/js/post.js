@@ -1,5 +1,15 @@
 $(document).ready(function(){
-
+	$('#loadingDiv').hide();
+	$(document)
+	.ajaxStart(function () {
+		$('#loadingDiv').show();
+	  })
+	  .ajaxStop(function () {
+		$('#loadingDiv').hide();
+	  })
+	.ajaxSend(function (event, jqxhr, settings) {
+		jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+	});
 	var ShowForm = function(e){
 		e.stopImmediatePropagation();
 		var btn = $(this);
@@ -16,14 +26,19 @@ $(document).ready(function(){
 		});
 		return false;
 	};
-
+	// change form to FormData
+	// var form = $(this)
+	// processData, contentType were removed
 	var SaveForm =  function(e){
+		var form = new FormData(this);
 		e.stopImmediatePropagation();
-		var form = $(this);
 		$.ajax({
-			url: form.attr('data-url'),
-			data: form.serialize(),
-			type: form.attr('method'),
+			url: $(this).attr('data-url'),
+			type: $(this).attr('method'),
+			data: form,
+			cache: false,
+			processData: false,
+			contentType: false,
 			dataType: 'json',
 			success: function(data){
 				if(data.form_is_valid){
@@ -49,3 +64,4 @@ $('#modal-post').on("submit",".update-form",SaveForm)
 $('#post-list').on("click",".show-form-delete",ShowForm);
 $('#modal-post').on("submit",".delete-form",SaveForm)
 });
+

@@ -2,16 +2,35 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<div class="card">
-  <script src="{% static 'js/post.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
-  <div class="card-body  create-post-btn"  data-url="{% url 'home:post-create' %}">
-    <div class="media mb-0 align-items-center " >
-      <img class="img-create-post rounded-circle my-0 mr-3" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
-        alt="Profile image">
-          <span class="text-muted align-middle" style="font-size: 1.5rem;">What's new?</span>
-    </div>  
+  <div class="card mb-1">
+    <script src="{% static 'js/post.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+    <div class="card-body create-post-btn"  data-url="{% url 'home:post-create' %}">
+      <div class="mb-0 align-items-center " >
+        <img class="img-create-post rounded-circle my-0 mr-3" style="width: 40px;height: 40px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
+          alt="Profile image">
+            <span class="text-muted align-middle" style="font-size: 1rem;">What's new?</span>
+      </div>  
+    </div>
   </div>
+    <div class="d-flex justify-content-left">
+      <div class="mr-2">
+        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-clone pr-1"></i>Posts</button>
+      </div>
+      <div class="mr-2">
+        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-hashtag pr-1"></i>Trending</button>
+      </div>
+      <div class="mr-2">
+        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-newspaper pr-1"></i>News</button>
+      </div>
+      <div class="mr-2">
+        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-pen-square pr-1"></i>Blogs</button>
+      </div>
+    </div>
+<div class="mt-1 border-top border-bottom">
+  <span class="text-muted small">
+    You are seeing posts by your friends <a href="#">click here</a> to learn more
+  </span>
 </div>
 <div id="post-list">
   <div>

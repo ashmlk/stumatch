@@ -16,13 +16,16 @@
   <script src="{% static 'js/like-api.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <div class="border-left border-right">
+    <h4 class=" font-weight-bolder ml-1">{{ post.title }}</h4>
     <div class="mx-0" style="margin: 0; padding: 0;">
-      <div class="mt-3 rounded-0" style="max-width: 100rem !important;">
+      <div class="mt-3 rounded-0 border-top" style="max-width: 100rem !important;">
         <div class="card-body mb-1 text-dark" style="min-height: 20rem;">
           <div class="d-flex">
             <img class="img-create-post rounded-circle mr-2" style="width: 50px;height: 50px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
               alt="Profile image">
-              <span class="align-text-top"><a class="mr-2 text-dark font-weight-bolder" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a><br><p class="font-weight-light text-muted">{{ post.title }}</p></span>
+              <span class="align-text-top"><a class="mr-2 text-dark font-weight-bolder" href="#">{{ post.author.first_name }} {{ post.author.last_name }} </a><br>
+                <p class="small text-muted">@{{ post.author.username }}</p>
+            </span>
                 <div class="float-right text-right ml-auto">
                   <p class="text-muted small" style="font-size: 0.7rem;">{{ post.date_posted|date:"F d, Y" }}</p>
                 </div>     
@@ -32,17 +35,24 @@
           </div>
         </div>
       </div>
-      <hr class="mx-2 px-2">
+      <hr class="mx-2 px-2" style="margin: 0;">
       <div class="d-flex justify-content-center">
-        <div class="mr-4">
+        <div class="mx-4">
           <button class="btn btn-md" type="button" id="post-comment-button-viewer">
             <span class="text-secondary">
                 <i class="fas fa-comment"></i>
             </span>
         </button>
         </div>
-        <div id="like-section" class="ml-4 inside-post-detail">
+        <div id="like-section" class="mx-4 inside-post-detail">
           {% include 'home/posts/likes.html' with post=post %}
+        </div>
+        <div class="mx-4">
+          <a class="btn btn-md" href="#">
+            <span class="text-secondary">
+              <i class="fas fa-share-square"></i>
+            </span>
+          </a>
         </div>
       </div>
         <div class="d-flex justify-content-center py-0 mx-0">
@@ -53,14 +63,14 @@
               <div class="input-group">
                 {{ form }}
                 <div class="input-group-append">
-                  <button class="btn btn-sm small btn-primary" style="height: 2.3rem; border-radius: 1.2rem;" type="submit">Add</button>
+                  <button class="btn btn-sm small btn-primary ml-1" style="height: 2.3rem; border-radius: 1.2rem;" type="submit">Add</button>
                 </div>
               </div>     
             </form>
           </div>
         </div>
         <hr class="text-muted post-border-div">
-        <div id="post-linked-comments">
+        <div id="post-linked-comments" class="pb-1" style="margin: 0;">
           <div>
             {% include 'home/posts/post_comment.html' %}
           </div>    

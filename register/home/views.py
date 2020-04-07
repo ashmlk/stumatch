@@ -61,34 +61,29 @@ def save_all(request,form,template_name):
 @login_required
 def post_create(request):
     data = dict()
-    ImageFormset = modelformset_factory(Images,form=ImageForm,extra=4)
     if request.method == 'POST':
+        image_form = ImageForm(request.POST or None, request.FILES or None)
+        images = request.FILES.getlist('file')
         form = PostForm(request.POST)
-        formset = ImageFormset(request.POST or None, request.FILES or None)
-        if form.is_valid() and formset.is_valid():    
+        if form.is_valid() and image_form.is_valid():    
             post = form.save(False)
             post.author = request.user
-            #post.likes = None
             post.save()
-            for i in formset:
-                try:
-                    i = Images(post=post, image=f.cleaned_data.get('image'))
-                    i.save()
-                except Exception as e:  
-                    break
+            for i in images:
+                image_instance = Images(file=i,post=post)
+                image_instance.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
-            images = Images.objects.all()
             posts = Post.objects.order_by('-last_edited')
-            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts,'images':images},request=request)
+            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
         else:
             data['form_is_valid'] = False
     else:
-        form = PostForm  
-        formset = ImageFormset(queryset=Images.objects.none())     
+        image_form = ImageForm
+        form = PostForm      
     context = {
     'form':form,
-    'formset':formset,
+    'image_form':image_form
 	}
     data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
     return JsonResponse(data) 

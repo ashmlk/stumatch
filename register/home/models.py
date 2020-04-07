@@ -25,7 +25,7 @@ class Post(models.Model):
     likes= models.ManyToManyField(Profile, blank=True, related_name='post_likes')
     
     def __str__(self):
-        return self.subject
+        return self.title
 
     def get_absolute_url(self):
         return reverse('home:post-detail')
@@ -78,14 +78,12 @@ class Post(models.Model):
             else:
                 return str(years) + "y"
             
-        
-
 def image_create_uuid_p_u(instance, filename):
     return '/'.join(['post_images', str(uuid.uuid4().hex + ".png")]) 
-
+        
 class Images(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='images')
-    image = models.FileField(upload_to=upload_to_uuid('media/post_images', make_dir=True),verbose_name='Image')
+    file = models.FileField(upload_to=upload_to_uuid('media/post_images/'),verbose_name='Image')
     date_added = models.DateTimeField(auto_now_add=True)
     
 class Comment(models.Model):
@@ -149,7 +147,12 @@ class Course(models.Model):
         FALL = '3', 'Fall'
         WINTER = '4', 'Winter'
         NONE = '0', 'None'
-    course = models.ManyToManyField(Profile,related_name='course')
+    class Difficulty(models.TextChoices):
+        EASY = '1', 'Easy'
+        MEDIUM = '2', 'Medium'
+        HARD = '3', 'Hard'
+        FAILED = '4', 'Failed'
+    users = models.ManyToManyField(Profile,related_name='courses')
     course_code = models.CharField(max_length=20)
     course_university = models.CharField(max_length=100)
     course_instructor = models.CharField(max_length=100)
@@ -161,7 +164,11 @@ class Course(models.Model):
         choices=Semester.choices,
         default=Semester.NONE
         )
-    
+    course_difficulty = models.CharField(
+        max_length=2,
+        choices=Difficulty.choices,
+        default=Difficulty.MEDIUM
+        )
     def __str__(self):
         return self.course_code
     
@@ -185,5 +192,8 @@ class Course(models.Model):
     def get_course_rating(self):
         return (self.course_likes.count() / (self.course_likes.count() + self.course_dislikes.count())) 
     
+    def get_users_enrolled(self):
+        users = Courses.users.filter(course_code=self.course_code)
+
         
         

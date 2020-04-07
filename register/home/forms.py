@@ -13,6 +13,12 @@ def current_year():
     return datetime.date.today().year
 
 class PostForm(forms.ModelForm):
+    title = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Set an interesting title!'
+                }))
     content= forms.CharField(
         label='',
         widget=forms.Textarea(
@@ -24,19 +30,21 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title','content',)
-
-def image_create_uuid_p_u(instance, filename):
-    return '/'.join(['post_images', str(instance.post.id), str(uuid.uuid4().hex + ".png")]) 
    
 class ImageForm(forms.ModelForm):
-    image = forms.FileField(
-        label='',
-        widget = forms.FileInput(
-        	attrs={
-                'required': False})) 
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields['file'].required = False
+        
+    file = forms.FileField(
+        widget=forms.ClearableFileInput(
+            attrs={
+                'multiple': True,
+                'class':'image_upload_form'
+                }))
     class Meta:
         model = Images
-        fields = ('image', )
+        fields = ('file',)
 
 class CommentForm(forms.ModelForm):
     body = forms.CharField(
@@ -96,20 +104,6 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
-    course_semester = forms.TypedChoiceField(
-        label='',
-		required=False,
-        choices=['spring','summer','fall','winter'],
-		validators=[alphabetical],
-		widget=forms.TextInput(
-			attrs={
-				"placeholder": "Term",
-				"class": "form-control"
-			}
-		)
-    )
-
-
     course_year = forms.TypedChoiceField(
         coerce=int,
         choices=year_choices,
@@ -124,5 +118,5 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_instructor','course_semester','course_year',)
+        fields=('course_code','course_instructor','course_year','course_semester','course_difficulty',)
         

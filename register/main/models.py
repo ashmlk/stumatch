@@ -10,6 +10,7 @@ class Profile(AbstractUser):
     university = models.CharField(max_length=50)
     image = models.ImageField(default='profile_image/profile_default.png', upload_to='profile_image', blank=True)
     friends = models.ManyToManyField("Profile", blank=True)
+    
     def __str__(self):
         return self.username
     
