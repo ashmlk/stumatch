@@ -60,7 +60,6 @@
             <div class="container-fluid pl-4 pr-5 pt-4">
                 <div class="row">
                     <div class="col-sm-3">
-                      <div class="position-fixed" style="width: 19rem;">
                         <div class="card side-tab-link-holder border-light mb-4" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
                             <div class="card-body pb-1">
                               <img class="card-img-top" src="" alt="Profile Image">         
@@ -77,9 +76,6 @@
                                   <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
                                 </div>
                                 <div class="py-3">
-                                  <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-calendar pr-2"></i>Calendar</a>
-                                </div>
-                                <div class="py-3">
                                   <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-briefcase pr-2"></i>Jobs</a>   
                                 </div>
                                 <div class="py-3">
@@ -87,61 +83,52 @@
                                 </div>
                             </div>
                             </div>
-                        </div>
-                      </div>
+                        </div>     
                     </div>
                     <div class="col-md-6">
                         {% block content %}
                         {% endblock %}
                     </div>
                     <div class="col-sm-3">
-                      <div class="card right-pannel-base">
-                        <div class="card-header bg-transparent">
-                          <h4>Links</h4>
+                      <div class="card right-pannel-base border-0 bg-transparent">
+
+                      </div>
+                      <footer class="page-footer font-small bg-light pt-2">
+                        <div class="mx-1 row"> 
+                          <div class="mb-2">       
+                            <a class="text-muted" href="#">
+                              Help Center
+                              </a><span class="mx-1">·</span>
+                          </div>    
+                          <div class="mb-2">       
+                            <a class="text-muted" href="#">
+                              About
+                              </a><span class="mx-1">·</span>
+                          </div>    
+                          <div class="mb-2">       
+                            <a class="text-muted" href="#">
+                              Privacy
+                              </a><span class="mx-1">·</span>
+                          </div>                                                                   
+                            <div class="mb-2">       
+                              <a class="text-muted" href="#">About</a>
+                            </div>                                             
+                            <div class="mb-2">       
+                              <a class="text-muted" href="#">
+                                Guidlines
+                                </a><span class="mx-1">·</span>
+                            </div>                                                            
+                            <div class="mb-2">       
+                              <a class="text-muted" href="#">
+                                Privacy Policy
+                                </a>
+                            </div>      
                         </div>
-                        <div class="card-body">
-                          <ul id="communit-homepage-list" class="list-group list-group-flush">
-                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
-                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
-                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
-                            <li class="list-group-item"><a href="#" class="card-link text-dark">Link</a></li>
-                          </ul>
-                        </div>
+                        <div class="footer-copyright small mx-1 text-muted">StuMatch © 2020. All rights reserved
+                          </div>
+                      </footer> 
                     </div>
-                        <footer class="page-footer font-small bg-light pt-2">
-                            <div class="mx-1 row"> 
-                              <div class="mb-2">       
-                                <a class="text-muted" href="#">
-                                  Help Center
-                                  </a><span class="mx-1">·</span>
-                              </div>    
-                              <div class="mb-2">       
-                                <a class="text-muted" href="#">
-                                  About
-                                  </a><span class="mx-1">·</span>
-                              </div>    
-                              <div class="mb-2">       
-                                <a class="text-muted" href="#">
-                                  Privacy
-                                  </a><span class="mx-1">·</span>
-                              </div>                                                                   
-                                <div class="mb-2">       
-                                  <a class="text-muted" href="#">About</a>
-                                </div>                                             
-                                <div class="mb-2">       
-                                  <a class="text-muted" href="#">
-                                    Guidlines
-                                    </a><span class="mx-1">·</span>
-                                </div>                                                            
-                                <div class="mb-2">       
-                                  <a class="text-muted" href="#">
-                                    Privacy Policy
-                                    </a>
-                                </div>      
-                            </div>
-                            <div class="footer-copyright small mx-1 text-muted">StuMatch © 2020. All rights reserved
-                              </div>
-                          </footer> 
+                        
                     </div>
                 </div>
             </div>

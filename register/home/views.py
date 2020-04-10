@@ -63,12 +63,12 @@ def post_create(request):
     data = dict()
     if request.method == 'POST':
         image_form = ImageForm(request.POST or None, request.FILES or None)
-        images = request.FILES.getlist('file')
         form = PostForm(request.POST)
-        if form.is_valid() and image_form.is_valid():    
+        if form.is_valid() and image_form.is_valid():  
             post = form.save(False)
             post.author = request.user
             post.save()
+            images = request.FILES.getlist('image')
             for i in images:
                 image_instance = Images(file=i,post=post)
                 image_instance.save()

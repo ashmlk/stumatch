@@ -18,7 +18,7 @@ def max_value_current_year(value):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=12,unique=True, null=True)
-    content = models.TextField(validators=[MaxLengthValidator(700)])
+    content = models.TextField(validators=[MaxLengthValidator(1200)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
@@ -83,7 +83,7 @@ def image_create_uuid_p_u(instance, filename):
         
 class Images(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='images')
-    file = models.FileField(upload_to=upload_to_uuid('media/post_images/'),verbose_name='Image')
+    image = models.FileField(upload_to=upload_to_uuid('media/post_images/'),verbose_name='Image')
     date_added = models.DateTimeField(auto_now_add=True)
     
 class Comment(models.Model):
@@ -92,6 +92,7 @@ class Comment(models.Model):
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
+    reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")
 
     class Meta:
         ordering = ['created_on']

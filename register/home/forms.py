@@ -34,9 +34,9 @@ class PostForm(forms.ModelForm):
 class ImageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ImageForm, self).__init__(*args, **kwargs)
-        self.fields['file'].required = False
+        self.fields['image'].required = False
         
-    file = forms.FileField(
+    image = forms.FileField(
         widget=forms.ClearableFileInput(
             attrs={
                 'multiple': True,
@@ -44,7 +44,7 @@ class ImageForm(forms.ModelForm):
                 }))
     class Meta:
         model = Images
-        fields = ('file',)
+        fields = ('image',)
 
 class CommentForm(forms.ModelForm):
     body = forms.CharField(

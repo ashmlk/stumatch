@@ -1,13 +1,5 @@
 $(document).ready(function(){
-	$('#loadingDiv').hide();
-	$(document)
-	.ajaxStart(function () {
-		$('#loadingDiv').show();
-	  })
-	  .ajaxStop(function () {
-		$('#loadingDiv').hide();
-	  })
-	.ajaxSend(function (event, jqxhr, settings) {
+	$(document).ajaxSend(function (event, jqxhr, settings) {
 		jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
 	});
 	var ShowForm = function(e){
@@ -26,9 +18,6 @@ $(document).ready(function(){
 		});
 		return false;
 	};
-	// change form to FormData
-	// var form = $(this)
-	// processData, contentType were removed
 	var SaveForm =  function(e){
 		var form = new FormData(this);
 		e.stopImmediatePropagation();

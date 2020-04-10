@@ -1,7 +1,7 @@
-var files;
 $(document).ready(function(){
+  $("#id_image").css({"margin-left":"-9999px"});
+  $('input[type="file"]').attr("accept",".png, .jpg, .jpeg");
     $("#upload-image").click(function(){
-      $('input[type="file"]').attr("accept",".png, .jpg, .jpeg");
       $("#id_file").click();  
     });
     $("#id_file").on("change", function () {
@@ -10,7 +10,6 @@ $(document).ready(function(){
         alert('You can only upload a maximum of 4 images')
       }
       else {
-        files = $("#id_file")[0].files;
         for(var i=0;i<files_length;i++){
           var pic = '<div class="d-flex justify-content-center flex-column ml-1">';
           pic += '<img id="' + i + '" src="' + URL.createObjectURL(event.target.files[i]) + '" style="width:7em;height:7em;" class="upload_image_to_div">';

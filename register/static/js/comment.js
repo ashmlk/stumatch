@@ -35,6 +35,7 @@ $(document).ready(function(){
 			success: function(data) {
 				$("#post-linked-comments div").html(data.comments)
 				$('textarea').val('')
+				$('#modal-comment-reply').modal('hide');
 			},
 			error: function(rs, e){
                 console.log(rs.responeText);
