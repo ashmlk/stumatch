@@ -7,6 +7,8 @@
             #navBarSearchForm input[type=text]{width:400px !important;}
         </style>
         <title>StuMatch</title>
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,18 +18,17 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
     </head>
     <body class="main-bg-color">
      {% block javascript %}
      {% endblock javascript %}
      <nav class="navbar navbar-expand-lg sticky-top navbar-light nav-header-main" style="height: 3rem;">
-      <span class="navbar-brand brand-home-header h1 display-1 my-0">StuMatch</span>
+      <span class="navbar-brand ml-0"> <img src="{% static 'logo/m/nav.png' %}" style="height: 50px;" ></span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <form class="mx-2 mb-1 form-inline d-inline w-50" style="height: 2rem;">
+          <form class="mx-2 mb-3 form-inline d-inline w-50" style="height: 1.5rem;">
             <div class="input-group">
                 <input type="text" class="form-control border border-right-0" placeholder="Search Stumatch" aria-label="Search">
                 <span class="input-group-append">
@@ -39,19 +40,19 @@
           </form>
           <ul class="navbar-nav ml-auto mx-4">
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="{% url 'home:home' %}">Home</a>
+                  <a class="nav-link text-dark" href="{% url 'home:home' %}">Home</a>
               </li>
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="#">Profile</a>
+                  <a class="nav-link text-dark" href="#">Profile</a>
               </li>
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="#">Message</a>
+                  <a class="nav-link text-dark" href="#">Message</a>
               </li>
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="#">Settings</a>
+                  <a class="nav-link text-dark" href="#">Settings</a>
               </li>
               <li class="nav-item mx-0">
-                  <a class="nav-link text-muted" href="{% url 'main:user_logout' %}">Logout</a>
+                  <a class="nav-link text-dark" href="{% url 'main:user_logout' %}">Logout</a>
               </li>
           </ul>
       </div>
@@ -93,33 +94,34 @@
                       <div class="card right-pannel-base border-0 bg-transparent">
 
                       </div>
-                      <footer class="page-footer font-small bg-light pt-2">
+                      <footer class="page-footer font-small pt-2">
                         <div class="mx-1 row"> 
                           <div class="mb-2">       
-                            <a class="text-muted" href="#">
+                            <a class="text-muted small" href="#">
                               Help Center
-                              </a><span class="mx-1">·</span>
-                          </div>    
+                              </a>
+                          </div>
+                          <span class="text-muted mx-2"  >·</span>
                           <div class="mb-2">       
-                            <a class="text-muted" href="#">
+                            <a class="text-muted small" href="#">
                               About
-                              </a><span class="mx-1">·</span>
-                          </div>    
+                              </a>
+                          </div> 
+                          <span class="text-muted mx-2"  >·</span>  
                           <div class="mb-2">       
-                            <a class="text-muted" href="#">
+                            <a class="text-muted small" href="#">
                               Privacy
-                              </a><span class="mx-1">·</span>
-                          </div>                                                                   
+                              </a>
+                          </div> 
+                          <span class="text-muted mx-2"  >·</span>                                                                                                            
                             <div class="mb-2">       
-                              <a class="text-muted" href="#">About</a>
-                            </div>                                             
-                            <div class="mb-2">       
-                              <a class="text-muted" href="#">
+                              <a class="text-muted small" href="#">
                                 Guidlines
-                                </a><span class="mx-1">·</span>
-                            </div>                                                            
+                                </a>
+                            </div>  
+                            <span class="text-muted mx-2"  >·</span>                                                          
                             <div class="mb-2">       
-                              <a class="text-muted" href="#">
+                              <a class="text-muted small" href="#">
                                 Privacy Policy
                                 </a>
                             </div>      
@@ -127,8 +129,7 @@
                         <div class="footer-copyright small mx-1 text-muted">StuMatch © 2020. All rights reserved
                           </div>
                       </footer> 
-                    </div>
-                        
+                    </div>       
                     </div>
                 </div>
             </div>

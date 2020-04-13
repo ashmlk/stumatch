@@ -3,12 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django_uuid_upload import upload_to_uuid
 
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
-    image = models.ImageField(default='profile_image/profile_default.png', upload_to='profile_image', blank=True)
+    image = models.ImageField(default='profile_image/profile_default.png', upload_to=upload_to_uuid('post_images/profiles/'), blank=True)
     friends = models.ManyToManyField("Profile", blank=True)
     
     def __str__(self):

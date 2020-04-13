@@ -56,7 +56,7 @@ class CommentForm(forms.ModelForm):
                 'class':'form-control',
                 'placeholder':'Add a comment',
                 'rows': 1 ,
-                'cols': 50}))
+                'cols': 47}))
     class Meta:
         model = Comment
         fields = ('body',)

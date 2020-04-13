@@ -119,19 +119,23 @@ def post_delete(request, guid_url):
 def post_detail(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
+    comments = Comment.objects.filter(post=post,reply=None)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(False)
+            reply_id = request.POST.get('comment_id')
+            comment_qs = None
+            if reply_id:
+                comment_qs = Comment.objects.get(id=reply_id)
             comment.name = request.user
             comment.post = post
+            comment.reply=comment_qs
             comment.save()
-            comments = post.comments.all()
         else:
             data['is_valid'] = False
     else:
         form = CommentForm
-    comments = post.comments.all()
     comment_count = post.comments.count()
     context = {'post':post,
                 'form':form,

@@ -1,4 +1,16 @@
 $(document).ready(function(){
+	// newly added
+	$('#like-section #likeBtn').on("click", function (e) {
+		e.preventDefault();
+		if($("#like-section #likeBtn i").hasClass("fa-thumbs-up")){
+			($("#like-section #likeBtn i").removeClass("fa-thumbs-up"))
+			($("#like-section #likeBtn i").addClass("fa-thumbs-down"))
+		} else {
+			($("#like-section #likeBtn i").removeClass("fa-thumbs-down"))
+			($("#like-section #likeBtn i").addClass("fa-thumbs-up"))
+		}
+	});
+	// end
 	$(document).ajaxSend(function (event, jqxhr, settings) {
 		jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
 	});

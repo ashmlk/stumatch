@@ -9,7 +9,6 @@ from .forms import SignUpForm, EditProfileForm, PasswordResetForm
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
-
 @login_required
 def user_logout(request):
     logout(request)

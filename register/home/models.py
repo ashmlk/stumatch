@@ -7,7 +7,7 @@ import uuid
 import math
 import secrets
 from django_uuid_upload import upload_to_uuid
-
+import uuid 
 
 def current_year():
     return datetime.date.today().year
@@ -140,6 +140,8 @@ class Comment(models.Model):
                 return str(years) + "y"
             else:
                 return str(years) + "y"
+    def get_uuid(self):
+        return str(uuid.uuid4()) 
 
 class Course(models.Model):
     class Semester(models.TextChoices):

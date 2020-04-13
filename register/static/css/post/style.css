@@ -42,3 +42,10 @@
   .post-remove-button-link:hover {
     text-decoration: underline;
   }
+  button {
+    border: none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    }

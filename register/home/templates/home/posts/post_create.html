@@ -9,32 +9,54 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
-	<div class="modal-body" style="overflow-y: auto; margin:0;">
-		{{ form|crispy }}
-		<div class="d-flex justify-content-left">
-			<div>
-				<button type="button" id="upload-image" class="btn btn-sm mr-auto btn-primary pb-1 fileinput-button">
-					<span><i class="fas fa-image"></i></span>
-				</button>
-			</div>
-			<div>
-				<p class="pt-1 mx-2 text-muted small">Add up to four images to your post</p>
-			</div>
-		</div>
-		{{ image_form }}
+	<div class="modal-body" style="overflow-y: hidden; margin:0;">
+		{{ form|crispy }}	
+		<button type="button" id="upload-image" class="btn btn-md fileinput-button">
+			<span><i class="align-middle fa-2x fas fa-image"></i></span>
+			<span class="text-muted small">Add up to four images to your post</span>
+		</button>
+		{{ image_form }}		
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>
+		<button type="submit" class="btn btn-primary"  style="border-radius: 20px;">Post</button>
 	</div>
 	<style>
-		label[for="id_file"]{
+		label[for="id_image"]{
+			height: 0;
+			margin-top: -20px;
 			display: none;
 		}
 		.modal-body {
 			overflow-y: auto;
 		}
+		.textarea-hide-outline{
+		border:none !important;
+		outline:none !important;
+		box-shadow: none !important;
+		-moz-box-shadow:none !important;
+		-webkit-box-shadow:none !important;
+		padding-bottom: 1rem;
+		overflow-y: auto;
+		min-height: 12.5rem;
+		}
+		.textinput-hide-outline{
+		border-radius: 0;
+		border-left:none !important;
+		border-top:none !important;
+		border-right:none !important;
+		outline:none !important;
+		box-shadow: none !important;
+		-moz-box-shadow:none !important;
+		-webkit-box-shadow:none !important;
+		}
 	</style>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		<button type="submit" class="btn btn-primary">Post</button>
-	</div>
+	<script>
+		$(document).ready(function () {
+			$(".modal-body textarea").addClass("textarea-hide-outline");
+			$(".modal-body input").addClass("textinput-hide-outline")
+		})
+	</script>
 </form>
 
 

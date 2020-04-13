@@ -6,7 +6,7 @@ from django.core.validators import RegexValidator
 
 
 username_regex = RegexValidator(r'^(?!.*\.{2})[0-9a-zA-Z-_]*$', 'Only alphanumeric, underscore, dash or nonconsecutive periods are allowed.')
-alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 
 
 class SignUpForm(UserCreationForm):
