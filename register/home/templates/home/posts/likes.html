@@ -3,24 +3,28 @@
 {% if request.user.is_authenticated %}
 <script src="{% static 'js/post.js' %}"></script>
 <script src="{% static 'js/comment.js' %}"></script>
-<form action="{% url 'home:post-like' post.id %}" method="POST">
+<form class="post-like-form" action="{% url 'home:post-like' post.id %}" method="POST">
     {% csrf_token %}
-    {% if request.user in post.likes.all or is_liked %}
-        <button type="submit" id="likeBtn" data-url="{% url 'home:post-like' post.guid_url %}" data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="btn btn-md">
+    {% if request.user in post.likes.all %}
+        <button type="submit" data-url="{% url 'home:post-like' post.guid_url %}" 
+            data-token="{{ csrf_token }}" class="likeBtn btn btn-md">
             <span class="text-secondary">
-                <i class="fas fa-thumbs-down"></i>
-                <span id="like-count">
+                <i class="fas fa-thumbs-down" ></i>
+                <span class="like-count">
                     {{ post.likes.count }}
-                </span> 
+                </span>
+                <input type="hidden" class="input-like-count" value=" {{ post.likes.count }} " />
             </span>
         </button>
     {% else %}
-        <button type="submit" id="likeBtn" data-url="{% url 'home:post-like' post.guid_url %}" data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="btn btn-md">
+        <button type="submit" data-url="{% url 'home:post-like' post.guid_url %}" 
+            data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="likeBtn btn btn-md">
             <span class="text-secondary">
                 <i class="fas fa-thumbs-up"></i>
-                <span id="like-count">
+                <span class="like-count">
                     {{ post.likes.count }}
                 </span> 
+                <input type="hidden" class="input-like-count" value=" {{ post.likes.count }} " />
             </span>
         </button>
     {% endif %}
@@ -31,3 +35,8 @@
     </div>
   </div>  
 {% endif %}
+<style>
+    .fa-thumbs-down{
+        color: #c62828;
+    }
+</style>

@@ -1,6 +1,8 @@
 {% load crispy_forms_tags %}
 {% load static %}
-<script src="{% static 'js/image_upload.js' %}"></script>
+<script src="{% static 'js/image-uploader.js' %}"></script>
+<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="{% static 'css/post/image-uploader.css' %}">
 <form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
 		<div class="modal-header">
@@ -10,12 +12,11 @@
 			</button>
 		</div>
 	<div class="modal-body" style="overflow-y: hidden; margin:0;">
-		{{ form|crispy }}	
-		<button type="button" id="upload-image" class="btn btn-md fileinput-button">
+		{{ form|crispy }}
+		<button type="button" id="upload-image" style="margin-top: 0;" class="btn btn-md fileinput-button">
 			<span><i class="align-middle fa-2x fas fa-image"></i></span>
-			<span class="text-muted small">Add up to four images to your post</span>
-		</button>
-		{{ image_form }}		
+		</button><span class="text-muted small">Add up to four images to your post</span>
+		<div class="input-images my-2" style="display: none;"></div>
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>
@@ -50,12 +51,31 @@
 		-moz-box-shadow:none !important;
 		-webkit-box-shadow:none !important;
 		}
+		.fileinput-button:hover{
+			opacity: 0.6;
+		}
+		.edited-image {
+			width: 150%;
+			height: 150%;
+		}
 	</style>
 	<script>
 		$(document).ready(function () {
+			$('.input-images').imageUploader({
+				label: '',
+				imagesInputName: 'images',
+				maxFiles: 4,
+			});
 			$(".modal-body textarea").addClass("textarea-hide-outline");
-			$(".modal-body input").addClass("textinput-hide-outline")
-		})
+			$(".modal-body input[type='text']").addClass("textinput-hide-outline");
+			$("#upload-image").click(function(){
+				$("input[type='file']").click();  
+			});
+			$('.uploaded-image').find("img").addClass("edited-image")
+			$("input[type='file']").on("change", function () {
+				$(".input-images").show();
+			})
+		});
 	</script>
 </form>
 

@@ -62,16 +62,16 @@ def save_all(request,form,template_name):
 def post_create(request):
     data = dict()
     if request.method == 'POST':
-        image_form = ImageForm(request.POST or None, request.FILES or None)
         form = PostForm(request.POST)
-        if form.is_valid() and image_form.is_valid():  
+        if form.is_valid():  
             post = form.save(False)
             post.author = request.user
             post.save()
-            images = request.FILES.getlist('image')
-            for i in images:
-                image_instance = Images(file=i,post=post)
-                image_instance.save()
+            if request.Files is not None:
+                images = request.FILES.getlist('images[]')
+                for i in images:
+                    image_instance = Images.objects.create(image=i,post=post)
+                    image_instance.save()
             data['form_is_valid'] = True
             posts = Post.objects.all()
             posts = Post.objects.order_by('-last_edited')
@@ -136,7 +136,7 @@ def post_detail(request, guid_url):
             data['is_valid'] = False
     else:
         form = CommentForm
-    comment_count = post.comments.count()
+    comment_count = post.comment_count()
     context = {'post':post,
                 'form':form,
                 'comments':comments,
@@ -158,10 +158,10 @@ def post_like(request,guid_url):
             post.likes.remove(user)
         else:
             post.likes.add(user)
-        posts = Post.objects.all()
-        posts = Post.objects.order_by('-last_edited')
-        data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
-        data['posts-detail'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+        #posts = Post.objects.all()
+        #posts = Post.objects.order_by('-last_edited')
+        #data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+        data['posts_detail'] = render_to_string('home/posts/post_detail.html',{'post':post},request=request)
         return JsonResponse(data)
 
 # Course views

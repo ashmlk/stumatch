@@ -37,6 +37,10 @@ class Post(models.Model):
         self.guid_url = secrets.token_urlsafe(8)
         super(Post, self).save(*args, **kwargs)
         
+    def comment_count(self):
+        comments = Comment.objects.filter(post=self, reply=None)
+        return comments.count()
+    
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.date_posted

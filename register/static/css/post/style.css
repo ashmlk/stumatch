@@ -8,7 +8,7 @@
     padding: 0;
   }
 
-  .post-detail-clickable-details-view:hover {
+  .post-details-view:hover {
     cursor: pointer;
     background-color: rgba(226, 224, 224, 0.979);
   }
@@ -42,7 +42,8 @@
   .post-remove-button-link:hover {
     text-decoration: underline;
   }
-  button {
+
+  button, .btn {
     border: none !important;
     outline:none !important;
     box-shadow: none !important;

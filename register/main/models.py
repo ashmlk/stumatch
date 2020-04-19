@@ -8,7 +8,7 @@ from django_uuid_upload import upload_to_uuid
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
-    image = models.ImageField(default='profile_image/profile_default.png', upload_to=upload_to_uuid('post_images/profiles/'), blank=True)
+    image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     friends = models.ManyToManyField("Profile", blank=True)
     
     def __str__(self):

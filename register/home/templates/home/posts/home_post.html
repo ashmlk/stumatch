@@ -4,47 +4,44 @@
 <script src="{% static 'js/post.js' %}"></script>
 {% for post in posts %}
 <script>
-  $(document).on('click', '.post-detail-clickable-details-view', function () {
+  $(document).on('click', '.post-details-view', function () {
     var url = $(this).attr("data-url")
     document.location.href = url 
 });
 </script>
   <div class="row ml-2">
-    <div class="col-sm-2">
-      <div class="float-right mb-3 mt-3">
-        <div>
+    <div class="col-md-1">
+      <div class="mx-auto mt-3" style="margin-right: -1.5rem;">
           <img class="img-create-post rounded-circle mr-2" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
           alt="Profile image">
-        </div>
-        <div>
-          <p class="text-muted post-card-date small mr-2">{{ post.get_created_on }} ago</p>
-        </div>
       </div>
     </div>
-    <div class="col-md-10" style="margin-left: -1.6rem;">
+    <div class="col-md-11">
       <div class="card rounded-0 mb-3 mt-3">
-        <div class="card-header bg-transparent" style="height: 3rem;">
-          <h5 style="margin-bottom: 0px;">
-            <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
-                <span class="small text-muted">@{{ post.author.username }}</span> 
-          </h5>      
+        <div class="ml-1">
+          <a class="small text-muted" href="#">@{{ post.author.username }}</a>
+          <span class="mx-0 small text-muted">·</span>
+          <span class="text-muted small">{{ post.get_created_on }}</span>
         </div>
-        <div class="card-body post-detail-clickable-details-view text-dark" data-url="{% url 'home:post-detail' post.guid_url  %}" 
-                style="margin-top:-0.5rem;">
+        <div class="card-body post-details-view text-dark" data-url="{% url 'home:post-detail' post.guid_url  %}">
           <a id="post-detail-view-link" href="{% url 'home:post-detail' post.guid_url %}"></a>
-          <p class="mr-1 text-dark font-weight-bolder">{{ post.author.first_name }} {{ post.author.last_name }}</p>
-          <p class="card-text pt-2" style="margin-top: -0.9rem;">{{ post.content }}</p>
+          <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+          <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
+          </h5>
+          <div class="my-2">
+            <p class="card-text pt-2" style="margin-top: -0.9rem;">{{ post.content }}</p>
+          </div>   
         </div>
        <hr style="margin: 0;">
           <div class="d-flex align-items-center justify-content-between" >
             <div class="row mx-1">
-              <div id="like-section" class="px-1">
+              <div class="like-section px-1">
                 {% include 'home/posts/likes.html' with post=post %}
               </div>
               <div class="px-1"> 
                 <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
                   <span class="text-secondary">
-                    <i class="fas fa-comment"></i> {{ post.comments.count }}
+                    <i class="fas fa-comment"></i> {{ post.comment_count }}
                   </span>
                 </a>
               </div>

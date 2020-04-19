@@ -2,10 +2,10 @@ $(document).ready(function(){
   $("#id_image").css({"margin-left":"-9999px"});
   $('input[type="file"]').attr("accept",".png, .jpg, .jpeg");
     $("#upload-image").click(function(){
-      $("#id_file").click();  
+      $("#id_image").click();  
     });
-    $("#id_file").on("change", function () {
-      var files_length = document.getElementById('id_file').files.length;
+    $("#id_image").on("change", function () {
+      var files_length = document.getElementById('id_image').files.length;
       if(files_length>4){
         alert('You can only upload a maximum of 4 images')
       }
@@ -26,5 +26,5 @@ $(document).ready(function(){
   });
 
 
-
+<script src="{% static 'js/image_upload.js' %}"></script>
 

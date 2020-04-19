@@ -18,11 +18,9 @@ $(document).ready(function(){
 	$('.inside-post-detail #likeBtn').on("click", function (e) {
 		e.preventDefault();
 		if($(".inside-post-detail #likeBtn i").hasClass("fa-thumbs-up")){
-			($(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-up"))
-			($(".inside-post-detail #likeBtn i").addClass("fa-thumbs-down"))
+			$(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-up").addClass("fa-thumbs-down");
 		} else {
-			($(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-down"))
-			($(".inside-post-detail #likeBtn i").addClass("fa-thumbs-up"))
+			$(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-down").addClass("fa-thumbs-up");
 		}
 	})
 	$(".post-comment-form").on("submit", function (e) {
