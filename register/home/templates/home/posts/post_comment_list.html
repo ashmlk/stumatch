@@ -1,0 +1,31 @@
+{% load static %}
+<div class="modal-header">
+    <h5 class="modal-title" >Comments</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body ml-1" style="overflow-y: auto; margin-top: -12px;">
+    {% for comment in post_comments %}
+    <div class="row border-bottom">
+        <div class="col-xs m-1">
+            <img class="img-create-post rounded-circle" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
+        </div>
+        <div class="col-xs">
+            <a class="text-dark font-size-smaller" href="#" style="font-weight: 500;">{{ comment.name.first_name }} {{ comment.name.last_name }}</a>
+            <span class="text-muted small">·</span>
+            <span class="text-muted small">{{ comment.get_created_on }} ago</span>
+            <div style="margin-top: -9px;"> 
+                <span class="text-muted small">@{{ comment.name.username }}</span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="d-flex justify-content-center">
+        <p class="m-0 small text-muted">No Likes</p>
+    </div>
+    {% endfor %}
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>
+</div>

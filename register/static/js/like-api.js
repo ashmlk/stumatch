@@ -7,11 +7,13 @@ $(document).ready(function (e) {
             $(".input-like-count", this).val(like_count);
             $("i", this).removeClass("fa-thumbs-up").addClass("fa-thumbs-down")
             $(".like-count", this).text(like_count);
+            $(".like-count-d").text(like_count);
         } else {
             like_count--;
             $(".input-like-count", this).val(like_count);
             $("i", this).removeClass("fa-thumbs-down").addClass("fa-thumbs-up")
             $(".like-count", this).text(like_count);
+            $(".like-count-d").text(like_count);
         }
         //var tk = $(this).attr("data-token")
         $.ajax({

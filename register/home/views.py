@@ -164,6 +164,22 @@ def post_like(request,guid_url):
         data['posts_detail'] = render_to_string('home/posts/post_detail.html',{'post':post},request=request)
         return JsonResponse(data)
 
+@login_required
+def post_like_list(request, guid_url):
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    post_likes = post.likes.all()
+    data['html'] = render_to_string('home/posts/post_like_list.html',{'post_likes':post_likes},request=request)
+    return JsonResponse(data)
+
+@login_required
+def post_comment_list(request, guid_url):
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    post_comments = Comment.objects.filter(post=post,reply=None)
+    data['html'] = render_to_string('home/posts/post_comment_list.html',{'post_comments':post_comments},request=request)
+    return JsonResponse(data)
+
 # Course views
 def course_list(request):
     pass

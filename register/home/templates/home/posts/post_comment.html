@@ -34,7 +34,8 @@
               <span class="text-dark font-size-smaller" href="#" style="font-weight: 500;">{{ reply.name.first_name }}</span>
               <span class="text-muted small"></span>
               <a class="text-muted small" href="#">@{{ reply.name.username }}</a>
-              <span class="text-muted small">{{ reply.get_created_on }} ago, replied:</span>
+              <span class="text-muted small">·</span>
+              <span class="text-muted small">{{ reply.get_created_on }} ago</span><br>
               <span class="font-weight-light pl-1">{{ reply.body }}</span>
             </div>
           </div>
