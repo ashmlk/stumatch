@@ -3,14 +3,14 @@
 
 <html>
     <head>
+      <div id="#headerPlaceholder"></div>
         <style>
             #navBarSearchForm input[type=text]{width:400px !important;}
         </style>
         <title>StuMatch</title>
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -22,50 +22,13 @@
     <body class="main-bg-color">
      {% block javascript %}
      {% endblock javascript %}
-     <nav class="navbar navbar-expand-lg sticky-top navbar-light nav-header-main" style="height: 3rem;">
-      <span class="navbar-brand ml-0"> <img src="{% static 'logo/m/nav.png' %}" style="height: 50px;" ></span>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <form class="mx-2 mb-3 form-inline d-inline w-50" style="height: 1.5rem;">
-            <div class="input-group">
-                <input type="text" class="form-control border border-right-0" placeholder="Search Stumatch" aria-label="Search">
-                <span class="input-group-append">
-                    <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span>
-            </div>
-          </form>
-          <ul class="navbar-nav ml-auto mx-4">
-              <li class="nav-item mx-0">
-                  <a class="nav-link text-dark" href="{% url 'home:home' %}">Home</a>
-              </li>
-              <li class="nav-item mx-0">
-                  <a class="nav-link text-dark" href="#">Profile</a>
-              </li>
-              <li class="nav-item mx-0">
-                  <a class="nav-link text-dark" href="#">Message</a>
-              </li>
-              <li class="nav-item mx-0">
-                  <a class="nav-link text-dark" href="#">Settings</a>
-              </li>
-              <li class="nav-item mx-0">
-                  <a class="nav-link text-dark" href="{% url 'main:user_logout' %}">Logout</a>
-              </li>
-          </ul>
-      </div>
-      </nav>
+     <div id="#navPlaceholder">{% include 'home/nav.html' %}</div>
         <div class="wrapper">
             <div class="container-fluid pl-4 pr-5 pt-4">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="card side-tab-link-holder border-light mb-4" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
-                            <div class="card-body pb-1">
-                              <img class="card-img-top" src="" alt="Profile Image">         
-                              <h5 class="card-title font-weight-light">Welcome, {{ request.user.first_name }}!</h5>
-                              <hr>
+                        <div class="card side-tab-link-holder border-light" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                            <div class="card-body py-2">
                             <div class="my-3 py-1">
                                 <div class="py-3">
                                   <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-user-friends pr-2"></i>Friends</a>
@@ -86,23 +49,18 @@
                             </div>
                         </div>     
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-sm-6 order-2">
                         {% block content %}
                         {% endblock %}
                     </div>
-                    <div class="col-md-3 ">
+                    <div class="col-sm-3 order-sm-2 order-sm-2">
                       <div class="card rounded-0">
                       <div class="border-bottom">
                         <h5 class="m-1 font-weight-bold card-tittle">
-                          Home
+                          Explore
                         </h5>
                       </div>
-                        <div class="row">
-                          <div class="ml-2 col-sm-10">
                             <div class="d-flex flex-column">
-                              <div class="p-2">
-                                <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-clone pr-1"></i>Posts</a>
-                              </div>
                               <div class="p-2">
                                 <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-hashtag pr-1"></i>Trending</a>
                               </div>
@@ -113,44 +71,9 @@
                                 <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-pen-square pr-1"></i>Blogs</a>
                               </div>
                           </div>
-                          </div>
-                        </div> 
                       </div>
-                      <footer class="page-footer font-small pt-2">
-                        <div class="mx-1 row"> 
-                          <div class="mb-2">       
-                            <a class="text-muted small" href="#">
-                              Help Center
-                              </a>
-                              <span class="text-muted">·</span>
-                          </div>  
-                          <div class="mb-2">       
-                            <a class="text-muted small" href="#">
-                              About
-                              </a>
-                              <span class="text-muted">·</span>  
-                          </div> 
-                          <div class="mb-2">       
-                            <a class="text-muted small" href="#">
-                              Privacy
-                              </a>
-                              <span class="text-muted">·</span>  
-                          </div>                                                                                                  
-                            <div class="mb-2">       
-                              <a class="text-muted small" href="#">
-                                Guidlines
-                                </a>
-                                <span class="text-muted">·</span>  
-                            </div>                                                      
-                            <div class="mb-2">       
-                              <a class="text-muted small" href="#">
-                                Privacy Policy
-                                </a>
-                            </div>      
-                        </div>
-                        <div class="footer-copyright small mx-1 text-muted">StuMatch © 2020. All rights reserved
-                          </div>
-                      </footer> 
+                    
+                      <div id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>       
                     </div>
                 </div>

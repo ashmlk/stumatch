@@ -1,0 +1,36 @@
+{% load static %}
+<nav class="navbar navbar-expand-sm sticky-top navbar-light nav-header-main" style="height: 3rem;">
+    <span class="navbar-brand ml-0"> <img src="{% static 'logo/m/nav.png' %}" style="height: 50px;" ></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <form class="mx-2 mb-3 form-inline d-inline w-50" style="height: 1.5rem;">
+          <div class="input-group">
+              <input type="text" class="form-control border border-right-0" placeholder="Search Stumatch" aria-label="Search">
+              <span class="input-group-append">
+                  <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
+                      <i class="fa fa-search"></i>
+                  </button>
+              </span>
+          </div>
+        </form>
+        <ul class="navbar-nav ml-auto mx-4">
+            <li class="nav-item mx-0">
+                <a class="nav-link font-weight-bolder text-dark" href="{% url 'home:home' %}">Home</a>
+            </li>
+            <li class="nav-item mx-0">
+                <a class="nav-link font-weight-bolder text-dark" href="#">Profile</a>
+            </li>
+            <li class="nav-item mx-0">
+                <a class="nav-link font-weight-bolder text-dark" href="#">Messages</a>
+            </li>
+            <li class="nav-item mx-0">
+                <a class="nav-link  font-weight-bolder text-dark" href="#">Settings</a>
+            </li>
+            <li class="nav-item mx-0">
+                <a class="nav-link font-weight-bolder text-dark" href="{% url 'main:user_logout' %}">Logout</a>
+            </li>
+        </ul>
+    </div>
+    </nav>
