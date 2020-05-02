@@ -1,3 +1,20 @@
+{% load static %}
+{% with post=post %}
+<script src="{% static 'js/like-comment-api.js' %}"></script>
+<script src="{% static 'js/post_list.js' %}"></script>
+<script src="{% static 'js/like-api.js' %}"></script>
+<script src="{% static 'js/comment.js' %}"></script> 
+<div class="w-100" style="font-size: 0.8rem;">
+  <div class="d-flex justify-content-end">
+    <div class="ml-1">
+      <span class="like-count-d text-muted mr-1"></span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
+    </div>
+    <div class="ml-1">
+      <span class="comment-count text-muted mr-1">{{ comment_count }}</span><span data-url="{% url 'home:post-comment-list' post.guid_url %}" class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>
+    </div>
+  </div>
+</div>
+<hr class="mx-2 px-2" style="margin: 0;">
 {% for comment in comments %}
 {% with comment_uuid=comment.get_uuid %}
 <div class="m-1">
@@ -5,23 +22,29 @@
     <div class="col-xs">
       <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
     </div>
-    <div class="w-75 col-xs" >
+    <div class="col-xs">
         <div class="border border-light" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
-            <div class="m-1" style="font-size: 0.9rem;">
+            <div class="m-1 px-2" style="font-size: 0.9rem;">
                 <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }} {{ comment.name.last_name }}</span>
-                <span class="font-weight-light pl-1">{{ comment.body }}</span> 
+                <span class="font-weight-light pl-2">{{ comment.body }}</span> 
             </div>
         </div>
         <div class="d-flex justify-content-left">
             <div>
-                <span class="small text-muted u reply-btn button-hide-outline" type="button" 
-                data-id="{{ comment.id }}" data-toggle="modal" data-target="modal-comment-reply">Reply</span>
-                </div>
+              {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
+            </div>
+            <div class="mx-1">
+              <span class="text-muted small">·</span>
+            </div>
+            <div>
+              <span class="small text-muted u reply-btn button-hide-outline" type="button" 
+              data-id="{{ comment.id }}" data-toggle="modal" data-target="modal-comment-reply">Reply</span>
+            </div>
             <div class="mx-1">
                 <span class="text-muted small">·</span>
             </div>
             <div>
-            <span class="text-muted small view-replies" data-id="{{ comment_uuid }}" text="Hide replies">Replies ({{ comment.replies.count }})</span>
+            <span class="text-muted small view-replies" data-hidden="1" data-id="{{ comment_uuid }}" text="Hide replies">Replies ({{ comment.replies.count }})</span>
             </div>
             <div class="mx-1">
                 <span class="text-muted small">·</span>
@@ -36,16 +59,24 @@
               <div class="col-xs">
                 <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
               </div>
-              <div class=" w-75 col-xs">
+              <div class="col-xs">
                 <div class="border border-light" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
-                    <div class="m-1" style="font-size: 0.9rem;">
+                    <div class="m-1 px-2" style="font-size: 0.9rem;">
                         <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
                             {{ reply.name.first_name }} {{ reply.name.last_name }}</span>
                         <span class="font-weight-light pl-1">{{ reply.body }}</span>
                     </div>      
                 </div>
-                <div>
+                <div class="d-flex justify-content-left">
+                  <div>
+                    {% include 'home/posts/comment_like.html' with comment=reply guid_url=guid_url %}
+                  </div>
+                  <div class="mx-1">
+                    <span class="text-muted small">·</span>
+                  </div>
+                  <div>
                     <span class="text-muted small">{{ reply.get_created_on }}</span>
+                  </div>  
                 </div>
               </div>
             </div>
@@ -54,35 +85,35 @@
               <p class="m-0 small text-muted">No replies to show</p>
             </div>
             {% endfor %}
-          </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="modal-comment-reply">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header" style="height:3.3rem;margin-top: -10px;">
-        <p style="font-weight: bold;font-size: 1.4rem;"><span class="font-weight-light">replying to </span>@{{ comment.name.username }}</p>
-        <button type="button" class="button-hide-outline close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="." class="comment-reply-form" style="height: 1rem;">
-          {% csrf_token %}
-          <input type="hidden" id="c-get-id" name="comment_id" value=""/>
-          <div class="comment-reply-form" style="min-height: 10rem;">
-            {{ form }}
-          </div>
-          <div class="d-flex my-2 justify-content-between">
-            <div></div>
-            <div>
-              <button class="btn btn-md small btn-outline-primary ml-1" style="border-radius: 20px;" type="submit">Reply</button>
+        </div>
+        <div class="modal fade" id="modal-comment-reply">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header" style="height:3.3rem;margin-top: -10px;">
+                <p style="font-weight: bold;font-size: 1.4rem;"><span class="font-weight-light">replying to </span>@{{ comment.name.username }}</p>
+                <button type="button" class="button-hide-outline close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method="POST" data-url="{% url 'home:post-detail' guid_url %}" class="comment-reply-form" style="height: 1rem;">
+                  {% csrf_token %}
+                  <input type="hidden" id="c-get-id" name="comment_id" value="">
+                  <div style="min-height: 10rem;">
+                    {{ form }}
+                  </div>
+                  <div class="d-flex my-2 justify-content-between">
+                    <div></div>
+                    <div>
+                      <button class="btn btn-md small btn-outline-primary ml-1" style="border-radius: 20px;" type="submit">Reply</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
   </div>
 </div>
 {% endwith %}
@@ -92,15 +123,34 @@
 </div>
 {% endfor %}
 <script>
-$(function () {
-$('.view-replies').on('click', function () {
-    var curr = $(this).text()
-    var newt = $(this).attr('text')
-    $(this).text(newt)
-    $(this).attr("text",curr)
-});
-});
+  $(document).ready(function () {
+    $('.reply-btn').on("click", function () {
+        $("#modal-comment-reply textarea").attr("placeholder","Add your reply")
+		    $("#modal-comment-reply textarea").addClass("comment-reply-adjust")
+			  var c_id = $(this).data('id');
+			  $("#c-get-id").val(c_id);
+			  $('textarea').val('');
+			  $("#modal-comment-reply").modal("show");
+			  });
+		$('.view-replies').on('click', function () {
+			  var h = $(this).data('hidden');
+			  var curr = $(this).text()
+			  var newt = $(this).attr('text')
+			  $(this).text(newt)
+			  $(this).attr("text",curr)
+			  var id = $(this).data('id');
+			  if(h == 1){
+				$("#c-"+id).show();
+				$(this).data('hidden',0);
+				} else {
+				$("#c-"+id).hide();
+				$(this).data('hidden',1);
+				}
+			});
+  })
 </script>
+{% endwith %}
+
 
 
 

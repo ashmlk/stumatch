@@ -41,6 +41,11 @@ class Post(models.Model):
         comments = Comment.objects.filter(post=self, reply=None)
         return comments.count()
     
+    def image_count_as_list(self):
+        c = self.images.count()
+        return range(0,c)
+
+
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.date_posted
@@ -97,12 +102,16 @@ class Comment(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")
+    likes= models.ManyToManyField(Profile, blank=True, related_name='comment_likes')
 
     class Meta:
         ordering = ['created_on']
 
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.name)
+    
+    def likes_count(self):
+        return self.likes.count()
     
     def get_created_on(self):
         now = timezone.now()
@@ -159,7 +168,6 @@ class Course(models.Model):
         MEDIUM = '2', 'Medium'
         HARD = '3', 'Hard'
         FAILED = '4', 'Failed'
-    users = models.ManyToManyField(Profile,related_name='courses')
     course_code = models.CharField(max_length=20)
     course_university = models.CharField(max_length=100)
     course_instructor = models.CharField(max_length=100)

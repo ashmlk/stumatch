@@ -1,6 +1,7 @@
 $(document).ready(function (e) {
     $('.post-like-form').on("click", ".likeBtn", function (e) {
-        var like_count = parseInt($(".like-count", this).text());
+        var like_count = $(".input-like-count", this).val();
+        $(".like-count-d").text(like_count);
         e.preventDefault();
         if($(this).find("i").hasClass("fa-thumbs-up")){
             like_count++;
@@ -15,19 +16,15 @@ $(document).ready(function (e) {
             $(".like-count", this).text(like_count);
             $(".like-count-d").text(like_count);
         }
-        //var tk = $(this).attr("data-token")
+        var tk = $(this).attr("data-token");
+        var pg = $(this).attr('value');
         $.ajax({
             type: "POST",
-            dataType: 'json',
             url: $(this).attr("data-url"),
-            //data: {'csrfmiddlewaretoken': tk}, 
-            //added below
-            headers: {'X-CSRFToken': '{{ csrf_token }}'},       
-            data: $(this).closest("form").serialize(),
-            //end
+            dataType: 'json',
+            data: {'guid_url': pg, 'csrfmiddlewaretoken':tk },
             success: function (data){
                 var like_count = parseInt($(".like-count", this).text());
-                e.preventDefault();
                 if($(this).find("i").hasClass("fa-thumbs-up")){
                     like_count++;
                     $(".input-like-count", this).val(like_count);
@@ -39,7 +36,6 @@ $(document).ready(function (e) {
                     $("i", this).removeClass("fa-thumbs-down").addClass("fa-thumbs-up")
                     $(".like-count", this).text(like_count);
                 }
-                //$("#post-list div").html(data.posts)
                 $("#post-detail-container div").html(data.post_detail)
             },
             error: function(rs, e){

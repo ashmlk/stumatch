@@ -50,3 +50,7 @@
     -moz-box-shadow:none !important;
     -webkit-box-shadow:none !important;
     }
+    
+    i:hover {
+      opacity: 0.6;
+    }

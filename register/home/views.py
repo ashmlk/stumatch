@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+
 from django.views import View
 from django.views.generic import (
     ListView,
@@ -67,23 +68,25 @@ def post_create(request):
             post = form.save(False)
             post.author = request.user
             post.save()
-            if request.Files is not None:
+            if request.FILES is not None:
+                added = []
                 images = request.FILES.getlist('images[]')
                 for i in images:
-                    image_instance = Images.objects.create(image=i,post=post)
-                    image_instance.save()
+                    if i not in added:
+                        image_instance = Images.objects.create(image=i,post=post)
+                        image_instance.save()
+                        added.append(i)
             data['form_is_valid'] = True
-            posts = Post.objects.all()
-            posts = Post.objects.order_by('-last_edited')
-            data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+            #posts = Post.objects.all()
+            #posts = Post.objects.order_by('-last_edited')
+            #changed posts to post
+            data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request)
         else:
             data['form_is_valid'] = False
     else:
-        image_form = ImageForm
         form = PostForm      
     context = {
     'form':form,
-    'image_form':image_form
 	}
     data['html_form'] = render_to_string('home/posts/post_create.html',context,request=request)
     return JsonResponse(data) 
@@ -121,7 +124,7 @@ def post_detail(request, guid_url):
     post = get_object_or_404(Post, guid_url=guid_url)
     comments = Comment.objects.filter(post=post,reply=None)
     if request.method == 'POST':
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST or None)
         if form.is_valid():
             comment = form.save(False)
             reply_id = request.POST.get('comment_id')
@@ -130,20 +133,31 @@ def post_detail(request, guid_url):
                 comment_qs = Comment.objects.get(id=reply_id)
             comment.name = request.user
             comment.post = post
-            comment.reply=comment_qs
+            comment.reply = comment_qs
             comment.save()
         else:
             data['is_valid'] = False
     else:
-        form = CommentForm
+        form = CommentForm()
+    guid_url = post.guid_url
     comment_count = post.comment_count()
     context = {'post':post,
                 'form':form,
                 'comments':comments,
                 'comment_count':comment_count,
+                'guid_url':guid_url,
                 }
     if request.is_ajax():
-        data['comments'] = render_to_string('home/posts/post_comment.html',{'comments':comments,'comment_count':comment_count},request=request)
+        comments_new = Comment.objects.filter(post=post,reply=None)
+        comment_count_new = post.comment_count()
+        context_new = {'post':post,
+                        'comments':comments_new,
+                        'comment_count':comment_count_new,
+                        'guid_url':guid_url,
+                        'form':form,
+                    }
+        data['comments'] = render_to_string('home/posts/post_comment.html',context_new,request=request)
+        data['likes'] = render_to_string('home/posts/likes.html',context_new,request=request)
         return JsonResponse(data)
     return render(request,'home/posts/post_detail.html',context)
     
@@ -153,16 +167,32 @@ def post_like(request,guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
     user = request.user
-    if request.method == 'POST':    
-        if post.likes.filter(id=user.id).exists():
-            post.likes.remove(user)
-        else:
-            post.likes.add(user)
-        #posts = Post.objects.all()
-        #posts = Post.objects.order_by('-last_edited')
-        #data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
-        data['posts_detail'] = render_to_string('home/posts/post_detail.html',{'post':post},request=request)
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+    else:
+        post.likes.add(user)
+    #posts = Post.objects.all()
+    #posts = Post.objects.order_by('-last_edited')
+    #data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
+    if request.is_ajax():
+        guid_url = post.guid_url
+        data['post_detail'] = render_to_string('home/posts/post_detail.html',{'post':post,'guid_url':guid_url},request=request)
         return JsonResponse(data)
+
+@login_required
+def comment_like(request,guid_url,id):
+    data = dict()
+    guid_url = guid_url
+    comment = get_object_or_404(Comment, id=id)
+    user = request.user
+    if request.method == 'POST':    
+        if comment.likes.filter(id=user.id).exists():
+            comment.likes.remove(user)
+        else:
+            comment.likes.add(user)
+        data['comment'] = render_to_string('home/posts/comment_like.html',{'comment':comment,'guid_url':guid_url},request=request)
+        return JsonResponse(data)
+
 
 @login_required
 def post_like_list(request, guid_url):

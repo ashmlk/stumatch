@@ -1,5 +1,3 @@
-var selDiv = "";
-var storedFiles = [];
 $(document).ready(function(){
 	$(document).ajaxSend(function (event, jqxhr, settings) {
 		jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
@@ -21,20 +19,21 @@ $(document).ready(function(){
 		return false;
 	};
 	var SaveForm =  function(e){
-		var form = new FormData(this);
+		e.preventDefault();
 		e.stopImmediatePropagation();
+		var form = new FormData(this);
 		$.ajax({
 			url: $(this).attr('data-url'),
 			type: $(this).attr('method'),
 			data: form,
 			cache: false,
 			processData: false,
-			contentType: false,
+			contentType: 'multipart/form-data',
 			dataType: 'json',
 			success: function(data){
 				if(data.form_is_valid){
-					$('#post-list div').html(data.posts);
 					$('#modal-post').modal('hide');
+					$('#_niu1').preappend(data.post);
 				} else {
 					$('#modal-post .modal-content').html(data.html_form)
 				}

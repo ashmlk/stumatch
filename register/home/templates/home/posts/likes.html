@@ -3,11 +3,10 @@
 {% if request.user.is_authenticated %}
 <script src="{% static 'js/post.js' %}"></script>
 <script src="{% static 'js/comment.js' %}"></script>
-<form class="post-like-form" action="{% url 'home:post-like' post.id %}" method="POST">
+<form class="post-like-form" action="{% url 'home:post-like' post.guid_url %}"  method="POST">
     {% csrf_token %}
     {% if request.user in post.likes.all %}
-        <button type="submit" data-url="{% url 'home:post-like' post.guid_url %}" 
-            data-token="{{ csrf_token }}" class="likeBtn btn btn-md">
+        <button type="submit"  class="likeBtn btn btn-md" data-url="{% url 'home:post-like'  post.guid_url %}" data-token="{{ csrf_token }}" name="post_guid" value="{{ post.guid_url }}" >
             <span class="text-secondary">
                 <i class="fas fa-thumbs-down" ></i>
                 <span class="like-count">
@@ -17,8 +16,7 @@
             </span>
         </button>
     {% else %}
-        <button type="submit" data-url="{% url 'home:post-like' post.guid_url %}" 
-            data-token="{{ csrf_token }}" name="post_id" value="{{ post.id }}" class="likeBtn btn btn-md">
+        <button type="submit" name="post_guid" value="{{ post.guid_url }}" data-url="{% url 'home:post-like'  post.guid_url %}" data-token="{{ csrf_token }}" class="likeBtn btn btn-md">
             <span class="text-secondary">
                 <i class="fas fa-thumbs-up"></i>
                 <span class="like-count">

@@ -5,11 +5,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_uuid_upload import upload_to_uuid
 
+
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
+    program = models.CharField(blank=True,max_length=100)
     image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     friends = models.ManyToManyField("Profile", blank=True)
+    courses = models.ManyToManyField('home.Course',related_name='courses')
     
     def __str__(self):
         return self.username

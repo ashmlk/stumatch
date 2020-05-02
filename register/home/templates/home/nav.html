@@ -5,15 +5,17 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="mx-2 mb-3 form-inline d-inline w-50" style="height: 1.5rem;">
-          <div class="input-group">
-              <input type="text" class="form-control border border-right-0" placeholder="Search Stumatch" aria-label="Search">
-              <span class="input-group-append">
-                  <button class="btn btn-outline-secondary border border-left-0 bg-light" type="button">
-                      <i class="fa fa-search"></i>
-                  </button>
-              </span>
-          </div>
+        <form class="my-auto form-inline d-inline w-50" >
+            <div id="custom-search-input">
+                <div class="input-group col-md-12" style="height: 2rem;">
+                    <input type="text" class="pb-2 form-control input-md" placeholder="Search..." />
+                    <span class="input-group-btn">
+                        <button class="btn  btn-info btn-lg" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
         </form>
         <ul class="navbar-nav ml-auto mx-4">
             <li class="nav-item mx-0">
@@ -34,3 +36,35 @@
         </ul>
     </div>
     </nav>
+    <style>
+        #custom-search-input{
+        padding: 2px;
+        border: solid 1px #E4E4E4;
+        border-radius: 6px;
+        background-color: #fff;
+        }
+
+        #custom-search-input input{
+            height: 2.1rem;
+            border: 0;
+            box-shadow: none;
+        }
+
+        #custom-search-input button{
+            margin: 2px 0 0 0;
+            background: none;
+            box-shadow: none;
+            border: 0;
+            color: #666666;
+            padding: 0 8px 0 15px;
+            border-left: solid 1px #ccc;
+        }
+        #custom-search-input button:hover{
+            border: 0;
+            box-shadow: none;
+            border-left: solid 1px #ccc;
+        }
+        #custom-search-input .fa-search{
+            font-size: 1rem;
+        }    
+    </style>

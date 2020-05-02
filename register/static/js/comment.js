@@ -4,17 +4,10 @@ $(document).ready(function(){
 		$(this).prop('rows', rows.length);
 	  });
 	var s = 0;
-	var l = 0;
-	$("#post-comment-button-viewer").click(function(){
-		if(s == 0){
-			$('textarea').val('')
-			$("#post-comment-form-div").fadeIn();
-			s = -1;
-		} else {
-			$("#post-comment-form-div").fadeOut();
-			s = 0;
-		}
-	  })
+	$("#post-comment-button-viewer").on("click", function(){
+		$('textarea').val('')
+		$("#post-comment-form-div").fadeIn();
+	  });
 	$('.inside-post-detail #likeBtn').on("click", function (e) {
 		e.preventDefault();
 		if($(".inside-post-detail #likeBtn i").hasClass("fa-thumbs-up")){
@@ -23,77 +16,53 @@ $(document).ready(function(){
 			$(".inside-post-detail #likeBtn i").removeClass("fa-thumbs-down").addClass("fa-thumbs-up");
 		}
 	})
-	$(".post-comment-form").on("submit", function (e) {
+	$('.post-comment-form').on('submit', function (e) {
 		e.preventDefault();
 		e.stopImmediatePropagation();
+		var form = $(this).serialize();
 		$.ajax({
-			type:'POST',
-			url: $(this).attr('action'),
-			data: $(this).serialize(),
-			dataType: 'json',
-			success: function(data) {
-				$("#post-linked-comments div").html(data.comments)
-				$('textarea').val('')
-				$('.reply-btn').on("click", function () {
-					$("#modal-comment-reply textarea").attr("placeholder","Add your reply")
-					$("#modal-comment-reply textarea").addClass("comment-reply-adjust")
-					var c_id = $(this).data('id');
-					$("#c-get-id").val(c_id);
-					$('textarea').val('');
-					$("#modal-comment-reply").modal("show");
-				  });
-				  $('.view-replies').on('click', function () {
-					var curr = $(this).text()
-					var newt = $(this).attr('text')
-					$(this).text(newt)
-					$(this).attr("text",curr)
-					var id = $(this).data('id');
-					  if(l == 0){
-						$("#c-"+id).show();
-						l = -1;
-					  } else {
-						$("#c-"+id).hide();
-						l = 0;
-					  }
-					});
-					$(".comment-reply-form").on("submit", function () {
-						$('.post-comment-form textarea').val('');
-						$(this).submit();
-						$("modal-comment-reply").modal("hide");
-					})
-			},
-			error: function(rs, e){
-                console.log(rs.responeText);
-            },
+		  url: $(this).attr('data-url'),
+		  type: 'POST',
+		  data: form,
+		  dataType: 'json',
+		  success: function(data) {
+			$("#like-section").html(data.likes);
+			$("#post-linked-comments").html(data.comments); 
+			$('textarea').val('');
+			$('.reply-btn').on("click", function () {
+				$("#modal-comment-reply textarea").attr("placeholder","Add your reply")
+				$("#modal-comment-reply textarea").addClass("comment-reply-adjust")
+				var c_id = $(this).data('id');
+				$("#c-get-id").val(c_id);
+				$('textarea').val('');
+				$("#modal-comment-reply").modal("show");
+			});
+		  },
+		  error: function(rs, e){
+					console.log(rs.responeText);
+				},
+		});
+	  });
+	  $('.comment-reply-form').on("submit", function (e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var form = $(this).serialize();
+		$.ajax({
+		  url: $(this).attr('data-url'),
+		  type: 'POST',  
+		  data: form,
+		  dataType: 'json',
+		  success: function(data) {
+			$('.modal').modal('hide');
+			$("#like-section").html(data.likes);
+			$("#post-linked-comments").html(data.comments);
+			$('textarea').val('');
+		  },
+		  error: function(rs, e){
+					console.log(rs.responeText);
+				},
 		})
-	})
-
-	$("#modal-comment-reply textarea").attr("placeholder","Add your reply")
-    $("#modal-comment-reply textarea").addClass("comment-reply-adjust")
-    $('.reply-btn').on("click", function () {
-		var c_id = $(this).data('id');
-		$('textarea').val('');
-		$("#c-get-id").val(c_id);
-    	$("#modal-comment-reply").modal("show");
-	});
-	$(".comment-reply-form").on("submit", function () {
-		$(this).submit();
-		$("modal-comment-reply").modal("hide");
-	});
-    $('.view-replies').on('click', function () {
-      var curr = $(this).text()
-	  var newt = $(this).attr('text')
-	  $(this).text(newt)
-	  $(this).attr("text",curr)
-	  var id = $(this).data('id');
-      if(l == 0){
-		$("#c-"+id).show();
-        l = -1;
-      } else {
-        $("#c-"+id).hide();
-        l = 0;
-      }
-	});
+	  });
 	if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
     }
