@@ -39,7 +39,7 @@
                               <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-pen-square pr-2"></i>Blogs</a>
                             </div>
                             <div class="py-3">
-                              <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
+                              <a href="{% url 'home:courses' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
                             </div>
                             <div class="py-3">
                               <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
@@ -59,7 +59,7 @@
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>
                     <div class="col-sm-3 order-sm-2 order-sm-2">
-                      <div class="card rounded-0">
+                      <div class="card">
                       <div class="border-bottom">
                         <h5 class="m-1 font-weight-bold card-tittle">
                           Explore

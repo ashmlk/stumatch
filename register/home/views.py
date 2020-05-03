@@ -19,7 +19,7 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images
+from .models import Post, Comment, Images, Course
 from .forms import PostForm, CommentForm, CourseForm, ImageForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
@@ -167,17 +167,14 @@ def post_like(request,guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
     user = request.user
-    if post.likes.filter(id=user.id).exists():
-        post.likes.remove(user)
-    else:
-        post.likes.add(user)
-    #posts = Post.objects.all()
-    #posts = Post.objects.order_by('-last_edited')
-    #data['posts'] = render_to_string('home/posts/home_post.html',{'posts':posts},request=request)
-    if request.is_ajax():
-        guid_url = post.guid_url
-        data['post_detail'] = render_to_string('home/posts/post_detail.html',{'post':post,'guid_url':guid_url},request=request)
+    if request.method == 'POST':   
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        data['post_likes'] = render_to_string('home/posts/likes.html',{'post':post},request=request)
         return JsonResponse(data)
+        
 
 @login_required
 def comment_like(request,guid_url,id):
@@ -211,15 +208,52 @@ def post_comment_list(request, guid_url):
     return JsonResponse(data)
 
 # Course views
-def course_list(request):
-    pass
+@login_required
+def courses(request):
+    courses = request.user.courses.all()
+    courses = courses.order_by("course_code")
+    context = { 'courses':courses }
+    return render(request,'home/courses/course_list.html',context)
 
+@login_required
+def courses_instructor(request,par1,par2):
+    courses = Course.objects.filter(course_instructor=par2,course_university=par1)
+    instructor=par2
+    university=par1
+    university = university.lower()
+    university = university.replace('university','')
+    context = {
+         'courses':courses,
+         'instructor':instructor,
+         'university':university,
+         }
+    return render(request,'home/courses/instructor_course_list.html',context)
+
+@login_required
 def course_add(request):
-    pass
-
+    
+    if request.method == "POST":
+        form = CourseForm(request.POST or none)
+        if form.is_valid():
+            course = form.save()
+            request.user.courses.add(course)
+    else:
+        form = CourseForm
+    context = {
+        'form':form
+    }
+    return render(request,'home/courses/course_add.html', context)
+        
+    
 def course_update(request):
     pass
 
 def course_delete(request):
+    pass
+
+def course_like(request, course_code, instructor):
+    pass
+
+def course_dislike(request, course_code, instructor):
     pass
 

@@ -1,0 +1,68 @@
+{% extends 'home/courses/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
+<div class="d-flex mb-2 border-bottom justify-items-left">
+    <div class="mx-2">
+        <h4 class="font-weight-bolder">{{ instructor|capfirst }}</h4>
+        <h6 class="text-muted">{{ university|capfirst }}</h6>
+    </div>
+</div>
+<div class="course-list">
+    {% for course in courses %}
+    <div class="border-bottom bg-white mb-2">
+        <div class="row">
+            <div class="col-sm-1">
+                <div class="votes-container pb-1">
+                    <div class="text-center d-flex justify-content-center flex-column ml-1">
+                        <div>
+                            <button class="btn btn-lica btn-sm btn-circle">
+                                <i class="fas fa-2x fa-chevron-up" style="color: whitesmoke;"></i>
+                            </button>
+                        </div>
+                        <div style="margin-left: 0.2rem;">
+                            <span>
+                                N
+                            </span>
+                        </div>
+                        <div>
+                            <button  class="btn btn-lica-r btn-sm btn-circle">
+                                <i class="fas fa-2x fa-chevron-down" style="color: whitesmoke;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-11" style="margin-left: -1rem;">
+                <div class="d-flex">
+                    <div>
+                        <div class="mx-2">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="pt-1  font-weight-bold">{{ course.course_code }}</h5>
+                                </div>
+                            </div>
+                            <div class="t-stu">
+                                <span class="text-dark">Total students: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="t-stu">
+                                    <span class="text-dark">Overall Average Complexity: </span><span class="mr-1 font-weight-bolder text-danger">{{ course.average_complexity }}</span>
+                                </div>
+                                <div class="t-stu">
+                                    <span class="text-dark">Average Complexity with this instructor: </span><span class="mr-1 font-weight-bolder text-danger">{{ course.average_complexity_ins }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

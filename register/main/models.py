@@ -12,7 +12,7 @@ class Profile(AbstractUser):
     program = models.CharField(blank=True,max_length=100)
     image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     friends = models.ManyToManyField("Profile", blank=True)
-    courses = models.ManyToManyField('home.Course',related_name='courses')
+    courses = models.ManyToManyField('home.Course',related_name='profiles')
     
     def __str__(self):
         return self.username

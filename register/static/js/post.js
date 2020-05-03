@@ -28,12 +28,12 @@ $(document).ready(function(){
 			data: form,
 			cache: false,
 			processData: false,
-			contentType: 'multipart/form-data',
+			contentType: false,
 			dataType: 'json',
 			success: function(data){
 				if(data.form_is_valid){
 					$('#modal-post').modal('hide');
-					$('#_niu1').preappend(data.post);
+					$('#_np2u').prepend(data.post);
 				} else {
 					$('#modal-post .modal-content').html(data.html_form)
 				}

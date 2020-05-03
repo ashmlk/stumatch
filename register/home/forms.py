@@ -2,8 +2,9 @@ from .models import Comment, Course, Post, Images
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
+import datetime
 
-alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed.')
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
 alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
 
 def year_choices():
@@ -67,6 +68,7 @@ class CourseForm(forms.ModelForm):
 		max_length=12,
 		min_length=5,
 		required=True,
+        help_text='Enter your course code ommiting any dashes or spaces',
   		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
@@ -76,12 +78,13 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
-    instructor = forms.CharField(
+    course_instructor = forms.CharField(
 		label='', 
 		max_length=50,
 		min_length=2,
 		required=True,
   		validators=[alphabetical],
+        help_text='Please ommit any title(Dr, Professor, Mr., Mrs,...)',
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Instructor Lastname",
@@ -90,7 +93,7 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
-    university = forms.CharField(
+    course_university = forms.CharField(
 		label='',
 		max_length=50,
 		min_length=2,
@@ -98,7 +101,7 @@ class CourseForm(forms.ModelForm):
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
-				"placeholder": "University",
+				"placeholder": "Enter University",
 				"class": "form-control"
 			}
 		)
@@ -110,7 +113,7 @@ class CourseForm(forms.ModelForm):
         initial=current_year,
         widget=forms.TextInput(
 		    attrs={
-				"placeholder": "Term",
+				"placeholder": "When did you take this course?",
 				"class": "form-control"
 			}
 		)
@@ -118,5 +121,5 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_instructor','course_year','course_semester','course_difficulty',)
+        fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
         

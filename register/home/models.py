@@ -2,18 +2,17 @@ from django.db import models
 from django.utils import timezone
 from main.models import Profile
 from django.urls import reverse
-from django.core.validators import MaxLengthValidator, MinValueValidator
+from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 import uuid
 import math
 import secrets
 from django_uuid_upload import upload_to_uuid
 import uuid 
+import datetime
 
-def current_year():
-    return datetime.date.today().year
+def max_value_current_year():
+    return datetime.date.today().year + 1
 
-def max_value_current_year(value):
-    return MaxValueValidator(current_year())(value) 
  
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -171,7 +170,7 @@ class Course(models.Model):
     course_code = models.CharField(max_length=20)
     course_university = models.CharField(max_length=100)
     course_instructor = models.CharField(max_length=100)
-    course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), max_value_current_year])
+    course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), MaxValueValidator(max_value_current_year())])
     course_likes = models.ManyToManyField(Profile, blank=True, related_name='course_likes')
     course_dislikes = models.ManyToManyField(Profile, blank=True, related_name='course_dislikes')
     course_semester = models.CharField(
@@ -205,10 +204,47 @@ class Course(models.Model):
             s = self.course_university.capitalize() + 'University'
     
     def get_course_rating(self):
-        return (self.course_likes.count() / (self.course_likes.count() + self.course_dislikes.count())) 
+        return (self.course_likes.count() - self.course_dislikes.count())
     
-    def get_users_enrolled(self):
-        users = Courses.users.filter(course_code=self.course_code)
+    def get_user_count(self):
+        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university)
+        num = 0
+        for c in courses:
+            num += c.profiles.count()
+        return num
+    
+    def get_user_count_ins(self):
+        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor)
+        num = 0
+        for c in courses:
+            num += c.profiles.count()
+        return num
+    
+    def average_complexity(self):
+        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Likely to Fail"}
+        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university)
+        avg_cplx = 0
+        total_courses = courses.count()
+        complexity_sum = 0
+        for c in courses:
+            complexity_sum += int(c.course_difficulty)
+        avg_cplx = round(complexity_sum / total_courses)
+        return r_dic[avg_cplx]
+    
+    def average_complexity_ins(self):
+        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Failed"}
+        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor)
+        avg_cplx = 0
+        total_courses = courses.count()
+        complexity_sum = 0
+        for c in courses:
+            complexity_sum += int(c.course_difficulty)
+        avg_cplx = round(complexity_sum / total_courses)
+        return r_dic[avg_cplx]
+        
+        
+        
+        
 
         
         

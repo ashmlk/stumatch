@@ -9,6 +9,9 @@ background-color: deepskyblue;
 .nav-header-main {
     background-color: rgb(129,193,242);
 }
+.card-link-title-bg {
+    background-color: rgba(129, 193, 242, 0.548);
+}
 
 .brand-home-header {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;

@@ -193,6 +193,15 @@ class EditProfileForm(UserChangeForm):
 			}
 		)
 	)
+	program = forms.CharField(
+		required=False,
+		widget=forms.Textarea(
+			attrs={
+				"placeholder":"What are you studying?",
+				"class": "form-control"
+			}
+		)
+	)
 	
 	image = models.ImageField(upload_to='profile_image')
 
@@ -200,7 +209,7 @@ class EditProfileForm(UserChangeForm):
 
 	class Meta:
 		model = Profile
-		fields=('username','first_name','last_name','email','bio','image',)
+		fields=('username','first_name','last_name','university','program','email','bio','image',)
 		def save(self, commit = True):
 			user = super(UserChangeForm, self).save(commit=False)
 			user.bio = self.cleaned_data['bio']

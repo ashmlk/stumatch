@@ -7,7 +7,7 @@
 <div class="w-100" style="font-size: 0.8rem;">
   <div class="d-flex justify-content-end">
     <div class="ml-1">
-      <span class="like-count-d text-muted mr-1"></span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
+      <span class="like-count-d text-muted mr-1">{{ post.likes.count }}</span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
     </div>
     <div class="ml-1">
       <span class="comment-count text-muted mr-1">{{ comment_count }}</span><span data-url="{% url 'home:post-comment-list' post.guid_url %}" class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>

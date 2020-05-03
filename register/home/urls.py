@@ -12,7 +12,8 @@ urlpatterns = [
     path('post/<str:guid_url>/comments/', views.post_comment_list, name='post-comment-list'),
     path('post/<str:guid_url>/c/<int:id>/like/', views.comment_like, name='comment-like'),
     path('post/<str:guid_url>/delete/', views.post_delete, name='post-delete'),
-    path('courses/', views.course_list, name='courses-list'),
+    path('courses/', views.courses, name='courses'),
     path('courses/add/', views.course_add, name='courses-add'),
-    path('courses/delete/<int:id>', views.course_delete, name='courses-delete'),
+    path('courses/delete/<int:id>/', views.course_delete, name='courses-delete'),
+    path('courses/<str:par1>/instructor/<str:par2>/', views.courses_instructor, name='course-instructor'),
   ]

@@ -45,6 +45,7 @@
   </style>
   <script src="{% static 'js/comment.js' %}"></script>
   <script src="{% static 'js/like-comment-api.js' %}"></script>
+  <script src="{% static 'js/like-api.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <div id="#post-detail-container">
     <div class="border-left border-right pb-5">
@@ -63,7 +64,7 @@
                   </div>     
             </div>
             <div class="card-post-content">
-              <div class="pb-2">
+              <div class="pb-2" style="margin-right: -1.27rem;margin-left: -1.27rem;">
                 {% if post.images %}
                 <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" class="carousel slide" data-interval="false" data-ride="carousel">
                   <ol class="carousel-indicators">
@@ -105,7 +106,7 @@
               </span>
           </button>
           </div>
-          <div id="like-section" class="mx-4 inside-post-detail">
+          <div class="like-section" class="mx-4 inside-post-detail">
             {% include 'home/posts/likes.html' with post=post %}
           </div>
           <div class="mx-4">

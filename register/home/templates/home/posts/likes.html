@@ -1,8 +1,6 @@
 {% load static %}
-<!-- static file were here -->
+<script src="{% static 'js/like-api.js' %}"></script>
 {% if request.user.is_authenticated %}
-<script src="{% static 'js/post.js' %}"></script>
-<script src="{% static 'js/comment.js' %}"></script>
 <form class="post-like-form" action="{% url 'home:post-like' post.guid_url %}"  method="POST">
     {% csrf_token %}
     {% if request.user in post.likes.all %}
