@@ -14,6 +14,7 @@ urlpatterns = [
     path('post/<str:guid_url>/delete/', views.post_delete, name='post-delete'),
     path('courses/', views.courses, name='courses'),
     path('courses/add/', views.course_add, name='courses-add'),
-    path('courses/delete/<int:id>/', views.course_delete, name='courses-delete'),
+    path('courses/course/remove/<int:id>/', views.course_remove, name='course-remove'),
     path('courses/<str:par1>/instructor/<str:par2>/', views.courses_instructor, name='course-instructor'),
+    path('courses/<int:id>/<str:code>/<str:status>/', views.course_vote, name='course-vote'),
   ]

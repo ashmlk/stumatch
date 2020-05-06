@@ -1,6 +1,9 @@
 {% load static %}
+{% load ibuilder %}
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <script src="{% static 'js/post.js' %}"></script>
+<script src="{% static 'js/post-delete.js' %}"></script>
+<script src="{% static 'js/post-update.js' %}"></script>
 <script>
   $(document).on('click', '.post-details-view', function () {
     var url = $(this).attr("data-url")
@@ -12,29 +15,53 @@ $(document).on('click', '.p_ico', function(event) {
 </script>
 <div id="_np2u"></div>
 {% for post in posts %}
-<div class="_p_c">
+{% div_class as veid %}
+<div id="_pc_{{ veid }}">
   <div class="row">
-    <div class="col-sm-1 d-none d-md-block">
-      <div class="ml-2 mt-3" >
-          <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
-          alt="Profile image">
-      </div>
-    </div>
-    <div class="col-sm-11 col-12">
-      <div class="card rounded-0 ml-1 mb-3 mt-3">
-        <div class="ml-1">
-          <a class="small text-muted" href="#">@{{ post.author.username }}</a>
-          <span class="mx-0 small text-muted">·</span>
-          <span class="text-muted small">{{ post.get_created_on }}</span>
+    <div class="col-sm-12 col-12">
+      <div class="card rounded-0 border-light shadow-sm ml-1 mb-2 mt-2">
+        <div class="d-flex justify-content-between ml-1">
+          <div class="d-flex m-2">
+            <div>
+                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                alt="Profile image">
+            </div>
+            <div class="ml-1">
+              <div>
+                <span class="mx-0 text-dark font-weight-bolder">{{ post.author.first_name }} {{ post.author.last_name}}</span>
+              </div>
+              <div style="margin-top: -0.35rem;">
+                <a class="small text-muted" href="#">@{{ post.author.username }}</a>
+                <span class="mx-0 small text-muted">·</span>
+                <span class="text-muted small">{% if post.edited %}Edited {{ post.get_edited_on }}{% else %}{{ post.get_created_on }}{% endif %}</span>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+              {% if post.author == request.user %}
+              <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:post-delete' post.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+              <button class="small dropdown-item show-form-update" data-veid="{{ veid }}" data-url="{% url 'home:post-update' post.guid_url %}"><i class="mr-1 fas fa-edit"></i>Edit</button>
+              {% endif %}
+              <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+            </div>
+          </div>
         </div>
         <div class="card-body text-dark post-details-view" data-url="{% url 'home:post-detail' post.guid_url  %}">
-          <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
-          <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
-          </h5>
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+                <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
+                </h5>
+            </div>
+          </div>
           <div class="my-2">
             <div class="pb-3 p_ico" style="margin-right: -1.27rem;margin-left: -1.27rem;">
-              {% if post.images %}
-              <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" class="carousel slide" data-interval="false" data-ride="carousel">
+              {% if  post.has_image %}
+              <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" class="carousel slide mb-2" data-interval="false" data-ride="carousel">
                 <ol class="carousel-indicators">
                   {% for i in post.image_count_as_list %}
                   <li data-target="#carousel-{{ post.title|cut:' ' }}" data-slide-to="{{ forloop.counter0 }}" class="active"></li>
@@ -58,24 +85,22 @@ $(document).on('click', '.p_ico', function(event) {
               </div>
               {% endif %}
             </div>
-            <p class="card-text pt-2" style="margin-top: -0.9rem;">{{ post.content }}</p>
+            <p class="card-text" style="margin-top: -0.9rem;">{{ post.content }}</p>
           </div>   
         </div>
        <hr style="margin: 0;">
-          <div class="d-flex align-items-center justify-content-between" >
-            <div class="row mx-1">
-              <div class="like-section px-1">
-                {% include 'home/posts/likes.html' with post=post %}
-              </div>
-              <div class="px-1"> 
-                <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
-                  <span class="text-secondary">
-                    <i class="fas fa-comment"></i> {{ post.comment_count }}
-                  </span>
-                </a>
-              </div>
+          <div class="d-flex align-items-center justify-content-center" >
+            <div class="like-section px-4">
+              {% include 'home/posts/likes.html' with post=post %}
             </div>
-            <div> 
+            <div class="px-4"> 
+              <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
+                <span class="text-secondary">
+                  <i class="fas fa-comment"></i> {{ post.comment_count }}
+                </span>
+              </a>
+            </div>
+            <div class="px-4"> 
               <a class="btn btn-md" href="#">
                 <span class="text-secondary">
                   <i class="fas fa-share-square"></i>
@@ -86,6 +111,16 @@ $(document).on('click', '.p_ico', function(event) {
       </div>
     </div>
   </div>
+  <div class="modal fade" id="modal-post-delete">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post-update">
+    <div class="modal-dialog modal-dialog-centered moda-sm">
+      <div class="modal-content"></div>
+    </div>
+  </div> 
 </div>
 {% empty %}
 <div class="d-flex justify-content-center">

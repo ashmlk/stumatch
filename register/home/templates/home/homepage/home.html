@@ -4,14 +4,14 @@
 {% block content %}
 <script src="{% static 'js/post.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
-<div class="ml-1 card rounded-0">
+<div class="ml-1 p-1 card shadow-sm border-light">
     <div class="d-flex m-1 justify-content-left" >
       <div>
         <img class="img-create-post rounded-circle" style="width: 40px;height: 40px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"
         alt="Profile image">
       </div>
-      <div class="ml-1 w-100">
-        <input type="text" readonly="readonly" class="bg-light form-control create-post-btn" placeholder="What's new?"  data-url="{% url 'home:post-create' %}">
+      <div class="ml-1 w-100" style="background-color: rgba(247, 247, 247, 0.685); border-radius:20px;">
+        <input type="text" readonly="readonly" class="bg-transparent border-0 form-control create-post-btn input-no-border" placeholder="What's new?"  data-url="{% url 'home:post-create' %}">
       </div>
       <div>
         <button class="ml-1 btn btn-md create-post-btn"  data-url="{% url 'home:post-create' %}">
@@ -26,7 +26,7 @@
   </div>
 </div>
 <div class="modal fade" id="modal-post" style="overflow-y: show;">
-  <div class="modal-dialog modal-lg ">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content"></div>
   </div>
 </div> 

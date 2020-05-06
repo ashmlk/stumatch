@@ -46,12 +46,5 @@ $(document).ready(function(){
 $('.create-post-btn').click(ShowForm);
 $('#modal-post').on("submit",".post-create-form",SaveForm)
 
-//update
-$('#post-list').on("click",".show-form-update",ShowForm);
-$('#modal-post').on("submit",".update-form",SaveForm)
-
-//delete
-$('#post-list').on("click",".show-form-delete",ShowForm);
-$('#modal-post').on("submit",".delete-form",SaveForm)
 });
 

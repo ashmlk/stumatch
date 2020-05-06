@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="post" data-url="{% url 'home:post-update' form.instance.id %}" class="update-form">
+<form method="post" data-url="{% url 'home:post-update' form.instance.guid_url %}" class="update-form">
 	{% csrf_token %}
 		<div class="modal-header">
 		<h5 class="modal-title" >Edit Post</h5>
@@ -11,7 +11,25 @@
 		{{form|crispy}}
 		</div>
 		<div class="modal-footer">
-		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		<button type="submit" class="btn btn-primary">Save Changes</button>
+		<button type="button" class="btn btn-secondary" style="border-radius: 20px;" data-dismiss="modal">Close</button>
+		<button type="submit" class="btn btn-primary" style="border-radius: 20px;">Save Changes</button>
 		</div>
 </form>
+<style>
+	.t_new {
+		border:none !important;
+		outline:none !important;
+		box-shadow: none !important;
+		-moz-box-shadow:none !important;
+		-webkit-box-shadow:none !important;
+		padding-bottom: 1rem;
+		overflow-y: auto;
+		min-height: 12.5rem;
+		}
+</style>
+<script>
+	$(document).ready(function (e){
+		$(this).find('.textarea').addClass('t_new')
+		$(this).find("input[type='text']").css({'font-weight':'600','color':'black'})
+	})
+</script>

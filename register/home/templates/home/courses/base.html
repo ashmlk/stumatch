@@ -18,35 +18,41 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-        <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
+        <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico  ' %}" />
     </head>
     <body class="main-bg-color">
-     <div id="#navPlaceholder">{% include 'home/nav.html' %}</div>
+        <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>>
         <div class="wrapper">
-            <div class="container-fluid pl-4 pr-5 pt-4">
+            <div class="container-fluid pl-4 pr-5">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="pb-2">
-                            <div class="border-bottom">
-                                <h4 class="m-1 font-weight-bold card-tittle">
-                                    Courses
-                                </h4>
+                        <div class="sticky-top mt-2" style="top: 66px !important;margin-top: 20px !important;">
+                            <div class="pt-3 pb-2">
+                                <div class="border-bottom">
+                                    <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
+                                        Courses
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="list-group bg-transparent">
+                                <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action">Your Courses</a>
+                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">Add Course</a>
+                                <a href="#" class="list-group-item list-group-item-action">Instructors</a>
+                                <a href="#" class="list-group-item list-group-item-action">Suggestions</a>
+                                <a href="#" class="list-group-item list-group-item-action">Related</a>
                             </div>
                         </div>
-                        <div class="list-group">
-                            <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action">Your Courses</a>
-                            <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">Add Course</a>
-                            <a href="#" class="list-group-item list-group-item-action disabled">Related</a>
-                        </div>
                     </div>
-                    <div class="col-sm-6 order-2">
+                    <div class="col-sm-6 order-2 pt-2" style="top: 44px;">
                         {% block content %}
                         {% endblock %}
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>
                     <div class="col-sm-3 order-sm-2 order-sm-2">
-                        
-                      <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+                        <div class="sticky-top mt-2" style="top: 66px;">
+                            <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+                        </div>
+                      
                     </div>       
                 </div>
             </div>

@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 from django.forms import Textarea
 import datetime
 
+alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
 alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
 
@@ -31,6 +32,12 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title','content',)
+    
+    def __init__(self, *args, **kwargs): 
+        super(PostForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:                     
+            self.fields['title'].disabled = True
    
 class ImageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -68,8 +75,8 @@ class CourseForm(forms.ModelForm):
 		max_length=12,
 		min_length=5,
 		required=True,
-        help_text='Enter your course code ommiting any dashes or spaces',
-  		validators=[alphanumeric],
+        help_text='Please enter your course code ommiting any spaces',
+  		validators=[alphanumeric_v2],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Course Code",
@@ -97,7 +104,7 @@ class CourseForm(forms.ModelForm):
 		label='',
 		max_length=50,
 		min_length=2,
-		required=False,
+		required=True,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={

@@ -1,87 +1,100 @@
 {% extends "home/courses/base.html" %}
 {% load crispy_forms_tags %}
+{% load ibuilder %}
 {% load static %}
 {% block content %}
+<script src="{% static 'js/courses/courses.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
-    {% for course in courses %}
-    {% with par2=course.course_instructor par1=course.course_university %}
-    <div class="border mb-2 rounded-0">    
-        <div class="row">
-            <div class="col-sm-1 border-right">
-                <div class="votes-container mt-2 my-1">
-                    <div class="text-center d-flex justify-content-center flex-column ml-1">
-                        <div>
-                            <button class="btn btn-lica btn-sm btn-circle">
-                                <i class="fas fa-2x fa-chevron-up" style="color: whitesmoke;"></i>
-                            </button>
-                        </div>
-                        <div style="margin-left: 0.2rem;">
-                            <span>
-                                NaN
-                            </span>
-                        </div>
-                        <div>
-                            <button  class="btn btn-lica-r btn-sm btn-circle">
-                                <i class="fas fa-2x fa-chevron-down" style="color: whitesmoke;"></i>
-                            </button>
+{% if courses %}
+<div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
+    <div class="m-0">
+        <h6 class="display-4" style="font-size: 2.2rem;">Courses you've taken</h4>
+    </div>
+    <div>
+        <span class="text-muted small" style="margin-left: 0.2rem;">Learn about how your courses are displayed <a href="#">here.</a></span>
+    </div>
+</div>
+{% endif %}
+{% for course in courses %}
+{% div_class as veid %}
+{% with par2=course.course_instructor par1=course.course_university %}
+<div class="mb-2" id="_cc_{{ veid }}" >
+    <div class="row border rounded-0">
+        <div class="col-sm-12 p-0">
+            <div class="d-flex justify-content-between ml-1 mr-1">
+                <div class="d-flex">
+                    <div>
+                        <h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm no-border" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-menu mt-1" aria-labelledby="d_l">
+                            <button class="small dropdown-item"><i class="mr-1 fas fa-share"></i>Share</button>
+                            <button class="small dropdown-item sh-rmv-c" data-veid="{{ veid }}" 
+                            data-url="{% url 'home:course-remove' course.id %}">
+                            <i class="mr-1 fas fa-trash"></i>Remove Course</button>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <button class="btn btn-cplx {{ course.average_complexity|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said this course is {{ course.user_complexity }}"></button>
                 </div>
             </div>
-            <div class="col-sm-11" style="margin-left: -1rem;">
-                <div class="mx-2">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="pt-1  font-weight-bold">{{ course.course_code }}</h5>
-                        </div>
-                        <div style="margin-right:-1.2rem;">
-                            <button class="btn btn-cplx {{ course.average_complexity }}"></button>
-                        </div>
-                    </div>
-                    <div class="d-flex" style="margin-left: -0.4rem;">
-                        <div class="c_dis course-goto btn-outline-primary"  data-url="{%url 'home:course-instructor' par1 par2 %}">
-                            <span class="m-1 text-dark">Instructor:</span><span class="text-dark mr-1">{{ course.course_instructor|capfirst }}</span>
-                        </div>
-                        <div class="c_dis">
-                            <span class="m-1 text-dark">University:</span><span class="mr-1">{{ course.course_university|capfirst }}</span>
-                        </div>
-                        <div class="c_dis">
-                            <span class="m-1 text-dark">Year:</span><span class="mr-1">{{ course.course_year }}</span>
-                        </div>
-                        <div class="c_dis">
-                            <span class="m-1 text-dark">Semester:</span><span class="mr-1">{{ course.course_semester }}</span>
-                        </div>
-                    </div>
+            <div class="row mx-1">
+                <div class="c_dis mb-1 course-goto btn-outline-primary text-center" data-url="{%url 'home:course-instructor' par1 par2 %}">
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                 </div>
-                <div class="pt-1 d-flex border-top justify-content-end my-1">
-                    <span class="small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}<span>people have</span>{% endif %} enrolled in this course. See them <a href="#">here</a>.</span>
+                <div class="c_dis mb-1 course-goto btn-outline-primary text-center">
+                    <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                </div>
+                <div class="c_dis mb-1 text-center">
+                    <span class="text-dark">Year:</span><span class="ml-1">{{ course.course_year }}</span>
+                </div>
+                <div class="c_dis mb-1 text-center">
+                    <span class="text-dark">Semester:</span><span class="ml-1">{{ course.sem }}</span>
                 </div>
             </div>
+            <div class="d-flex border-top justify-content-between mb-0 mt-1">
+                <div class="d-flex votes-container ml-1" style="margin-top: -2px !important;">
+                    {% include 'home/courses/course_vote.html' with course=course %}
+                </div>
+                <div class="mb-0">
+                    <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}<span>people have</span>{% endif %} enrolled in this course. See them <a href="#">here</a>.</span>
+                </div>
+            </div>
+        </div>   
+    </div>   
+</div>
+<div class="modal fade" id="modal-course-remove">
+    <div class="modal-dialog">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+{% endwith %}
+{% empty %}
+<div class="card" style="margin-left: -0.85rem !important;">
+    <div class="card-body">
+        <div class="d-flex justify-content-center">
+            <h4 class="text-muted">You haven't added any courses.</h4>
         </div>
     </div>
-    {% endwith %}
-    {% empty %}
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-center">
-                <h4 class="text-muted">You haven't added any courses.</h4>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-    <script>
-        $(document).ready(function () {
-            $('.list-group a').removeClass("active");
-            $('#user-courses').addClass("active");
-            $('.c_dis').addClass("border border-primary rounded ml-2")
-            $('.c_dis').css({'font-size':'0.94rem'});
-            $('.c_dis').find('span.text-dark').css({'font-weight':'600'});
-            $('._ar').addClass("border rounded-circle");
-            $(document).on('click', '.course-goto', function (e) {
-            e.stopImmediatePropagation();
-            var url = $(this).attr("data-url")
-            document.location.href = url 
-        });
-        })
-    </script>
+</div>
+{% endfor %}
+<script>
+    $(document).ready(function () {
+        $('.list-group a').removeClass("active");
+        $('#user-courses').addClass("active");
+        $('.c_dis').addClass("border rounded p-1 mr-2")
+        $('.c_dis').css({'font-size':'0.94rem'});
+        $('.c_dis').find('span.text-dark').css({'font-weight':'600'});
+        $('._ar').addClass("border rounded-circle");
+        $(document).on('click', '.course-goto', function (e) {
+        e.stopImmediatePropagation();
+        var url = $(this).attr("data-url")
+        document.location.href = url 
+    });
+    })
+</script>
 {% endblock content %}

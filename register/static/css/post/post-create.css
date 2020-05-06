@@ -1,0 +1,42 @@
+label[for="id_image"]{
+    height: 0;
+    margin-top: -20px;
+    display: none;
+}
+.modal-body {
+    overflow-y: auto;
+}
+.textarea-hide-outline{
+border:none !important;
+outline:none !important;
+box-shadow: none !important;
+-moz-box-shadow:none !important;
+-webkit-box-shadow:none !important;
+padding-bottom: 1rem;
+overflow-y: auto;
+min-height: 12.5rem;
+}
+.textinput-hide-outline{
+border-radius: 0;
+border-left:none !important;
+border-top:none !important;
+border-right:none !important;
+outline:none !important;
+box-shadow: none !important;
+-moz-box-shadow:none !important;
+-webkit-box-shadow:none !important;
+}
+.fileinput-button:hover{
+    opacity: 0.6;
+}
+.edited-image {
+    width: 150%;
+    height: 150%;
+}
+
+.uploaded-image {
+    height: 100px !important;
+    width: 100px !important;
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+}

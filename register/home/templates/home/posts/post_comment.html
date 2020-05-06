@@ -2,12 +2,11 @@
 {% with post=post %}
 <script src="{% static 'js/like-comment-api.js' %}"></script>
 <script src="{% static 'js/post_list.js' %}"></script>
-<script src="{% static 'js/like-api.js' %}"></script>
-<script src="{% static 'js/comment.js' %}"></script> 
+<script src="{% static 'js/comment.js' %}"></script>
 <div class="w-100" style="font-size: 0.8rem;">
-  <div class="d-flex justify-content-end">
+  <div class="d-flex justify-content-end mx-2">
     <div class="ml-1">
-      <span class="like-count-d text-muted mr-1">{{ post.likes.count }}</span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
+      <span class="like-count-d text-muted mr-1"></span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
     </div>
     <div class="ml-1">
       <span class="comment-count text-muted mr-1">{{ comment_count }}</span><span data-url="{% url 'home:post-comment-list' post.guid_url %}" class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>
@@ -23,35 +22,39 @@
       <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
     </div>
     <div class="col-xs">
-        <div class="border border-light" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
-            <div class="m-1 px-2" style="font-size: 0.9rem;">
-                <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }} {{ comment.name.last_name }}</span>
-                <span class="font-weight-light pl-2">{{ comment.body }}</span> 
+        <div>
+          <div style="display: inline-block !important;">
+            <div class="border border-light d-block" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
+              <div class="m-1 px-2" style="font-size: 0.9rem;">
+                  <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }} {{ comment.name.last_name }}</span>
+                  <span class="font-weight-light pl-2">{{ comment.body }}</span> 
+              </div>
             </div>
-        </div>
-        <div class="d-flex justify-content-left">
-            <div>
-              {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
-            </div>
-            <div class="mx-1">
-              <span class="text-muted small">·</span>
-            </div>
-            <div>
-              <span class="small text-muted u reply-btn button-hide-outline" type="button" 
-              data-id="{{ comment.id }}" data-toggle="modal" data-target="modal-comment-reply">Reply</span>
-            </div>
-            <div class="mx-1">
+          </div>
+          <div class="d-flex justify-content-start">
+              <div>
+                {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
+              </div>
+              <div class="mx-1">
                 <span class="text-muted small">·</span>
-            </div>
-            <div>
-            <span class="text-muted small view-replies" data-hidden="1" data-id="{{ comment_uuid }}" text="Hide replies">Replies ({{ comment.replies.count }})</span>
-            </div>
-            <div class="mx-1">
-                <span class="text-muted small">·</span>
-            </div>
-            <div>
-                <span class="text-muted small">{{ comment.get_created_on }}</span>
-            </div>   
+              </div>
+              <div>
+                <span class="small text-muted u reply-btn button-hide-outline" type="button" 
+                data-id="{{ comment.id }}" data-toggle="modal" data-target="modal-comment-reply">Reply</span>
+              </div>
+              <div class="mx-1">
+                  <span class="text-muted small">·</span>
+              </div>
+              <div>
+              <span class="text-muted small view-replies" data-hidden="1" data-id="{{ comment_uuid }}" text="Hide replies">Replies ({{ comment.replies.count }})</span>
+              </div>
+              <div class="mx-1">
+                  <span class="text-muted small">·</span>
+              </div>
+              <div>
+                  <span class="text-muted small">{{ comment.get_created_on }}</span>
+              </div>   
+          </div> 
         </div>
         <div class="comment-replies pl-4" id="c-{{ comment_uuid }}" style="display: none;">
             {% for reply in comment.replies.all %}
@@ -147,7 +150,7 @@
 				$(this).data('hidden',1);
 				}
 			});
-  })
+  });
 </script>
 {% endwith %}
 

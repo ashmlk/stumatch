@@ -8,7 +8,6 @@
             #navBarSearchForm input[type=text]{width:400px !important;}
         </style>
         <title>StuMatch</title>
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,70 +16,77 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
     </head>
     <body class="main-bg-color">
      {% block javascript %}
      {% endblock javascript %}
-     <div id="#navPlaceholder">{% include 'home/nav.html' %}</div>
+     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
         <div class="wrapper">
             <div class="container-fluid pl-4 pr-5 pt-4">
                 <div class="row">
                     <div class="col-sm-3">
-                      <div class="pb-2">
-                        <div class="card side-tab-link-holder border-light" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
-                          <div class="card-body py-2">
-                          <div class="my-3 py-1">
-                            <div class="py-3">
-                              <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-mask pr-2"></i>Buzz</a>
-                            </div>
-                            <div class="py-3">
-                              <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-pen-square pr-2"></i>Blogs</a>
-                            </div>
-                            <div class="py-3">
-                              <a href="{% url 'home:courses' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
-                            </div>
-                            <div class="py-3">
-                              <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
-                            </div>
-                            <div class="py-3">
-                              <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-user-friends pr-2"></i>Friends</a>
-                            </div>
-                          </div>
-                          </div>
-                      </div> 
-                      </div>
-                                             
+                      <div class="sticky-top" style="top: 64px;">
+                        <div class="pb-2">
+                          <div class="card side-tab-link-holder border-light" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                              <div class="card-body py-1">
+                                <div class="my-3 py-1">
+                                  <div class="py-3">
+                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-mask pr-2"></i>Buzz</a>
+                                  </div>
+                                  <div class="py-3">
+                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-pen-square pr-2"></i>Blogs</a>
+                                  </div>
+                                  <div class="py-3">
+                                    <a href="{% url 'home:courses' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
+                                  </div>
+                                  <div class="py-3">
+                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
+                                  </div>
+                                  <div class="py-3">
+                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-bookmark pr-2"></i>Bookmarks</a>
+                                  </div>
+                                </div>
+                              </div>
+                          </div> 
+                        </div>
+                      </div>                   
                     </div>
-                    <div class="col-sm-6 order-2">
+                    <div class="col-sm-6 order-2" >
+                      <div class="mt-5" style="top: 54px;">
                         {% block content %}
                         {% endblock %}
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+                      </div>
+ 
                     </div>
                     <div class="col-sm-3 order-sm-2 order-sm-2">
-                      <div class="card">
-                      <div class="border-bottom">
-                        <h5 class="m-1 font-weight-bold card-tittle">
-                          Explore
-                        </h5>
-                      </div>
-                        <div class="d-flex flex-column">
-                          <div class="p-2">
-                            <a href="{% url 'home:home' %}" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-clock pr-1"></i>Feed</a>
+                      <div class="sticky-top mt-3" style="top: 64px;">
+                        <div class="card bg-transparent">
+                          <div class="border-bottom">
+                            <h5 class="m-1 font-weight-bold card-tittle">
+                              Explore
+                            </h5>
                           </div>
-                          <div class="p-2">
-                            <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-star pr-1"></i>Top</a>
-                          </div>
-                          <div class="p-2">
-                            <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-hashtag pr-1"></i>Trending</a>
+                          <div class="d-flex flex-column">
+                            <div class="p-2">
+                              <a href="{% url 'home:home' %}" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-clock pr-1"></i>Feed</a>
+                            </div>
+                            <div class="p-2">
+                              <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-star pr-1"></i>Top</a>
+                            </div>
+                            <div class="p-2">
+                              <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-hashtag pr-1"></i>Trending</a>
+                            </div>
                           </div>
                         </div>
+                        <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                       </div>
-                    
-                      <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>       
-                    </div>
+                  </div>
                 </div>
             </div>
         </div>

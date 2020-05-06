@@ -1,7 +1,3 @@
-body {
-background-color: deepskyblue;
-}
-
 .main-bg-color {
     background-color: rgb(252, 252, 252);
 }
@@ -26,3 +22,14 @@ background-color: deepskyblue;
     text-transform: none;
 }
 
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: rgba(129, 193, 242, 0.993)!important;
+}
+
+.input-no-border {
+    border: 0;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+}

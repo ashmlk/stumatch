@@ -1,82 +1,29 @@
 {% load crispy_forms_tags %}
 {% load static %}
 <script src="{% static 'js/image-uploader.js' %}"></script>
+<script src="{% static 'js/post-create.js' %}"></script>
 <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="{% static 'css/post/image-uploader.css' %}">
+<link rel="stylesheet" href="{% static 'css/post/post-create.css' %}">
 <form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
-		<div class="modal-header">
-			<h5 class="modal-title" >Create a Post</h5>
+		<div class="modal-header text-center">
+			<h5 class="modal-title col-12 text-center">Create a Post
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 			</button>
+		</h5>
 		</div>
 	<div class="modal-body" style="overflow-y: hidden; margin:0;">
 		{{ form|crispy }}
 		<button type="button" id="upload-image" style="margin-top: 0;" class="btn btn-md fileinput-button">
 			<span><i class="align-middle fa-2x fas fa-image"></i></span>
 		</button><span class="text-muted small">Add up to four images to your post</span>
-		<div class="input-images my-2" style="display: none;"></div>
+		<div class="input-images my-2" style="display: none; overflow-x: auto;"></div>
 	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>
-		<button type="submit" class="btn btn-primary"  style="border-radius: 20px;">Post</button>
+	<div class="modal-footer col-12">
+		<button type="submit" class="btn btn-primary"  style="border-radius: 20px; width: 100%;">Post</button>
 	</div>
-	<style>
-		label[for="id_image"]{
-			height: 0;
-			margin-top: -20px;
-			display: none;
-		}
-		.modal-body {
-			overflow-y: auto;
-		}
-		.textarea-hide-outline{
-		border:none !important;
-		outline:none !important;
-		box-shadow: none !important;
-		-moz-box-shadow:none !important;
-		-webkit-box-shadow:none !important;
-		padding-bottom: 1rem;
-		overflow-y: auto;
-		min-height: 12.5rem;
-		}
-		.textinput-hide-outline{
-		border-radius: 0;
-		border-left:none !important;
-		border-top:none !important;
-		border-right:none !important;
-		outline:none !important;
-		box-shadow: none !important;
-		-moz-box-shadow:none !important;
-		-webkit-box-shadow:none !important;
-		}
-		.fileinput-button:hover{
-			opacity: 0.6;
-		}
-		.edited-image {
-			width: 150%;
-			height: 150%;
-		}
-	</style>
-	<script>
-		$(document).ready(function () {
-			$('.input-images').imageUploader({
-				label: '',
-				imagesInputName: 'images',
-				maxFiles: 4,
-			});
-			$(".modal-body textarea").addClass("textarea-hide-outline");
-			$(".modal-body input[type='text']").addClass("textinput-hide-outline");
-			$("#upload-image").click(function(){
-				$("input[type='file']").click();  
-			});
-			$('.uploaded-image').find("img").addClass("edited-image")
-			$("input[type='file']").on("change", function () {
-				$(".input-images").show();
-			})
-		});
-	</script>
 </form>
 
 

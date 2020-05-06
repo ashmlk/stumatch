@@ -1,70 +1,62 @@
 {% load static %}
-<nav class="navbar navbar-expand-sm sticky-top navbar-light nav-header-main" style="height: 3rem;">
-    <span class="navbar-brand ml-0"> <img src="{% static 'logo/m/nav.png' %}" style="height: 50px;" ></span>
+<link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
+<script>
+    $(function () {
+        $('[data-tooltip="tooltip"]').tooltip()
+        $('[data-tooltip="tooltip"]').click(function () {
+          $('[data-tooltip="tooltip"]').tooltip("hide");
+       });
+    });
+</script>
+<nav class="navbar navbar-expand-sm shadow-sm pl-3 border-bottom border-light  p-0 navbar-bg" >
+    <span class="navbar-brand ml-2"> <img src="{% static 'logo/m/nav.png' %}" style="height: 35px;" ></span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="my-auto form-inline d-inline w-50" >
+    <div class="collapse navbar-collapse mr-4" id="navbarSupportedContent">
+        <form class="my-auto form-inline d-inline" style="width: 35%;">
             <div id="custom-search-input">
-                <div class="input-group col-md-12" style="height: 2rem;">
-                    <input type="text" class="pb-2 form-control input-md" placeholder="Search..." />
+                <div class="input-group align-items-center col-md-12" style="height: 1.84rem;" >
+                    <input type="text" class="form-control input-md" placeholder="Search" />
                     <span class="input-group-btn">
-                        <button class="btn  btn-info btn-lg" type="button">
+                        <button class="btn rounded-0 btn-info btn-md" type="button">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>
                 </div>
             </div>
         </form>
-        <ul class="navbar-nav ml-auto mx-4">
-            <li class="nav-item mx-0">
-                <a class="nav-link font-weight-bolder text-dark" href="{% url 'home:home' %}">Home</a>
+        <ul class="navbar-nav ml-auto my-1">
+            <li class="nav-item mr-2">
+                <div class="mr-3 profile-link border-light">
+                    <a href="#" style="text-decoration: none;" data-tooltip="tooltip" data-placement="bottom" title="Profile">
+                        <img class="img-create-post rounded-circle ml-1" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                        alt="Profile image"><span class="mx-1 text-dark font-weight-bolder" >{{ request.user.first_name }}</span></a>
+                </div>
             </li>
-            <li class="nav-item mx-0">
-                <a class="nav-link font-weight-bolder text-dark" href="#">Profile</a>
+            <li class="nav-item mr-2">
+                <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
+                    data-tooltip="tooltip" data-placement="bottom" title="Home"  href="{% url 'home:home' %}"><i class="mt-1 fas fa-2x fa-home text-dark"></i></a>
             </li>
-            <li class="nav-item mx-0">
-                <a class="nav-link font-weight-bolder text-dark" href="#">Messages</a>
+            <li class="nav-item mr-2">
+                <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
+                  data-tooltip="tooltip" data-placement="bottom" title="Notifications" href="#"><i class="mt-1 fas fa-2x fa-bell text-dark" style="transform:rotate(20deg);"></i></a>
             </li>
-            <li class="nav-item mx-0">
-                <a class="nav-link  font-weight-bolder text-dark" href="#">Settings</a>
+            <li class="nav-item mr-2">
+                <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
+                    data-tooltip="tooltip" data-placement="bottom" title="Friends" href="#"><i class="mt-1 fas fa-2x fa-user-friends"></i></a>
             </li>
-            <li class="nav-item mx-0">
-                <a class="nav-link font-weight-bolder text-dark" href="{% url 'main:user_logout' %}">Logout</a>
-            </li>
+            <li class="nav-item border-left  dropdown">
+                <button class="nav-button-bg ml-3  no-border btn-md btn-circle border-light nav-button-bg rounded-circle nav-link border-light " href="#" id="navbarDropdown" 
+                data-tooltip="tooltip" data-placement="bottom" title="Menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-2x fa-caret-down text-dark"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#"><i class="fas mr-1 fa-cog"></i> Settings</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item text-dark" href="{% url 'main:user_logout' %}"><i class="fas mr-1 fa-sign-out-alt"></i> Logout</a>
+                </div>
+              </li>
         </ul>
     </div>
-    </nav>
-    <style>
-        #custom-search-input{
-        padding: 2px;
-        border: solid 1px #E4E4E4;
-        border-radius: 6px;
-        background-color: #fff;
-        }
-
-        #custom-search-input input{
-            height: 2.1rem;
-            border: 0;
-            box-shadow: none;
-        }
-
-        #custom-search-input button{
-            margin: 2px 0 0 0;
-            background: none;
-            box-shadow: none;
-            border: 0;
-            color: #666666;
-            padding: 0 8px 0 15px;
-            border-left: solid 1px #ccc;
-        }
-        #custom-search-input button:hover{
-            border: 0;
-            box-shadow: none;
-            border-left: solid 1px #ccc;
-        }
-        #custom-search-input .fa-search{
-            font-size: 1rem;
-        }    
-    </style>
+</nav>

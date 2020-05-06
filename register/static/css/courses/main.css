@@ -39,24 +39,48 @@
     -webkit-box-shadow:none !important;
 }
 
+.btn.no-border {
+    border:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+}
+.btn.no-border:hover {
+    opacity: 0.88;
+}
 .btn-cplx.Hard {
-    background-color: rgba(255, 0, 0, 0.918);
+    background-color: rgba(245, 76, 76, 0.918);
 
 }
 
 .btn-cplx.Easy {
-    background-color: rgba(0, 128, 0, 0.918);
+    background-color: rgba(0, 204, 0, 0.918);
 }
 
 .btn-cplx.Medium{
-    background-color:rgba(255, 255, 0, 0.918);
+    background-color:rgba(243, 243, 89, 0.918);
 }
 
-.btn-cplx.Failed{
+.btn-cplx.MostFailed{
     background-color:rgba(0, 0, 0, 0.918);
-    content: X;
 }
 
 .btn-cplx:hover {
     opacity: 0.653;
+}
+.cplx.Easy {
+    color: rgba(0, 204, 0, 0.918);
+}
+.cplx.Medium {
+    color:rgba(243, 243, 89, 0.918);
+}
+.cplx.Hard {
+    color:rgba(245, 76, 76, 0.918);
+}
+.cplx.MostFailed {
+    color:rgba(0, 0, 0, 0.918);
+}
+.error-box {
+    background-color: rgba(204, 0, 0, 0.199);
 }
