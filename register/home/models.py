@@ -109,7 +109,7 @@ class Images(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
     name = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(validators=[MaxLengthValidator(350)])
     created_on = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")
@@ -186,6 +186,7 @@ class Course(models.Model):
     course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), MaxValueValidator(max_value_current_year())])
     course_likes = models.ManyToManyField(Profile, blank=True, related_name='course_likes')
     course_dislikes = models.ManyToManyField(Profile, blank=True, related_name='course_dislikes')
+    course_comments = models.ManyToManyField(Comment, blank=True, related_name='course_comments')
     course_semester = models.CharField(
         max_length=2,
         choices=Semester.choices,
@@ -229,6 +230,8 @@ class Course(models.Model):
         total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
         total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
         t = total_likes - total_dislikes
+        if t==0:
+            return "Rate"
         t = float('{:.3g}'.format(t))
         magnitude = 0
         while abs(t) >= 1000:
@@ -264,7 +267,7 @@ class Course(models.Model):
         return r_dic[avg_cplx]
     
     def user_complexity(self):
-        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"a Failure"}
+        r_dic = {1:"easy",2:"medium",3:"hard",4:"a failure"}
         return r_dic[int(self.course_difficulty)]
         
     def average_complexity_ins(self):
@@ -284,8 +287,10 @@ class Course(models.Model):
     def not_liked(self,user):
         return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
     
+    def get_comments(self):
+        return Course.course_comments.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor)
     
-
+    
 
         
         

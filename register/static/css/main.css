@@ -33,3 +33,21 @@
     -moz-box-shadow:none !important;
     -webkit-box-shadow:none !important;
 }
+
+.menu-link-active {
+    background-color:rgb(214, 211, 211); ;
+}
+
+.menu-link:hover {
+    cursor: pointer;
+    background-color:rgb(207, 205, 205); ;
+}
+
+.menu-link:hover  i{
+    color:rgb(18, 20, 22) ;
+}
+
+.menu-link:hover  a{
+    color:rgb(18, 20, 22) ;
+}
+

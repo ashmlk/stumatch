@@ -21,7 +21,7 @@
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
     </head>
-    <body class="main-bg-color">
+    <body class="main-bg-color pb-5" style="background-color: rgb(252, 252, 252);">
      {% block javascript %}
      {% endblock javascript %}
      <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
@@ -31,7 +31,7 @@
                     <div class="col-sm-3">
                       <div class="sticky-top" style="top: 64px;">
                         <div class="pb-2">
-                          <div class="card side-tab-link-holder border-light" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
+                          <div class="card side-tab-link-holder border-0" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
                               <div class="card-body py-1">
                                 <div class="my-3 py-1">
                                   <div class="py-3">
@@ -44,7 +44,7 @@
                                     <a href="{% url 'home:courses' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
                                   </div>
                                   <div class="py-3">
-                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
+                                    <a href="{% url 'home:users-posts' request.user.get_username %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
                                   </div>
                                   <div class="py-3">
                                     <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-bookmark pr-2"></i>Bookmarks</a>
@@ -65,24 +65,22 @@
                     </div>
                     <div class="col-sm-3 order-sm-2 order-sm-2">
                       <div class="sticky-top mt-3" style="top: 64px;">
-                        <div class="card bg-transparent">
                           <div class="border-bottom">
-                            <h5 class="m-1 font-weight-bold card-tittle">
+                            <h5 class="m-1 font-weight-bold">
                               Explore
                             </h5>
                           </div>
-                          <div class="d-flex flex-column">
-                            <div class="p-2">
-                              <a href="{% url 'home:home' %}" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-clock pr-1"></i>Feed</a>
+                          <div class="d-flex flex-column mt-1" id="_pol3">
+                            <div class="p-2 rounded menu-link">
+                              <a href="{% url 'home:latest-posts' %}" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-clock pr-1"></i>Latest</a>
                             </div>
-                            <div class="p-2">
+                            <div class="p-2 rounded menu-link">
                               <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-star pr-1"></i>Top</a>
                             </div>
-                            <div class="p-2">
+                            <div class="p-2 rounded menu-link">
                               <a href="#" class="card-link h6 font-weight-bold text-dark"><i class="fas fa-hashtag pr-1"></i>Trending</a>
                             </div>
-                          </div>
-                        </div>
+                          </div> 
                         <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                       </div>
                     </div>       
@@ -90,5 +88,18 @@
                 </div>
             </div>
         </div>
+        <script>
+          $(document).ready(function () {
+            var path = window.location.href;
+            $('#_pol3 a').each(function() {
+              if (this.href === path) {
+              $(this).closest('div').addClass('menu-link-active');
+              }
+            });
+            $(".menu-link").on("click", function() {
+              location.href = $(this).children("a").attr("href");
+            });
+          });
+        </script>
     </body>
 </html>

@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
+from django.utils import timezone
 from django.views.generic import (
     ListView,
     DetailView,
@@ -20,10 +21,12 @@ from django.views.generic import (
 )
 from django.forms import modelformset_factory 
 from .models import Post, Comment, Images, Course
+from main.models import Profile
 from .forms import PostForm, CommentForm, CourseForm, ImageForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+import datetime
 
 MAX_COURSES = 7
 
@@ -36,13 +39,20 @@ def home(request):
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
-def user_posted_home(request):
+def users_posts(request,username):
+    u = get_object_or_404(Profile,username=username)
     posts = Post.objects.filter(author=request.user).order_by('-last_edited')
-    images = Images.objects.all()
     context = { 'posts':posts }
-    return render(request, 'home/homepage/user_posts.html', context)
-    
+    return render(request, 'home/homepage/home.html', context)
 
+@login_required
+def latest_posts(request):
+    now = datetime.datetime.now(tz=timezone.utc)
+    t_24 = now - datetime.timedelta(hours=24)
+    posts = Post.objects.filter(last_edited__range=(t_24,now))
+    context = { 'posts':posts }
+    return render(request, 'home/homepage/home.html', context)
+   
 @login_required
 def post_create(request):
     data = dict()

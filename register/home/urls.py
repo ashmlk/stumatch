@@ -4,6 +4,8 @@ from home import views
 # removed trailing backslashes
 urlpatterns = [
     url(r'^$',views.home, name='home'),
+    path('posts/latest/', views.latest_posts, name='latest-posts'),
+    path('posts/<str:username>/', views.users_posts, name='users-posts'),
     path('post/create/', views.post_create, name='post-create'),
     path('post/<str:guid_url>/', views.post_detail, name='post-detail'),
     path('post/<str:guid_url>/like/', views.post_like, name='post-like'),
