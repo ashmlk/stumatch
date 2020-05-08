@@ -1,4 +1,4 @@
-from .models import Comment, Course, Post, Images
+from .models import Comment, Course, Post, Images, Review
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
@@ -67,6 +67,21 @@ class CommentForm(forms.ModelForm):
                 'cols': 60}))
     class Meta:
         model = Comment
+        fields = ('body',)
+        
+class ReviewForm(forms.ModelForm):
+    body = forms.CharField(
+        max_length=400,
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'style':'resize:none; outline:none;',
+                'class':'form-control',
+                'placeholder':'Write a review and let other know your experience!',
+                'rows': 4 ,
+                'cols': 80}))
+    class Meta:
+        model = Review
         fields = ('body',)
     
 class CourseForm(forms.ModelForm):

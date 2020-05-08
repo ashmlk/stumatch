@@ -20,9 +20,9 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course
+from .models import Post, Comment, Images, Course, Review
 from main.models import Profile
-from .forms import PostForm, CommentForm, CourseForm, ImageForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -267,10 +267,6 @@ def course_add(request):
     }
     return render(request,'home/courses/course_add.html', context)
         
-
-def course_update(request):
-    pass
-
 def course_remove(request, id):
     data= dict()
     course = get_object_or_404(Course, id=id)
@@ -306,4 +302,50 @@ def course_vote(request, id, code, status=None):
     data['course_vote'] = render_to_string('home/courses/course_vote.html',{'course':course},request=request)
     return JsonResponse(data)
             
-
+def course_detail(request, id):
+    data = dict()
+    course = get_object_or_404(Course, id=id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST or None)
+        if form.is_valid():
+            review = form.save(False)
+            review.author = request.user
+            review.save()
+            course.course_reviews.add(review)
+    else:
+        form = ReviewForm
+    if request.is_ajax():
+        data['review_count'] = course.reviews_count()
+        data['reviews_all_count'] = course.reviews_all_count()
+        data['review'] = render_to_string('home/courses/new_review.html',{'review': review},request=request)
+        return JsonResponse(data)
+    reviews_count = course.reviews_count()
+    reviews_all_count = course.reviews_all_count()
+    reviews = course.get_reviews()
+    reviews_all = course.get_reviews_all()
+    context = {
+        'course':course,
+        'reviews_count':reviews_count,
+        'reviews_all_count':reviews_all_count,
+        'reviews':reviews,
+        'reviews_all':reviews_all,
+        'form':form,
+    }
+    return render(request,'home/courses/course_detail.html', context)
+    
+@login_required
+def course_like(request,id):
+    data = dict()
+    review = get_object_or_404(Review, id=id)
+    user = request.user
+    if request.method == 'POST':    
+        if review.likes.filter(id=user.id).exists():
+            review.likes.remove(user)
+        else:
+            review.likes.add(user)
+        data['review'] = render_to_string('home/courses/review_like.html',{'review':review},request=request)
+        return JsonResponse(data)   
+        
+        
+        
+            

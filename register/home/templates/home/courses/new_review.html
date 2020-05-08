@@ -1,0 +1,36 @@
+{% load static %}
+{% with review=review %}
+<div class="row bg-white mb-1">
+    <div class="col-sm">
+        <div class="card">
+            <div class="d-flex">
+                <div class="c-n-img p-1 mr-0">
+                    <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                        alt="Profile image">
+                </div>
+                <div>
+                    <div class="d-flex flex-column">
+                        <div class="u_n">
+                            <div>
+                                <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+                            </div>
+                        </div>
+                        <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
+                            <div class="ml-1" style="font-size: 0.8rem;">
+                                <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
+                                <span>{{ review.created_on|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body m-0">
+                <div class="content display-4" style="font-size: 1.2rem;">
+                   {{ review.body }} 
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}

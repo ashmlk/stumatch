@@ -1,0 +1,25 @@
+<form class="review-like-form" data-url="{% url 'home:review-like' review.id %}" method="POST">
+    {% csrf_token %}
+    {% if request.user in review.likes.all %}
+    <button class="btn p-0 btn-sm btn-outline-danger small review-like-btn button-hide-outline" type="submit" 
+        data-id="{{ review.id }}">
+        <span id="#clikeBtn" class="mx-1 small u">
+            Disike<span class="review-like-count"> {{ review.likes_count }}</span>
+        </span>
+        <input type="hidden" class="review-input-like-count" value=" {{ review.likes_count }} "/>
+    </button> 
+    {% else %}
+    <button class="btn p-0 btn-sm btn-outline-primary small  review-like-btn  button-hide-outline" type="submit" 
+        data-id="{{ review.id }}">
+        <span id="#clikeBtn" class="mx-1 u small">
+            Like<span class="review-like-count"> {{ review.likes_count }} </span> 
+        </span>
+        <input type="hidden" class="review-input-like-count" value="{{ review.likes_count }} " />
+    </button>
+    {% endif %}
+    </form>
+    <style>
+        button {
+            opacity: 1 !important;
+        }
+    </style>

@@ -1,4 +1,103 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
-{% load crispy_form_tags %}
-<div class=""></div>
+{% block item %}
+<script src="{% static 'js/courses/course-review.js' %}"></script>
+<div class="bg-white rounded shadow-sm border">
+    <div class="c_code align-items-center bg-primary" style="min-height: 4.9rem;">
+        <div class="d-flex justify-content-between pt-4 p-1">
+            <div>
+                <h5 class="text-white display-4" style="font-weight:500; font-size: 1.9rem;">
+                    {{ course.course_code }}
+                </h5>
+            </div>
+            <div class="mr-3" style="margin-top: -15px !important;">
+                <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image" style="height:75px;width: 75px;">
+            </div> 
+        </div>
+    </div> 
+    <div class="col-sm mb-2">
+        <div class="pt-1" style="min-height: 100px !important;">
+            <div class="c_dis mb-1 course-goto btn btn-outline-primary " data-url="{%url 'home:course-instructor' course.course_university course.course_instructor %}">
+                <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+            </div>
+            <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
+                <span>Difficulty:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
+            </div>
+            <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
+                <span>Difficulty Overall:</span><span class="ml-1">{{ course.average_complexity }}</span>
+            </div>
+        </div>
+        <div class="border-top votes-container ml-1">
+            {% include 'home/courses/course_vote.html' with course=course %}
+        </div>
+    </div>
+</div>
+<div>
+    <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show" style="text-decoration: none;" type="button">Write a review</button>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container p-0 mb-4">
+    <div class="review-textbox pl-3 pr-3 my-2" style="display: none;">
+        <form class=course-review-form  data-url="{% url 'home:course-detail' course.id %}" method="POST">
+            {% csrf_token %}
+            <div class="d-flex  flex-column">
+                <div class="row border rounded">
+                    <div class="col-xs m-1">
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                        alt="Profile image">
+                    </div>
+                    <div class="col-sm-11" style="margin-left: -0.9rem;">
+                        {{ form }}
+                    </div>  
+                </div>
+                <div class="d-flex justify-content-end my-1">
+                    <div>
+                        <button class="border-0 no-border btn btn-md small btn-primary" data-url="{% url 'home:course-detail' course.id %}" style="margin-right: -14px !important;text-decoration: none;" type="submit">Add Review</button>
+                    </div>           
+                </div>
+            </div>     
+        </form>
+    </div>
+    <div id="reviews" class=" border-bottom p-0 mt-1">
+        <ul class="d-flex mt-1 justify-content-start nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item align-items-center d-flex justify-content-between">
+              <a class="nav-link d-flex align-items-center active" id="review-spec-tab" data-toggle="pill" href="#review-spec" role="tab" aria-controls="review-spec" aria-selected="false">Reviews
+                <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
+              </a>
+            </li>
+            <li class="nav-item align-items-center d-flex justify-content-between">
+              <a class="nav-link d-flex align-items-center" id="review-all-tab" data-toggle="pill" href="#review-all" role="tab" aria-controls="review-all" aria-selected="false">Reviews All
+                <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
+              </a>
+              
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="review-spec" role="tabpanel" aria-labelledby="review-spec-tab">
+                <div id="new-review-s"></div>
+                {% include 'home/courses/course_reviews.html' with reviews=reviews %}
+            </div>
+            <div class="tab-pane fade" id="review-all" role="tabpanel" aria-labelledby="review-all-tab">
+                <div id="new-review-a"></div>
+                {% include 'home/courses/course_reviews.html' with reviews=reviews_all %}</div>
+          </div>
+    </div>
+</div>
+<style>
+    .btn-primary, textarea {
+        border: 0 !important;
+        outline:none !important;
+        box-shadow: none !important;
+        -moz-box-shadow:none !important;
+        -webkit-box-shadow:none !important;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('textarea').attr("row","4");
+        $('textarea').attr("col","70");
+        $('textarea').attr("placeholder",'Write a review, and share your experience with others');
+    });
+</script>
+{% endblock content %}

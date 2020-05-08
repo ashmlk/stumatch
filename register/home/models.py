@@ -167,6 +167,62 @@ class Comment(models.Model):
     def get_uuid(self):
         return str(uuid.uuid4()) 
 
+class Review(models.Model):
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    body = models.TextField(validators=[MaxLengthValidator(400)])
+    created_on = models.DateTimeField(auto_now_add=True)
+    likes= models.ManyToManyField(Profile, blank=True, related_name='review_likes')
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return 'Review {} by {}'.format(self.body, self.author.get_username)
+    
+    def likes_count(self):
+        return self.likes.count()
+    
+    def get_created_on(self):
+        now = timezone.now()
+        diff= now - self.created_on
+        if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+            seconds= diff.seconds 
+            if seconds == 1:
+                return str(seconds) +  "s"
+            else:
+                return str(seconds) + " s"     
+        if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+            minutes= math.floor(diff.seconds/60)
+            if minutes == 1:
+                return str(minutes) + "m" 
+            else:
+                return str(minutes) + "m"
+        if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+            hours= math.floor(diff.seconds/3600)
+            if hours == 1:
+                return str(hours) + "h"
+            else:
+                return str(hours) + "h"
+        # 1 day to 30 days
+        if diff.days >= 1 and diff.days < 30:
+            days= diff.days
+            if days == 1:
+                return str(days) + "d"
+            else:
+                return str(days) + "d"
+        if diff.days >= 30 and diff.days < 365:
+            months= math.floor(diff.days/30)       
+            if months == 1:
+                return str(months) + "m"
+            else:
+                return str(months) + "m"
+        if diff.days >= 365:
+            years= math.floor(diff.days/365)
+            if years == 1:
+                return str(years) + "y"
+            else:
+                return str(years) + "y"
+
 class Course(models.Model):
     class Semester(models.TextChoices):
         SPRING = '1', 'Spring'
@@ -186,7 +242,7 @@ class Course(models.Model):
     course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), MaxValueValidator(max_value_current_year())])
     course_likes = models.ManyToManyField(Profile, blank=True, related_name='course_likes')
     course_dislikes = models.ManyToManyField(Profile, blank=True, related_name='course_dislikes')
-    course_comments = models.ManyToManyField(Comment, blank=True, related_name='course_comments')
+    course_reviews = models.ManyToManyField(Review, blank=True, related_name='course_reviews')
     course_semester = models.CharField(
         max_length=2,
         choices=Semester.choices,
@@ -250,6 +306,14 @@ class Course(models.Model):
             t /= 1000.0
         return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
     
+    def complexity_btn(self):
+        r_dic = {"Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
+        return (r_dic[self.average_complexity()])
+    
+    def complexity_btn_ins(self):
+        r_dic = {"Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
+        return (r_dic[self.average_complexity_ins()])
+    
     def sem(self):      
         r_dic = {1:"Spring",2:"Summer",3:"Fall",4:"Winter"}
         d = int(self.course_difficulty)
@@ -287,10 +351,19 @@ class Course(models.Model):
     def not_liked(self,user):
         return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
     
-    def get_comments(self):
-        return Course.course_comments.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor)
+    def get_reviews(self):
+        return Review.objects.filter(course_reviews__course_code=self.course_code, course_reviews__course_instructor=self.course_instructor,course_reviews__course_university=self.course_university).distinct()
     
+    def get_reviews_all(self):
+       return Review.objects.filter(course_reviews__course_code=self.course_code,course_reviews__course_university=self.course_university).distinct()
     
+    def reviews_count(self):
+       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
+    
+    def reviews_all_count(self):
+       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university).count()
+    
+
 
         
         

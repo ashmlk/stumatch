@@ -24,7 +24,7 @@
             <div class="d-flex justify-content-between ml-1 mr-1">
                 <div class="d-flex">
                     <div>
-                        <h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5>
+                        <a href="{% url 'home:course-detail' course.id %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
                     </div>
                     <div class="dropdown">
                         <button class="btn btn-sm no-border" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

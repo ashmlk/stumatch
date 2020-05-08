@@ -20,14 +20,14 @@
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico  ' %}" />
     </head>
-    <body class="main-bg-color">
+    <body>
         <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>>
         <div class="wrapper">
             <div class="container-fluid pl-4 pr-5">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="sticky-top mt-2" style="top: 66px !important;margin-top: 20px !important;">
-                            <div class="pt-3 pb-2">
+                            <div class="pb-2">
                                 <div class="border-bottom">
                                     <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
                                         Courses
@@ -48,7 +48,11 @@
                         {% endblock %}
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>
-                    <div class="col-sm-3 order-sm-2 order-sm-2">
+                    <div class="col-sm-3 order-sm-2 order-sm-2" style="top: 44px;">
+                        <div class="mt-2">
+                            {% block item %}
+                            {% endblock %}
+                        </div>  
                         <div class="sticky-top mt-2" style="top: 66px;">
                             <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                         </div>
