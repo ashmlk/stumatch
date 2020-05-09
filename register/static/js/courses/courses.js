@@ -1,4 +1,13 @@
 $(document).ready(function () {
+        $('.c_dis').addClass("border rounded p-1 mr-2")
+        $('.c_dis').css({'font-size':'0.94rem'});
+        $('.c_dis').find('span.text-dark').css({'font-weight':'600'});
+        $('._ar').addClass("border rounded-circle");
+        $(document).on('click', '.course-goto', function (e) {
+        e.stopImmediatePropagation();
+        var url = $(this).attr("data-url")
+        document.location.href = url 
+        });
     var veid = null;
 	$(document).on("click",".sh-rmv-c", function (e) {
 		e.stopImmediatePropagation();

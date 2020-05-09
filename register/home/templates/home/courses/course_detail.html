@@ -1,9 +1,11 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
 {% block item %}
-<script src="{% static 'js/courses/course-review.js' %}"></script>
+{% load ibuilder %}
+{% bg_rand as bgrnd %}
+<script src="{% static 'js/courses/course-detail.js' %}"></script>
 <div class="bg-white rounded shadow-sm border">
-    <div class="c_code align-items-center bg-primary" style="min-height: 4.9rem;">
+    <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
         <div class="d-flex justify-content-between pt-4 p-1">
             <div>
                 <h5 class="text-white display-4" style="font-weight:500; font-size: 1.9rem;">
@@ -26,6 +28,13 @@
             <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
                 <span>Difficulty Overall:</span><span class="ml-1">{{ course.average_complexity }}</span>
             </div>
+            <hr>
+            <div class="c_dis mb-1" style="display: inline-block;">
+                <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
+            </div>
+            <div class="c_dis mb-1" style="display: inline-block;">
+                <span>Total Students With Instructor {{ course.course_instructor|capfirst }}:</span><span class="ml-1">{{ course.get_user_count_ins }}</span>
+            </div>
         </div>
         <div class="border-top votes-container ml-1">
             {% include 'home/courses/course_vote.html' with course=course %}
@@ -35,9 +44,13 @@
 <div>
     <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show" style="text-decoration: none;" type="button">Write a review</button>
 </div>
+<div>
+    <button class="col-sm-12 my-1 border-0 btn btn-block small btn-primary" style="text-decoration: none;" type="button">Compare this course</button>
+</div>
 {% endblock %}
 {% block content %}
-<div class="container p-0 mb-4">
+<script src="{% static 'js/courses/course-review.js' %}"></script>
+<div class="container mt-1 p-0 mb-4">
     <div class="review-textbox pl-3 pr-3 my-2" style="display: none;">
         <form class=course-review-form  data-url="{% url 'home:course-detail' course.id %}" method="POST">
             {% csrf_token %}
@@ -59,8 +72,8 @@
             </div>     
         </form>
     </div>
-    <div id="reviews" class=" border-bottom p-0 mt-1">
-        <ul class="d-flex mt-1 justify-content-start nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <div id="reviews" class="p-0 mt-1">
+        <ul class="d-flex mt-1 justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
             <li class="nav-item align-items-center d-flex justify-content-between">
               <a class="nav-link d-flex align-items-center active" id="review-spec-tab" data-toggle="pill" href="#review-spec" role="tab" aria-controls="review-spec" aria-selected="false">Reviews
                 <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
@@ -93,11 +106,4 @@
         -webkit-box-shadow:none !important;
     }
 </style>
-<script>
-    $(document).ready(function () {
-        $('textarea').attr("row","4");
-        $('textarea').attr("col","70");
-        $('textarea').attr("placeholder",'Write a review, and share your experience with others');
-    });
-</script>
 {% endblock content %}

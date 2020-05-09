@@ -1,5 +1,6 @@
 import string
 import secrets
+import random
 from django import template
 
 register = template.Library()
@@ -21,4 +22,12 @@ def check_not_liked(context):
     request = context['request']
     course = context['course']
     return course.not_liked(request.user)
+
+@register.simple_tag
+def bg_rand():
+    bgs = ['#546e7a','#455a64','#90a4ae','#90a4ae','#616161','#fdd835','#00c853','#558b2f','#9ccc65','#43a047','#0091ea','#01579b','#2979ff','#512da8','#5c6bc0','#00c853','#1a237e','#ffbb33','#33b5e5',
+           '#2BBBAD','#aa66cc','#ba68c8','#795548','#607d8b','#90a4ae']
+    random.shuffle(bgs)
+    return random.choice(bgs)
+
 

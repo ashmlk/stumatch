@@ -174,7 +174,7 @@ class Review(models.Model):
     likes= models.ManyToManyField(Profile, blank=True, related_name='review_likes')
 
     class Meta:
-        ordering = ['created_on']
+        ordering = ['-created_on']
 
     def __str__(self):
         return 'Review {} by {}'.format(self.body, self.author.get_username)
@@ -238,7 +238,6 @@ class Course(models.Model):
     course_code = models.CharField(max_length=20)
     course_university = models.CharField(max_length=100)
     course_instructor = models.CharField(max_length=100)
-    is_shared = models.BooleanField(default=False)
     course_year = models.IntegerField(('year'), validators=[MinValueValidator(1984), MaxValueValidator(max_value_current_year())])
     course_likes = models.ManyToManyField(Profile, blank=True, related_name='course_likes')
     course_dislikes = models.ManyToManyField(Profile, blank=True, related_name='course_dislikes')

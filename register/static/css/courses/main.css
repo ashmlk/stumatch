@@ -31,6 +31,7 @@
     height: 1.4rem;
     width: 1.4rem;
 }
+
 .btn.btn-cplx{
     border:none !important;
     outline:none !important;
@@ -83,4 +84,20 @@
 }
 .error-box {
     background-color: rgba(204, 0, 0, 0.199);
+}
+.course-title-box:hover {
+    cursor: pointer;
+    opacity: 0.7;
+}
+.cplx.Easy {
+    color: rgba(0, 204, 0, 0.918);
+}
+.cplx.Medium {
+    color:rgba(243, 243, 89, 0.918);
+}
+.cplx.Hard {
+    color:rgba(245, 76, 76, 0.918);
+}
+.cplx.MostFailed {
+    color:rgba(0, 0, 0, 0.918);
 }

@@ -10,6 +10,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
 from django.utils import timezone
+from django.db.models import Q
+from django.db.models import Max, Min
 from django.views.generic import (
     ListView,
     DetailView,
@@ -212,7 +214,16 @@ def courses(request):
 
 @login_required
 def courses_instructor(request,par1,par2):
-    courses = Course.objects.filter(course_instructor=par2,course_university=par1)
+    course_dup = Course.objects.filter(course_instructor=par2,course_university=par1).values('course_instructor', 'course_university').annotate(course_year=Max('course_year'))
+    courses = Course.objects.filter(course_instructor__in=[c['course_instructor'] for c in course_dup], course_university__in=[c2['course_university'] for c2 in course_dup])
+    rtr_cc = []
+    ids = []
+    for c in courses:
+        if c.course_code in rtr_cc:
+            ids.append(c.id)
+        else:
+            rtr_cc.append(c.course_code)
+    courses = Course.objects.filter(course_instructor=par2,course_university=par1).filter(~Q(id__in=ids))
     instructor=par2
     university=par1
     university = university.lower()
@@ -254,7 +265,7 @@ def course_add(request):
                 return render(request,'home/courses/course_add.html', context)
             else:
                 if course_exists:
-                    c = Courses.objects.filter(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty)
+                    c = Courses.objects.get(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty)
                     request.user.courses.add(c)
                 else:
                     course.save()
@@ -315,7 +326,7 @@ def course_detail(request, id):
     else:
         form = ReviewForm
     if request.is_ajax():
-        data['review_count'] = course.reviews_count()
+        data['reviews_count'] = course.reviews_count()
         data['reviews_all_count'] = course.reviews_all_count()
         data['review'] = render_to_string('home/courses/new_review.html',{'review': review},request=request)
         return JsonResponse(data)

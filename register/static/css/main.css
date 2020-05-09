@@ -18,8 +18,12 @@
     text-transform: none;
 }
 
-.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
-    background-color: rgba(129, 193, 242, 0.993)!important;
+.btn-primary, .btn-primary:active, .btn-primary:visited {
+    background-color: rgb(126, 192, 243)!important;
+}
+
+.btn-primary:hover {
+    opacity: 0.85;
 }
 
 .input-no-border {
@@ -31,12 +35,12 @@
 }
 
 .menu-link-active {
-    background-color:rgb(214, 211, 211); ;
+    background-color:rgb(214, 211, 211);
 }
 
 .menu-link:hover {
     cursor: pointer;
-    background-color:rgb(207, 205, 205); ;
+    background-color:rgb(207, 205, 205); 
 }
 
 .menu-link:hover  i{

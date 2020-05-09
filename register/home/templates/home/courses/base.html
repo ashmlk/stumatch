@@ -21,46 +21,56 @@
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico  ' %}" />
     </head>
     <body>
-        <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>>
+        <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
         <div class="wrapper">
             <div class="container-fluid pl-4 pr-5">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="sticky-top mt-2" style="top: 66px !important;margin-top: 20px !important;">
+                        <div class="sticky-top" style="top: 64px;">
                             <div class="pb-2">
-                                <div class="border-bottom">
-                                    <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
-                                        Courses
-                                    </h4>
+                                <div class="mb-2">
+                                    <div class="border-bottom">
+                                        <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
+                                            Courses
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="list-group bg-transparent">
+                                    <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action"><span class="mr-2">
+                                        <img src="{% static 'default/courses/books.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                    </span>Your Courses</a>
+                                    <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">
+                                        <span class="mr-2">
+                                            <img src="{% static 'default/courses/addc.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                        </span>Add Course</a>
+                                    <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
+                                        <img src="{% static 'default/courses/instructor.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                    </span>Instructors</a>
+                                    <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
+                                        <img src="{% static 'default/courses/clk.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                    </span>Saved</a>
                                 </div>
                             </div>
-                            <div class="list-group bg-transparent">
-                                <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action">Your Courses</a>
-                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">Add Course</a>
-                                <a href="#" class="list-group-item list-group-item-action">Instructors</a>
-                                <a href="#" class="list-group-item list-group-item-action">Suggestions</a>
-                                <a href="#" class="list-group-item list-group-item-action">Related</a>
-                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 order-2 pt-2" style="top: 44px;">
-                        {% block content %}
-                        {% endblock %}
-                        <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
-                    </div>
-                    <div class="col-sm-3 order-sm-2 order-sm-2" style="top: 44px;">
-                        <div class="mt-2">
-                            {% block item %}
+                    <div class="col-sm-5 order-2 mt-4">
+                        <div class="mt-5">
+                            {% block content %}
                             {% endblock %}
-                        </div>  
+                            <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 order-sm-2 order-sm-2">
                         <div class="sticky-top mt-2" style="top: 66px;">
+                            <div class="mt-2">
+                                {% block item %}
+                                {% endblock %}
+                            </div>  
                             <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                         </div>
-                      
-                    </div>       
-                </div>
+                    </div>
+                </div>       
             </div>
-         </div>
+        </div>
     </body>
-
 </html>
