@@ -90,7 +90,6 @@ class CourseForm(forms.ModelForm):
 		max_length=12,
 		min_length=5,
 		required=True,
-        help_text='Please enter your course code ommiting any spaces',
   		validators=[alphanumeric_v2],
 		widget=forms.TextInput(
 			attrs={
@@ -106,7 +105,7 @@ class CourseForm(forms.ModelForm):
 		min_length=2,
 		required=True,
   		validators=[alphabetical],
-        help_text='Please ommit any title(Dr, Professor, Mr., Mrs,...)',
+        help_text='Please ommit any title(Dr., Professor, Mr., Mrs.,...)',
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Instructor Lastname",

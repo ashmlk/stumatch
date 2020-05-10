@@ -17,7 +17,7 @@ def max_value_current_year():
  
 class Post(models.Model):
     title = models.CharField(max_length=100)
-    guid_url = models.CharField(max_length=12,unique=True, null=True)
+    guid_url = models.CharField(max_length=255,unique=True, null=True)
     content = models.TextField(validators=[MaxLengthValidator(1200)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
@@ -168,11 +168,21 @@ class Comment(models.Model):
         return str(uuid.uuid4()) 
 
 class Review(models.Model):
+    class Interesting(models.TextChoices):
+        INTERESTING = '1', 'Interesting'
+        RELATIVELY = '2', 'Relatively Interesting'
+        NOT = '3', 'Not Interesting'
+        NO_OPINION = '4', 'No opinion'
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     body = models.TextField(validators=[MaxLengthValidator(400)])
     created_on = models.DateTimeField(auto_now_add=True)
     likes= models.ManyToManyField(Profile, blank=True, related_name='review_likes')
-
+    dislikes= models.ManyToManyField(Profile, blank=True, related_name='review_dislikes')
+    review_interest = models.CharField(
+        max_length=2,
+        choices=Interesting.choices,
+        default=Interesting.NO_OPINION
+        )
     class Meta:
         ordering = ['-created_on']
 
@@ -257,7 +267,7 @@ class Course(models.Model):
     
     def save(self, *args, **kwargs):
         self.course_code = self.course_code.upper().replace(' ', '')
-        self.course_university = self.course_university.strip().lower().replace('university','')
+        self.course_university = self.course_university.strip().lower()
         self.course_instructor = self.course_instructor.strip().lower()
         super(Course, self).save(*args, **kwargs)    
     
@@ -331,6 +341,10 @@ class Course(models.Model):
     
     def user_complexity(self):
         r_dic = {1:"easy",2:"medium",3:"hard",4:"a failure"}
+        return r_dic[int(self.course_difficulty)]
+    
+    def user_complexity_btn(self):
+        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
         return r_dic[int(self.course_difficulty)]
         
     def average_complexity_ins(self):

@@ -1,6 +1,6 @@
 {% load static %}
 {% for review in reviews %}
-<div class="row bg-white mb-1">
+<div class="row bg-white mt-1">
     <div class="col-sm">
         <div class="card">
             <div class="d-flex">
@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <div class="d-flex flex-column">
-                        <div class="u_n">
+                        <div class="u_n d-fle">
                             <div>
                                 <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
                             </div>
@@ -18,7 +18,8 @@
                         <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
                             <div class="ml-1" style="font-size: 0.8rem;">
                                 <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
-                                <span>{{ review.created_on|date:"M d, Y" }}</span>
+                                <span>·</span>
+                                <span>{{ review.get_created_on }}</span>
                             </div>
                         </div>
                     </div>
@@ -30,7 +31,7 @@
                 </div>
                 
             </div>
-            <div class="m-1">
+            <div class="m-1 mt-2 review-likes-container">
                 {% include 'home/courses/review_like.html' with review=review %}
             </div>
         </div>

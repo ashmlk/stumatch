@@ -2,9 +2,11 @@
 {% load crispy_forms_tags %}
 {% load ibuilder %}
 {% load static %}
+{% block item %}
+
+{% endblock %}
 {% block content %}
 <script src="{% static 'js/courses/courses.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
 <div class="mb-4">
     {% if courses %}
     <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
@@ -25,22 +27,24 @@
                 <div class="d-flex justify-content-between ml-1 mr-1 border-bottom">
                     <div class="d-flex">
                         <div class="ml-1">
-                            <a class="text-dark" href="{% url 'home:course-detail' course.id %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
+                            <a class="text-dark" href="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
                         </div>
                         <div class="dropdown">
                             <button class="btn btn-sm no-border" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-caret-down"></i>
                             </button>
                             <div class="dropdown-menu mt-1" aria-labelledby="d_l">
-                                <button class="small dropdown-item"><i class="mr-1 fas fa-share"></i>Share</button>
-                                <button class="small dropdown-item sh-rmv-c" data-veid="{{ veid }}" 
+                                <button class="dropdown-item"><i class="mr-1 fas fa-share"></i>Share</button>
+                                <button class="dropdown-item sh-rmv-c" data-veid="{{ veid }}" 
                                 data-url="{% url 'home:course-remove' course.id %}">
                                 <i class="mr-1 fas fa-trash"></i>Remove Course</button>
+                                <a class="btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university course.course_code %}">
+                                    <i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <button class="btn btn-cplx {{ course.average_complexity|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said this course is {{ course.user_complexity }}"></button>
+                        <button class="btn btn-cplx {{ course.user_complexity_btn|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said this course is {{ course.user_complexity }}"></button>
                     </div>
                 </div>
                 <div class="row mt-1 mx-1">

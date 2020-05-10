@@ -1,25 +1,35 @@
-<form class="review-like-form" data-url="{% url 'home:review-like' review.id %}" method="POST">
+{% load static %}
+<script src="{% static 'js/courses/review-likes.js' %}"></script>
+<form class="review-like-form"  method="POST">
     {% csrf_token %}
     {% if request.user in review.likes.all %}
-    <button class="btn p-0 btn-sm btn-outline-danger small review-like-btn button-hide-outline" type="submit" 
-        data-id="{{ review.id }}">
-        <span id="#clikeBtn" class="mx-1 small u">
-            Disike<span class="review-like-count"> {{ review.likes_count }}</span>
-        </span>
-        <input type="hidden" class="review-input-like-count" value=" {{ review.likes_count }} "/>
-    </button> 
+    <button class="btn no-border p-0 mr-1  btn-md  review-like-btn button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='rmvlike' %}">
+        <i class="fas  mr-1 fa-thumbs-up" style="color:  rgb(43, 98, 153);"></i><span class="text-muted small">{{ review.likes.count }}</span></button> 
+
+    <button class="btn no-border p-0 btn-md review-like-btn button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='udislike' %}">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button> 
+
+    {% elif request.user in review.dislikes.all %}
+
+    <button class="btn no-border p-0 mr-1 btn-md  review-like-btn  button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='ulike' %}">
+        <i class="fas mr-1 fa-thumbs-up" style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.likes.count }}</span></button>
+
+    <button class="btn no-border p-0 btn-md  review-like-btn  button-hide-outline" type="submit" 
+    data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='rmvdislike' %}">
+    <i class="fas mr-1 fa-thumbs-down" style="color:  rgb(240, 78, 78);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button>
+
     {% else %}
-    <button class="btn p-0 btn-sm btn-outline-primary small  review-like-btn  button-hide-outline" type="submit" 
-        data-id="{{ review.id }}">
-        <span id="#clikeBtn" class="mx-1 u small">
-            Like<span class="review-like-count"> {{ review.likes_count }} </span> 
-        </span>
-        <input type="hidden" class="review-input-like-count" value="{{ review.likes_count }} " />
-    </button>
+
+    <button class="btn no-border p-0 mr-1  btn-md  review-like-btn  button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='like' %}">
+        <i class="fas mr-1 fa-thumbs-up"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.likes.count }}</span></button>
+
+    <button class="btn no-border p-0 btn-md review-like-btn  button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='dislike' %}">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button>
+    
     {% endif %}
-    </form>
-    <style>
-        button {
-            opacity: 1 !important;
-        }
-    </style>
+</form>

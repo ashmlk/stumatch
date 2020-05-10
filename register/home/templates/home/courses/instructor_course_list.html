@@ -6,7 +6,7 @@
 <script src="{% static 'js/courses/course-instructor.js' %}"></script>
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
-        <h4 class="font-weight-bolder">{{ instructor|capfirst }}</h4>
+        <h4 class="font-weight-bolder">Professor {{ instructor|capfirst }}</h4>
         <h6 class="text-muted">{{ university|capfirst }}</h6>
     </div>
     <div>
@@ -17,7 +17,7 @@
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="card mb-2 bg-white">
-        <div class="d-flex justify-content-between course-title-box"  data-url="{% url 'home:course-detail' course.id %}" style="height:6rem; background-color: {{ bgrnd }};">
+        <div class="d-flex justify-content-between course-title-box"  data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" style="height:6rem; background-color: {{ bgrnd }};">
             <div class="ml-1"> 
                 <a class="mx-2 my-auto text-white"><h3 class="pt-1 font-weight-bold">{{ course.course_code }}</h3></a>
             </div>
@@ -51,11 +51,10 @@
                         </button>
                         <div class="dropdown-menu bg-white dropdown-menu-left mt-1" aria-labelledby="d_li">
                           <button class="small btn no-border dropdown-item"><i class="mr-1 fas fa-bookmark"></i>Save</button>
-                          <button class="small btn no-border dropdown-item"><i class="mr-1 fas fa-plus"></i>More instructors</button>
+                          <a class="small btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university course.course_code %}"><i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
                         </div>
                     </div>
-                </div>
-                
+                </div> 
             </div>     
         </div>
     </div>

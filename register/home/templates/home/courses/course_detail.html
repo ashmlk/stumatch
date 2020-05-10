@@ -4,55 +4,63 @@
 {% load ibuilder %}
 {% bg_rand as bgrnd %}
 <script src="{% static 'js/courses/course-detail.js' %}"></script>
-<div class="bg-white rounded shadow-sm border">
-    <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
-        <div class="d-flex justify-content-between pt-4 p-1">
-            <div>
-                <h5 class="text-white display-4" style="font-weight:500; font-size: 1.9rem;">
-                    {{ course.course_code }}
-                </h5>
+<div class="mt-3">
+    <div class="bg-white rounded shadow-sm border">
+        <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
+            <div class="d-flex justify-content-between pt-4 p-1">
+                <div>
+                    <h5 class="text-white display-4" style="font-weight:500; font-size: 1.9rem;">
+                        {{ course.course_code }}
+                    </h5>
+                </div>
+                <div class="mr-3" style="margin-top: -15px !important;">
+                    <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image" style="height:75px;width: 75px;">
+                </div> 
             </div>
-            <div class="mr-3" style="margin-top: -15px !important;">
-                <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image" style="height:75px;width: 75px;">
-            </div> 
-        </div>
-    </div> 
-    <div class="col-sm mb-2">
-        <div class="pt-1" style="min-height: 100px !important;">
-            <div class="c_dis mb-1 course-goto btn btn-outline-primary " data-url="{%url 'home:course-instructor' course.course_university course.course_instructor %}">
-                <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+        </div> 
+        <div class="col-sm mb-2">
+            <div class="pt-2" style="min-height: 100px !important;">
+                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university course.course_instructor %}">
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                </a>
+                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
+                    <span>Difficulty:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
+                </div>
+                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
+                    <span>Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                </div>
+                <hr>
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
+                </div>
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span>Total Students With Professor {{ course.course_instructor|capfirst }}:</span><span class="ml-1">{{ course.get_user_count_ins }}</span>
+                </div>
+                {% if taken %}
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span class="small text-muted">You have taken this course.</span>
+                </div>
+                {% endif %}
             </div>
-            <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
-                <span>Difficulty:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
+            <div class="border-top votes-container ml-1">
+                {% include 'home/courses/course_vote.html' with course=course %}
             </div>
-            <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
-                <span>Difficulty Overall:</span><span class="ml-1">{{ course.average_complexity }}</span>
-            </div>
-            <hr>
-            <div class="c_dis mb-1" style="display: inline-block;">
-                <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
-            </div>
-            <div class="c_dis mb-1" style="display: inline-block;">
-                <span>Total Students With Instructor {{ course.course_instructor|capfirst }}:</span><span class="ml-1">{{ course.get_user_count_ins }}</span>
-            </div>
-        </div>
-        <div class="border-top votes-container ml-1">
-            {% include 'home/courses/course_vote.html' with course=course %}
         </div>
     </div>
-</div>
-<div>
-    <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show" style="text-decoration: none;" type="button">Write a review</button>
-</div>
-<div>
-    <button class="col-sm-12 my-1 border-0 btn btn-block small btn-primary" style="text-decoration: none;" type="button">Compare this course</button>
+    <div>
+        <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show" style="text-decoration: none;" type="button">Write a review</button>
+    </div>
+    <div>
+        <a class="col-sm-12 my-1 border-0 btn btn-block small btn-primary" style="text-decoration: none;" 
+        type="button" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university course.course_code %}">All instructors</a>
+    </div>
 </div>
 {% endblock %}
 {% block content %}
 <script src="{% static 'js/courses/course-review.js' %}"></script>
-<div class="container mt-1 p-0 mb-4">
+<div class="p-0 mb-4">
     <div class="review-textbox pl-3 pr-3 my-2" style="display: none;">
-        <form class=course-review-form  data-url="{% url 'home:course-detail' course.id %}" method="POST">
+        <form class=course-review-form  data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" method="POST">
             {% csrf_token %}
             <div class="d-flex  flex-column">
                 <div class="row border rounded">
@@ -66,24 +74,23 @@
                 </div>
                 <div class="d-flex justify-content-end my-1">
                     <div>
-                        <button class="border-0 no-border btn btn-md small btn-primary" data-url="{% url 'home:course-detail' course.id %}" style="margin-right: -14px !important;text-decoration: none;" type="submit">Add Review</button>
+                        <button class="border-0 no-border btn btn-md small btn-primary" data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" style="margin-right: -14px !important;text-decoration: none;" type="submit">Add Review</button>
                     </div>           
                 </div>
             </div>     
         </form>
     </div>
     <div id="reviews" class="p-0 mt-1">
-        <ul class="d-flex mt-1 justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
-            <li class="nav-item align-items-center d-flex justify-content-between">
-              <a class="nav-link d-flex align-items-center active" id="review-spec-tab" data-toggle="pill" href="#review-spec" role="tab" aria-controls="review-spec" aria-selected="false">Reviews
+        <ul class="d-flex justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
+            <li class="nav-item ">
+              <a class="nav-link active" id="review-spec-tab" data-toggle="pill" href="#review-spec" role="tab" aria-controls="review-spec" aria-selected="false">Reviews
                 <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
               </a>
             </li>
-            <li class="nav-item align-items-center d-flex justify-content-between">
+            <li class="nav-item">
               <a class="nav-link d-flex align-items-center" id="review-all-tab" data-toggle="pill" href="#review-all" role="tab" aria-controls="review-all" aria-selected="false">Reviews All
                 <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
               </a>
-              
             </li>
           </ul>
           <div class="tab-content" id="pills-tabContent">
