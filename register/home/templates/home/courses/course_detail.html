@@ -4,6 +4,7 @@
 {% load ibuilder %}
 {% bg_rand as bgrnd %}
 <script src="{% static 'js/courses/course-detail.js' %}"></script>
+<script src="{% static 'js/courses/save-course.js' %}"></script>
 <div class="mt-3">
     <div class="bg-white rounded shadow-sm border">
         <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
@@ -20,7 +21,7 @@
         </div> 
         <div class="col-sm mb-2">
             <div class="pt-2" style="min-height: 100px !important;">
-                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university course.course_instructor %}">
+                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
                     <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                 </a>
                 <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
@@ -52,7 +53,28 @@
     </div>
     <div>
         <a class="col-sm-12 my-1 border-0 btn btn-block small btn-primary" style="text-decoration: none;" 
-        type="button" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university course.course_code %}">All instructors</a>
+        type="button" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All instructors</a>
+    </div>
+    <div>
+        <form method="POST" class="course-save-form">
+            {% csrf_token %}
+            <button class="col-sm-12 my-1 border-0 btn btn-block small btn-primary save-course" type="submit" data-url="{% url 'home:course-save' course.id %}">Save</button>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="modal-save-course">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header border-0  p-1">
+            <h5 class="modal-title col-12 text-center font-weight-bolder">Save Course</h5>
+        </div>
+          <div class="moda-body text-center border-0 p-2">
+              <hp class="mt-2 col-8 text-center text-message text-danger"></p>
+          </div>
+          <div class="modal-footer border-0 p-1">
+            <button type="button" class="btn btn-secondary"  data-dismiss="modal" style="border-radius: 20px; width: 100%;">Close</button>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
@@ -60,7 +82,7 @@
 <script src="{% static 'js/courses/course-review.js' %}"></script>
 <div class="p-0 mb-4">
     <div class="review-textbox pl-3 pr-3 my-2" style="display: none;">
-        <form class=course-review-form  data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" method="POST">
+        <form class=course-review-form  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" method="POST">
             {% csrf_token %}
             <div class="d-flex  flex-column">
                 <div class="row border rounded">
@@ -74,7 +96,7 @@
                 </div>
                 <div class="d-flex justify-content-end my-1">
                     <div>
-                        <button class="border-0 no-border btn btn-md small btn-primary" data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" style="margin-right: -14px !important;text-decoration: none;" type="submit">Add Review</button>
+                        <button class="border-0 no-border btn btn-md small btn-primary" data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="margin-right: -14px !important;text-decoration: none;" type="submit">Add Review</button>
                     </div>           
                 </div>
             </div>     

@@ -28,9 +28,8 @@
         <div class="wrapper">
             <div class="container-fluid pl-4 pr-5 pt-4">
                 <div class="row">
-                    <div class="col-sm-3">
-                      <div class="sticky-top" style="top: 64px;">
-                        <div class="pb-2">
+                    <div class="col-sm-3"  style="margin-top: 54px;">
+                      <div class="position-fixed ml-2" style="width: 22%;">
                           <div class="card side-tab-link-holder border-0" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
                               <div class="card-body py-1">
                                 <div class="my-3 py-1">
@@ -52,7 +51,6 @@
                                 </div>
                               </div>
                           </div> 
-                        </div>
                       </div>                   
                     </div>
                     <div class="col-sm-6 order-2" >
@@ -65,22 +63,7 @@
                     </div>
                     <div class="col-sm-3 order-sm-2 order-sm-2">
                       <div class="sticky-top mt-3" style="top: 64px;">
-                          <div class="border-bottom">
-                            <h5 class="m-1 font-weight-bold">
-                              Explore
-                            </h5>
-                          </div>
-                          <div class="d-flex  mt-1" id="_pol3">
-                            <div class="p-2 rounded menu-link">
-                              <a href="{% url 'home:latest-posts' %}" class="card-link h6 text-dark"><i class="fas fa-clock pr-1"></i>Latest</a>
-                            </div>
-                            <div class="p-2 rounded menu-link">
-                              <a href="#" class="card-link h6  text-dark"><i class="fas fa-star pr-1"></i>Top</a>
-                            </div>
-                            <div class="p-2 rounded menu-link">
-                              <a href="#" class="card-link h6  text-dark"><i class="fas fa-hashtag pr-1"></i>Trending</a>
-                            </div>
-                          </div> 
+                          
                         <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                       </div>
                     </div>       

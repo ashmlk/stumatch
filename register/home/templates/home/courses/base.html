@@ -29,30 +29,28 @@
             <div class="container-fluid pl-4 pr-5">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="sticky-top" style="top: 64px;">
-                            <div class="pb-2">
-                                <div class="mb-2">
-                                    <div class="border-bottom">
-                                        <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
-                                            Courses
-                                        </h4>
-                                    </div>
+                        <div class="position-fixed" style="top: 64px;">
+                            <div class="mb-2">
+                                <div class="border-bottom">
+                                    <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
+                                        Courses
+                                    </h4>
                                 </div>
-                                <div class="list-group bg-transparent">
-                                    <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action"><span class="mr-2">
-                                        <img src="{% static 'default/courses/books.png' %}" alt="Course Image" style="height:36px;width: 36px;">
-                                    </span>Your Courses</a>
-                                    <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">
-                                        <span class="mr-2">
-                                            <img src="{% static 'default/courses/addc.png' %}" alt="Course Image" style="height:36px;width: 36px;">
-                                        </span>Add a Course</a>
-                                    <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
-                                        <img src="{% static 'default/courses/studentsgroup.png' %}" alt="Course Image" style="height:36px;width: 36px;">
-                                    </span>Students you may know</a>
-                                    <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
-                                        <img src="{% static 'default/courses/clk.png' %}" alt="Course Image" style="height:36px;width: 36px;">
-                                    </span>Saved Courses</a>
-                                </div>
+                            </div>
+                            <div class="list-group bg-transparent">
+                                <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action"><span class="mr-2">
+                                    <img src="{% static 'default/courses/books.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                </span>Your Courses</a>
+                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">
+                                    <span class="mr-2">
+                                        <img src="{% static 'default/courses/addc.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                    </span>Add a Course</a>
+                                <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
+                                    <img src="{% static 'default/courses/studentsgroup.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                </span>Students you may know</a>
+                                <a href="{% url 'home:courses-saved' %}" class="list-group-item list-group-item-action"><span class="mr-2">
+                                    <img src="{% static 'default/courses/clk.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                </span>Saved Courses</a>
                             </div>
                         </div>
                     </div>

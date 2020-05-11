@@ -3,6 +3,7 @@
 {% block content %}
 {% load ibuilder %}
 <script src="{% static 'js/courses/course-instructor.js' %}"></script>
+<script src="{% static 'js/courses/save-course.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
@@ -21,9 +22,9 @@
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="card mb-2 bg-white">
-        <div class="d-flex justify-content-between course-title-box"  data-url="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
+        <div class="d-flex justify-content-between course-title-box"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
             <div class="ml-2"> 
-                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university par2=course.course_instructor %}"><h3 class="pt-1 font-weight-bold">{{ course.course_instructor|capfirst }}</h3></a>
+                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}"><h3 class="font-weight-bold">{{ course.course_instructor|capfirst }}</h3></a>
             </div>
           </div>
         <div class="row p-0">
@@ -32,8 +33,6 @@
                     <div class="d-flex justify-content-right">
                         <div class="border p-1 border-rounded shadow-sm t-stu">
                             <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
-                        </div>
-                        <div style="margin-left: 3px;margin-right: 2px;">
                         </div>
                         <div class="t-stu p-1 border border-rounded shadow-sm">
                             <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
@@ -49,11 +48,32 @@
                     <div class="votes-container ">
                         {% include 'home/courses/course_vote.html' with course=course %}
                     </div>
+                    <div>
+                        <a href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" class="btn btn-sm small no-border text-muted ">Reviews</a>
+                    </div>
                     <div >
-                        <button class="small text-muted btn-sm small btn no-border dropdown-item"><i class="mr-1 fas fa-bookmark"></i>Save</button>
+                        <form method="POST" class="course-save-form">
+                            {% csrf_token %}
+                            <button class="small text-muted btn-sm small btn no-border save-course" type="submit" data-url="{% url 'home:course-save' course.id %}"><i class="mr-1 fas fa-bookmark"></i>Save</button>
+                        </form>
                     </div> 
                 </div>    
             </div>     
+        </div>
+    </div>
+    <div class="modal fade" id="modal-save-course">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+          <div class="modal-content">
+            <div class="modal-header border-0  p-1">
+                <h5 class="modal-title col-12 text-center font-weight-bolder">Save Course</h5>
+            </div>
+              <div class="moda-body text-center border-0 p-2">
+                  <hp class="mt-2 col-8 text-center text-message text-danger"></p>
+              </div>
+              <div class="modal-footer border-0 p-1">
+                <button type="button" class="btn btn-secondary"  data-dismiss="modal" style="border-radius: 20px; width: 100%;">Close</button>
+            </div>
+          </div>
         </div>
     </div>
     {% endfor %}
@@ -65,30 +85,30 @@
         -moz-column-count: 1;
         column-count: 1;
     }
-}
-
-@media (min-width: 48em) {
-    .card-columns {
-        -webkit-column-count: 1;
-        -moz-column-count: 1;
-        column-count: 1;
     }
-}
 
-@media (min-width: 62em) {
-    .card-columns {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
+    @media (min-width: 48em) {
+        .card-columns {
+            -webkit-column-count: 1;
+            -moz-column-count: 1;
+            column-count: 1;
+        }
     }
-}
 
-@media (min-width: 75em) {
-    .card-columns {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
+    @media (min-width: 62em) {
+        .card-columns {
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
+        }
     }
-}
+
+    @media (min-width: 75em) {
+        .card-columns {
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
+        }
+    }
 </style>
 {% endblock %}

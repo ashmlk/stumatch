@@ -1,0 +1,90 @@
+{% extends 'home/courses/base.html' %} 
+{% load static %}
+{% block content %}
+{% load ibuilder %}
+<script src="{% static 'js/courses/user-courses.js' %}"></script>
+<div class="card-columns mt-1">
+    {% for course in courses %}
+    {% bg_rand as bgrnd %}
+    <div class="card mb-2 bg-white">
+        <div class="d-flex justify-content-between course-title-box course-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
+            <div class="ml-2"> 
+                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-sm" >           
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                </div>
+                <div class="my-1 border p-1 border rounded shadow-sm t-stu">
+                    <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
+                </div>
+                <div class="my-1  p-1 border border-rounded shadow-sm">
+                    <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                </div>
+                <div class="my-1 border rounded p-1 shadow-sm" style="display: inline-block;">
+                    <span class="text-dark">Average Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
+                </div>
+                <div class="d-flex justify-content-between ">
+                    <div class="votes-container ">
+                        {% include 'home/courses/course_vote.html' with course=course %}
+                    </div>
+                    <div>
+                        <form class="scrmv" method="POST">
+                            {% csrf_token %}
+                            <button data-url="{% url 'home:course-save-remove' course.id %}" type="submit" class="btn btn-sm small no-border text-muted scrmvbtn">Remove</button>
+                        </form>     
+                    </div>
+                </div>    
+            </div>     
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="modal fade" id="modal-saved-courses">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header border-0  p-1">
+            <h5 class="modal-title col-12 text-center font-weight-bolder">Remove Course</h5>
+        </div>
+          <div class="moda-body text-center border-0 p-2">
+              <hp class="mt-2 col-8 text-center text-message text-danger"></p>
+          </div>
+          <div class="modal-footer border-0 p-1">
+            <button type="button" class="btn btn-secondary"  data-dismiss="modal" style="border-radius: 20px; width: 100%;">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+<style>
+    @media (min-width: 34em) {
+.card-columns {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+}
+}
+@media (min-width: 48em) {
+.card-columns {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+    }
+}   
+@media (min-width: 62em) {
+.card-columns {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    }
+}
+@media (min-width: 75em) {
+.card-columns {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    }
+}
+</style>
+{% endblock %}

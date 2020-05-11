@@ -30,6 +30,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 import datetime
 
+
 MAX_COURSES = 7
 
 @login_required
@@ -87,7 +88,6 @@ def post_create(request):
 
 @login_required
 def post_update(request, guid_url):
-    
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
     if request.method == 'POST':
@@ -108,8 +108,9 @@ def post_delete(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
     if request.method == 'POST':
-        post.delete()
-        data['form_is_valid'] = True
+        if post.author == request.user:
+            post.delete()
+            data['form_is_valid'] = True
     else:
         context = {'post':post}
         data['html_form'] = render_to_string('home/posts/post_delete.html',context,request=request)
@@ -187,7 +188,20 @@ def comment_like(request,guid_url,id):
         data['comment'] = render_to_string('home/posts/comment_like.html',{'comment':comment,'guid_url':guid_url},request=request)
         return JsonResponse(data)
 
-
+@login_required
+def comment_delete(request,id):
+    data=dict()
+    comment=get_object_or_404(Comment,id=id)
+    if request.method=="POST":
+        if comment.name==request.user:
+            comment.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'comment':comment}
+        data['html_form'] = render_to_string('home/posts/comment_delete.html',context,request=request)
+    return JsonResponse(data)
+            
+# Method for returning a list of all users who liked a post   
 @login_required
 def post_like_list(request, guid_url):
     data = dict()
@@ -196,6 +210,7 @@ def post_like_list(request, guid_url):
     data['html'] = render_to_string('home/posts/post_like_list.html',{'post_likes':post_likes},request=request)
     return JsonResponse(data)
 
+# Method for returning a list of all users who commented on a post 
 @login_required
 def post_comment_list(request, guid_url):
     data = dict()
@@ -204,7 +219,10 @@ def post_comment_list(request, guid_url):
     data['html'] = render_to_string('home/posts/post_comment_list.html',{'post_comments':post_comments},request=request)
     return JsonResponse(data)
 
-# Course views
+'''
+Below is all views related to course section
+All methods are for course section exclusively
+'''
 @login_required
 def courses(request):
     courses = request.user.courses.all()
@@ -214,15 +232,11 @@ def courses(request):
 
 @login_required
 def courses_instructor(request,par1,par2):
-    courses = Course.objects.filter(course_instructor=par2,course_university=par1).order_by('course_code','course_instructor','course_university').distinct('course_code','course_instructor','course_university')
-    instructor=par2
-    university=par1
-    university = university.lower()
-    university = university.replace('university','')
+    courses = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
     context = {
          'courses':courses,
-         'instructor':instructor,
-         'university':university,
+         'instructor':courses.first().course_instructor,
+         'university':courses.first().course_university,
          }
     return render(request,'home/courses/instructor_course_list.html',context)
 
@@ -304,10 +318,10 @@ def course_vote(request, id, code, status=None):
     data['course_vote'] = render_to_string('home/courses/course_vote.html',{'course':course},request=request)
     return JsonResponse(data)
             
-def course_detail(request, course_university,course_instructor, course_code):
+def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
-    course = Course.objects.filter(course_university=course_university,course_instructor=course_instructor,course_code=course_code).order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
-    taken = request.user.courses.filter(course_university=course_university,course_code=course_code,course_instructor=course_instructor).exists()
+    course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code).order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
+    taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code,course_instructor_slug=course_instructor_slug).exists()
     if request.method == 'POST':
         form = ReviewForm(request.POST or None)
         if form.is_valid():
@@ -336,7 +350,8 @@ def course_detail(request, course_university,course_instructor, course_code):
         'form':form,
     }
     return render(request,'home/courses/course_detail.html', context)  
-        
+
+# Template needs to be added
 @login_required
 def course_share(request,id):
     data = dict()
@@ -344,20 +359,20 @@ def course_share(request,id):
     if request.method == 'POST':
         title = request.user.get_full_name() + " just started taking a course!"
         content = "Hey! I am taking " + course.course_code + " with professor " + course.course_instructor + "!"
-        author = request
+        author = request.user
         post = Post(title=title,content=content,author=author)
         post.save()
-        data['shared'] = render_to_string('home/courses/course_shared.html',{'course':course},request=request)
+        data['html'] = render_to_string('home/courses/course_shared.html',{'course':course},request=request)
         data['message'] = "Shared successfuly!"
         return JsonResponse(data)
     
 @login_required
-def course_instructors(request,course_university,course_code):
-    courses = Course.objects.filter(course_university=course_university,course_code=course_code).order_by('course_university','course_instructor','course_code').distinct('course_university','course_instructor','course_code')
-    taken = request.user.courses.filter(course_university=course_university,course_code=course_code).exists()
+def course_instructors(request,course_university_slug,course_code):
+    courses = Course.objects.filter(course_university_slug=course_university_slug,course_code=course_code).order_by('course_university_slug','course_instructor_slug','course_code').distinct('course_university_slug','course_instructor_slug','course_code')
+    taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code).exists()
     context = {
         'code':course_code,
-        'university':course_university,
+        'university': courses.first().course_university,
         'courses': courses,
         'taken':taken
     }
@@ -385,6 +400,52 @@ def review_like(request,id,status=None):
             review.dislikes.add(user)
         data['review'] = render_to_string('home/courses/review_like.html',{'review':review},request=request)
         return JsonResponse(data)
-        
+
+@login_required
+def university_detail(request, course_university_slug):
+    courses = Course.objects.filter(course_university_slug__icontains=course_university_slug)
+    users = courses.select_related('profiles')
+    course_instructors = courses.order_by('course_instructor','course_code','course_year').distinct('course_instructor','course_code')
+    context = {
+        'courses':courses,
+        'users':users,
+        'course_instructors':course_instructors,
+    }
+    return render('home/courses/univerist_detail.html',context,request)
             
-                      
+'''
+
+Method to returm related to students to user based on user courses taken
+to be implemented after friending method
+
+'''
+@login_required
+def related_students(request):
+    pass        
+
+@login_required
+def course_save(request,id):
+    data = dict()
+    course = get_object_or_404(Course,id=id)
+    if request.method == "POST":
+        if request.user.saved_courses.filter(course_instructor=course.course_instructor,course_university=course.course_university,course_code=course.course_code).exists():
+            data['message'] = "You have already saved this course"
+        else:
+            request.user.saved_courses.add(course)
+            data['message'] = course.course_code + " with professor " + course.course_instructor + " has been successfully added to your saved courses"
+        return JsonResponse(data)
+    
+@login_required
+def remove_saved_course(request,id):
+    data = dict()
+    course = get_object_or_404(Course, id=id)
+    if request.method == "POST":
+        request.user.saved_courses.remove(course)
+        data['message'] = course.course_code + " with professor " + course.course_instructor + " has been successfully removed from your saved courses"
+        return JsonResponse(data)
+        
+        
+@login_required
+def saved_courses(request):
+    courses = request.user.saved_courses.all()
+    return render(request,'home/courses/user_saved_courses.html',{'courses':courses})

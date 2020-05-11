@@ -45,6 +45,5 @@ $(document).ready(function(){
 //create
 $('.create-post-btn').click(ShowForm);
 $('#modal-post').on("submit",".post-create-form",SaveForm)
-
 });
 

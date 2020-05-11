@@ -20,14 +20,14 @@
     {% endif %}
     {% for course in courses %}
     {% div_class as veid %}
-    {% with par2=course.course_instructor par1=course.course_university %}
+    {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
     <div class="mb-2" id="_cc_{{ veid }}" >
         <div class="row border bg-white rounded-0">
             <div class="col-sm-12 p-0">
                 <div class="d-flex justify-content-between ml-1 mr-1 border-bottom">
                     <div class="d-flex">
                         <div class="ml-1">
-                            <a class="text-dark" href="{% url 'home:course-detail' course.course_university course.course_instructor course.course_code %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
+                            <a class="text-dark" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
                         </div>
                         <div class="dropdown">
                             <button class="btn btn-sm no-border" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -38,13 +38,13 @@
                                 <button class="dropdown-item sh-rmv-c" data-veid="{{ veid }}" 
                                 data-url="{% url 'home:course-remove' course.id %}">
                                 <i class="mr-1 fas fa-trash"></i>Remove Course</button>
-                                <a class="btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university course.course_code %}">
+                                <a class="btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
                                     <i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <button class="btn btn-cplx {{ course.user_complexity_btn|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said this course is {{ course.user_complexity }}"></button>
+                        <button class="btn btn-cplx {{ course.user_complexity_btn|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said the course difficulty is {{ course.user_complexity }}"></button>
                     </div>
                 </div>
                 <div class="row mt-1 mx-1">
