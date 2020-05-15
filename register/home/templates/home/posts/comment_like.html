@@ -1,4 +1,4 @@
-<form class="comment-like-form" data-url="{% url 'home:comment-like' guid_url comment.id %}" method="POST">
+<form class="comment-like-form" data-url="{% url 'home:comment-like' guid_url comment.get_hashid %}" method="POST">
 {% csrf_token %}
 {% if request.user in comment.likes.all %}
 <button class="small text-muted comment-like-btn button-hide-outline" type="submit" 
@@ -18,8 +18,3 @@
 </button>
 {% endif %}
 </form>
-<style>
-    button {
-        opacity: 1 !important;
-    }
-</style>

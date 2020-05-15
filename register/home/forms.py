@@ -1,4 +1,4 @@
-from .models import Comment, Course, Post, Images, Review
+from .models import Comment, Course, Post, Images, Review, Buzz
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
@@ -19,15 +19,15 @@ class PostForm(forms.ModelForm):
         label='',
         widget=forms.TextInput(
             attrs={
-                'placeholder': 'Set an interesting title!'
+                'placeholder': "What's your post about?"
                 }))
     content= forms.CharField(
         label='',
         widget=forms.Textarea(
             attrs={
-                'placeholder': 'What do you want to share?',
+                'placeholder': 'Write what you want to share...',
                 'style': 'resize:none',
-                'rows': 5 ,
+                'rows': 1,
                 'cols': 40}))
     class Meta:
         model = Post
@@ -143,4 +143,31 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
-        
+
+class BuzzForm(forms.ModelForm):
+    nickname = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "Set a nickname if you like..."
+                }))
+    title = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "What's your buzz about?"
+                }))
+    content= forms.CharField(
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': 'Write it here...',
+                'style': 'resize:none',
+                'rows': 5,
+                'cols': 40,
+                'maxlength': '260',
+                }),
+        )
+    class Meta:
+        model = Buzz
+        fields = ('nickname','title','content',)

@@ -1,27 +1,47 @@
 {% load static %}
-{% with review=review %}
-<div class="row bg-white mb-1">
+{% load ibuilder %}
+{% div_class as veid %}
+<div class="row bg-white mt-1" id="_rc_{{ veid }}">
     <div class="col-sm">
         <div class="card">
-            <div class="d-flex">
-                <div class="c-n-img p-1 mr-0">
-                    <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
-                        alt="Profile image">
-                </div>
-                <div>
-                    <div class="d-flex flex-column">
-                        <div class="u_n">
-                            <div>
-                                <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex">
+                    <div class="c-n-img p-1 mr-0">
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                            alt="Profile image">
+                    </div>
+                    <div>
+                        <div class="d-flex mt-1 flex-column">
+                            <div class="u_n d-fle">
+                                <div>
+                                    <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
-                            <div class="ml-1" style="font-size: 0.8rem;">
-                                <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
-                                <span>{{ review.created_on|date:"M d, Y" }}</span>
+                            <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
+                                <div class="ml-1" style="font-size: 0.8rem;">
+                                    <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
+                                    <span>·</span>
+                                    <span>{{ review.get_created_on }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                          {% if review.author == request.user %}
+                          <button class="small dropdown-item show-form-update" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-edit"></i>Edit</button>
+                          <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:review-delete' review.id %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+                          {% endif %}
+                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                        </div>
+                      </div>
                 </div>
             </div>
             <div class="card-body m-0">
@@ -30,7 +50,9 @@
                 </div>
                 
             </div>
+            <div class="m-1 mt-2 review-likes-container">
+                {% include 'home/courses/review_like.html' with review=review %}
+            </div>
         </div>
     </div>
 </div>
-{% endwith %}

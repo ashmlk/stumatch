@@ -1,0 +1,80 @@
+{% load static %}
+{% load ibuilder %}
+<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+<div id="_nb21"></div>
+{% for buzz in buzzes %}
+{% div_class as veid %}
+<div id="_bc_{{ veid }}">
+  <div class="row">
+    <div class="col-sm-12 col-12">
+      <div class="card rounded-0 ml-1 mb-2 mt-2">
+        <div class="d-flex justify-content-between ml-1">
+          <div class="d-flex m-2">
+              <div style="margin-top: -0.35rem;">
+                <span class="text-muted small">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
+                <span class="text-muted small">·</span>
+                <span class="text-muted small">{{ buzz.get_created_on }}</span> 
+                {% if buzz.expiry %}
+                <span class="text-muted small">·</span> 
+                <span class="text-muted small">expirying in {{ buzz.get_expiry|default_if_none:"&nbsp;" }}</span> 
+                {% endif %}
+              </div>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+              {% if buzz.author == request.user %}
+              <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:buzz-delete' buzz.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+              {% endif %}
+              <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+              <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+              <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-1 ml-2 text-dark buzz-details-view" data-url="#">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+                <a class="text-dark" style="text-decoration: none;" href="#">{{ buzz.title }}</a>
+                </h5>
+            </div>
+          </div>
+          <div class="my-2">
+            <p class="card-text">{{ buzz.content }}</p>
+          </div>   
+        </div>
+       <hr style="margin: 0;">
+          <div class="d-flex align-items-center justify-content-center" >
+            <div class="d-flex ml-2">
+              <div class="mr-1 buzz-likes-container">
+                {% include 'home/buzz/buzz_like.html' %}
+              </div>
+              <div class="buzz-wots-container">
+                {% include 'home/buzz/buzz_wot.html' %}
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% empty %}
+  {% if latest %}
+  <div class="d-flex justify-content-center">
+    <h5 class="h5 font-weight-lighter my-3 text-muted">No new buzzes in past 24 hours.</h5>
+  </div>
+  {% else %}
+  <div class="d-flex justify-content-center">
+    <h5 class="h5 font-weight-lighter my-3 text-muted">No buzzes to show.</h5>
+  </div>
+  {% endif %}
+{% endfor %}
+
+
+
+
+
+

@@ -4,31 +4,31 @@
     {% csrf_token %}
     {% if request.user in review.likes.all %}
     <button class="btn no-border p-0 mr-1  btn-md  review-like-btn button-hide-outline" type="submit" 
-        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='rmvlike' %}">
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='rmvlike' %}">
         <i class="fas  mr-1 fa-thumbs-up" style="color:  rgb(43, 98, 153);"></i><span class="text-muted small">{{ review.likes.count }}</span></button> 
 
     <button class="btn no-border p-0 btn-md review-like-btn button-hide-outline" type="submit" 
-        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='udislike' %}">
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='udislike' %}">
         <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button> 
 
     {% elif request.user in review.dislikes.all %}
 
     <button class="btn no-border p-0 mr-1 btn-md  review-like-btn  button-hide-outline" type="submit" 
-        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='ulike' %}">
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='ulike' %}">
         <i class="fas mr-1 fa-thumbs-up" style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.likes.count }}</span></button>
 
     <button class="btn no-border p-0 btn-md  review-like-btn  button-hide-outline" type="submit" 
-    data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='rmvdislike' %}">
+    data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='rmvdislike' %}">
     <i class="fas mr-1 fa-thumbs-down" style="color:  rgb(240, 78, 78);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button>
 
     {% else %}
 
     <button class="btn no-border p-0 mr-1  btn-md  review-like-btn  button-hide-outline" type="submit" 
-        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='like' %}">
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='like' %}">
         <i class="fas mr-1 fa-thumbs-up"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.likes.count }}</span></button>
 
     <button class="btn no-border p-0 btn-md review-like-btn  button-hide-outline" type="submit" 
-        data-id="{{ review.id }}" data-url="{% url 'home:review-like' id=review.id  status='dislike' %}">
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  status='dislike' %}">
         <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ review.dislikes.count }}</span></button>
     
     {% endif %}

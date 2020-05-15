@@ -1,11 +1,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
-<script src="{% static 'js/image-uploader.js' %}"></script>
-<script src="{% static 'js/post-create.js' %}"></script>
-<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="{% static 'css/post/image-uploader.css' %}">
-<link rel="stylesheet" href="{% static 'css/post/post-create.css' %}">
-<form method="POST" data-url="{% url 'home:post-create' %}" class="post-create-form" enctype="multipart/form-data">
+<form method="POST" data-url="{% url 'home:post-create' %}" id="my-dropzone" class="dropzone post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
 		<div class="modal-header text-center">
 			<h5 class="modal-title col-12 text-center">Create a Post
@@ -14,17 +9,31 @@
 			</button>
 		</h5>
 		</div>
-	<div class="modal-body" style="overflow-y: hidden; margin:0;">
-		{{ form|crispy }}
-		<button type="button" id="upload-image" style="margin-top: 0;" class="btn btn-md fileinput-button">
-			<span><i class="align-middle fa-2x fas fa-image"></i></span>
-		</button><span class="text-muted small">Add up to four images to your post</span>
-		<div class="input-images my-2" style="display: none; overflow-x: auto;"></div>
+	<div class="modal-body" style="height:350px;overflow-y: auto; margin:0;">
+		{{ form|crispy }}	
+		<div class="fallback">
+			<input name="file" type="file" multiple />
+		</div>
+		<div class="row" id="preview-selected"></div>
+		  <div id="preview-template" class="mx-auto col-6 dz-preview dz-file-preview" style="display: none;">
+				<div class="d-flex flex-column align-items-center dz-details border rounded mb-1 mr-1">
+				<img data-dz-thumbnail/>
+				</div>
+				<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+				<div class="dz-success-mark"><span>✔</span></div>
+				<div class="dz-error-mark"><span>✘</span></div>
+				<div class="dz-error-message"><span data-dz-errormessage></span></div>
+		  </div>
 	</div>
+	<button type="button" class="m-1 btn border border-dark rounded btn-md " id="add-images"><i class="mx-1 fas fa-camera"></i>Photo</button>
+	<button type="button" class="m-1 btn border border-dark rounded btn-md " id="add-tagstp"><i class="mx-1 fas fa-hashtag"></i>Tags</button>
+	<div class="dz-default dz-message"></div>
 	<div class="modal-footer col-12">
-		<button type="submit" class="btn btn-primary"  style="border-radius: 20px; width: 100%;">Post</button>
+		<button type="submit" id="sub-etal" class="btn btn-primary"  style="border-radius: 20px; width: 100%;">Post</button>
 	</div>
 </form>
+<script src="{% static 'js/post/post-dz.js' %}"></script>
+
 
 
 

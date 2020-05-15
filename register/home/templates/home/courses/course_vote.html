@@ -15,23 +15,23 @@
             </button>
         </div>
         <div> 
-            <button class="p-0 btn btn-sm no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code  status='rmv' %}" style="height: 1.41rem;">
+            <button class="p-0 btn btn-sm no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code  status='rmv' %}" style="height: 1.41rem;">
                 <span class="text-primary mx-1 font-weight-bolder small">{{ course.average_voting }}</span>
             </button>
         </div>
         <div>
-            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code  status='dislike' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
+            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code  status='dislike' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
                 <div class="icon-arrow-down" style="color:  rgb(185, 186, 187);"></div>
             </button>
         </div>
         {% elif disliked %}
         <div>
-            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code  status='like' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
+            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code  status='like' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
                 <div class="icon-arrow-up" style="color:  rgb(185, 186, 187);"></div>
             </button>
         </div>
         <div>
-            <button class="p-0 btn btn-sm no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code status='rmv' %}" style="height: 1.41rem;">
+            <button class="p-0 btn btn-sm no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code status='rmv' %}" style="height: 1.41rem;">
                 <span class="text-danger mx-1 font-weight-bolder small">{{ course.average_voting }}</span>
             </button>
         </div>
@@ -42,7 +42,7 @@
         </div>
         {% else %}
         <div>
-            <button class="p-0 btn btn-lg no-border rounded-0 c_v"  type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code status='like' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
+            <button class="p-0 btn btn-lg no-border rounded-0 c_v"  type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code status='like' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
                 <div class="icon-arrow-up" style="color:  rgb(185, 186, 187);"></div>
             </button>
         </div>
@@ -52,7 +52,7 @@
             </button>
         </div>
         <div>
-            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' id=course.id code=course.course_code  status='dislike' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
+            <button class="p-0 btn btn-lg no-border rounded-0 c_v" type="submit" data-token="{{ csrf_token }}" data-url="{% url 'home:course-vote' hid=course.get_hashid  code=course.course_code  status='dislike' %}" style="width: 1.41rem;height: 1.41rem;display: inline-block;">
                 <div class="icon-arrow-down" style="color:  rgb(185, 186, 187);"></div>
             </button>
         </div>

@@ -2,7 +2,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<script src="{% static 'js/post.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <div class="ml-1 p-1 card shadow-sm border-light">
     <div class="d-flex m-1 justify-content-left" >
@@ -36,9 +35,10 @@
     {% include 'home/posts/home_post.html' %}
   </div>
 </div>
-<div class="modal fade" id="modal-post" style="overflow-y: show;">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="modal-post" >
+  <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
     <div class="modal-content"></div>
   </div>
 </div> 
+<script src="{% static 'js/post.js' %}"></script>
 {% endblock content %}

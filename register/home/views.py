@@ -12,6 +12,7 @@ from django.views import View
 from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Max, Min
+from hashids import Hashids
 from django.views.generic import (
     ListView,
     DetailView,
@@ -22,21 +23,23 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review
+from .models import Post, Comment, Images, Course, Review, Buzz
 from main.models import Profile
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 import datetime
+from django.utils.timezone import make_aware
+from django.utils import timezone
 
-
+# Max number of courses can have in every semester
 MAX_COURSES = 7
+hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 @login_required
 def home(request):
     posts = Post.objects.all()
-    images = Images.objects.all()
     posts = Post.objects.order_by('-last_edited')
     context = { 'posts':posts }
     return render(request, 'home/homepage/home.html', context)
@@ -66,13 +69,10 @@ def post_create(request):
             post.author = request.user
             post.save()
             if request.FILES is not None:
-                added = []
-                images = request.FILES.getlist('images[]')
+                images = [request.FILES.get('images[%d]' % i) for i in range(0, len(request.FILES))]  
                 for i in images:
-                    if i not in added:
-                        image_instance = Images.objects.create(image=i,post=post)
-                        image_instance.save()
-                        added.append(i)
+                    image_instance = Images.objects.create(image=i,post=post)
+                    image_instance.save()
             data['form_is_valid'] = True
             data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request)
         else:
@@ -120,7 +120,7 @@ def post_delete(request, guid_url):
 def post_detail(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    comments = Comment.objects.filter(post=post,reply=None)
+    comments = post.comments.filter(reply=None)
     if request.method == 'POST':
         form = CommentForm(request.POST or None)
         if form.is_valid():
@@ -175,9 +175,10 @@ def post_like(request,guid_url):
         
 
 @login_required
-def comment_like(request,guid_url,id):
+def comment_like(request,guid_url,hid):
     data = dict()
     guid_url = guid_url
+    id =  hashids.decode(hid)[0]
     comment = get_object_or_404(Comment, id=id)
     user = request.user
     if request.method == 'POST':    
@@ -189,8 +190,9 @@ def comment_like(request,guid_url,id):
         return JsonResponse(data)
 
 @login_required
-def comment_delete(request,id):
+def comment_delete(request,hid):
     data=dict()
+    id =  hashids.decode(hid)[0]
     comment=get_object_or_404(Comment,id=id)
     if request.method=="POST":
         if comment.name==request.user:
@@ -282,9 +284,11 @@ def course_add(request):
         'form':form,
     }
     return render(request,'home/courses/course_add.html', context)
-        
-def course_remove(request, id):
+
+@login_required     
+def course_remove(request, hid):
     data= dict()
+    id = hashids.decode(hid)[0]
     course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
         request.user.courses.remove(course)
@@ -297,8 +301,10 @@ def course_remove(request, id):
         data['html_form'] = render_to_string('home/courses/course_remove.html',context,request=request)
     return JsonResponse(data)
 
-def course_vote(request, id, code, status=None):
+@login_required 
+def course_vote(request, hid, code, status=None):
     data = dict()
+    id = hashids.decode(hid)[0]
     course = get_object_or_404(Course, id=id)
     code = code
     if request.method == 'POST':
@@ -315,9 +321,10 @@ def course_vote(request, id, code, status=None):
                 course.course_dislikes.remove(request.user)
             if course.course_likes.filter(id=request.user.id).exists():
                 course.course_likes.remove(request.user)
-    data['course_vote'] = render_to_string('home/courses/course_vote.html',{'course':course},request=request)
-    return JsonResponse(data)
-            
+        data['course_vote'] = render_to_string('home/courses/course_vote.html',{'course':course},request=request)
+        return JsonResponse(data)
+
+@login_required      
 def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
     course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code).order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
@@ -329,13 +336,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
             review.author = request.user
             review.save()
             course.course_reviews.add(review)
-    else:
-        form = ReviewForm
-    if request.is_ajax():
         data['reviews_count'] = course.reviews_count()
         data['reviews_all_count'] = course.reviews_all_count()
         data['review'] = render_to_string('home/courses/new_review.html',{'review': review},request=request)
         return JsonResponse(data)
+    else:
+        form = ReviewForm
     reviews_count = course.reviews_count()
     reviews_all_count = course.reviews_all_count()
     reviews = course.get_reviews()
@@ -351,21 +357,20 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
     }
     return render(request,'home/courses/course_detail.html', context)  
 
-# Template needs to be added
+
 @login_required
 def course_share(request,id):
     data = dict()
     course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
-        title = request.user.get_full_name() + " just started taking a course!"
+        title = "Started taking a new course!"
         content = "Hey! I am taking " + course.course_code + " with professor " + course.course_instructor + "!"
         author = request.user
         post = Post(title=title,content=content,author=author)
         post.save()
-        data['html'] = render_to_string('home/courses/course_shared.html',{'course':course},request=request)
-        data['message'] = "Shared successfuly!"
-        return JsonResponse(data)
-    
+    data['html'] = render_to_string('home/courses/course_shared.html',{'course':course},request=request)
+    return JsonResponse(data)
+
 @login_required
 def course_instructors(request,course_university_slug,course_code):
     courses = Course.objects.filter(course_university_slug=course_university_slug,course_code=course_code).order_by('course_university_slug','course_instructor_slug','course_code').distinct('course_university_slug','course_instructor_slug','course_code')
@@ -379,8 +384,9 @@ def course_instructors(request,course_university_slug,course_code):
     return render(request,'home/courses/course_instructors.html', context)
     
 @login_required
-def review_like(request,id,status=None):
+def review_like(request,hid,status=None):
     data = dict()
+    id =  hashids.decode(hid)[0]
     review = get_object_or_404(Review, id=id)
     user = request.user
     if request.method == "POST":
@@ -398,8 +404,21 @@ def review_like(request,id,status=None):
         elif status == "udislike":
             review.likes.remove(user)
             review.dislikes.add(user)
-        data['review'] = render_to_string('home/courses/review_like.html',{'review':review},request=request)
-        return JsonResponse(data)
+    data['review'] = render_to_string('home/courses/review_like.html',{'review':review},request=request)
+    return JsonResponse(data)
+
+@login_required
+def review_delete(request, id):
+    data = dict()
+    review = get_object_or_404(Review, id=id)
+    if request.method == 'POST':
+        if review.author == request.user:
+            review.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'review':review}
+        data['html_form'] = render_to_string('home/courses/review_delete.html',context,request=request)
+    return JsonResponse(data)
 
 @login_required
 def university_detail(request, course_university_slug):
@@ -449,3 +468,84 @@ def remove_saved_course(request,id):
 def saved_courses(request):
     courses = request.user.saved_courses.all()
     return render(request,'home/courses/user_saved_courses.html',{'courses':courses})
+
+@login_required
+def buzz(request):
+    buzzes = Buzz.objects.order_by('-date_posted')
+    context = {
+        'buzzes':buzzes
+    }
+    return render(request, 'home/buzz/buzz.html', context)
+    
+@login_required
+def buzz_create(request):
+    data = dict()
+    if request.method == 'POST':
+        form = BuzzForm(request.POST)
+        if form.is_valid():  
+            buzz = form.save(False)
+            buzz.author = request.user
+            e = int(request.POST['exd_fb'])
+            if e in [1,3,7]:
+                buzz.expiry = timezone.now() + datetime.timedelta(days=e)
+            buzz.save()
+            data['form_is_valid'] = True
+            data['buzz'] = render_to_string('home/buzz/new_buzz.html',{'buzz':buzz },request=request)
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = BuzzForm      
+    context = {
+    'form':form,
+	}
+    data['html_form'] = render_to_string('home/buzz/buzz_create.html',context,request=request)
+    return JsonResponse(data) 
+
+@login_required
+def buzz_like(request,guid_url,status=None):
+    data = dict()
+    buzz = get_object_or_404(Buzz, guid_url=guid_url)
+    user = request.user
+    if request.method == "POST":
+        if status=="like":
+            buzz.likes.add(user)
+        elif status=="dislike":
+            buzz.dislikes.add(user)
+        elif status=="rmvlike":
+            buzz.likes.remove(user)
+        elif status == "rmvdislike":
+            buzz.dislikes.remove(user)
+        elif status == "ulike":
+            buzz.dislikes.remove(user)
+            buzz.likes.add(user)
+        elif status == "udislike":
+            buzz.likes.remove(user)
+            buzz.dislikes.add(user)
+        data['buzz'] = render_to_string('home/buzz/buzz_like.html',{'buzz':buzz},request=request)
+        return JsonResponse(data)
+    
+@login_required
+def buzz_wot(request,guid_url,status=None):
+    data = dict()
+    buzz = get_object_or_404(Buzz, guid_url=guid_url)
+    user = request.user
+    if request.method == "POST":
+        if status=="wot":
+            buzz.wots.add(user)
+        elif status=="rmv":
+            buzz.wots.remove(user)
+        data['buzz'] = render_to_string('home/buzz/buzz_wot.html',{'buzz':buzz},request=request)
+        return JsonResponse(data)
+
+@login_required
+def buzz_delete(request, guid_url):
+    data = dict()
+    buzz = get_object_or_404(Buzz, guid_url=guid_url)
+    if request.method == 'POST':
+        if buzz.author == request.user:
+            buzz.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'buzz':buzz}
+        data['html_form'] = render_to_string('home/buzz/buzz_delete.html',context,request=request)
+    return JsonResponse(data)

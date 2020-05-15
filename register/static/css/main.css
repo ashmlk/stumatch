@@ -51,3 +51,82 @@
     color:rgb(18, 20, 22) ;
 }
 
+.post-create-form textarea{
+    border:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    padding-bottom: 1rem;
+    overflow-y: auto;
+    /*min-height: 11rem;*/
+    }
+    
+.post-create-form input[type='text']{
+    border-radius: 0;
+    border-left:none !important;
+    border-top:none !important;
+    border-right:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+}
+.post-update-form textarea{
+    border:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    padding-bottom: 1rem;
+    overflow-y: auto;
+    min-height: 11rem;
+    }
+
+.post-create-form #add-images {
+    border: 1px solid rgb(207, 205, 205);
+    background-color: rgba(210, 230, 248, 0.63);
+}
+.post-create-form #add-images:hover {
+    opacity: 0.875;
+}
+.post-create-form #add-tagstp {
+    border: 1px solid rgb(207, 205, 205);
+    background-color: rgba(199, 248, 184, 0.63);
+}
+.post-create-form  #add-tagstp:hover {
+    opacity: 0.875;
+}
+
+.buzz-create-form textarea{
+    border:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    padding-bottom: 1rem;
+    overflow-y: auto;
+    /*min-height: 11rem;*/
+    }
+    
+.buzz-create-form input[type='text']{
+    border-radius: 0;
+    border-left:none !important;
+    border-top:none !important;
+    border-right:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+}
+
+.carousel .carousel-indicators li {
+    background-color:#e0e0e0!important;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    }
+
+.comment-like-form button {
+    opacity: 1 !important;
+}

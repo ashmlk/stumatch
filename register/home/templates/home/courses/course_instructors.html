@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
 {% load ibuilder %}
-<script src="{% static 'js/courses/course-instructor.js' %}"></script>
-<script src="{% static 'js/courses/save-course.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
@@ -78,37 +76,6 @@
     </div>
     {% endfor %}
 </div>
-<style>
-    @media (min-width: 34em) {
-    .card-columns {
-        -webkit-column-count: 1;
-        -moz-column-count: 1;
-        column-count: 1;
-    }
-    }
-
-    @media (min-width: 48em) {
-        .card-columns {
-            -webkit-column-count: 1;
-            -moz-column-count: 1;
-            column-count: 1;
-        }
-    }
-
-    @media (min-width: 62em) {
-        .card-columns {
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-            column-count: 2;
-        }
-    }
-
-    @media (min-width: 75em) {
-        .card-columns {
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-            column-count: 2;
-        }
-    }
-</style>
+<script src="{% static 'js/courses/course-instructor.js' %}"></script>
+<script src="{% static 'js/courses/save-course.js' %}"></script>
 {% endblock %}

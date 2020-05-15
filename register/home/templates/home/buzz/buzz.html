@@ -1,0 +1,53 @@
+{% extends 'home/homepage/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% block item %}
+<div>
+    <div class="p-2 border rounded-0 mb-2" id="_pol3">
+        <div class="p-2 rounded menu-link">
+          <a href="#" class="card-link h6 text-dark"><i class="fas fa-clock pr-1"></i>Latest</a>
+        </div>
+        <hr class="m-1">
+        <div class="p-2 rounded menu-link">
+          <a href="#" class="card-link h6  text-dark"><i class="fas fa-fire pr-1"></i>Hot</a>
+        </div>
+        <hr class="m-1">
+        <div class="p-2 rounded menu-link">
+          <a href="#" class="card-link h6  text-dark"><i class="fas fa-hourglass-end pr-1"></i>Expirying</a>
+        </div>
+    </div> 
+    <div class="p-1 card rounded-0">
+        <div class="row align-items-center">
+            <div class="col-5">
+                <img class="img-fluid" src="{% static 'default/buzz/buzzi.png' %}" alt="Buzz">
+            </div>
+            <div class="col-7 my-auto" style="margin-left: -15px;">
+                <div class="align-middle">
+                    <i class="font-weight-bolder">Let others know...</i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row m-1 justify-content-left" >
+            <button class="col-12 btn btn-primary border-0 create-buzz-btn "  data-url="{% url 'home:buzz-create' %}">Create Buzz</button> 
+        </div>  
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div id="buzz-list">
+    {% include 'home/buzz/buzz_list.html' %}
+</div>
+<div class="modal fade" id="modal-buzz" >
+  <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+    <div class="modal-content"></div>
+  </div>
+</div>
+<div class="modal fade" id="modal-buzz-delete">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content"></div>
+  </div>
+</div>
+<script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
+{% endblock content %}

@@ -2,8 +2,23 @@
 {% load static %}
 {% block content %}
 {% load ibuilder %}
-<script src="{% static 'js/courses/user-courses.js' %}"></script>
-<div class="card-columns mt-1">
+<script src="{% static 'js/courses/saved-courses.js' %}"></script>
+{% if courses %}
+<div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
+    <div class="d-flex justify-content-between mb-0">
+        <div class="m-0">
+            <h6 class="display-4" style="font-size: 2.2rem;">Saved Courses</h4>
+        </div>
+        <div>
+            <img  src="{% static 'default/courses/sv_nts.png' %}" alt="Course Image" style="margin-top:-15px;height:100px;width: 100px;">
+        </div>
+    </div>
+    <div>
+        <span class="text-muted small" style="margin-left: 0.2rem;">Learn about how your courses are displayed <a href="#">here.</a></span>
+    </div>
+</div>
+{% endif %}
+<div class="card-columns mt-1" style="margin-left: -0.85rem;margin-right: -0.85rem;">
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="card mb-2 bg-white">
@@ -13,7 +28,10 @@
             </div>
         </div>
         <div class="row p-1">
-            <div class="col-sm" >           
+            <div class="col-sm" >
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="#">
+                    <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                </div>       
                 <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
                     <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                 </div>
@@ -42,6 +60,15 @@
     </div>
     {% endfor %}
 </div>
+{% if not courses %}
+<div class="card" style="margin-left: -0.85rem !important;">
+    <div class="card-body">
+        <div class="d-flex justify-content-center">
+            <h4 class="text-muted">You haven't saved any course.</h4>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="modal fade" id="modal-saved-courses">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">

@@ -43,8 +43,6 @@
       overflow-y:auto;
     }
   </style>
-  <script src="{% static 'js/comment.js' %}"></script>
-  <script src="{% static 'js/like-comment-api.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <div id="#post-detail-container">
     <div class="border-left border-right pb-5">
@@ -74,7 +72,7 @@
                   <div class="carousel-inner">
                     {% for pic in post.images.all %}
                     <div class="carousel-item">
-                      <img class="d-block img-fluid" src="{{ pic.image.url}}" alt="Content not available">
+                      <img  class="img-fluid d-block mx-auto" src="{{ pic.image.url }}" alt="Image shared by {{ post.author.get_full_name }}">
                     </div>
                     {% endfor %}
                   </div>
@@ -143,7 +141,9 @@
     <div class="modal-dialog modal-md">
       <div class="modal-content"></div>
     </div>
-  </div> 
+  </div>
+  <script src="{% static 'js/comment.js' %}"></script>
+  <!--comment-like-api file removed-->
 {% endblock %}
 
   

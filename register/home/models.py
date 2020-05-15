@@ -12,6 +12,15 @@ import secrets
 from django_uuid_upload import upload_to_uuid
 import uuid 
 import datetime
+import pytz
+from dateutil import tz
+import PIL
+from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import io
+from hashids import Hashids
+ 
+hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 def max_value_current_year():
     return datetime.date.today().year + 1
@@ -63,8 +72,8 @@ class Post(models.Model):
             days= diff.days
             return str(days) + "d"
         if diff.days >= 30 and diff.days < 365:
-            months= math.floor(diff.days/30)       
-            return str(months) + "m"
+            months= math.floor(diff.days/7)       
+            return str(months) + "w"
         if diff.days >= 365:
             years= math.floor(diff.days/365)
             return str(years) + "y"
@@ -77,7 +86,8 @@ class Post(models.Model):
         
     def edited(self):
         if (self.last_edited - self.date_posted).seconds > 1800:
-            return True   
+            return True 
+          
     def get_edited_on(self):
         now = timezone.now()
         diff= now - self.last_edited
@@ -94,8 +104,8 @@ class Post(models.Model):
             days= diff.days
             return str(days) + "d" + " ago "
         if diff.days >= 30 and diff.days < 365:
-            months= math.floor(diff.days/30)       
-            return str(months) + "m" + " ago "
+            months= math.floor(diff.days/7)       
+            return str(months) + "w" + " ago "
         if diff.days >= 365:
             years= math.floor(diff.days/365)
             return str(years) + "y" + " ago "
@@ -108,6 +118,31 @@ class Images(models.Model):
     image = models.FileField(upload_to=upload_to_uuid('media/post_images/'),verbose_name='Image')
     date_added = models.DateTimeField(auto_now_add=True)
     
+    def save(self, *args, **kwargs):
+        
+        if self.pk is None:
+            MAX_WIDTH = 1080
+            MAX_HEIGHT = 1350
+            img=Image.open(self.image)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            exif = None
+            if 'exif' in img.info:
+                exif=img.info['exif']
+            ratio = min(MAX_WIDTH/img.size[0], MAX_HEIGHT/img.size[1])
+            if img.size[0] > MAX_WIDTH or img.size[1] > MAX_HEIGHT:
+                img = img.resize((int(img.size[0]*ratio), int(img.size[1]*ratio)), PIL.Image.ANTIALIAS)
+            else:
+                img = img.resize((img.size[0], img.size[1]), PIL.Image.ANTIALIAS)
+            output = io.BytesIO()
+            if exif:
+                img.save(output, format='JPEG', exif=exif, quality=90)
+            else:
+                img.save(output, format='JPEG', quality=90)
+            output.seek(0)
+            self.image = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.image.name, 'image/jpeg', output.getbuffer().nbytes, None)
+            super(Images, self).save(*args, **kwargs)
+            
 class Comment(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
     name = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -126,45 +161,31 @@ class Comment(models.Model):
     def likes_count(self):
         return self.likes.count()
     
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.created_on
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds 
-            if seconds == 1:
-                return str(seconds) +  "s"
-            else:
-                return str(seconds) + " s"     
+            return str(seconds) + " s"     
         if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
             minutes= math.floor(diff.seconds/60)
-            if minutes == 1:
-                return str(minutes) + "m" 
-            else:
-                return str(minutes) + "m"
+            return str(minutes) + "m"
         if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
             hours= math.floor(diff.seconds/3600)
-            if hours == 1:
-                return str(hours) + "h"
-            else:
-                return str(hours) + "h"
+            return str(hours) + "h"
         if diff.days >= 1 and diff.days < 30:
             days= diff.days
-            if days == 1:
-                return str(days) + "d"
-            else:
-                return str(days) + "d"
+            return str(days) + "d"
         if diff.days >= 30 and diff.days < 365:
             months= math.floor(diff.days/7)       
-            if months == 1:
-                return str(months) + "w"
-            else:
-                return str(months) + "w"
+            return str(months) + "w"
         if diff.days >= 365:
             years= math.floor(diff.days/365)
-            if years == 1:
-                return str(years) + "y"
-            else:
-                return str(years) + "y"
+            return str(years) + "y"
+        
     def get_uuid(self):
         return str(uuid.uuid4()) 
 
@@ -190,49 +211,31 @@ class Review(models.Model):
     def __str__(self):
         return 'Review {} by {}'.format(self.body, self.author.get_username)
     
-    def likes_count(self):
-        return self.likes.count()
+    def get_hashid(self):
+        return hashids.encode(self.id)
     
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.created_on
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds 
-            if seconds == 1:
-                return str(seconds) +  "s"
-            else:
-                return str(seconds) + " s"     
+            return str(seconds) + " s"     
         if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
             minutes= math.floor(diff.seconds/60)
-            if minutes == 1:
-                return str(minutes) + "m" 
-            else:
-                return str(minutes) + "m"
+            return str(minutes) + "m"
         if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
-            hours= math.floor(diff.seconds/3600)
-            if hours == 1:
-                return str(hours) + "h"
-            else:
-                return str(hours) + "h"
+            hours= math.floor(diff.seconds/3600)            
+            return str(hours) + "h"
         # 1 day to 30 days
         if diff.days >= 1 and diff.days < 30:
-            days= diff.days
-            if days == 1:
-                return str(days) + "d"
-            else:
-                return str(days) + "d"
+            days= diff.days          
+            return str(days) + "d"
         if diff.days >= 30 and diff.days < 365:
-            months= math.floor(diff.days/30)       
-            if months == 1:
-                return str(months) + "m"
-            else:
-                return str(months) + "m"
+            months= math.floor(diff.days/30)                
+            return str(months) + "m"
         if diff.days >= 365:
-            years= math.floor(diff.days/365)
-            if years == 1:
-                return str(years) + "y"
-            else:
-                return str(years) + "y"
+            years= math.floor(diff.days/365)            
+            return str(years) + "y"
 
 class Course(models.Model):
     class Semester(models.TextChoices):
@@ -272,19 +275,25 @@ class Course(models.Model):
         self.course_code = self.course_code.upper().replace(' ', '')
         self.course_university_slug = slugify(self.course_university.strip().lower())
         self.course_instructor_slug = slugify(self.course_instructor.strip().lower())
-        super(Course, self).save(*args, **kwargs)    
+        super(Course, self).save(*args, **kwargs)   
+        
+    def get_hashid(self):
+        return hashids.encode(self.id)
     
     def get_user_count(self):
         courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university).annotate(user_count=Count('profiles'))
         return courses[0].user_count
     
     def get_user_count_ins(self):
-        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor).annotate(user_count=Count('profiles'))
+        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor)\
+            .annotate(user_count=Count('profiles'))
         return courses[0].user_count
     
     def average_voting(self):
-        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
-        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
+        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,\
+            course__course_instructor=self.course_instructor).count()
+        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,\
+            course__course_instructor=self.course_instructor).count()
         t = total_likes - total_dislikes
         if t==0:
             return "Rate"
@@ -296,8 +305,10 @@ class Course(models.Model):
         return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
     
     def average_voting_ins(self):
-        total_likes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor).course_likes.count()
-        total_dislikes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor).course_dislikes.count()
+        total_likes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
+            course_instructor=self.course_instructor).course_likes.count()
+        total_dislikes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
+            course_instructor=self.course_instructor).course_dislikes.count()
         t = total_likes - total_dislikes
         t = float('{:.3g}'.format(t))
         magnitude = 0
@@ -321,12 +332,14 @@ class Course(models.Model):
         
     def average_complexity(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
+        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university).\
+            annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def average_complexity_ins(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
+        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
+            course_instructor=self.course_instructor).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def user_complexity(self):
@@ -338,26 +351,89 @@ class Course(models.Model):
         return r_dic[int(self.course_difficulty)]
     
     def is_liked(self,user):
-        return Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
+        return Course.course_likes.through.objects.filter(course__course_code=self.course_code,\
+            course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
     
     def not_liked(self,user):
-        return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
+        return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,\
+            course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
     
     def get_reviews(self):
-        return Review.objects.filter(course_reviews__course_code=self.course_code, course_reviews__course_instructor=self.course_instructor,course_reviews__course_university=self.course_university).distinct()
+        return Review.objects.filter(course_reviews__course_code=self.course_code,\
+            course_reviews__course_instructor=self.course_instructor,course_reviews__course_university=self.course_university).distinct()
     
     def get_reviews_all(self):
-       return Review.objects.filter(course_reviews__course_code=self.course_code,course_reviews__course_university=self.course_university).distinct()
+       return Review.objects.filter(course_reviews__course_code=self.course_code,\
+           course_reviews__course_university=self.course_university).distinct()
     
     def reviews_count(self):
-       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
+       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
+           course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
     
     def reviews_all_count(self):
-       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university).count()
+       return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
+           course__course_university=self.course_university).count()
+    
+class Buzz(models.Model):
+    nickname = models.CharField(max_length=30, blank=True, null = True)
+    title = models.CharField(max_length=90)
+    guid_url = models.CharField(max_length=255,unique=True)
+    content = models.TextField(validators=[MaxLengthValidator(278)])
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    last_edited= models.DateTimeField(auto_now=True)
+    expiry = models.DateTimeField(blank=True, null=True)
+    likes= models.ManyToManyField(Profile, blank=True, related_name='likes')
+    dislikes= models.ManyToManyField(Profile, blank=True, related_name='dilikes')
+    wots= models.ManyToManyField(Profile, blank=True, related_name='wots')
+    shares = models.ManyToManyField(Profile, blank=True, related_name='shares')
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        self.guid_url = secrets.token_urlsafe(12)
+        super(Buzz, self).save(*args, **kwargs) 
+    
+    def get_created_on(self):
+        now = timezone.now()
+        diff= now - self.date_posted
+        if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+            seconds= diff.seconds 
+            return 'Just now'  
+        if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+            minutes= math.floor(diff.seconds/60)
+            return str(minutes) + "m"
+        if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+            hours= math.floor(diff.seconds/3600)
+            return str(hours) + "h"
+        if diff.days >= 1 and diff.days < 30:
+            days= diff.days
+            return str(days) + "d"
+        if diff.days >= 30 and diff.days < 365:
+            months= math.floor(diff.days/7)       
+            return str(months) + "w"
+        if diff.days >= 365:
+            years= math.floor(diff.days/365)
+            return str(years) + "y"
+    
+    def get_expiry(self):
+        if self.expiry is not None:
+            now = timezone.now()
+            diff = self.expiry - now
+            if diff.seconds >= 3600 and diff.days < 1:
+                hours= math.floor(diff.seconds/3600)
+                return str(hours) + "h"
+            if diff.days >= 1 and diff.days < 30:
+                days = diff.days
+                return str(days) + "d"
+    
+    
+    
+    
+    
     
 
-
-        
         
 
         
