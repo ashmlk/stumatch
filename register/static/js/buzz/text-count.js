@@ -1,10 +1,10 @@
 $(document).ready(function () {
-    maxCharacters = 260;
+    maxCharacters = 500;
     $('#count').text(maxCharacters);
     $('textarea').bind('keyup keydown', function() {
         var count = $('#count');
         var characters = $(this).val().length;
-        if (characters > maxCharacters) {
+        if (characters >= maxCharacters) {
             count.addClass('text-danger');
         } else {
             count.removeClass('text-danger');

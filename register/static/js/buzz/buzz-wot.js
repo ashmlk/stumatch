@@ -1,5 +1,5 @@
 $(document).ready(function (e) {
-    $('.buzz-wot-form').on("click", ".buzz-wot-btn", function (e) {
+    $('.buzz-ctr').on("click", ".buzz-wot-btn", function (e) {
         var btn = $(this)
         e.preventDefault();
         e.stopImmediatePropagation();

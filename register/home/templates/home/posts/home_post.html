@@ -5,7 +5,7 @@
 <div id="_np2u"></div>
 {% for post in posts %}
 {% div_class as veid %}
-<div id="_pc_{{ veid }}">
+<div id="_pc_{{ veid }}" class="post-ctr">
   <div class="row">
     <div class="col-sm-12 col-12">
       <div class="card rounded-0 ml-1 mb-2 mt-2">
@@ -85,7 +85,7 @@
             <div class="px-4"> 
               <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
                 <span class="text-secondary">
-                  <i class="fas fa-comment"></i> {{ post.comment_count }}
+                  <i class="fas fa-comment"></i> {{ post.comments.count }}
                 </span>
               </a>
             </div>
@@ -123,7 +123,6 @@
   </div>
 </div>
 <script src="{% static 'js/post/post.js' %}"></script>
-<!--post-delete, post-update, carousel, link update all moved to post.js-->
 
 
 

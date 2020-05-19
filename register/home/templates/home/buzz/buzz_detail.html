@@ -1,0 +1,110 @@
+{% extends 'home/homepage/base.html' %}
+{% load static %}
+{% load ibuilder %}
+{% block content %}
+{% div_class as veid %}
+<script src="{% static 'js/buzz/buzz-d.js' %}"></script>
+<div class=".b_dlf">
+    <div id="_bc_{{ veid }}" class="buzz-ctr">
+        <div class="row">
+          <div class="col-sm-12 col-12">
+            <div class="card rounded-0 mt-2">
+              <div class="d-flex justify-content-between ml-1">
+                <div class="d-flex m-2">
+                    <div style="margin-top: -0.35rem;">
+                      <span class="text-muted small">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
+                      <span class="text-muted small">·</span>
+                      <span class="text-muted small">{{ buzz.get_created_on }}</span> 
+                      {% if buzz.expiry %}
+                      <span class="text-muted small">·</span> 
+                      <span class="text-muted small">expirying in {{ buzz.get_expiry|default_if_none:"&nbsp;" }}</span> 
+                      {% endif %}
+                    </div>
+                </div>
+                <div class="dropdown">
+                  <button class="btn btn-sm no-border" type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                    {% if buzz.author == request.user %}
+                    <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:buzz-delete' buzz.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+                    {% endif %}
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body post-details-view p-1 text-dark buzz-details-view" data-url="">
+                <div class="ml-2">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h5 class="font-weight-bolder" style="margin-bottom: 0px;">
+                      <a class="text-dark" style="text-decoration: none;" href="#">{{ buzz.title }}</a>
+                      </h5>
+                  </div>
+                </div>
+                <div class="my-2">
+                  <p class="card-text">{{ buzz.content }}</p>
+                </div>  
+                </div> 
+              </div>
+             <hr style="margin: 0;">
+             <div>
+              <div class="d-flex align-items-center justify-content-center ">
+                <div class="d-flex ml-2">
+                  <div class="mr-1 buzz-likes-container">
+                   
+                      {% include 'home/buzz/buzz_like.html' %}
+                  
+                  </div>
+                  <div class="buzz-wots-container">
+                    {% include 'home/buzz/buzz_wot.html' %}
+                  </div>
+                  <div>
+                    <button class="btn b_actb no-border p-0 mr-4 btn-md">
+                      <span class="text-secondary">
+                        <i class="fas fa-comment" style="color:  rgb(185, 186, 187);"></i> 
+                        <span class="small" id="_cct">
+                          {{ buzz.breplies.count }}
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+             </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 pt-2 border-left border-right" >
+        <div class="buzz-comment-container">
+          {% include 'home/buzz/buzz_replies.html' %}
+        </div>
+      </div>
+</div>
+<div class="modal fade" id="modal-buzz-c">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <form class="mb-2 buzz-d-c" data-url="{% url 'home:buzz-detail' buzz.guid_url %}" method="POST">
+          {% csrf_token %}
+          <div class="modal-header text-center">
+            <h5 class="modal-title col-12 text-center">Add Comment
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </h5>
+          </div>
+          <div class="modal-body" style="overflow-y: auto; margin:0;">
+            {{ form }}
+            <span class="small"><em id="count"></em></span>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button type="submit" id="ddsno43" class="self-center col-sm-11 btn border-0 btn-primary" style="border-radius: 20px;">Comment</button>
+          </div>   
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

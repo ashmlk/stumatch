@@ -1,0 +1,41 @@
+{% for reply in replies %}
+{% load ibuilder %}
+{% load static %}
+<div class="bzrbx">
+    <div class="d-flex justify-content-between">
+        <div class="text-muted small">
+            <span>
+                {{ reply.reply_nickname }}
+            </span>
+            <span>· </span>
+            <span>
+                {{ reply.get_created_on }}
+            </span>
+        </div>
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-sm no-border" type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                  {% if reply.reply_author == request.user %}
+                  <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-trash"></i>Delete</button>
+                  {% endif %}
+                  <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                </div>
+              </div>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div class="col-sm review">
+                {{ reply.reply_content }}
+            </div>
+        </div>
+    </div>
+    <div class="review-likes-container mt-2 p-1">
+        {% include 'home/buzz/buzz_r_like.html' with reply=reply %}
+    </div>
+    <hr>
+</div>
+{% endfor %}

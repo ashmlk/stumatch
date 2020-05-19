@@ -1,4 +1,4 @@
-from .models import Comment, Course, Post, Images, Review, Buzz
+from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
@@ -165,9 +165,31 @@ class BuzzForm(forms.ModelForm):
                 'style': 'resize:none',
                 'rows': 5,
                 'cols': 40,
-                'maxlength': '260',
+                'maxlength': '500',
                 }),
         )
     class Meta:
         model = Buzz
         fields = ('nickname','title','content',)
+        
+class BuzzReplyForm(forms.ModelForm):
+    reply_nickname = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control mb-2 rounded-0",
+                'placeholder': "Set a nickname if you like..."
+                }))
+    reply_content = forms.CharField(
+        max_length=180,
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'style':'outline:none;min-height:5rem',
+                'class':'form-control rounded-0',
+                'placeholder':'Add a comment anonymously...',
+                'rows': 2 ,
+                'cols': 50}))
+    class Meta:
+        model = BuzzReply
+        fields = ('reply_nickname','reply_content',)

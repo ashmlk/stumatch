@@ -1,8 +1,5 @@
 $(document).ready(function () {
-    $('.like-count').css({"display":"none"});
-    var lc = $(".input-like-count").val();
-    $('.like-count-d').text(lc);
-    $('.show-likes').on("click", function (e) {
+    $('.post-ctr').on("click",'.show-likes', function (e) {
       e.preventDefault();
       $.ajax({
             url: $(this).data("url"),
@@ -14,7 +11,7 @@ $(document).ready(function () {
             }
       });
     });
-    $('.show-comments').on("click", function (e) {
+    $('.post-ctr').on("click", '.show-comments',function (e) {
       e.preventDefault();
       $.ajax({
             url: $(this).data("url"),

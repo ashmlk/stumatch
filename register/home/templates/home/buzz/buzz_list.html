@@ -4,7 +4,7 @@
 <div id="_nb21"></div>
 {% for buzz in buzzes %}
 {% div_class as veid %}
-<div id="_bc_{{ veid }}">
+<div id="_bc_{{ veid }}" class="buzz-ctr">
   <div class="row">
     <div class="col-sm-12 col-12">
       <div class="card rounded-0 ml-1 mb-2 mt-2">
@@ -34,17 +34,19 @@
             </div>
           </div>
         </div>
-        <div class="card-body p-1 ml-2 text-dark buzz-details-view" data-url="#">
+        <div class="card-body post-details-view bd-gt p-1 text-dark buzz-details-view" data-url="{% url 'home:buzz-detail' buzz.guid_url %}">
+          <div class="ml-2">
           <div class="d-flex justify-content-between">
             <div>
-              <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+              <h5 class="font-weight-bolder" style="margin-bottom: 0px;">
                 <a class="text-dark" style="text-decoration: none;" href="#">{{ buzz.title }}</a>
                 </h5>
             </div>
           </div>
           <div class="my-2">
             <p class="card-text">{{ buzz.content }}</p>
-          </div>   
+          </div>  
+          </div> 
         </div>
        <hr style="margin: 0;">
           <div class="d-flex align-items-center justify-content-center" >
@@ -54,6 +56,15 @@
               </div>
               <div class="buzz-wots-container">
                 {% include 'home/buzz/buzz_wot.html' %}
+              </div>
+              <div>
+                <a class="btn no-border p-0 mr-4 btn-md" href="#">
+                  <span class="text-secondary">
+                    <i class="fas fa-comment" style="color:  rgb(185, 186, 187);"></i> <span class="small">
+                      {{ buzz.breplies.count }}
+                    </span>
+                  </span>
+                </a>
               </div>
             </div>
           </div>

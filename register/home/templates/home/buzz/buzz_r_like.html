@@ -1,0 +1,27 @@
+{% load static %}
+<form class="buzz-reply-like-form"  method="POST">
+    {% csrf_token %}
+    {% if request.user in reply.rlikes.all %}
+    <button class="btn no-border p-0 mr-1  btn-md  reply-like-btn button-hide-outline" type="submit" 
+         data-url="">
+        <i class="fas  mr-1 fa-thumbs-up" style="color:  rgb(43, 98, 153);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button> 
+    <button class="btn no-border p-0 btn-md reply-like-btn button-hide-outline" type="submit" 
+         data-url="">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button> 
+    {% elif request.user in reply.rdislikes.all %}
+    <button class="btn no-border p-0 mr-1 btn-md  reply-like-btn  button-hide-outline" type="submit" 
+         data-url="">
+        <i class="fas mr-1 fa-thumbs-up" style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button>
+    <button class="btn no-border p-0 btn-md  reply-like-btn  button-hide-outline" type="submit" 
+    data-url="">
+    <i class="fas mr-1 fa-thumbs-down" style="color:  rgb(240, 78, 78);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button>
+    {% else %}
+    <button class="btn no-border p-0 mr-1  btn-md  reply-like-btn  button-hide-outline" type="submit" 
+        data-url="">
+        <i class="fas mr-1 fa-thumbs-up"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button>
+
+    <button class="btn no-border p-0 btn-md reply-like-btn  button-hide-outline" type="submit" 
+         data-url="">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button>
+    {% endif %}
+</form>

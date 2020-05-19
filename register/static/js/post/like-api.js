@@ -1,7 +1,5 @@
 $(document).ready(function (e) {
-    var likes = $(".likeBtn").find("input").attr("value");
-    $(".like-count-d").text(likes);
-    $('.post-like-form').on("click", ".likeBtn", function (e) {
+    $('.post-ctr').on("click", ".likeBtn", function (e) {
         var btn = $(this)
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -13,6 +11,7 @@ $(document).ready(function (e) {
             data: { 'csrfmiddlewaretoken':tk },
             success: function (data){
                 $(btn).closest(".like-section").html(data.post_likes);
+                $('#like-count-d').html(data.likescount);
             },
             error: function(rs, e){
                 console.log(rs.responeText);

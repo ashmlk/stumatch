@@ -33,4 +33,5 @@ urlpatterns = [
     path('buzz/<str:guid_url>/like/<str:status>/', views.buzz_like, name='buzz-like'),
     path('buzz/<str:guid_url>/wot/<str:status>/', views.buzz_wot, name='buzz-wot'),
     path('buzz/<str:guid_url>/delete/', views.buzz_delete, name='buzz-delete'),
+    path('buzz/i/<str:guid_url>/', views.buzz_detail, name='buzz-detail'),
   ]

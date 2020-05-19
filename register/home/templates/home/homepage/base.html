@@ -16,7 +16,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -27,9 +26,9 @@
      {% endblock javascript %}
      <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
         <div class="wrapper" >
-            <div class="container-fluid pl-4 pt-4">
+            <div class="container-fluid pt-4">
                 <div class="row">
-                    <div class="col-sm-3 ml-2"  style="margin-top: 54px;">
+                    <div class="col-sm-3"  style="margin-top: 54px;">
                       <div class="position-fixed ml-2" style="width: 22%;">
                           <div class="card side-tab-link-holder border-0" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
                               <div class="card-body py-1">
@@ -54,19 +53,19 @@
                           </div> 
                       </div>                   
                     </div>
-                    <div class="col-sm-6 order-2" style="margin-left: 20px; margin-right: 20px;">
+                    <div class="col-sm-6 order-2">
                       <div class="mt-5" style="top: 54px;">
                         {% block content %}
                         {% endblock %}
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                       </div>
                     </div>
-                    <div class="col-sm-2 order-sm-2 order-sm-2">
-                        <div class="pt-2 mt-5" style="margin-right: -2rem !important;top: 54px;" >
+                    <div class="col-sm-3 order-sm-2 order-sm-2">
+                        <div class="pt-2 mt-5">
                           {% block item %}
                           {% endblock %}
-                          <div class="d-none d-md-block"  id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                         </div>
+                        <div class="d-none d-md-block"  id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                     </div>       
                   </div>
                 </div>
@@ -74,18 +73,14 @@
         </div>
         <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
         <script src="{% static 'js/buzz/buzz.js' %}"></script>
-        <script>
-          $(document).ready(function () {    
-            var path = window.location.href;
-            $('#_pol3 a').each(function() {
-              if (this.href === path) {
-              $(this).closest('div').addClass('menu-link-active');
-              }
-            });
-            $(".menu-link").on("click", function() {
-              location.href = $(this).children("a").attr("href");
-            });
-          });
-        </script>
+        <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+        <script src="{% static 'js/post/like-api.js' %}"></script>
+        <script src="{% static 'js/post/post-comments.js' %}"></script>
+        <script src="{% static 'js/post/post_list.js' %}"></script>
+        <script src="{% static 'js/post/comment.js' %}"></script>
+        <script src="{% static 'js/post/comment-delete.js' %}"></script>
+        <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+        <script src="{% static 'js/index.js' %}"></script>
     </body>
 </html>

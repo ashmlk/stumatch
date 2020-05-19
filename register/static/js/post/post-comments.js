@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('.reply-btn').on("click", function () {
+    $('.post-ctr').on("click", ".reply-btn",function () {
         $("#modal-comment-reply textarea").attr("placeholder","Add your reply")
 		    $("#modal-comment-reply textarea").addClass("comment-reply-adjust")
 			  var c_id = $(this).data('id');
@@ -7,7 +7,7 @@ $(document).ready(function () {
 			  $('textarea').val('');
 			  $("#modal-comment-reply").modal("show");
 			  });
-		$('.view-replies').on('click', function () {
+	$('.post-ctr').on('click','.view-replies',function () {
 			  var h = $(this).data('hidden');
 			  var curr = $(this).text()
 			  var newt = $(this).attr('text')

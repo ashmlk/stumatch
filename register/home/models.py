@@ -378,7 +378,7 @@ class Buzz(models.Model):
     nickname = models.CharField(max_length=30, blank=True, null = True)
     title = models.CharField(max_length=90)
     guid_url = models.CharField(max_length=255,unique=True)
-    content = models.TextField(validators=[MaxLengthValidator(278)])
+    content = models.TextField(validators=[MaxLengthValidator(550)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
@@ -427,9 +427,40 @@ class Buzz(models.Model):
             if diff.days >= 1 and diff.days < 30:
                 days = diff.days
                 return str(days) + "d"
+
+class BuzzReply(models.Model):
+    buzz = models.ForeignKey(Buzz,on_delete=models.CASCADE,related_name='breplies')
+    reply_nickname = models.CharField(max_length=30, blank=True, null = True)
+    reply_content = models.TextField(validators=[MaxLengthValidator(180)])
+    reply_author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    date_replied = models.DateTimeField(auto_now_add=True)
+    reply_likes= models.ManyToManyField(Profile, blank=True, related_name='rlikes')
+    reply_dislikes= models.ManyToManyField(Profile, blank=True, related_name='rdislikes')
     
+    def __str__(self):
+        return self.reply_nickname
     
-    
+    def get_created_on(self):
+        now = timezone.now()
+        diff= now - self.date_replied
+        if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+            seconds= diff.seconds 
+            return 'Just now'  
+        if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+            minutes= math.floor(diff.seconds/60)
+            return str(minutes) + "m"
+        if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+            hours= math.floor(diff.seconds/3600)
+            return str(hours) + "h"
+        if diff.days >= 1 and diff.days < 30:
+            days= diff.days
+            return str(days) + "d"
+        if diff.days >= 30 and diff.days < 365:
+            months= math.floor(diff.days/7)       
+            return str(months) + "w"
+        if diff.days >= 365:
+            years= math.floor(diff.days/365)
+            return str(years) + "y"
     
     
     

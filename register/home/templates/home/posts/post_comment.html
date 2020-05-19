@@ -4,7 +4,7 @@
   <div class="w-100" style="font-size: 0.8rem;">
     <div class="d-flex justify-content-end mx-2">
       <div class="ml-1">
-        <span class="like-count-d text-muted mr-1"></span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
+        <span id="like-count-d" class="text-muted mr-1">{{ post.likes.count }}</span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
       </div>
       <div class="ml-1">
         <span id="cc_n" class="comment-count text-muted mr-1">{{ comment_count }}</span><span data-url="{% url 'home:post-comment-list' post.guid_url %}" class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>
@@ -159,11 +159,11 @@
     </div>
   </div>
 </div>
-<script src="{% static 'js/post/post-comments.js' %}"></script>
-<script src="{% static 'js/post/like-comment-api.js' %}"></script>
-<script src="{% static 'js/post/post_list.js' %}"></script>
-<script src="{% static 'js/post/comment.js' %}"></script>
-<script src="{% static 'js/post/comment-delete.js' %}"></script>
+<!-- post-comment.js -->
+<!-- like-comment-api.js -->
+<!-- post_list.js -->
+<!-- comment.js -->
+<!-- comment delete -->
 {% endwith %}
 
 

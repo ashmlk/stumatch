@@ -23,9 +23,9 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review, Buzz
+from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply
 from main.models import Profile
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -170,6 +170,7 @@ def post_like(request,guid_url):
             post.likes.remove(user)
         else:
             post.likes.add(user)
+        data['likescount'] = post.likes.count()
         data['post_likes'] = render_to_string('home/posts/likes.html',{'post':post},request=request)
         return JsonResponse(data)
         
@@ -549,3 +550,36 @@ def buzz_delete(request, guid_url):
         context = {'buzz':buzz}
         data['html_form'] = render_to_string('home/buzz/buzz_delete.html',context,request=request)
     return JsonResponse(data)
+
+@login_required
+def buzz_detail(request, guid_url):
+    data = dict()
+    buzz = get_object_or_404(Buzz, guid_url=guid_url)
+    replies = buzz.breplies.all()
+    if request.method == 'POST':
+        form = BuzzReplyForm(request.POST or None)
+        if form.is_valid():
+            reply = form.save(False)
+            reply.reply_author = request.user
+            reply.buzz = buzz
+            reply.save()
+    else: 
+        form = BuzzReplyForm()
+    guid_url = buzz.guid_url
+    context = {'buzz':buzz,
+                'form':form,
+                'replies':replies,
+                'guid_url':guid_url,
+                }
+    if request.is_ajax():
+        r_new = BuzzReply.objects.filter(buzz=buzz)
+        r_count = buzz.breplies.count()
+        context_new = {'buzz':buzz,
+                        'replies':r_new,
+                        'guid_url':guid_url,
+                        'form':form,
+                    }
+        data['replies'] = render_to_string('home/buzz/buzz_replies.html',context_new,request=request)
+        data['r_count'] = r_count
+        return JsonResponse(data)
+    return render(request,'home/buzz/buzz_detail.html',context)

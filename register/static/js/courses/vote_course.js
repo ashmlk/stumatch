@@ -1,5 +1,5 @@
 $(document).ready(function (e) {
-    $('.course-vote-form').on("click", ".c_v", function (e) {
+    $(document).on("click", ".c_v", function (e) {
         var btn = $(this);
         e.preventDefault();
         e.stopImmediatePropagation();

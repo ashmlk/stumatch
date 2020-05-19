@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('.v_rebtn').on("click", function () {
+    $(document).on("click",'.v_rebtn', function () {
         if ($(this).data("text") == "Show"){
             $('.review-textbox').show();
             $(this).data('text',"Hide");

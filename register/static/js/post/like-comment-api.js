@@ -1,5 +1,5 @@
 $(document).ready(function (e) {
-    $('.comment-like-form').on("click", ".comment-like-btn", function (e) {
+    $(document).on("click", ".comment-like-btn", function (e) {
         e.stopImmediatePropagation();
         e.preventDefault();
         var like_count = parseInt($(".comment-like-count", this).text());

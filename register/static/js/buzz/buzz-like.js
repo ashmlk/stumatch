@@ -1,8 +1,8 @@
 $(document).ready(function (e) {
-    $('.buzz-like-form').on("click", ".buzz-like-btn", function (e) {
-        var btn = $(this)
+    $('.buzz-ctr').on("click", ".buzz-like-btn", function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
+        var btn = $(this)
         var tk = $(this).attr("data-token");
         $.ajax({
             type: "POST",
