@@ -583,3 +583,41 @@ def buzz_detail(request, guid_url):
         data['r_count'] = r_count
         return JsonResponse(data)
     return render(request,'home/buzz/buzz_detail.html',context)
+
+@login_required
+def comment_buzz_like(request,hid,status=None):
+    data = dict()
+    id = hashids.decode(hid)[0]
+    r = get_object_or_404(BuzzReply, id=id)
+    user = request.user
+    if request.method == "POST":
+        if status=="like":
+            r.reply_likes.add(user)
+        elif status=="dislike":
+            r.reply_dislikes.add(user)
+        elif status=="rmvlike":
+            r.reply_likes.remove(user)
+        elif status == "rmvdislike":
+            r.reply_dislikes.remove(user)
+        elif status == "ulike":
+            r.reply_dislikes.remove(user)
+            r.reply_likes.add(user)
+        elif status == "udislike":
+            r.reply_likes.remove(user)
+            r.reply_dislikes.add(user)
+        data['r'] = render_to_string('home/buzz/buzz_r_like.html',{'reply':r},request=request)
+        return JsonResponse(data)
+    
+@login_required
+def comment_buzz_delete(request, hid):
+    data = dict()
+    id = hashids.decode(hid)[0]
+    reply = get_object_or_404(BuzzReply, id=id)
+    if request.method == 'POST':
+        if reply.reply_author == request.user:
+            reply.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'reply':reply}
+        data['html_form'] = render_to_string('home/buzz/comment_delete.html',context,request=request)
+    return JsonResponse(data)

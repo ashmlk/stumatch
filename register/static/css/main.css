@@ -130,3 +130,12 @@
 .comment-like-form button {
     opacity: 1 !important;
 }
+
+.mnpglk:hover{
+    background-color: rgba(210, 230, 248, 0.192);
+    cursor: pointer;
+}
+
+.mnpglk-active{
+    background-color: rgba(210, 230, 248, 0.192);
+}

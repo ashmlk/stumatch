@@ -1,27 +1,26 @@
 {% load static %}
-<form class="buzz-reply-like-form"  method="POST">
+<form class="buzzrlkfrm"  method="POST">
     {% csrf_token %}
-    {% if request.user in reply.rlikes.all %}
-    <button class="btn no-border p-0 mr-1  btn-md  reply-like-btn button-hide-outline" type="submit" 
-         data-url="">
-        <i class="fas  mr-1 fa-thumbs-up" style="color:  rgb(43, 98, 153);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button> 
-    <button class="btn no-border p-0 btn-md reply-like-btn button-hide-outline" type="submit" 
-         data-url="">
-        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button> 
-    {% elif request.user in reply.rdislikes.all %}
-    <button class="btn no-border p-0 mr-1 btn-md  reply-like-btn  button-hide-outline" type="submit" 
-         data-url="">
-        <i class="fas mr-1 fa-thumbs-up" style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button>
-    <button class="btn no-border p-0 btn-md  reply-like-btn  button-hide-outline" type="submit" 
-    data-url="">
-    <i class="fas mr-1 fa-thumbs-down" style="color:  rgb(240, 78, 78);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button>
+    {% if request.user in reply.reply_likes.all %}
+    <button class="btn no-border p-0 mr-1  btn-md  relikbtnbz button-hide-outline" type="submit" 
+         data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='rmvlike' %}">
+        <i class="fas  mr-1 fa-thumbs-up" style="color:  rgb(43, 98, 153);"></i><span class="text-muted small">{{ reply.reply_likes.count }}</span></button> 
+    <button class="btn no-border p-0 btn-md relikbtnbz button-hide-outline" type="submit" 
+         data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='udislike' %}">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.reply_dislikes.count }}</span></button> 
+    {% elif request.user in reply.reply_dislikes.all %}
+    <button class="btn no-border p-0 mr-1 btn-md  relikbtnbz  button-hide-outline" type="submit" 
+         data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='ulike' %}">
+        <i class="fas mr-1 fa-thumbs-up" style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.reply_likes.count }}</span></button>
+    <button class="btn no-border p-0 btn-md  relikbtnbz  button-hide-outline" type="submit" 
+    data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='rmvdislike' %}">
+    <i class="fas mr-1 fa-thumbs-down" style="color:  rgb(240, 78, 78);"></i><span class="text-muted small">{{ reply.reply_dislikes.count }}</span></button>
     {% else %}
-    <button class="btn no-border p-0 mr-1  btn-md  reply-like-btn  button-hide-outline" type="submit" 
-        data-url="">
-        <i class="fas mr-1 fa-thumbs-up"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rlikes.count }}</span></button>
-
-    <button class="btn no-border p-0 btn-md reply-like-btn  button-hide-outline" type="submit" 
-         data-url="">
-        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.rdislikes.count }}</span></button>
+    <button class="btn no-border p-0 mr-1  btn-md  relikbtnbz  button-hide-outline" type="submit" 
+        data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='like' %}">
+        <i class="fas mr-1 fa-thumbs-up"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.reply_likes.count }}</span></button>
+    <button class="btn no-border p-0 btn-md relikbtnbz  button-hide-outline" type="submit" 
+         data-url="{% url 'home:cbuzz-like' hid=reply.get_hashid status='dislike' %}">
+        <i class="fas mr-1 fa-thumbs-down"  style="color:  rgb(185, 186, 187);"></i><span class="text-muted small">{{ reply.reply_dislikes.count }}</span></button>
     {% endif %}
 </form>

@@ -3,14 +3,19 @@
 {% load static %}
 <div class="bzrbx">
     <div class="d-flex justify-content-between">
-        <div class="text-muted small">
-            <span>
-                {{ reply.reply_nickname }}
-            </span>
-            <span>· </span>
-            <span>
-                {{ reply.get_created_on }}
-            </span>
+        <div class="align-items-center d-flex">
+            <div>
+                <img class="bzrvmuim img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"  data-name="{{ reply.reply_nickname }}" alt="Image">
+            </div>
+            <div class="text-muted small">
+                <span>
+                    {{ reply.reply_nickname }}
+                </span>
+                <span>· </span>
+                <span>
+                    {{ reply.get_created_on }}
+                </span>
+            </div>
         </div>
         <div>
             <div class="dropdown">
@@ -19,9 +24,11 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
                   {% if reply.reply_author == request.user %}
-                  <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-trash"></i>Delete</button>
+                  <button class="small dropdown-item no-border shbzcmdlfrm" data-url="{% url 'home:cbuzz-delete' reply.get_hashid %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
                   {% endif %}
-                  <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                  {% if reply.reply_author != request.user %}
+                  <button class="small dropdown-item no-border" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                  {% endif %}
                 </div>
               </div>
         </div>
@@ -33,9 +40,16 @@
             </div>
         </div>
     </div>
-    <div class="review-likes-container mt-2 p-1">
+    <div class="_3buzzcmcntr mt-2 p-1">
         {% include 'home/buzz/buzz_r_like.html' with reply=reply %}
     </div>
     <hr>
 </div>
 {% endfor %}
+
+<div class="modal fade" id="modal-comment-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>

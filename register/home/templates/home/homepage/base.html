@@ -17,6 +17,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
         <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
        
@@ -30,25 +31,69 @@
                 <div class="row">
                     <div class="col-sm-3"  style="margin-top: 54px;">
                       <div class="position-fixed ml-2" style="width: 22%;">
-                          <div class="card side-tab-link-holder border-0" style="border-radius: 50px; background-color: rgba(210, 230, 248, 0.192);">           
-                              <div class="card-body py-1">
-                                <div class="my-3 py-1">
-                                  <div class="py-3">
-                                    <a href="{% url 'home:buzz' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-mask pr-2"></i>Buzz</a>
+                        <!--style="border-radius: 40px; background-color: rgba(210, 230, 248, 0.192);"-->
+                          <div class="side-tab-link-holder border-bottom">           
+                              <div class="ml-3 mr-1">
+                                
+                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:buzz' %}">
+                                    <div class="col-2">
+                                      <!--style="color: #788287;"-->
+                                      <i class="fas fa-mask" style=" color: transparent; -webkit-text-stroke-width: 2px;-webkit-text-stroke-color: rgb(0, 0, 0);"></i>
+                                    </div>
+                                    <div class="col-10">
+                                      Buzz
+                                    </div>
                                   </div>
-                                  <div class="py-3">
-                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-pen-square pr-2"></i>Blogs</a>
+
+                                  <div class="row h5 rounded font-weight-bold  p-3 mnpglk" data-url="">
+                                    <div class="col-2">
+                                      <!-- style="color: #1ee321;"-->
+                                      <i class="material-icons-outlined" style="font-size: 28px;">
+                                        create
+                                      </i>
+                                    </div>
+                                    <div class="col-10">
+                                      Blogs
+                                    </div>
                                   </div>
-                                  <div class="py-3">
-                                    <a href="{% url 'home:courses' %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-book pr-2"></i>Courses</a>
+
+                                  <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:courses' %}">
+                                    <div class="col-2">
+                                      <!-- style="color: #731ee3;"-->
+                                      <i class="material-icons-outlined" style="font-size: 28px;">
+                                       book
+                                      </i>
+                                    </div>
+                                    <div class="col-10">
+                                      Courses
+                                    </div>
                                   </div>
-                                  <div class="py-3">
-                                    <a href="{% url 'home:users-posts' request.user.get_username %}" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-portrait pr-2"></i>Your Posts</a>
+                                  
+                                  <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:users-posts' request.user.get_username %}">
+                                    <div class="col-2">
+                                      <!--style="color: #1e6de3;"-->
+                                      <i class="material-icons-outlined" style="font-size: 28px;">
+                                        view_agenda
+                                      </i>
+                                    </div>
+                                    <div class="col-10">
+                                      Your Posts
+                                    </div>
                                   </div>
-                                  <div class="py-3">
-                                    <a href="#" class="card-link h5 font-weight-bold text-dark"><i class="fas fa-bookmark pr-2"></i>Bookmarks</a>
+
+                                  <div class="row card-link h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:users-posts' request.user.get_username %}">
+                                    <div class="col-2">
+                                      <i class="material-icons" style="font-size: 28px;">
+                                        bookmark_border
+                                      </i>
+                                    </div>
+                                    <div class="col-10">
+                                      Bookmarks
+                                    </div>
                                   </div>
-                                </div>
+
+                                
+
                               </div>
                           </div> 
                       </div>                   
@@ -72,15 +117,18 @@
             </div>
         </div>
         <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+        <script src="{% static 'initial/initial.js' %}"></script>
         <script src="{% static 'js/post/like-api.js' %}"></script>
         <script src="{% static 'js/post/post-comments.js' %}"></script>
         <script src="{% static 'js/post/post_list.js' %}"></script>
         <script src="{% static 'js/post/comment.js' %}"></script>
         <script src="{% static 'js/post/comment-delete.js' %}"></script>
         <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+        <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
+        <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
         <script src="{% static 'js/index.js' %}"></script>
     </body>
 </html>

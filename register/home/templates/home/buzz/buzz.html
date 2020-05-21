@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% block item %}
 <div>
-    <div class="p-2 border rounded-0 mb-2" id="_pol3">
+    <div class="p-2 mb-2" id="_pol3">
         <div class="p-2 rounded menu-link">
           <a href="#" class="card-link h6 text-dark"><i class="fas fa-clock pr-1"></i>Latest</a>
         </div>
@@ -17,20 +17,15 @@
           <a href="#" class="card-link h6  text-dark"><i class="fas fa-hourglass-end pr-1"></i>Expirying</a>
         </div>
     </div> 
-    <div class="p-1 card rounded-0">
-        <div class="row align-items-center">
-            <div class="col-5">
-                <img class="img-fluid" src="{% static 'default/buzz/buzzi.png' %}" alt="Buzz">
-            </div>
-            <div class="col-7 my-auto" style="margin-left: -15px;">
-                <div class="align-middle">
-                    <i class="font-weight-bolder">Let others know...</i>
-                </div>
+    <div class="ml-2 p-1 pb-4 card">
+        <div class="row justify-content-center mb-2">
+            <div class="col-5" style="border-radius: 0px 0px 26px 26px !important;">
+                <img class="img-fluid" src="{% static 'default/buzz/stayqtg.png' %}"  alt="Buzz">
             </div>
         </div>
-        
-        <div class="row m-1 justify-content-left" >
-            <button class="col-12 btn btn-primary border-0 create-buzz-btn "  data-url="{% url 'home:buzz-create' %}">Create Buzz</button> 
+        <div class="row m-1 mb-2 justify-content-center" >
+            <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip" data-placement="bottom" title="Buzz and comment anonymously!"
+             data-url="{% url 'home:buzz-create' %}">Create a Buzz</button> 
         </div>  
     </div>
 </div>

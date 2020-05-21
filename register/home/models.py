@@ -440,6 +440,9 @@ class BuzzReply(models.Model):
     def __str__(self):
         return self.reply_nickname
     
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.date_replied

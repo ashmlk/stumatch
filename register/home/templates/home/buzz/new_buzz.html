@@ -8,7 +8,7 @@
         <div class="d-flex justify-content-between ml-1">
           <div class="d-flex m-2">
             <div style="margin-top: -0.35rem;">
-              <span class="text-muted small">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
+              <span class="font-weight-bolder small" style="color: rgb(1,119,200)">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
               <span class="text-muted small">·</span>
               <span class="text-muted small">{{ buzz.get_created_on }}</span> 
               {% if buzz.expiry %}

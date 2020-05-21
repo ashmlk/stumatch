@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var btn_c_rmv = null;
-	$('#cm_all_r').on("click",".show-comment-delete-form", function (e) {
+	$('.buzz-comment-container').on("click",".shbzcmdlfrm", function (e) {
         btn_c_rmv = $(this);
         e.preventDefault();
 		e.stopImmediatePropagation();
@@ -17,36 +17,24 @@ $(document).ready(function () {
 		});
 	});
 
-	$('#modal-comment-delete').on("submit",".comment-delete-form",function (e){
+	$('#modal-comment-delete').on("submit",".cbzcmdlfrm",function (e){
 		e.preventDefault();
         e.stopImmediatePropagation();
-        var form = new FormData(this);
+        var form = $(this).serialize();
 		$.ajax({
 			url: $(this).attr('data-url'),
 			type: $(this).attr('method'),
 			data: form,
-			cache: false,
-			processData: false,
-			contentType: false,
 			dataType: 'json',
 			success: function(data){
 				if(data.form_is_valid){
+                    $(btn_c_rmv).closest(".bzrbx").remove();
+                    var cm_count = parseInt(document.getElementById("_cct").innerText);
+                    cm_count--;
+                    document.getElementById("_cct").innerText = cm_count
 					$('#modal-comment-delete').modal('hide');
 					$('body').removeClass('modal-open');
 					$('.modal-backdrop').remove();
-					if($(btn_c_rmv).attr("data-type")=="reply"){
-						var rp_count = $("input#rsrcp").val();
-						alert(rp_count)
-						rp_count--;
-						$("input#rsrcp").val(rp_count)
-						document.getElementById("srfc").attr("text","Replies (" + rp_count + ")");
-						$(btn_c_rmv).closest(".reply-box").remove();
-					} else {
-						$(btn_c_rmv).closest(".comment-box").remove();
-						var cm_count = parseInt(document.getElementById("cc_n").innerText);
-						cm_count--;
-						document.getElementById("cc_n").innerText = cm_count
-					}
 				} 
 			}
 		})

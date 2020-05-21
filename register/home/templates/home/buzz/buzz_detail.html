@@ -12,7 +12,7 @@
               <div class="d-flex justify-content-between ml-1">
                 <div class="d-flex m-2">
                     <div style="margin-top: -0.35rem;">
-                      <span class="text-muted small">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
+                      <span class="font-weight-bolder small" style="color: rgb(1,119,200)">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
                       <span class="text-muted small">·</span>
                       <span class="text-muted small">{{ buzz.get_created_on }}</span> 
                       {% if buzz.expiry %}
@@ -31,7 +31,9 @@
                     {% endif %}
                     <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
                     <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+                    {% if buzz.author != request.user %}
                     <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -54,9 +56,7 @@
               <div class="d-flex align-items-center justify-content-center ">
                 <div class="d-flex ml-2">
                   <div class="mr-1 buzz-likes-container">
-                   
                       {% include 'home/buzz/buzz_like.html' %}
-                  
                   </div>
                   <div class="buzz-wots-container">
                     {% include 'home/buzz/buzz_wot.html' %}
@@ -80,7 +80,7 @@
       </div>
       <div class="col-sm-12 pt-2 border-left border-right" >
         <div class="buzz-comment-container">
-          {% include 'home/buzz/buzz_replies.html' %}
+          {% include 'home/buzz/buzz_replies.html' with replies=replies %}
         </div>
       </div>
 </div>
