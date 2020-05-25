@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="POST" data-url="{% url 'home:course-remove' course.id %}" class="remove-form">
+<form method="POST" data-url="{% url 'home:course-remove' hid=course.get_hashid %}" class="remove-form">
 	{% csrf_token %}
 		<div class="modal-header">
 		<h5 class="modal-title display-4" style="font-size: 0.9rem;">Remove Course</h5>

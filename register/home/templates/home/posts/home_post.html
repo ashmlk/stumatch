@@ -84,7 +84,7 @@
             <div class="px-4"> 
               <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
                 <span class="text-secondary">
-                  <i class="fas fa-comment"></i> {{ post.comments.count }}
+                  <i class="fas fa-comment"></i> {{ post.comment_count|num_format   }}
                 </span>
               </a>
             </div>

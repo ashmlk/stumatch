@@ -1,0 +1,228 @@
+{% extends "home/homepage/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block content %}
+<style>
+    .nav-pills > li > a {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+<ul class="nav nav-pills nav-fill mb-3 border-bottom border-primary" id="pills-tab" role="tablist" style="border-width: 2px !important;">
+    <li class="nav-item">
+        <a class="nav-link active" id="pills-post-tab" data-toggle="pill" href="#pills-post" role="tab" aria-controls="pills-post" aria-selected="true">Posts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="pills-buzz-tab" data-toggle="pill" href="#pills-buzz" role="tab" aria-controls="pills-buzz" aria-selected="false">Buzzes</a>
+    </li>
+    <li class="nav-item" style="margin-right: -0.01rem;">
+        <a class="nav-link" id="pills-blog-tab" data-toggle="pill" href="#pills-blog" role="tab" aria-controls="pills-blog" aria-selected="false">Blog</a>
+    </li>
+</ul>
+  <div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-post" role="tabpanel" aria-labelledby="pills-post-tab">
+        <div id="_np2u"></div>
+        {% for post in posts %}
+        {% div_class as veid %}
+        <div id="_pc_{{ veid }}" class="post-ctr">
+        <div class="row">
+            <div class="col-sm-12 col-12">
+            <div class="card rounded-0 ml-1 mb-2 mt-2">
+                <div class="d-flex justify-content-between ml-1">
+                <div class="d-flex m-2">
+                    <div>
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                        alt="Profile image">
+                    </div>
+                    <div class="ml-1">
+                    <div>
+                        <span class="mx-0 text-dark font-weight-bolder">{{ post.author.first_name }} {{ post.author.last_name}}</span>
+                    </div>
+                    <div style="margin-top: -0.35rem;">
+                        <a class="small text-muted" href="#">@{{ post.author.get_username }}</a>
+                        <span class="mx-0 small text-muted">·</span>
+                        <span class="text-muted small">{% if post.edited %}Edited {{ post.get_edited_on }}{% else %}{{ post.get_created_on }}{% endif %}</span>
+                    </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                    {% if post.author == request.user %}
+                    <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:post-delete' post.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+                    <button class="small dropdown-item show-form-update" data-veid="{{ veid }}" data-url="{% url 'home:post-update' post.guid_url %}"><i class="mr-1 fas fa-edit"></i>Edit</button>
+                    {% endif %}
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+                    </div>
+                </div>
+                </div>
+                <div class="card-body text-dark post-details-view" data-url="{% url 'home:post-detail' post.guid_url  %}">
+                <div class="d-flex justify-content-between">
+                    <div>
+                    <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+                        <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
+                        </h5>
+                    </div>
+                </div>
+                <div class="my-2">
+                    <div class="pb-3 p_ico" style="margin-right: -1.27rem;margin-left: -1.27rem;">
+                    {% if  post.has_image %}
+                    <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" class="carousel slide mb-2" data-interval="false" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                        {% for i in post.image_count_as_list %}
+                        <li data-target="#carousel-{{ post.title|cut:' ' }}" data-slide-to="{{ forloop.counter0 }}" class="active"></li>
+                        {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                        {% for pic in post.images.all %}
+                        <div class="carousel-item">
+                            <img class="img-fluid d-block mx-auto" src="{{ pic.image.url }}" alt="Image shared by {{ post.author.get_full_name }}">
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                    </div>
+                    <p class="card-text" style="margin-top: -0.9rem;">{{ post.content }}</p>
+                </div>   
+                </div>
+            <hr style="margin: 0;">
+                <div class="d-flex align-items-center justify-content-center" >
+                    <div class="like-section px-4">
+                    {% include 'home/posts/likes.html' with post=post %}
+                    </div>
+                    <div class="px-4"> 
+                    <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
+                        <span class="text-secondary">
+                        <i class="fas fa-comment"></i> {{ post.comments.count|num_format  }}
+                        </span>
+                    </a>
+                    </div>
+                    <div class="px-4"> 
+                    <a class="btn btn-md" href="#">
+                        <span class="text-secondary">
+                        <i class="fas fa-share-square"></i>
+                        </span>
+                    </a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="tab-pane fade" id="pills-buzz" role="tabpanel" aria-labelledby="pills-buzz-tab">
+        <div id="_nb21" class="buzz-ctr"></div>
+        {% for buzz in buzzes %}
+        <div  class="buzz-ctr">
+        <div class="row">
+            <div class="col-sm-12 col-12">
+            <div class="card rounded-0 ml-1 mb-2 mt-2">
+                <div class="d-flex justify-content-between ml-1">
+                <div class="d-flex m-2">
+                    <div style="margin-top: -0.35rem;">
+                        <span class="font-weight-bolder small" style="color: rgb(1,119,200)">{{ buzz.nickname|default_if_none:"anonymous poster" }}</span> 
+                        <span class="text-muted small">·</span>
+                        <span class="text-muted small">{{ buzz.get_created_on }}</span> 
+                        {% if buzz.expiry %}
+                        <span class="text-muted small">·</span> 
+                        <span class="text-muted small">{{ buzz.get_expiry|default_if_none:"&nbsp;" }}</span> 
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                    {% if buzz.author == request.user %}
+                    <button class="small dropdown-item show-form-delete"  data-url="{% url 'home:buzz-delete' buzz.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+                    {% endif %}
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+                    {% if buzz.author != request.user %}
+                    <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                    {% endif %}
+                    </div>
+                </div>
+                </div>
+                <div class="card-body post-details-view bd-gt p-1 text-dark buzz-details-view" data-url="{% url 'home:buzz-detail' buzz.guid_url %}">
+                <div class="ml-2">
+                <div class="d-flex justify-content-between">
+                    <div>
+                    <h5 class="font-weight-bolder" style="margin-bottom: 0px;">
+                        <a class="text-dark" style="text-decoration: none;" href="#">{{ buzz.title }}</a>
+                        </h5>
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="card-text">{{ buzz.content }}</p>
+                </div>  
+                </div> 
+                </div>
+            <hr style="margin: 0;">
+                <div class="d-flex align-items-center justify-content-center" >
+                    <div class="d-flex ml-2">
+                    <div class="mr-1 buzz-likes-container">
+                        {% include 'home/buzz/buzz_like.html' %}
+                    </div>
+                    <div class="buzz-wots-container">
+                        {% include 'home/buzz/buzz_wot.html' %}
+                    </div>
+                    <div>
+                        <a class="btn no-border p-0 mr-4 btn-md" href="#">
+                        <span class="text-secondary">
+                            <i class="fas fa-comment" style="color:  rgb(185, 186, 187);"></i> <span class="small">
+                            {{ buzz.breplies.count|num_format  }}
+                            </span>
+                        </span>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No buzzes to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="tab-pane fade" id="pills-blog" role="tabpanel" aria-labelledby="pills-blog-tab">Blog</div>
+  </div>
+<script src="{% static 'js/post/post.js' %}"></script>
+{% endblock %}
+{% block contentleft %}
+<div class="mt-3">
+    <div class="row mb-2 justify-content-center">
+        <button class="col-10 ml-1 btn btn-primary border-0 create-post-btn"  data-url="{% url 'home:post-create' %}">
+        Create a Post
+        </button>
+    </div>
+    <div class="row justify-content-center" >
+        <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip" data-placement="bottom" title="Buzz and comment anonymously!"
+        data-url="{% url 'home:buzz-create' %}">Create a Buzz</button> 
+    </div>   
+</div>
+{% endblock %}

@@ -1,18 +1,19 @@
+{% load ibuilder %}
 <form class="comment-like-form" data-url="{% url 'home:comment-like' guid_url comment.get_hashid %}" method="POST">
 {% csrf_token %}
 {% if request.user in comment.likes.all %}
-<button class="small text-muted comment-like-btn button-hide-outline" type="submit" 
+<button class="bg-transparent small text-muted comment-like-btn button-hide-outline" type="submit" 
     data-id="{{ comment.id }}" style="margin-right: -7px;">
     <span id="#clikeBtn" class="u text-danger">
-        Like(<span class="comment-like-count">{{ comment.likes_count }}</span>)
+        Like(<span class="comment-like-count">{{ comment.likes_count|num_format  }}</span>)
     </span>
     <input type="hidden" class="comment-input-like-count" value=" {{ comment.likes_count }} "/>
 </button> 
 {% else %}
-<button class="small text-muted comment-like-btn  button-hide-outline" type="submit" 
+<button class="bg-transparent small text-muted comment-like-btn  button-hide-outline" type="submit" 
     data-id="{{ comment.id }}"  style="margin-right: -7px;">
     <span id="#clikeBtn" class="u">
-        Like(<span class="comment-like-count">{{ comment.likes_count }}</span>)
+        Like(<span class="comment-like-count">{{ comment.likes_count|num_format  }}</span>)
     </span>
     <input type="hidden" class="comment-input-like-count" value="{{ comment.likes_count }} " />
 </button>

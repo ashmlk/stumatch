@@ -30,6 +30,7 @@ from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 import datetime
+from django.db.models.functions import Now
 from django.utils.timezone import make_aware
 from django.utils import timezone
 
@@ -47,9 +48,11 @@ def home(request):
 @login_required
 def users_posts(request,username):
     u = get_object_or_404(Profile,username=username)
-    posts = Post.objects.filter(author=request.user).order_by('-last_edited')
-    context = { 'posts':posts }
-    return render(request, 'home/homepage/home.html', context)
+    posts = request.user.post_set.order_by('-last_edited')
+    buzzes = request.user.buzz_set.filter(author=request.user).order_by('-date_posted')
+    #Buzz.objects.filter(Q(expiry__gt=now) | Q(expiry__isnull=True)).order_by('-date_posted')
+    context = { 'posts':posts,'buzzes':buzzes }
+    return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def latest_posts(request):
@@ -360,8 +363,9 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
 
 
 @login_required
-def course_share(request,id):
+def course_share(request,hid):
     data = dict()
+    id = hashids.decode(hid)[0]
     course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
         title = "Started taking a new course!"
@@ -472,7 +476,7 @@ def saved_courses(request):
 
 @login_required
 def buzz(request):
-    buzzes = Buzz.objects.order_by('-date_posted')
+    buzzes = Buzz.objects.filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
     context = {
         'buzzes':buzzes
     }

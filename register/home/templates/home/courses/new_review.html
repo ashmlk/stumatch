@@ -4,6 +4,15 @@
 <div class="row bg-white mt-1" id="_rc_{{ veid }}">
     <div class="col-sm">
         <div class="card">
+            {% if all == 1 %}
+            <div class="border-bottom ">
+                <span class="small m-1 text-muted">Professor {{ review.get_course_prof }}, {{ review.get_course_sm|capfirst}} {{ review.get_course_yr }}</span>
+            </div>
+            {% else %}
+            <div class="border-bottom ">
+                <span class="small m-1 text-muted">{{ review.get_course_sm|capfirst}} {{ review.get_course_yr }}</span>
+            </div>
+            {% endif %}
             <div class="d-flex justify-content-between">
                 <div class="d-flex">
                     <div class="c-n-img p-1 mr-0">

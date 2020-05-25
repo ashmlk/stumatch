@@ -1,4 +1,4 @@
-$(document).ready( function () {
+$('.b_dlfx').ready( function () {
      $('.b_actb').on("click", function () {
          $('#modal-buzz-c').modal('show');
 	 })

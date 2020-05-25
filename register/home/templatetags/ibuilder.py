@@ -30,4 +30,13 @@ def bg_rand():
     random.shuffle(bgs)
     return random.choice(bgs)
 
+@register.filter
+def num_format(value):
+    t = float('{:.3g}'.format(int(value)))
+    magnitude = 0
+    while abs(t) >= 1000:
+        magnitude += 1
+        t /= 1000.0
+    return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
+
 

@@ -1,3 +1,6 @@
+body {
+    background-color: white !important;
+}
 .nav-header-main {
     background-color: rgb(129,193,242);
 }
@@ -138,4 +141,16 @@
 
 .mnpglk-active{
     background-color: rgba(210, 230, 248, 0.192);
+}
+
+.mnpglk i:hover {
+    opacity: 1;
+}
+
+.dropdown > button {
+    border:none !important;
+    outline:none !important;
+    box-shadow: none !important;
+    -moz-box-shadow:none !important;
+    -webkit-box-shadow:none !important;
 }

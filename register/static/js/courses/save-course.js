@@ -1,5 +1,5 @@
 $(document).ready(function (e) {
-    $('.course-save-form').on("click", ".save-course", function (e) {
+    $(document).on("click", ".save-course", function (e) {
         var btn = $(this)
         e.preventDefault();
         e.stopImmediatePropagation();

@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
 {% block item %}
 <div>
     <div class="p-2 mb-2" id="_pol3">
@@ -17,7 +18,7 @@
           <a href="#" class="card-link h6  text-dark"><i class="fas fa-hourglass-end pr-1"></i>Expirying</a>
         </div>
     </div> 
-    <div class="ml-2 p-1 pb-4 card">
+    <div class="ml-2 p-1 pb-4 card border-light" style=" background-color: rgba(210, 230, 248, 0.192);">
         <div class="row justify-content-center mb-2">
             <div class="col-5" style="border-radius: 0px 0px 26px 26px !important;">
                 <img class="img-fluid" src="{% static 'default/buzz/stayqtg.png' %}"  alt="Buzz">
@@ -31,6 +32,7 @@
 </div>
 {% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <div id="buzz-list">
     {% include 'home/buzz/buzz_list.html' %}
 </div>
@@ -39,10 +41,4 @@
     <div class="modal-content"></div>
   </div>
 </div>
-<div class="modal fade" id="modal-buzz-delete">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content"></div>
-  </div>
-</div>
-<script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
 {% endblock content %}

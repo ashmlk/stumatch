@@ -1,68 +1,156 @@
 {% load static %}
 {% load ibuilder %}
-{% for review in reviews %}
-{% div_class as veid %}
-<div class="row bg-white mt-1" id="_rc_{{ veid }}">
-    <div class="col-sm">
-        <div class="card">
-            <div class="d-flex justify-content-between">
-                <div class="d-flex">
-                    <div class="c-n-img p-1 mr-0">
-                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
-                            alt="Profile image">
+{% if all == 1 %}
+<div class="dropdown">
+    <button class="btn p-1 mb-1 btn-light border rounded btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort By
+      </button>
+    <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
+        <button class="small dropdown-item srbtn active odnw" type="button">Newest</button>
+        <button class="small dropdown-item srbtn odins">Instructor</button>
+        <button class="small dropdown-item srbtn odyr" type="button">Course Year</button>
+        <button class="small dropdown-item srbtn odiyr" type="button">Instructor and Year</button>
+    </div>
+</div>
+{% endif %}
+{% if all == 1 %}
+<div id="a">
+    <div id="dvmc">
+{% endif %}
+        {% for review in reviews %}
+        {% with rw_crs_prof=review.get_course_prof rw_sm=review.get_course_sm rw_crs_yr=review.get_course_yr %}
+        {% div_class as veid %}
+        <div class="cntr row bg-white mt-1" id="_rc_{{ veid }}" data-year="{{ rw_crs_yr }}" data-ins="{{ rw_crs_prof }}">
+            <div class="col-sm">
+                <div class="card">
+                    {% if all == 1 %}
+                    <div class="border-bottom ">
+                        <span class="small m-1 text-muted">Professor {{ rw_crs_prof|capfirst }}, {{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
                     </div>
-                    <div>
-                        <div class="d-flex mt-1 flex-column">
-                            <div class="u_n d-fle">
-                                <div>
-                                    <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
-                                </div>
+                    {% else %}
+                    <div class="border-bottom ">
+                        <span class="small m-1 text-muted">{{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                            <div class="c-n-img p-1 mr-0">
+                                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                                    alt="Profile image">
                             </div>
-                            <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
-                                <div class="ml-1" style="font-size: 0.8rem;">
-                                    <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
-                                    <span>·</span>
-                                    <span>{{ review.get_created_on }}</span>
+                            <div>
+                                <div class="d-flex mt-1 flex-column">
+                                    <div class="u_n d-fle">
+                                        <div>
+                                            <span class="ml-1" style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
+                                        <div class="ml-1" style="font-size: 0.8rem;">
+                                            <a class="text-muted" href="#" >@{{ review.author.get_username }}</a>
+                                            <span>·</span>
+                                            <span>{{ review.get_created_on }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                                  {% if review.author == request.user %}
+                                  <button class="small dropdown-item show-form-update" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-edit"></i>Edit</button>
+                                  <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:review-delete' review.id %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
+                                  {% endif %}
+                                  <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+                                  <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
+                                  <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="card-body m-0">
+                        <div class="content display-4" style="font-size: 1.2rem;">
+                           {{ review.body }} 
+                        </div>
+                        
+                    </div>
+                    <div class="m-1 mt-2 review-likes-container">
+                        {% include 'home/courses/review_like.html' with review=review %}
                     </div>
                 </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% empty %}
+        <div class="no-review-box">
+            <div class="d-flex justify-content-center pt-2 my-2 rounded border ">
                 <div>
-                    <div class="dropdown">
-                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="fas fa-ellipsis-h"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
-                          {% if review.author == request.user %}
-                          <button class="small dropdown-item show-form-update" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-edit"></i>Edit</button>
-                          <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url="{% url 'home:review-delete' review.id %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
-                          {% endif %}
-                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
-                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-share"></i>Share</button>
-                          <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
-                        </div>
-                      </div>
+                    <h6>No review to show</h6>
                 </div>
             </div>
-            <div class="card-body m-0">
-                <div class="content display-4" style="font-size: 1.2rem;">
-                   {{ review.body }} 
-                </div>
-                
-            </div>
-            <div class="m-1 mt-2 review-likes-container">
-                {% include 'home/courses/review_like.html' with review=review %}
-            </div>
         </div>
-    </div>
+        {% endfor %}
+{% if all == 1 %}   
+    </div> 
 </div>
-{% empty %}
-<div class="no-review-box">
-    <div class="d-flex justify-content-center pt-2 my-2 rounded border ">
-        <div>
-            <h6>No reviews to show</h6>
-        </div>
-    </div>
-</div>
-{% endfor %}
+{% endif %}
+<script>
+    var newsest; 
+    $(document).ready(function () {
+        newest = $('#dvmc').clone(true);
+
+        $(document).on('click', '.srbtnmenu button', function (e) {
+            var btn = $(this);
+            $('.srbtn').each(function () {
+                $(this).removeClass('active');
+            });
+            $(btn).addClass('active');
+        });
+
+        $('.odyr').on('click',function (e) {  
+            e.preventDefault()
+            $('#dvmc').find('.cntr').sort(function(a, b) { 
+                var contentA = parseInt($(a).attr('data-year')); 
+                var contentB = parseInt($(b).attr('data-year')); 
+                return contentB - contentA;
+            }).appendTo("#dvmc");
+        });
+
+        $('.odins').on('click',function (e) {  
+            e.preventDefault()
+            $('#dvmc').find('.cntr').sort(function(a, b) { 
+                var contentA = $(a).attr('data-ins').toLowerCase(); 
+                var contentB = $(b).attr('data-ins').toLowerCase();
+                return String.prototype.localeCompare.call(contentA, contentB);
+            }).appendTo("#dvmc");
+        });
+
+        $('.odiyr').on('click',function (e) {  
+            e.preventDefault()
+            $('#dvmc').find('.cntr').sort(function(a, b) { 
+                var contentA = $(a).attr('data-ins').toLowerCase(); 
+                var contentB = $(b).attr('data-ins').toLowerCase();
+                if (contentA === contentB){
+                    var conA = parseInt($(a).attr('data-year')); 
+                    var conB = parseInt($(b).attr('data-year'));
+                    return conB - conA;
+                }
+                else {
+                    return String.prototype.localeCompare.call(contentA, contentB);
+                }
+            }).appendTo("#dvmc");
+        });
+
+        $('.odnw').on('click',function (e) {
+            e.preventDefault();
+            if (!$(this).hasClass('active'))
+            $('#a').html(newest)
+        });
+        
+    });
+        
+</script>

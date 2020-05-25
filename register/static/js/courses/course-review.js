@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$('.course-review-form').on('submit', function (e) {
+	$(document).on('submit','.course-review-form', function (e) {
 		e.preventDefault();
 		e.stopImmediatePropagation();
 		var form = $(this).serialize();

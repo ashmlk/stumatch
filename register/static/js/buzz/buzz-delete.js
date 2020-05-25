@@ -1,9 +1,10 @@
 $(document).ready(function (e) {
-    var veid = null;
-	$('#buzz-list').on("click",".show-form-delete", function (e) {
+	//var veid = null;
+	var btn = null
+	$('.buzz-ctr').on("click",".show-form-delete", function (e) {
 		e.stopImmediatePropagation();
-        var btn = $(this);
-        veid = $(this).data("veid");
+        btn = $(this);
+        //veid = $(this).data("veid");
 		$.ajax({
 			url: btn.attr("data-url"),
 			type: 'get',
@@ -33,7 +34,7 @@ $(document).ready(function (e) {
 					$('#modal-buzz-delete').modal('hide');
 					$('body').removeClass('modal-open');
 					$('.modal-backdrop').remove();  
-					$('#_bc_'+veid).remove();
+					$(btn).closest('.buzz-ctr').remove();
 				} 
 			}
 		})

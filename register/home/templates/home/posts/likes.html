@@ -1,4 +1,5 @@
 {% load static %}
+{% load ibuilder %}
 {% if request.user.is_authenticated %}
 <form class="post-like-form" action="{% url 'home:post-like' post.guid_url %}"  method="POST">
     {% csrf_token %}
@@ -7,7 +8,7 @@
             <span class="text-secondary">
                 <i class="fas fa-thumbs-down" style="color: #c62828;"></i>
                 <span class="like-count">
-                    {{ post.likes.count }}
+                    {{ post.likes.count|num_format  }}
                 </span>
                 <input type="hidden" class="input-like-count" value=" {{ post.likes.count }} " />
             </span>
@@ -17,7 +18,7 @@
             <span class="text-secondary">
                 <i class="fas fa-thumbs-up"></i>
                 <span class="like-count">
-                    {{ post.likes.count }}
+                    {{ post.likes.count|num_format  }}
                 </span> 
                 <input type="hidden" class="input-like-count" value=" {{ post.likes.count }} " />
             </span>

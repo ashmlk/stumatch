@@ -22,7 +22,7 @@
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
        
     </head>
-    <body class="pb-5">
+    <body class="pb-5" >
      {% block javascript %}
      {% endblock javascript %}
      <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
@@ -33,69 +33,63 @@
                       <div class="position-fixed ml-2" style="width: 22%;">
                         <!--style="border-radius: 40px; background-color: rgba(210, 230, 248, 0.192);"-->
                           <div class="side-tab-link-holder border-bottom">           
-                              <div class="ml-3 mr-1">
-                                
-                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:buzz' %}">
-                                    <div class="col-2">
+                              <div class="ml-3 mr-1">                   
+                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:buzz' %}" style="height: 4rem;">
+                                    <div class="col-2 mt-1">
                                       <!--style="color: #788287;"-->
                                       <i class="fas fa-mask" style=" color: transparent; -webkit-text-stroke-width: 2px;-webkit-text-stroke-color: rgb(0, 0, 0);"></i>
                                     </div>
-                                    <div class="col-10">
+                                    <div class="col-10 mt-1">
                                       Buzz
                                     </div>
                                   </div>
-
                                   <div class="row h5 rounded font-weight-bold  p-3 mnpglk" data-url="">
-                                    <div class="col-2">
+                                    <div class="col-2 mt-1">
                                       <!-- style="color: #1ee321;"-->
                                       <i class="material-icons-outlined" style="font-size: 28px;">
                                         create
                                       </i>
                                     </div>
-                                    <div class="col-10">
+                                    <div class="col-10 mt-2">
                                       Blogs
                                     </div>
                                   </div>
-
                                   <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:courses' %}">
-                                    <div class="col-2">
+                                    <div class="col-2 mt-1">
                                       <!-- style="color: #731ee3;"-->
                                       <i class="material-icons-outlined" style="font-size: 28px;">
                                        book
                                       </i>
                                     </div>
-                                    <div class="col-10">
+                                    <div class="col-10 mt-2">
                                       Courses
                                     </div>
                                   </div>
-                                  
                                   <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:users-posts' request.user.get_username %}">
-                                    <div class="col-2">
+                                    <div class="col-2 mt-1">
                                       <!--style="color: #1e6de3;"-->
                                       <i class="material-icons-outlined" style="font-size: 28px;">
                                         view_agenda
                                       </i>
                                     </div>
-                                    <div class="col-10">
-                                      Your Posts
+                                    <div class="col-10 mt-2">
+                                      By You
                                     </div>
                                   </div>
-
-                                  <div class="row card-link h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:users-posts' request.user.get_username %}">
+                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="">
                                     <div class="col-2">
                                       <i class="material-icons" style="font-size: 28px;">
                                         bookmark_border
                                       </i>
                                     </div>
-                                    <div class="col-10">
+                                    <div class="col-10 mt-1">
                                       Bookmarks
                                     </div>
                                   </div>
-
-                                
-
                               </div>
-                          </div> 
+                          </div>
+                          {% block contentleft %}
+                          {% endblock %}
                       </div>                   
                     </div>
                     <div class="col-sm-6 order-2">
@@ -116,8 +110,34 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="modal-post" >
+          <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+            <div class="modal-content"></div>
+          </div>
+        </div>
+        <div class="modal fade" id="modal-post-delete">
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+              <div class="modal-content"></div>
+          </div>
+        </div>
+        <div class="modal fade" id="modal-post-update">
+            <div class="modal-dialog modal-dialog-centered ">
+                <div class="modal-content"></div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-buzz" >
+          <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+            <div class="modal-content"></div>
+          </div>
+        </div>
+        <div class="modal fade" id="modal-buzz-delete">
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content"></div>
+          </div>
+        </div>
         <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
         <script src="{% static 'initial/initial.js' %}"></script>
+        <!--
         <script src="{% static 'js/post/like-api.js' %}"></script>
         <script src="{% static 'js/post/post-comments.js' %}"></script>
         <script src="{% static 'js/post/post_list.js' %}"></script>
@@ -129,6 +149,11 @@
         <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
         <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
         <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
+        -->
+        <script src="{% static 'js/buzz/buzzall.js' %}"></script>
+        <script src="{% static 'js/post/postall.js' %}"></script>
         <script src="{% static 'js/index.js' %}"></script>
+        
     </body>
 </html>

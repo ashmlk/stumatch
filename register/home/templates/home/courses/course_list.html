@@ -3,7 +3,6 @@
 {% load ibuilder %}
 {% load static %}
 {% block item %}
-
 {% endblock %}
 {% block content %}
 <script src="{% static 'js/courses/courses.js' %}"></script>
@@ -34,9 +33,8 @@
                                 <i class="fas fa-caret-down"></i>
                             </button>
                             <div class="dropdown-menu mt-1" aria-labelledby="d_l">
-                                <button class="dropdown-item sh-shr-c" data-url="{% url 'home:course-share' course.id %}"><i class="mr-1 fas fa-share"></i>Share</button>
-                                <button class="dropdown-item sh-rmv-c" data-veid="{{ veid }}" 
-                                data-url="{% url 'home:course-remove' course.id %}">
+                                <button class="dropdown-item sh-shr-c" data-url="{% url 'home:course-share' hid=course.get_hashid %}"><i class="mr-1 fas fa-share"></i>Share</button>
+                                <button class="dropdown-item sh-rmv-c" data-veid="{{ veid }}" data-url="{% url 'home:course-remove' hid=course.get_hashid %}">
                                 <i class="mr-1 fas fa-trash"></i>Remove Course</button>
                                 <a class="btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
                                     <i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>

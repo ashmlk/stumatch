@@ -1,7 +1,7 @@
 {% load static %}
 {% load ibuilder %}
 {% div_class as veid %}
-<div id="_bc_{{ veid }}">
+<div class="buzz-ctr">
   <div class="row">
     <div class="col-sm-12 col-12">
       <div class="card rounded-0 ml-1 mb-2 mt-2">
@@ -13,7 +13,7 @@
               <span class="text-muted small">{{ buzz.get_created_on }}</span> 
               {% if buzz.expiry %}
               <span class="text-muted small">·</span> 
-              <span class="text-muted small">expirying in {{ buzz.get_expiry|default_if_none:"&nbsp;" }}</span> 
+              <span class="text-muted small">{{ buzz.get_expiry|default_if_none:"&nbsp;" }}</span> 
               {% endif %}
             </div>
           </div>
@@ -23,22 +23,25 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
               {% if buzz.author == request.user %}
-              <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}" data-url=""><i class="mr-1 fas fa-trash"></i>Delete</button>
+              <button class="small dropdown-item show-form-delete"  data-url="{% url 'home:buzz-delete' buzz.guid_url %}"><i class="mr-1 fas fa-trash"></i>Delete</button>
               {% endif %}
               <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-bookmark"></i>Bookmark</button>
+              {% if buzz.author != request.user %}
+              <button class="small dropdown-item" href="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+              {% endif %}
             </div>
           </div>
         </div>
         <div class="card-body p-1 ml-2 text-dark buzz-details-view" data-url="#">
           <div class="d-flex justify-content-between">
             <div>
-              <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+              <h5 class="font-weight-bolder" style="margin-bottom: 0px;">
                 <a class="text-dark" style="text-decoration: none;" href="#">{{ buzz.title }}</a>
                 </h5>
             </div>
           </div>
           <div class="my-2">
-            <p class="card-text" style="margin-top: -0.9rem;">{{ buzz.content }}</p>
+            <p class="card-text">{{ buzz.content }}</p>
           </div>   
         </div>
        <hr style="margin: 0;">

@@ -35,12 +35,12 @@ $(document).ready(function () {
 					$('body').removeClass('modal-open');
 					$('.modal-backdrop').remove();
 					if($(btn_c_rmv).attr("data-type")=="reply"){
-						var rp_count = $("input#rsrcp").val();
+						$(btn_c_rmv).closest(".reply-box").remove();
+						var rp_count = $("#rsrcp").val();
 						alert(rp_count)
 						rp_count--;
-						$("input#rsrcp").val(rp_count)
+						$("#rsrcp").val(rp_count)
 						document.getElementById("srfc").attr("text","Replies (" + rp_count + ")");
-						$(btn_c_rmv).closest(".reply-box").remove();
 					} else {
 						$(btn_c_rmv).closest(".comment-box").remove();
 						var cm_count = parseInt(document.getElementById("cc_n").innerText);

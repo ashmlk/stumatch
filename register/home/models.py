@@ -4,6 +4,8 @@ from main.models import Profile
 from django.urls import reverse
 from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db.models import Q, F, Count, Avg, FloatField
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db.models.functions import Cast
 from django.template.defaultfilters import slugify
 import uuid
@@ -49,8 +51,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
         
     def comment_count(self):
-        comments = Comment.objects.filter(post=self, reply=None)
-        return comments.count()
+        return self.comments.filter(post=self, reply=None).count()
     
     def image_count_as_list(self):
         c = self.images.count()
@@ -213,7 +214,7 @@ class Review(models.Model):
     
     def get_hashid(self):
         return hashids.encode(self.id)
-    
+
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.created_on
@@ -236,8 +237,18 @@ class Review(models.Model):
         if diff.days >= 365:
             years= math.floor(diff.days/365)            
             return str(years) + "y"
-
+        
+    def get_course_prof(self):
+        return Course.objects.get(course_reviews__id=self.id).course_instructor
+    
+    def get_course_yr(self):
+        return Course.objects.get(course_reviews__id=self.id).course_year
+    
+    def get_course_sm(self):
+        return Course.objects.get(course_reviews__id=self.id).sem()
+    
 class Course(models.Model):
+    
     class Semester(models.TextChoices):
         SPRING = '1', 'Spring'
         SUMMER = '2', 'Summer'
@@ -420,15 +431,38 @@ class Buzz(models.Model):
     def get_expiry(self):
         if self.expiry is not None:
             now = timezone.now()
-            diff = self.expiry - now
-            if diff.seconds >= 3600 and diff.days < 1:
-                hours= math.floor(diff.seconds/3600)
-                return str(hours) + "h"
-            if diff.days >= 1 and diff.days < 30:
-                days = diff.days
-                return str(days) + "d"
+            if self.expiry > now:
+                diff = self.expiry - now
+                if diff.seconds >= 3600 and diff.days < 1:
+                    hours= math.floor(diff.seconds/3600)
+                    return "expirying in " + str(hours) + "h"
+                if diff.days >= 1 and diff.days < 30:
+                    days = diff.days
+                    return "expirying in " + str(days) + "d"
+            else: 
+                diff = now - self.expiry
+                if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+                    seconds= diff.seconds 
+                    return 'Just expired'  
+                if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+                    minutes= math.floor(diff.seconds/60)
+                    return "expired " + str(minutes) + "m" + " ago"
+                if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+                    hours= math.floor(diff.seconds/3600)
+                    return "expired " + str(hours) + "h" + " ago"
+                if diff.days >= 1 and diff.days < 30:
+                    days= diff.days
+                    return "expired " + str(days) + "d" + " ago"
+                if diff.days >= 30 and diff.days < 365:
+                    months= math.floor(diff.days/7)       
+                    return "expired " + str(months) + "w" + " ago"
+                if diff.days >= 365:
+                    years= math.floor(diff.days/365)
+                    return "expired " + str(years) + "y" + " ago"
+                
 
 class BuzzReply(models.Model):
+    
     buzz = models.ForeignKey(Buzz,on_delete=models.CASCADE,related_name='breplies')
     reply_nickname = models.CharField(max_length=30, blank=True, null = True)
     reply_content = models.TextField(validators=[MaxLengthValidator(180)])
@@ -465,7 +499,13 @@ class BuzzReply(models.Model):
             years= math.floor(diff.days/365)
             return str(years) + "y"
     
+class Bookmarks(models.Model):
     
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE,related_name='bookmarks')
+    date = models.DateTimeField(auto_now_add=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
     
 
         

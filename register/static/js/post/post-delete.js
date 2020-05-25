@@ -1,6 +1,6 @@
 $(document).ready(function (e) {
     var veid = null;
-	$('#post-list').on("click",".show-form-delete", function (e) {
+	$('.post-ctr').on("click",".show-form-delete", function (e) {
 		e.stopImmediatePropagation();
         var btn = $(this);
         veid = $(this).data("veid");

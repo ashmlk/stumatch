@@ -118,11 +118,11 @@
           <div class="tab-content" id="pills-tabContent">
             <div class="c-review-list tab-pane fade show active" id="review-spec" role="tabpanel" aria-labelledby="review-spec-tab">
                 <div id="new-review-s"></div>
-                {% include 'home/courses/course_reviews.html' with reviews=reviews %}
+                {% include 'home/courses/course_reviews.html' with reviews=reviews all=0 %}
             </div>
             <div class="c-review-list tab-pane fade" id="review-all" role="tabpanel" aria-labelledby="review-all-tab">
                 <div id="new-review-a"></div>
-                {% include 'home/courses/course_reviews.html' with reviews=reviews_all %}</div>
+                {% include 'home/courses/course_reviews.html' with reviews=reviews_all all=1 %}</div>
           </div>
     </div>
 </div>
@@ -140,8 +140,11 @@
         -webkit-box-shadow:none !important;
     }
 </style>
+<!--
 <script src="{% static 'js/courses/course-detail.js' %}"></script>
 <script src="{% static 'js/courses/save-course.js' %}"></script>
 <script src="{% static 'js/courses/course-review.js' %}"></script>
 <script src="{% static 'js/courses/review-delete.js' %}"></script>
+-->
+
 {% endblock content %}
