@@ -12,10 +12,12 @@
       <div class="ml-1 w-100" style="background-color:rgb(247, 247, 247); border-radius:20px;">
         <input type="text" readonly="readonly" class="bg-transparent border-0 form-control create-post-btn input-no-border" placeholder="What's new?"  data-url="{% url 'home:post-create' %}">
       </div>
-      <div>
-        <button class="ml-1 btn btn-md create-post-btn"  data-url="{% url 'home:post-create' %}">
-          <i class="fas fa-camera"></i>
-        </button>
+      <div class="d-flex flex-column justify-content-center">
+        <div>
+          <button class="ml-1 p-0 btn border btn-sm btn-circle create-post-btn"  data-url="{% url 'home:post-create' %}" style="border:1px solid rgb(126, 192, 243) !important;">
+            <i class="fas fa-2x fa-camera" style="color:  rgb(126, 192, 243);"></i>
+          </button>
+        </div>
       </div>
     </div>  
 </div>

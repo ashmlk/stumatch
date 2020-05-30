@@ -17,6 +17,7 @@ urlpatterns = [
     path('post/comment/<str:hid>/delete/', views.comment_delete, name='comment-delete'),
     path('courses/', views.courses, name='courses'),
     path('courses/add/', views.course_add, name='courses-add'),
+    path('course/auto/add/<slug:course_university_slug>/<slug:course_instructor_slug>/<str:course_code>/', views.course_auto_add, name='course-auto-add'),
     path('courses/saved/', views.saved_courses, name='courses-saved'),
     path('courses/share/<str:hid>/', views.course_share, name='course-share'),
     path('courses/saved/<int:id>/', views.course_save, name='course-save'),

@@ -2,10 +2,7 @@
 {% load crispy_forms_tags %}
 {% load ibuilder %}
 {% load static %}
-{% block item %}
-{% endblock %}
 {% block content %}
-<script src="{% static 'js/courses/courses.js' %}"></script>
 <div class="mb-4">
     {% if courses %}
     <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
@@ -91,5 +88,17 @@
         </div>
     </div>
 </div>
-
+<script src="{% static 'js/courses/courses.js' %}"></script>
 {% endblock content %}
+{% block item %}
+<div class="mt-1">
+    <div class="border-bottom p-2 border-light" style="background-color:  rgba(210, 230, 248, 0.356); border-radius: 35px 35px 0px 0px !important;">
+        <h5 class="m-2">Courses for yn ou</h5>
+    </div>
+    <div class="card border-top-0 rounded-0" style="margin-top: -0.08rem;">
+        <div class="card-body">
+            <!--fill in users with same courses and instructors-->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -30,4 +30,4 @@ $(document).ready(function () {
     theme: "square"
     };
     $("#id_course_university").easyAutocomplete(options);
-        })
+    })

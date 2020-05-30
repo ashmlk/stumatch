@@ -77,12 +77,20 @@ class ReviewForm(forms.ModelForm):
             attrs={
                 'style':'resize:none; outline:none;',
                 'class':'form-control',
-                'placeholder':'Write a review and let other know your experience!',
+                'placeholder':'Write a review and let others know about your experience!',
                 'rows': 4 ,
                 'cols': 80}))
+    def __init__(self, *args, **kwargs):
+        super(ReviewForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+            
     class Meta:
         model = Review
-        fields = ('body',)
+        labels = {
+            "review_interest": "Rating",
+        }
+        fields = ('body','review_interest')
     
 class CourseForm(forms.ModelForm):
     course_code = forms.CharField(

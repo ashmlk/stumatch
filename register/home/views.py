@@ -255,9 +255,9 @@ def course_add(request):
             code = course.course_code.upper().replace(' ', '')
             uni = course.course_university.strip().lower()
             ins = course.course_instructor.strip().lower()
-            has_coursed = request.user.courses.filter(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester).exists()
-            max_reached =  request.user.courses.filter(course_year=course.course_year,course_university=uni,course_semester=course.course_semester).count()
-            course_exists = Course.objects.filter(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            has_coursed = request.user.courses.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester).exists()
+            max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester).count()
+            course_exists = Course.objects.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
             if max_reached > 7:
                 form = CourseForm
                 message = "You have reached maximum number of courses per semester for the " + course.sem + " semester in "+ course.course_year 
@@ -276,7 +276,7 @@ def course_add(request):
                 return render(request,'home/courses/course_add.html', context)
             else:
                 if course_exists:
-                    c = Courses.objects.get(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty)
+                    c = Course.objects.get(course_code=code,course_instructor=ins,course_year=course.course_year,course_university=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty)
                     request.user.courses.add(c)
                 else:
                     course.save()
@@ -289,6 +289,43 @@ def course_add(request):
     }
     return render(request,'home/courses/course_add.html', context)
 
+@login_required
+def course_auto_add(request, course_code,course_instructor_slug, course_university_slug):
+    course = Course.objects.filter(course_instructor_slug__iexact=course_instructor_slug,course_code=course_code,course_university_slug__iexact=course_university_slug).first()
+    data = dict()
+    if request.method == "POST":
+        form = CourseForm(request.POST or none)
+        if form.is_valid():
+            course = form.save(False)
+            max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester).count()
+            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
+                course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            if max_reached > 7:
+                    data['message'] =  "You have already reached maximum number of courses per semester for the " + course.sem + " semester in "+ course.course_year  
+            else:
+                if course_exists:
+                    c = Course.objects.get(course_code=course.course_code,course_instructor=course.course_instructor,\
+                                            course_year=course.course_year,course_university=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty)
+                    request.user.courses.add(c)
+                else:
+                    course.save()
+                    request.user.courses.add(course)
+                    data["message"] = "Course added successfully"
+            data['form_is_valid'] = True
+    else:
+        empty = ''
+        form = CourseForm(initial={'course_code':course.course_code, 'course_instructor': course.course_instructor, 'course_university':course.course_university,'course_year': empty })
+        form.fields['course_code'].widget.attrs['readonly']  = True
+        form.fields['course_instructor'].widget.attrs['readonly']  = True
+        form.fields['course_university'].widget.attrs['readonly']  = True
+        context = {
+            'form':form,
+            'course':course,
+        }
+        data['html_form'] = render_to_string('home/courses/course_auto_add.html',context,request=request)
+    return JsonResponse(data)
+        
+        
 @login_required     
 def course_remove(request, hid):
     data= dict()
@@ -331,7 +368,8 @@ def course_vote(request, hid, code, status=None):
 @login_required      
 def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
-    course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code).order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
+    course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code)\
+        .order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
     taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code,course_instructor_slug=course_instructor_slug).exists()
     if request.method == 'POST':
         form = ReviewForm(request.POST or None)

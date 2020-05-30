@@ -292,19 +292,19 @@ class Course(models.Model):
         return hashids.encode(self.id)
     
     def get_user_count(self):
-        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university).annotate(user_count=Count('profiles'))
+        courses = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).annotate(user_count=Count('profiles'))
         return courses[0].user_count
     
     def get_user_count_ins(self):
-        courses = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,course_instructor=self.course_instructor)\
+        courses = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,course_instructor__iexact=self.course_instructor)\
             .annotate(user_count=Count('profiles'))
         return courses[0].user_count
     
     def average_voting(self):
-        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,\
+        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
             course__course_instructor=self.course_instructor).count()
-        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university=self.course_university,\
-            course__course_instructor=self.course_instructor).count()
+        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
+            course__course_instructor__iexact=self.course_instructor).count()
         t = total_likes - total_dislikes
         if t==0:
             return "Rate"
@@ -316,10 +316,10 @@ class Course(models.Model):
         return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
     
     def average_voting_ins(self):
-        total_likes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
+        total_likes = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
             course_instructor=self.course_instructor).course_likes.count()
-        total_dislikes = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
-            course_instructor=self.course_instructor).course_dislikes.count()
+        total_dislikes = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
+            course_instructor__iexact=self.course_instructor).course_dislikes.count()
         t = total_likes - total_dislikes
         t = float('{:.3g}'.format(t))
         magnitude = 0
@@ -343,14 +343,14 @@ class Course(models.Model):
         
     def average_complexity(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university).\
+        avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).\
             annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def average_complexity_ins(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university=self.course_university,\
-            course_instructor=self.course_instructor).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
+        avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
+            course_instructor__iexact=self.course_instructor).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def user_complexity(self):
@@ -363,27 +363,27 @@ class Course(models.Model):
     
     def is_liked(self,user):
         return Course.course_likes.through.objects.filter(course__course_code=self.course_code,\
-            course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
+            course__course_university__iexact=self.course_university,course__course_instructor__iexact=self.course_instructor,profile_id=user.id).exists()
     
     def not_liked(self,user):
         return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,\
-            course__course_university=self.course_university,course__course_instructor=self.course_instructor,profile_id=user.id).exists()
+            course__course_university__iexact=self.course_university,course__course_instructor__iexact=self.course_instructor,profile_id=user.id).exists()
     
     def get_reviews(self):
         return Review.objects.filter(course_reviews__course_code=self.course_code,\
-            course_reviews__course_instructor=self.course_instructor,course_reviews__course_university=self.course_university).distinct()
+            course_reviews__course_instructor__iexact=self.course_instructor,course_reviews__course_university__iexact=self.course_university).distinct()
     
     def get_reviews_all(self):
        return Review.objects.filter(course_reviews__course_code=self.course_code,\
-           course_reviews__course_university=self.course_university).distinct()
+           course_reviews__course_university__iexact=self.course_university).distinct()
     
     def reviews_count(self):
        return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
-           course__course_university=self.course_university,course__course_instructor=self.course_instructor).count()
+           course__course_university__iexact=self.course_university,course__course_instructor__iexact=self.course_instructor).count()
     
     def reviews_all_count(self):
        return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
-           course__course_university=self.course_university).count()
+           course__course_university__iexact=self.course_university).count()
     
 class Buzz(models.Model):
     nickname = models.CharField(max_length=30, blank=True, null = True)
