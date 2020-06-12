@@ -41,9 +41,29 @@ INSTALLED_APPS = [
     'main',
     'home',
     'crispy_forms',
+    'ckeditor',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/files/'
+
+CKEDITOR_CONFIGS = {
+'default': {
+    'toolbar': [[ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ],
+                [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ],
+                [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ],
+                [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ],
+                [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] ,
+                [ 'Link', 'Unlink', 'Anchor' ],
+                [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ],
+                [ 'Styles', 'Format', 'Font', 'FontSize' ],
+                [ 'TextColor', 'BGColor' ],
+                [ 'Maximize', 'ShowBlocks' ]],
+    'width': 'auto',
+
+          },
+    }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

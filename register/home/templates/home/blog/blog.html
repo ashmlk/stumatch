@@ -1,0 +1,36 @@
+{% extends "home/homepage/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block item %}
+<div class="cr-blg-ctr fixedbutton">
+    <a href="{% url 'home:blog-create' %}" class="btn btn-primary btn-f-circle">  
+        <i class="material-icons-outlined" style="font-size: 30px;">create</i>
+    </a>         
+</div>
+<style>
+    .btn-f-circle {
+        border: none;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  padding: 9px 0;
+
+  line-height: 1.4;
+  border-radius: 25px;
+  
+}
+.fixedbutton {
+    position: fixed;
+    bottom: 50px;
+    right: 50px; 
+}
+</style>
+{% endblock %}
+{% block content %}
+<div id="blog-list">
+  <div>
+    {% include 'home/blog/blog_list.html' with blogs=blogs %}
+  </div>
+</div>
+{% endblock content %}

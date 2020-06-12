@@ -21,6 +21,8 @@ from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import io
 from hashids import Hashids
+from ckeditor_uploader.fields import RichTextUploadingField
+import readtime
  
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -499,16 +501,29 @@ class BuzzReply(models.Model):
             years= math.floor(diff.days/365)
             return str(years) + "y"
     
-class Bookmarks(models.Model):
+class Blog(models.Model):
     
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE,related_name='bookmarks')
-    date = models.DateTimeField(auto_now_add=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
+    title = models.CharField(max_length=200)
+    guid_url = models.CharField(max_length=255,unique=True)
+    content = RichTextUploadingField(blank=True,null=True)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    last_edited= models.DateTimeField(auto_now=True)
+    slug = models.SlugField(null = True, blank = True)
     
+    def save(self, *args, **kwargs):
+        self.guid_url = secrets.token_urlsafe(6)
+        self.title = self.title.strip()
+        self.slug = slugify(self.title.strip().lower())
+        super(Blog, self).save(*args, **kwargs) 
 
-        
+    def get_readtime(self):
+        result = readtime.of_text(str(self.content))
+        result = round(result.seconds / 60)
+        if result <= 1:
+            return '1 min'
+        else:
+            return str(result) + ' min'
 
         
         

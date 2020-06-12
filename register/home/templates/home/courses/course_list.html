@@ -67,11 +67,6 @@
             </div>   
         </div>   
     </div>
-    <div class="modal fade" id="modal-course-remove">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content"></div>
-        </div>
-      </div>
     {% endwith %}
     {% empty %}
     <div class="card" style="margin-left: -0.85rem !important;">
@@ -82,22 +77,17 @@
         </div>
     </div>
     {% endfor %}
-    <div class="modal fade" id="modal-course-share">
-        <div class="modal-dialog  modal-dialog-centered">
-          <div class="modal-content"></div>
-        </div>
-    </div>
 </div>
 <script src="{% static 'js/courses/courses.js' %}"></script>
 {% endblock content %}
 {% block item %}
 <div class="mt-1">
     <div class="border-bottom p-2 border-light" style="background-color:  rgba(210, 230, 248, 0.356); border-radius: 35px 35px 0px 0px !important;">
-        <h5 class="m-2">Courses for yn ou</h5>
+        <h5 class="m-2">Courses for you</h5>
     </div>
     <div class="card border-top-0 rounded-0" style="margin-top: -0.08rem;">
         <div class="card-body">
-            <!--fill in users with same courses and instructors-->
+            <!--fill in with courses recommended by users-->
         </div>
     </div>
 </div>

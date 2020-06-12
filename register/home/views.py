@@ -23,9 +23,9 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply
+from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog
 from main.models import Profile
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -498,13 +498,18 @@ def course_save(request,id):
         return JsonResponse(data)
     
 @login_required
-def remove_saved_course(request,id):
+def remove_saved_course(request,hid):
     data = dict()
+    id =  hashids.decode(hid)[0]
     course = get_object_or_404(Course, id=id)
     if request.method == "POST":
         request.user.saved_courses.remove(course)
-        data['message'] = course.course_code + " with professor " + course.course_instructor + " has been successfully removed from your saved courses"
-        return JsonResponse(data)
+    else:
+        context = {
+            'course':course,
+        }
+        data['html_form'] = render_to_string('home/courses/saved-course-remove.html',context,request=request)
+    return JsonResponse(data)
         
         
 @login_required
@@ -518,7 +523,7 @@ def buzz(request):
     context = {
         'buzzes':buzzes
     }
-    return render(request, 'home/buzz/buzz.html', context)
+    return render(request,'home/buzz/buzz.html', context)
     
 @login_required
 def buzz_create(request):
@@ -663,3 +668,27 @@ def comment_buzz_delete(request, hid):
         context = {'reply':reply}
         data['html_form'] = render_to_string('home/buzz/comment_delete.html',context,request=request)
     return JsonResponse(data)
+
+@login_required
+def blog(request):
+    blogs = Blog.objects.order_by('date_posted')
+    context = {'blogs':blogs}
+    return render(request, 'home/blog/blog.html', context)
+
+def blog_create(request):
+    if request.method == "POST":
+        form = BlogForm(request.POST)
+        if form.is_valid():
+             blog = form.save(False)
+             blog.author = request.user
+             blog.save()
+             return redirect('home:blog')
+    else:
+        form = BlogForm
+    context = {
+        'form':form,
+    }
+    return render(request,'home/blog/blog_create.html', context)
+
+def blog_detail(self, hid):
+    pass

@@ -21,7 +21,7 @@ urlpatterns = [
     path('courses/saved/', views.saved_courses, name='courses-saved'),
     path('courses/share/<str:hid>/', views.course_share, name='course-share'),
     path('courses/saved/<int:id>/', views.course_save, name='course-save'),
-    path('courses/saved/remove/<int:id>/', views.remove_saved_course, name='course-save-remove'),
+    path('courses/saved/remove/<str:hid>/', views.remove_saved_course, name='course-save-remove'),
     path('courses/course/remove/<str:hid>/', views.course_remove, name='course-remove'),
     path('courses/<slug:par1>/instructor/<slug:par2>/', views.courses_instructor, name='course-instructor'),
     path('courses/<slug:course_university_slug>/<str:course_code>/instructors/', views.course_instructors, name='course-instructors'),
@@ -37,4 +37,6 @@ urlpatterns = [
     path('buzz/i/<str:guid_url>/', views.buzz_detail, name='buzz-detail'),
     path('buzz/comments/<str:hid>/<str:status>/', views.comment_buzz_like, name='cbuzz-like'),
     path('buzz/delete/comments/<str:hid>/', views.comment_buzz_delete, name='cbuzz-delete'),
+    path('blog/', views.blog, name='blog'),
+    path('blog/create/', views.blog_create, name='blog-create'),
   ]

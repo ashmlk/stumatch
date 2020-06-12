@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 {% load ibuilder %}
-<script src="{% static 'js/courses/saved-courses.js' %}"></script>
 {% if courses %}
 <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
     <div class="d-flex justify-content-between mb-0">
@@ -49,10 +48,7 @@
                         {% include 'home/courses/course_vote.html' with course=course %}
                     </div>
                     <div>
-                        <form class="scrmv" method="POST">
-                            {% csrf_token %}
-                            <button data-url="{% url 'home:course-save-remove' course.id %}" type="submit" class="btn btn-sm small no-border text-muted scrmvbtn">Remove</button>
-                        </form>     
+                        <button data-url="{% url 'home:course-save-remove' hid=course.get_hashid %}" type="button" class="btn btn-sm small no-border text-muted scrmvbtn">Remove</button>
                     </div>
                 </div>    
             </div>     
@@ -69,49 +65,8 @@
     </div>
 </div>
 {% endif %}
-<div class="modal fade" id="modal-saved-courses">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content">
-        <div class="modal-header border-0  p-1">
-            <h5 class="modal-title col-12 text-center font-weight-bolder">Remove Course</h5>
-        </div>
-          <div class="moda-body text-center border-0 p-2">
-              <hp class="mt-2 col-8 text-center text-message text-danger"></p>
-          </div>
-          <div class="modal-footer border-0 p-1">
-            <button type="button" class="btn btn-secondary"  data-dismiss="modal" style="border-radius: 20px; width: 100%;">Close</button>
-        </div>
-      </div>
-    </div>
-</div>
+<script src="{% static 'js/courses/saved-courses.js' %}"></script>
 <style>
-    @media (min-width: 34em) {
-.card-columns {
-    -webkit-column-count: 1;
-    -moz-column-count: 1;
-    column-count: 1;
-}
-}
-@media (min-width: 48em) {
-.card-columns {
-    -webkit-column-count: 1;
-    -moz-column-count: 1;
-    column-count: 1;
-    }
-}   
-@media (min-width: 62em) {
-.card-columns {
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
-    column-count: 2;
-    }
-}
-@media (min-width: 75em) {
-.card-columns {
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
-    column-count: 2;
-    }
-}
+@media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}
 </style>
 {% endblock %}

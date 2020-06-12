@@ -1,26 +1,39 @@
-$(document).ready(function (e) {
-    $(document).on('click', '.course-goto', function (e) {
-        e.stopImmediatePropagation();
-        var url = $(this).attr("data-url")
-        document.location.href = url 
-	});
-    $('.scrmv').on("click", ".scrmvbtn", function (e) {
-        e.preventDefault();
+$(document).ready( function (e) {
+    var btn;
+    $(document).on("click",".scrmvbtn", function (e) {
+        btn = $(this)
         e.stopImmediatePropagation();
         var btn = $(this);
         $.ajax({
-            type: "POST",
-            url: $(this).attr("data-url"),
-            dataType: 'json',
-            data: $(this).closest("form").serialize(),
-            success: function (data){
-                $('#modal-saved-courses .text-message').text(data.message);
-                $('#modal-saved-courses').modal('show');
-                $(btn).closest(".card").remove();
+            url: btn.attr("data-url"),
+            type: 'get',
+            dataType:'json',
+            beforeSend: function(){
+                $('#modal-course-remove').modal('show');
             },
-            error: function(rs, e){
-                console.log(rs.responeText);
-            },
+            success: function(data){
+                $('#modal-course-remove .modal-content').html(data.html_form);
+            }
         });
     });
-});
+    $('#modal-course-remove').on("submit",".saved-course-remove-form",function (e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var form = new FormData(this);
+        $.ajax({
+            url: $(this).attr('data-url'),
+            type: $(this).attr('method'),
+            data: form,
+            cache: false,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(data){
+                $('#modal-course-remove').modal('hide');
+                $(btn).closest('.card').remove();
+            }
+        })
+    });
+})
+
+

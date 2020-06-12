@@ -1,4 +1,4 @@
-from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply
+from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply, Blog
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
@@ -201,3 +201,20 @@ class BuzzReplyForm(forms.ModelForm):
     class Meta:
         model = BuzzReply
         fields = ('reply_nickname','reply_content',)
+        
+
+class BlogForm(forms.ModelForm):
+    title = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control h4 blog-title-input",
+                'placeholder': "Set Title"
+                }))
+    class Meta:
+        model = Blog
+        labels = {
+            "title": "",
+            "content":"",
+        }
+        fields = ['title', 'content',]

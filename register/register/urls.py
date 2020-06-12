@@ -26,6 +26,7 @@ urlpatterns = [
     #Has to be included for Forgot Password funcitonality on main page
     path('', include('django.contrib.auth.urls')), 
     path('admin/', admin.site.urls),    
+    path('ckeditor/',include('ckeditor_uploader.urls')),
     path('',views.user_login,name='user_login'),
     path('',include('main.urls'),name='main'), 
     url(r'^home/',include(('home.urls','home'), namespace='home'))

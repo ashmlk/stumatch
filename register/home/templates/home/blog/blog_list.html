@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="mx-1">
+        <div class="mb-1">
+            {% for blog in blogs %}
+            <div class="blog-ctr border-bottom mb-2">
+                <div class="card-body">
+                    <h3 class="card-title font-weight-bolder" style="font-size: 2.678rem;"><a class="text-dark" style="text-decoration: none;"href="#">{{ blog.title }}</a></h3>
+                    <p class="text-muted">By <a href="#" class="card-link">
+                            {{ blog.author.get_full_name }}
+                        </a>
+                        on {{ blog.last_edited|date:"M d, Y" }}
+                        <span>
+                            ·
+                        </span>
+                        <span>
+                            {{ blog.get_readtime }} read
+                        </span>
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="d-flex justify-content-center">
+                <h5 class="h5 font-weight-lighter my-3 text-muted">No blogs to show</h5>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
