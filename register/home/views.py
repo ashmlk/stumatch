@@ -23,35 +23,53 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog
+from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply
 from main.models import Profile
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 import datetime
+from datetime import timedelta
 from django.db.models.functions import Now
 from django.utils.timezone import make_aware
 from django.utils import timezone
+from dal import autocomplete
+from taggit.models import Tag
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
-
+    
 @login_required
 def home(request):
-    posts = Post.objects.all()
-    posts = Post.objects.order_by('-last_edited')
-    context = { 'posts':posts }
+    
+    posts_list = Post.objects.all().select_related('author').order_by('-last_edited')
+    time_threshold = timezone.now() - timedelta(days=7)
+    qs = posts_list.filter(last_edited__gte=time_threshold)
+    is_home = True
+    tags = Post.tags.most_common(extra_filters={'post__in': qs })[:7]
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+   
+    context = { 'posts':posts, 'is_home':is_home, 'tags':tags }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
 def users_posts(request,username):
     u = get_object_or_404(Profile,username=username)
     posts = request.user.post_set.order_by('-last_edited')
-    buzzes = request.user.buzz_set.filter(author=request.user).order_by('-date_posted')
-    #Buzz.objects.filter(Q(expiry__gt=now) | Q(expiry__isnull=True)).order_by('-date_posted')
-    context = { 'posts':posts,'buzzes':buzzes }
+    buzzes = request.user.buzz_set.order_by('-date_posted')
+    blogs = request.user.blog_set.order_by('-last_edited')
+    context = { 'posts':posts,'buzzes':buzzes, 'blogs':blogs }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
@@ -71,6 +89,7 @@ def post_create(request):
             post = form.save(False)
             post.author = request.user
             post.save()
+            form.save_m2m()
             if request.FILES is not None:
                 images = [request.FILES.get('images[%d]' % i) for i in range(0, len(request.FILES))]  
                 for i in images:
@@ -93,18 +112,19 @@ def post_create(request):
 def post_update(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    if request.method == 'POST':
-        form = PostForm(request.POST,instance=post)
-        form.instance.author = request.user
-        if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
-            data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request) 
-    else:
-        form = PostForm(instance=post)
-        form.instance.author = request.user
-    data['html_form'] = render_to_string('home/posts/post_update.html',{'form':form},request=request)
-    return JsonResponse(data)
+    if post.author == request.user:
+        if request.method == 'POST':
+            form = PostForm(request.POST,instance=post)
+            form.instance.author = request.user
+            if form.is_valid():
+                form.save()
+                data['form_is_valid'] = True
+                data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request) 
+        else:
+            form = PostForm(instance=post)
+            form.instance.author = request.user
+        data['html_form'] = render_to_string('home/posts/post_update.html',{'form':form},request=request)
+        return JsonResponse(data)
 
 @login_required
 def post_delete(request, guid_url):
@@ -149,7 +169,8 @@ def post_detail(request, guid_url):
                 'guid_url':guid_url,
                 }
     if request.is_ajax():
-        comments_new = Comment.objects.filter(post=post,reply=None)
+        #changed from Comments.objects/filter(post=post, reply=None)
+        comments_new = post.comments.filter(reply=None)
         comment_count_new = post.comment_count()
         context_new = {'post':post,
                         'comments':comments_new,
@@ -519,7 +540,16 @@ def saved_courses(request):
 
 @login_required
 def buzz(request):
-    buzzes = Buzz.objects.filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
+    buzzes_list = Buzz.objects.select_related('author').filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(buzzes_list, 10)
+    try:
+        buzzes= paginator.page(page)
+    except PageNotAnInteger:
+        buzzes = paginator.page(1)
+    except EmptyPage:
+        buzzes = paginator.page(paginator.num_pages)
+    time_threshold = timezone.now() - timedelta(days=7)
     context = {
         'buzzes':buzzes
     }
@@ -537,6 +567,7 @@ def buzz_create(request):
             if e in [1,3,7]:
                 buzz.expiry = timezone.now() + datetime.timedelta(days=e)
             buzz.save()
+            form.save_m2m()
             data['form_is_valid'] = True
             data['buzz'] = render_to_string('home/buzz/new_buzz.html',{'buzz':buzz },request=request)
         else:
@@ -671,7 +702,15 @@ def comment_buzz_delete(request, hid):
 
 @login_required
 def blog(request):
-    blogs = Blog.objects.order_by('date_posted')
+    blogs_list = Blog.objects.select_related('author').all().order_by('-last_edited')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(blogs_list, 10)
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
     context = {'blogs':blogs}
     return render(request, 'home/blog/blog.html', context)
 
@@ -682,7 +721,8 @@ def blog_create(request):
              blog = form.save(False)
              blog.author = request.user
              blog.save()
-             return redirect('home:blog')
+             form.save_m2m()
+             return redirect('home:blog-detail',hid=blog.guid_url, t=blog.slug)
     else:
         form = BlogForm
     context = {
@@ -690,5 +730,229 @@ def blog_create(request):
     }
     return render(request,'home/blog/blog_create.html', context)
 
-def blog_detail(self, hid):
-    pass
+def blog_detail(request, hid, t):
+    blog = get_object_or_404(Blog, guid_url=hid, slug=t)
+    replies_count = blog.blog_replies.count()
+    context = {'blog':blog,'replies_count':replies_count}
+    return render(request,'home/blog/blog_detail.html',context)
+
+@login_required
+def blog_update(request, hid, t):
+    data = dict()
+    blog = get_object_or_404(Blog, guid_url=hid, slug=t)
+    if blog.author == request.user:
+        if request.method == 'POST':
+            form = BlogForm(request.POST,instance=blog)
+            form.instance.author = request.user
+            if form.is_valid():
+                form.save()
+                return redirect('home:blog-detail',hid=blog.guid_url, t=blog.slug) 
+        else:
+            form = BlogForm(instance=blog)
+            form.instance.author = request.user
+            is_edit = True
+            context = {
+                'form':form,
+                'blog':blog,
+                'is_edit':is_edit,
+            }
+        return render(request,'home/blog/blog_create.html', context)
+
+@login_required
+def blog_delete(request, hid, t):
+    data = dict()
+    blog = get_object_or_404(Blog, guid_url=hid, slug=t)
+    if request.method == 'POST':
+        if blog.author == request.user:
+            blog.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'blog':blog}
+        data['html_form'] = render_to_string('home/blog/blog_delete.html',context,request=request)
+    return JsonResponse(data)
+        
+@login_required
+def blog_like(request,guid_url):
+    data = dict()
+    blog = get_object_or_404(Blog, guid_url=guid_url)
+    user = request.user
+    if request.method == 'POST':   
+        if blog.likes.filter(id=user.id).exists():
+            blog.likes.remove(user)
+        else:
+            blog.likes.add(user)
+        data['blog_likes'] = render_to_string('home/blog/blog_like.html',{'blog':blog},request=request)
+        return JsonResponse(data)
+
+@login_required
+def blog_replies(request,guid_url,slug):
+    data = dict()
+    blog = get_object_or_404(Blog, guid_url=guid_url,slug=slug)
+    replies = blog.blog_replies.order_by('-date_replied')
+    replies_count = blog.blog_replies.count()
+    if request.method == 'POST':   
+        form = BlogReplyForm(request.POST or None)
+        if form.is_valid():
+            reply = form.save(False)
+            reply.author = request.user
+            reply.blog  = blog
+            reply.save()
+            form = BlogReplyForm()
+    else: 
+        form = BlogReplyForm
+    context = {'blog':blog,
+                'form':form,
+                'replies':replies,
+                'replies_count':replies_count,
+                }
+    
+    return render(request,'home/blog/blog_replies.html',context)
+
+@login_required
+def blog_reply_like(request,hid):
+    data = dict()
+    id = hashids.decode(hid)[0]
+    reply = get_object_or_404(BlogReply, id=id)
+    user = request.user
+    if request.method == 'POST':   
+        if reply.reply_likes.filter(id=user.id).exists():
+            reply.reply_likes.remove(user)
+        else:
+            reply.reply_likes.add(user)
+        data['reply_likes'] = render_to_string('home/blog/blog_reply_like.html',{'reply':reply},request=request)
+        return JsonResponse(data)
+    
+@login_required
+def tags_post(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    posts_list = Post.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
+    related_tags = Post.tags.most_common(extra_filters={'post__in': posts_list })[:5]
+    num_obj = posts_list.count()
+    if num_obj > 1:
+        s="posts"   
+    else:
+        s="post"
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    is_tag = True
+    context = {
+        'tag' : tag,
+        'posts':posts,
+        'is_tag':is_tag,
+        'num_obj':num_obj,
+        's':s,
+        'related_tags':related_tags
+        }
+    return render(request, 'home/homepage/home.html', context)
+
+@login_required
+def tags_blog(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    blog_list = Blog.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
+    related_tags = Blog.tags.most_common(extra_filters={'blog__in': blog_list })[:5]
+    num_obj = blog_list.count()
+    if num_obj > 1:
+        s="blogs" 
+    else:
+        s="blog"
+    page = request.GET.get('page', 1)
+    paginator = Paginator(blog_list, 10)
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
+    is_tag = True
+    context = {
+        'tag' : tag,
+        'blogs':blogs,
+        'is_tag':is_tag,
+        'num_obj':num_obj,
+        's':s,
+        'related_tags':related_tags
+        }
+    return render(request, 'home/blog/blog.html', context)
+
+@login_required
+def tags_buzz(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    buzz_list = Buzz.objects.select_related("name").filter(tags=tag).order_by('-last_edited')
+    related_tags = Blog.tags.most_common(extra_filters={'buzz__in': buzz_list })[:5]
+    num_obj = buzz_list.count()
+    if num_obj > 1:
+        s="buzzes" 
+    else:
+        s="buzz"
+    page = request.GET.get('page', 1)
+    paginator = Paginator(buzz_list, 10)
+    try:
+        buzzes = paginator.page(page)
+    except PageNotAnInteger:
+        buzzes = paginator.page(1)
+    except EmptyPage:
+        buzzes = paginator.page(paginator.num_pages)
+    is_tag = True
+    context = {
+        'tag' : tag,
+        'buzes':blogs,
+        'is_tag':is_tag,
+        'num_obj':num_obj,
+        's':s,
+        'related_tags':related_tags
+        }
+    return render(request, 'home/buzz/buzz.html', context)
+
+@login_required
+def search(request):
+    if request.method == 'GET':
+        search_term = request.GET.get('q', None)
+        g = request.GET.get('g', None)
+        if o == 'post':
+            posts = Post.objects.search(search_term)
+            context = {
+                'posts':posts
+            }
+            return render(request, 'home/search/search_post.html', context)
+        
+        if o == 'blog':
+            posts = Blog.objects.search(search_term)
+            context = {
+                'blogs':blogs
+            }
+            return render(request, 'home/search/search_blog.html', context)
+        
+        if o == 'buzz':
+            posts = Buzz.objects.search(search_term)
+            context = {
+                'buzzes':posts
+            }
+            return render(request, 'home/search/search_buzz.html', context)
+        
+        if o == 'users':
+            users = Profile.objects.search(search_term)
+            context = {
+                'users':users
+            }
+            return render(request, 'home/search/search_user.html', context)
+    
+    
+    
+
+
+
+
+
+
+
+
+        
+        
+
+    

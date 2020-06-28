@@ -1,3 +1,4 @@
+/*
 $(document).ready(function(){
 	$(document).ajaxSend(function (event, jqxhr, settings) {
 		jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
@@ -46,12 +47,10 @@ $(document).ready(function(){
 
 });
 
-/* 
-* Opens form for deleting a post 
-*/
+
 $(document).ready(function (e) {
     var veid = null;
-	$('#post-list').on("click",".show-form-delete", function (e) {
+	$('.post-ctr').on("click",".show-form-delete", function (e) {
 		e.stopImmediatePropagation();
         var btn = $(this);
         veid = $(this).data("veid");
@@ -91,12 +90,10 @@ $(document).ready(function (e) {
 	});
 });
 
-/* 
-* Opens form for updating a post 
-*/
+
 $(document).ready(function (e) {
     var veid = null;
-	$('#post-list').on("click",".show-form-update", function (e) {
+	$('.post-ctr').on("click",".show-form-update", function (e) {
         e.stopImmediatePropagation();
         var btn = $(this);
         veid = $(this).data("veid");
@@ -134,20 +131,17 @@ $(document).ready(function (e) {
 	});
 });
 
-/*
-* Takes user to a posts main page when clicking on content
-*/
+
 $(document).on('click', '.post-details-view', function () {
     var url = $(this).attr("data-url")
     document.location.href = url 
 });
 
-/*
-* Prevents the action of parent div in post container which takes user to post detail page
-*/
+
 $(document).on('click', '.p_ico', function(event) {
   event.stopPropagation();
 });
+*/
 
 /*
 * Sets the first image in carousel images as active

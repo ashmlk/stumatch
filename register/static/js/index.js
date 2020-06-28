@@ -2,6 +2,10 @@ $(document).ready(function () {
     var path = window.location.href;
     var p = window.location.pathname;
 
+    $('#add-tagstp').click(function() {
+      $('#div_id_tags').show();
+    })
+
     $('.dropdown').each(function () {
       $(this).find("button").addClass('no-border')
     })
@@ -37,6 +41,24 @@ $(document).ready(function () {
       fontSize: 40,
       fontWeight: 400,
     });
+  });
+
+  var infinite = new Waypoint.Infinite({
+    element: $('.infinite-container')[0],
+    onBeforePageLoad: function () {
+      $('.loading').show();
+    },
+    onAfterPageLoad: function ($items) {
+      $('.loading').hide();
+    }
+  });
+  
+  $(window).scroll(function() {
+    if ($(window).scrollTop() > 80) {
+        $('.cp-cntr-h').show();
+    } else {
+      $('.cp-cntr-h').hide();
+      }
   });
 
   $(function () {

@@ -2,7 +2,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
 {% block item %}
 <div>
     <div class="p-2 mb-2" id="_pol3">
@@ -33,12 +32,44 @@
 {% endblock %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+{% if is_tag %}
+<div class="rounded-0 ml-1 card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h4 class="card-title">#{{ tag.name }}</h4>
+      </div>
+      <div class="text-muted">
+        <span>{{ num_obj|num_format }} {{ s }}</span>
+      </div>
+    </div>
+    <div class="mt-1 related">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
+          <div style="margin-top: 0.2rem;">
+            <h6 class="text-muted small card-subtitle">Related:
+              <span class="related-tags">
+                {% for tag in related_tags %}
+                <span class="mr-1">
+                  <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a>
+                  </span>
+                {% endfor %} 
+              </span>
+             </h6>
+          </div>
+          <div class="small ml-2">
+            <!-- Display Related tags -->
+          </div>
+        </div>
+        <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
+          {% include 'main/tags/fav_buzz.html' with tag=tag %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 <div id="buzz-list">
     {% include 'home/buzz/buzz_list.html' %}
-</div>
-<div class="modal fade" id="modal-buzz" >
-  <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
-    <div class="modal-content"></div>
-  </div>
 </div>
 {% endblock content %}

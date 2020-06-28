@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from django.urls import path, include
 from home import views
+
+
 # removed trailing backslashes
 urlpatterns = [
     url(r'^$',views.home, name='home'),
@@ -39,4 +41,14 @@ urlpatterns = [
     path('buzz/delete/comments/<str:hid>/', views.comment_buzz_delete, name='cbuzz-delete'),
     path('blog/', views.blog, name='blog'),
     path('blog/create/', views.blog_create, name='blog-create'),
+    path('blog/view/<str:hid>/<slug:t>/', views.blog_detail, name='blog-detail'),
+    path('blog/edit/<str:hid>/<slug:t>/', views.blog_update, name='blog-edit'),
+    path('blog/delete/<str:hid>/<slug:t>/', views.blog_delete, name='blog-delete'),
+    path('blog/<str:guid_url>/like/', views.blog_like, name='blog-like'),
+    path('blog/replies/<str:guid_url>/<slug:slug>/', views.blog_replies, name='blog-replies'),
+    path('blog/like/replies/<str:hid>/', views.blog_reply_like, name='blog-reply-like'),
+    path('posts/tag/<slug:slug>/', views.tags_post, name='tag-post'),
+    path('blogs/tag/<slug:slug>/', views.tags_blog, name='tag-blog'),
+    path('buzzes/tag/<slug:slug>/', views.tags_buzz, name='tag-buzz'),
+    path('search', views.search, name='search-all'),
   ]

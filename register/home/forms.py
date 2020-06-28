@@ -1,8 +1,12 @@
-from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply, Blog
+from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply, Blog, BlogReply
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
 import datetime
+from taggit.forms import TagField
+from taggit.forms import TagWidget
+from dal import autocomplete
+from taggit.models import Tag
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]+$', 'Only alphanumeric characters are allowed( No spaces ).')
@@ -27,11 +31,19 @@ class PostForm(forms.ModelForm):
             attrs={
                 'placeholder': 'Write what you want to share...',
                 'style': 'resize:none',
-                'rows': 1,
+                'rows': 7,
                 'cols': 40}))
+    
     class Meta:
         model = Post
-        fields = ('title','content',)
+        labels = {
+            "tags": "",
+        }
+        help_texts = {
+            'tags': 'Tags',
+        }
+        fields = ('title','content','tags',)
+        
     
     def __init__(self, *args, **kwargs): 
         super(PostForm, self).__init__(*args, **kwargs)
@@ -178,7 +190,15 @@ class BuzzForm(forms.ModelForm):
         )
     class Meta:
         model = Buzz
-        fields = ('nickname','title','content',)
+        labels = {
+            "tags": "",
+        }
+        help_texts = {
+            'tags': 'Tags',
+        }
+        fields = ('nickname','title','content','tags',)
+        
+
         
 class BuzzReplyForm(forms.ModelForm):
     reply_nickname = forms.CharField(
@@ -217,4 +237,27 @@ class BlogForm(forms.ModelForm):
             "title": "",
             "content":"",
         }
-        fields = ['title', 'content',]
+        fields = ['title', 'content','tags']
+        labels = {
+            "tags": "",
+            "content":"",
+        }
+        help_texts = {
+            'tags': 'Tags',
+        }
+
+class BlogReplyForm(forms.ModelForm):
+    content = forms.CharField(
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'style':'resize:none; outline:none;min-height:5rem',
+                'class':'form-control no-border border-0',
+                'placeholder':'Write a reply',
+                'rows': 2,
+                'cols': 50}))
+    class Meta:
+        model = BlogReply
+        fields = ['content']
+        
+        

@@ -2,43 +2,119 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% load ibuilder %}
 {% block item %}
 <div class="cr-blg-ctr fixedbutton">
     <a href="{% url 'home:blog-create' %}" class="btn btn-primary btn-f-circle">  
         <i class="material-icons-outlined" style="font-size: 30px;">create</i>
     </a>         
 </div>
-<style>
-    .btn-f-circle {
-        border: none;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  padding: 9px 0;
-
-  line-height: 1.4;
-  border-radius: 25px;
-  
-}
-.fixedbutton {
-    position: fixed;
-    bottom: 50px;
-    right: 50px; 
-}
-</style>
 {% endblock %}
 {% block content %}
 <div id="blog-detail">
-    <div class="blog-title">
-        <h2 class="text-dark">{{ blog.title }}</h2>
+    <div class="row d-flex justify-content-between blog-title mb-4">
+        <div class="ml-3">
+            <h2 class="text-dark" style="font-size: 2.97568rem;">{{ blog.title }}</h2>
+        </div>
+        <div>
+            {% if request.user == blog.author %}
+            <div class="dropdown small">
+                <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">       
+                    <a class="dropdown-item p-0 mr-2 ml-1 blog-remove-btn text-secondary"  href="{% url 'home:blog-edit' hid=blog.guid_url t=blog.slug %}">Edit Blog</a>
+                    <button class="dropdown-item p-0 mr-2 show-form-delete ml-1 text-danger" data-url="{% url 'home:blog-delete' hid=blog.guid_url t=blog.slug %}">Remove Blog</a> 
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="d-flex justify-content-between">
+        <div class="d-flex info" style="margin-bottom: 2rem !important;">
+            <div class="img mr-2">
+                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                alt="Profile image">
+            </div>
+            <div style="margin-top: -0.147rem !important;">
+                <span class="text-muted">
+                    <a href="#" class="card-link">
+                        {{ blog.author.get_full_name }}
+                    </a>
+                </span><br>
+                <span class="text-muted small">
+                    {{ blog.last_edited|date:"M d, Y" }}
+                <span>
+                    ·
+                </span>
+                <span>
+                    {{ blog.get_readtime }} read
+                </span>
+            </span>
+            </div>
+        </div>
+        <div class="bm_allctr small p-0">
+            {% include 'main/bookmark/bookmark.html' with hid=blog.get_hashid t="blog" %}
+        </div>
     </div>
     <div class="blog-des">
         <p class="small-text-muted">
             <span></span>
         </p>
     </div>
-    <div class="card-body">
-        {{ blog.content }}
+    <div class="blog-body mt-3">
+        {{ blog.content|safe }}
+    </div>
+    <div class="mt-5 blog-tags d-flex">
+        {% for tag in blog.tags.all %}
+        <div class="btn-light btn mr-1 mnpglk small"data-url="{% url 'home:tag-blog' tag.slug %}">
+          <span class="text-dark"  style="text-decoration: none;">{{ tag.name }}</span>
+        </div>
+        {% endfor %} 
+    </div>
+    <div class="d-flex mt-3">
+        <div class="blog-like-section">
+            {% include 'home/blog/blog_like.html' with blog=blog %}
+        </div>
+        <div class="mx-2 blog-responses">
+            <a href="{% url 'home:blog-replies' slug=blog.slug guid_url=blog.guid_url %}" class="btn border btn-lg" style="border-radius: 20px;">
+                <span  style="font-size:1rem; color:  rgb(158, 158, 158);">
+                    View Replies           
+                    <span class="like-count small ml-1">
+                        ({{ replies_count|num_format  }})
+                    </span>
+                </span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="border-top pt-3 mt-3 bg-au">
+        <div class="d-flex justify-content-between">
+            <div class="d-flex info" style="margin-bottom: 2rem !important;">
+                <div class="img mr-2">
+                    <img class="img-create-post rounded-circle" style="margin-top:1px !important;height: 2.7rem !important;width: 2.7rem !important;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                    alt="Profile image">
+                </div>
+                <div style="margin-top: -0.140rem !important;">
+                    <span class="text-muted">
+                        <a href="#" class="card-link">
+                            {{ blog.author.get_full_name }}
+                        </a>
+                    </span><br>
+                    <span class="text-muted small">
+                        {{ blog.last_edited|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="bm_allctr small p-0">
+                {% include 'main/bookmark/bookmark.html' with hid=blog.get_hashid t="blog" %}
+            </div>
+        </div>
+        <div class="author-info">
+            <p>
+                {{ blog.author.bio }}
+            </p>
+        </div>
     </div>
 </div>
 {% endblock content %}

@@ -42,11 +42,32 @@ INSTALLED_APPS = [
     'home',
     'crispy_forms',
     'ckeditor',
+    'taggit',
+    'taggit_selectize',
+    'dal',
+    'dal_select2',
+    'friendship',
+    'django_celery_results',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 CKEDITOR_UPLOAD_PATH = 'uploads/files/'
+
+TAGGIT_SELECTIZE = {
+    'MINIMUM_QUERY_LENGTH': 1,
+    'RECOMMENDATION_LIMIT': 8,
+    'PERSIST': False,
+    'OPEN_ON_FOCUS': False,
+    'HIDE_SELECTED': True,
+    'CLOSE_AFTER_SELECT': True,
+    'LOAD_THROTTLE': 100,
+    'SELECT_ON_TAB': True,
+    'REMOVE_BUTTON': True,
+}
+
+TAGGIT_TAGS_FROM_STRING = 'taggit_selectize.utils.parse_tags'
+TAGGIT_STRING_FROM_TAGS = 'taggit_selectize.utils.join_tags'
 
 CKEDITOR_CONFIGS = {
 'default': {
@@ -64,6 +85,14 @@ CKEDITOR_CONFIGS = {
 
           },
     }
+
+#CELERY CONFIG
+
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

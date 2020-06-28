@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from main.models import Profile
+from main.models import Profile, BookmarkPost, BookmarkBlog, BookmarkBuzz
 from django.urls import reverse
 from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db.models import Q, F, Count, Avg, FloatField
@@ -23,12 +23,149 @@ import io
 from hashids import Hashids
 from ckeditor_uploader.fields import RichTextUploadingField
 import readtime
- 
+from taggit_selectize.managers import TaggableManager
+from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
+from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.indexes import GinIndex
+import django.contrib.postgres.search as pg_search
+from django.db.models.functions import Greatest
+
+#CUSTOM MODEL MANAGERS
+class PostManager(models.Manager):
+    
+    def search(self, search_text):
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title', search_text
+        ))
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.25))
+            .order_by('-bs')
+        )
+        
+        return qs
+
+class BlogManager(models.Manager):
+    
+    def search(self, search_text):
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title',search_text
+        ))
+        
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.25))
+            .order_by('-bs')
+        )
+        
+        return qs
+
+class BuzzManager(models.Manager):
+    
+    def search(self, search_text):
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                ) + SearchVector(
+                    'nickname', weight='C', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title', search_text
+        ) + TrigramSimilarity(
+            'nickname', search_text
+        ))
+        
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.25))
+            .order_by('-bs')
+        )
+        
+        return qs
+    
+class CourseManager(models.Manager):
+    
+    def search(self, search_text):
+        search_vectors = ( 
+              SearchVector(
+                  'course_code', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('course_instructor', delimiter=' '),
+                    weight='B', config='english'
+                    
+                ) + SearchVector(
+                    StringAgg('course_university', delimiter=' '),
+                    weight='C', config='english'
+                    
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        
+        trigram = (TrigramSimilarity(
+            'course_code', search_text
+        ) + TrigramSimilarity(
+            'course_instructor', search_text
+        ))
+        
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.25))
+            .order_by('-bs')
+        )
+        
+        return qs
+
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 def max_value_current_year():
     return datetime.date.today().year + 1
-
  
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -37,11 +174,23 @@ class Post(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
+    tags = TaggableManager(help_text="Tags", blank=True)
     likes= models.ManyToManyField(Profile, blank=True, related_name='post_likes')
+    sv = pg_search.SearchVectorField(null=True)
     
+    objects = PostManager()
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['sv'],name='search_idx_post'),
+        ]
+           
     def __str__(self):
         return self.title
 
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    
     def get_absolute_url(self):
         return reverse('home:post-detail')
     
@@ -281,6 +430,14 @@ class Course(models.Model):
         choices=Difficulty.choices,
         default=Difficulty.MEDIUM
         )
+    sv = pg_search.SearchVectorField(null=True)
+    
+    objects = CourseManager()
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['sv'],name='search_idx_course'),
+        ]
     def __str__(self):
         return self.course_code
     
@@ -396,17 +553,29 @@ class Buzz(models.Model):
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
     expiry = models.DateTimeField(blank=True, null=True)
+    tags = TaggableManager(help_text="Tags", blank=True)
     likes= models.ManyToManyField(Profile, blank=True, related_name='likes')
     dislikes= models.ManyToManyField(Profile, blank=True, related_name='dilikes')
     wots= models.ManyToManyField(Profile, blank=True, related_name='wots')
     shares = models.ManyToManyField(Profile, blank=True, related_name='shares')
+    sv = pg_search.SearchVectorField(null=True)
     
+    objects = BuzzManager()
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['sv'],name='search_idx_buzz'),
+        ]
+        
     def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
         self.guid_url = secrets.token_urlsafe(12)
         super(Buzz, self).save(*args, **kwargs) 
+    
+    def get_hashid(self):
+        return hashids.encode(self.id)
     
     def get_created_on(self):
         now = timezone.now()
@@ -509,14 +678,27 @@ class Blog(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
+    tags = TaggableManager(help_text="Tags", blank=True)
     slug = models.SlugField(null = True, blank = True)
+    likes= models.ManyToManyField(Profile, blank=True, related_name='blog_likes')
+    sv = pg_search.SearchVectorField(null=True)
     
+    objects = BlogManager()
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['sv'],name='search_idx_blog'),
+        ]  
+        
     def save(self, *args, **kwargs):
         self.guid_url = secrets.token_urlsafe(6)
         self.title = self.title.strip()
         self.slug = slugify(self.title.strip().lower())
-        super(Blog, self).save(*args, **kwargs) 
-
+        super(Blog, self).save(*args, **kwargs)
+         
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    
     def get_readtime(self):
         result = readtime.of_text(str(self.content))
         result = round(result.seconds / 60)
@@ -525,5 +707,41 @@ class Blog(models.Model):
         else:
             return str(result) + ' min'
 
-        
+class BlogReply(models.Model):
+    
+    blog = models.ForeignKey(Blog,on_delete=models.CASCADE,related_name='blog_replies')
+    content = models.TextField()
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    date_replied = models.DateTimeField(auto_now_add=True)
+    reply_likes= models.ManyToManyField(Profile, blank=True, related_name='brlikes')
+
+    def __str__(self):
+        return self.reply_nickname
+    
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    
+    def get_created_on(self):
+        now = timezone.now()
+        diff= now - self.date_replied
+        if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+            seconds= diff.seconds 
+            return 'Just now'  
+        if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+            minutes= math.floor(diff.seconds/60)
+            return str(minutes) + "m"
+        if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+            hours= math.floor(diff.seconds/3600)
+            return str(hours) + "h"
+        if diff.days >= 1 and diff.days < 30:
+            days= diff.days
+            return str(days) + "d"
+        if diff.days >= 30 and diff.days < 365:
+            months= math.floor(diff.days/7)       
+            return str(months) + "w"
+        if diff.days >= 365:
+            years= math.floor(diff.days/365)
+            return str(years) + "y"
+    
+            
         

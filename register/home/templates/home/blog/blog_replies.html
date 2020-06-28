@@ -1,0 +1,121 @@
+{% extends "home/homepage/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block item %}
+<div class="cr-blg-ctr fixedbutton">
+    <a href="{% url 'home:blog-create' %}" class="btn btn-primary btn-f-circle">  
+        <i class="material-icons-outlined" style="font-size: 30px;">create</i>
+    </a>         
+</div>
+{% endblock %}
+{% block content %}
+<div class="blog-replies-ctr">
+    <div class="card blog-info shadow-sm bg-white init-all">
+        <div class="card-body">
+            <p class="card-text">
+                You are seeing replies for:
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h3><a class="text-dark" style="text-decoration: none;"href="{% url 'home:blog-detail' hid=blog.guid_url t=blog.slug %}">{{ blog.title }}</a></h3>
+                        <a href="#" class="card-link small font-weight-bolder">{{ blog.author.get_full_name }}</a>
+                    </div>
+                    <div class="small text-muted">
+                        <span>
+                            {{ blog.last_edited|date:"M d, Y" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex like-replies small">
+                    <div class="blog-like-section">
+                        <div class="btn btn-sm border"  style="border-radius: 20px;">
+                            <span  style="color:  rgb(158, 158, 158);">
+                                Likes          
+                                <span class="like-count small ml-1">
+                                    {{ blog.likes.count|num_format  }}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mx-2 blog-responses">
+                        <div class="btn btn-sm border"  style="border-radius: 20px;">
+                            <span  style="color:  rgb(158, 158, 158);">
+                                Replies           
+                                <span class="like-count small ml-1">
+                                    {{ replies_count|num_format  }}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+            </p>
+        </div>
+    </div>
+    <div class="border-top pt-2 my-3">
+        <div class="my-3 replies-etall">
+            <span class="smal font-weight-bolder">
+                Replies
+            </span>
+        </div>
+        <div class="blog-replies-form-ctr border p-2 rounded">
+            <form method="POST" action="{% url 'home:blog-replies' guid_url=blog.guid_url slug=blog.slug %}"  class="blog-reply-form">
+                {% csrf_token %}
+                {{ form|crispy }}	    
+                <div class="mt-1">
+                    <div class="d-flex justify-content-end ml-1">
+                        <div>
+                            <button type="submit" id="sub-etal" class="btn no-border btn-primary"  style="border-radius: 20px; width: 100%;">Publish</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="blog-replies-list">
+        {% for reply in replies %}
+        <div class="mt-2 card blog-reply-card-ctr ">
+            <div class="card-body">
+                <div>
+                    <div class="d-flex info" style="margin-bottom: 2rem !important;">
+                        <div class="img mr-2">
+                            <img class="img-create-post rounded-circle" style="margin-top:1px !important; height: 2.7rem;width: 2.7rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                            alt="Profile image">
+                        </div>
+                        <div style="margin-top: -0.147rem !important;">
+                            <span class="text-muted">
+                                <a href="#" class="card-link">
+                                    {{ reply.author.get_full_name }}
+                                </a>
+                            </span><br>
+                            <span class="text-muted small">
+                                {{ reply.date_replied|date:"M d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p class="card-text">
+                    {{ reply.content }}
+                </p>
+                <div class="blog-reply-like-section">
+                    {% include 'home/blog/blog_reply_like.html' with reply=reply %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.blog-reply-form').on('submit', function () {
+            
+        })
+    })
+    var textarea = document.getElementById("id_content");
+    textarea.oninput = function() {
+    textarea.style.height = "";
+    textarea.style.height = Math.min(textarea.scrollHeight) + "px";
+    };
+    </script>
+{% endblock content %}

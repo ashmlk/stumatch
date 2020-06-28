@@ -1,33 +1,55 @@
 {% extends "home/homepage/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-{% load static %}
-{% block item %}
-<div class="cr-blg-ctr fixedbutton">
-    <a href="{% url 'home:blog-create' %}" class="btn btn-primary btn-f-circle">  
-        <i class="material-icons-outlined" style="font-size: 30px;">create</i>
-    </a>         
-</div>
-<style>
-    .btn-f-circle {
-        border: none;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  padding: 9px 0;
-
-  line-height: 1.4;
-  border-radius: 25px;
-  
-}
-.fixedbutton {
-    position: fixed;
-    bottom: 50px;
-    right: 50px; 
-}
-</style>
+{% load ibuilder %}
+{% block contentleft %}
+  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:blog-create' %}">
+    <div class="col-2">
+      <i class="btn-light btn-b-circle material-icons" style="font-size: 28px; ">create</i>
+    </div>
+    <div class="col-10 d-none d-lg-block mt-2">
+      <span class="ml-2">Create Blog</span>
+    </div>
+  </div>
 {% endblock %}
 {% block content %}
+{% if is_tag %}
+<div class="rounded-0 ml-1 card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h4 class="card-title">#{{ tag.name }}</h4>
+      </div>
+      <div class="text-muted">
+        <span>{{ num_obj|num_format }} {{ s }}</span>
+      </div>
+    </div>
+    <div class="mt-1 related">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
+          <div style="margin-top: 0.2rem;">
+            <h6 class="text-muted small card-subtitle">Related:
+              <span class="related-tags">
+                {% for tag in related_tags %}
+                <span class="mr-1">
+                  <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a>
+                  </span>
+                {% endfor %} 
+              </span>
+             </h6>
+          </div>
+          <div class="small ml-2">
+            <!-- Display Related tags -->
+          </div>
+        </div>
+        <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
+          {% include 'main/tags/fav_blog.html' with tag=tag %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 <div id="blog-list">
   <div>
     {% include 'home/blog/blog_list.html' with blogs=blogs %}

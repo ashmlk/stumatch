@@ -3,7 +3,7 @@
 
 <html>
     <head>
-      <div id="#headerPlaceholder"></div>
+        <div id="#headerPlaceholder"></div>
         <style>
             #navBarSearchForm input[type=text]{width:400px !important;}
         </style>
@@ -12,16 +12,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-        <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
-        <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_io/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
-       
-    </head>
+      </head>
     <body class="pb-5" >
      {% block javascript %}
      {% endblock javascript %}
@@ -33,69 +31,76 @@
                       <div class="position-fixed ml-2" style="width: 22%;">
                         <!--style="border-radius: 40px; background-color: rgba(210, 230, 248, 0.192);"-->
                           <div class="side-tab-link-holder border-bottom">           
-                              <div class="ml-3 mr-1">                   
-                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:buzz' %}" style="height: 4rem;">
-                                    <div class="col-2 mt-1">
+                              <div class="ml-3 mr-1 ">                   
+                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:buzz' %}" style="height: 4.4rem;">
+                                    <div class="col-2">
                                       <!--style="color: #788287;"-->
-                                      <i class="fas fa-mask" style=" color: transparent; -webkit-text-stroke-width: 2px;-webkit-text-stroke-color: rgb(0, 0, 0);"></i>
+                                      <button class="btn-primary btn-b-circle" style="padding-top: 8px !important;">
+                                        <i class="fas fa-mask " data-tooltip="tooltip" data-placement="bottom" title="Buzz" style=" color: transparent; -webkit-text-stroke-width: 2px;-webkit-text-stroke-color: rgb(255, 255, 255);"></i>
+                                      </button>
                                     </div>
-                                    <div class="col-10 mt-1">
-                                      Buzz
+                                    <div class="col-10 mt-2 d-none d-lg-block">
+                                      <span class="ml-2 ">Buzz</span>
                                     </div>
                                   </div>
                                   <div class="row h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:blog' %}">
-                                    <div class="col-2 mt-1">
+                                    <div class="col-2">
                                       <!-- style="color: #1ee321;"-->
-                                      <i class="material-icons" style="font-size: 28px;">
+                                      <i class="material-icons btn-primary btn-b-circle" data-tooltip="tooltip" data-placement="bottom" title="Blogs" style="font-size: 28px; " >
                                         reorder
                                       </i>
                                     </div>
-                                    <div class="col-10 mt-2">
-                                      Blogs
+                                    <div class="col-10 mt-2 d-none d-lg-block">
+                                      <span class="ml-2">Blogs</span>
                                     </div>
                                   </div>
                                   <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:courses' %}">
-                                    <div class="col-2 mt-1">
+                                    <div class="col-2">
                                       <!-- style="color: #731ee3;"-->
-                                      <i class="material-icons-outlined" style="font-size: 28px;">
+                                      <i class="material-icons-outlined btn-primary btn-b-circle" data-tooltip="tooltip" data-placement="bottom" title="Courses" style="font-size: 28px;">
                                        book
                                       </i>
                                     </div>
-                                    <div class="col-10 mt-2">
-                                      Courses
+                                    <div class="col-10  d-none d-lg-block mt-2">
+                                      <span class="ml-2">Courses</span>
                                     </div>
                                   </div>
                                   <div class="row  h5 rounded font-weight-bold  p-3 mnpglk" data-url="{% url 'home:users-posts' request.user.get_username %}">
-                                    <div class="col-2 mt-1">
+                                    <div class="col-2">
                                       <!--style="color: #1e6de3;"-->
-                                      <i class="material-icons-outlined" style="font-size: 28px;">
-                                        view_agenda
+                                      <i class="material-icons-outlined btn-primary btn-b-circle" data-tooltip="tooltip" data-placement="bottom" title="By You" style="font-size: 28px;">
+                                        inbox
                                       </i>
                                     </div>
-                                    <div class="col-10 mt-2">
-                                      By You
+                                    <div class="col-10 mt-2 d-none d-lg-block">
+                                      <span class="ml-2">By You</span>
                                     </div>
                                   </div>
-                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="">
+                                  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'main:bookmarks' %}">
                                     <div class="col-2">
-                                      <i class="material-icons" style="font-size: 28px;">
+                                      <i class="btn-primary btn-b-circle material-icons" data-tooltip="tooltip" data-placement="bottom" title="Bookmarks" style="font-size: 28px; ">
                                         bookmark_border
                                       </i>
                                     </div>
-                                    <div class="col-10 mt-1">
-                                      Bookmarks
+                                    <div class="col-10 d-none d-lg-block mt-2">
+                                      <span class="ml-2 ">Bookmarks</span>
                                     </div>
                                   </div>
                               </div>
                           </div>
-                          {% block contentleft %}
-                          {% endblock %}
+                          <div class="ml-3 mr-1 mt-2">
+                            {% block contentleft %}
+                            {% endblock %}
+                          </div>
+                          
                       </div>                   
                     </div>
                     <div class="col-sm-6 order-2">
-                      <div class="mt-5" style="top: 54px;">
-                        {% block content %}
-                        {% endblock %}
+                      <div class="mt-5" style="top: 44px !important;">
+                        <div class="pt-2">
+                          {% block content %}
+                          {% endblock %}
+                        </div>
                         <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
                       </div>
                     </div>
@@ -135,8 +140,39 @@
             <div class="modal-content"></div>
           </div>
         </div>
-        <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-        <script src="{% static 'initial/initial.js' %}"></script>
+        <div class="modal fade" id="modal-buzz" >
+          <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+            <div class="modal-content"></div>
+          </div>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="createModal" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title col-12 text-center" id="createModal">Create</h5>
+              </div>
+              <div class="modal-body">
+                  <div>
+                      <div class="row mb-2 justify-content-center">
+                          <button class="col-10 ml-1 btn btn-primary border-0 create-post-btn"  data-url="{% url 'home:post-create' %}">
+                          Create a Post
+                          </button>
+                      </div>
+                      <div class="row mb-2 justify-content-center" >
+                          <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip" data-placement="bottom" title="Buzz and comment anonymously!"
+                          data-url="{% url 'home:buzz-create' %}">Create a Buzz</button> 
+                      </div>
+                      <div class="row justify-content-center" >
+                          <button class="col-10 btn btn-primary border-0 " data-url="{% url 'home:blog-create' %}">Create a Blog</button> 
+                      </div>   
+                  </div>
+              </div>
+              <div class="modal-footer col-12">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 20px;" >Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <!--
         <script src="{% static 'js/post/like-api.js' %}"></script>
         <script src="{% static 'js/post/post-comments.js' %}"></script>
@@ -144,16 +180,45 @@
         <script src="{% static 'js/post/comment.js' %}"></script>
         <script src="{% static 'js/post/comment-delete.js' %}"></script>
         <script src="{% static 'js/post/like-comment-api.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz.js' %}"></script>
         <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
         <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
         <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
         <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
         <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
         -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+        <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+        <script src="{% static 'initial/initial.js' %}"></script>
         <script src="{% static 'js/buzz/buzzall.js' %}"></script>
         <script src="{% static 'js/post/postall.js' %}"></script>
         <script src="{% static 'js/index.js' %}"></script>
-        
+        <script src="{% static 'js/buzz/buzz.js' %}"></script>
+        <script>
+            $(document).ready(function (e) {
+              var btn;
+              $('.flw-tag-ctr').on("click", ".f-tag-btn", function (e) {
+                  btn = $(this)
+                  e.preventDefault();
+                  $.ajax({
+                      type: "POST",
+                      url: $(this).attr("data-url"),
+                      dataType: 'json',
+                      data: $(btn).closest('form').serialize(),
+                      success: function (data){
+                        $(btn).closest('.flw-tag-ctr').html(data.html_form)
+                      },
+                      error: function(rs, e){
+                          console.log(rs.responeText);
+                      },
+                  });
+              });
+            })
+        </script>
     </body>
 </html>

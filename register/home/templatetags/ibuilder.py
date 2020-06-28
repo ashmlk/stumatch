@@ -2,6 +2,9 @@ import string
 import secrets
 import random
 from django import template
+from main.models import Profile, BookmarkBuzz, BookmarkBlog, BookmarkPost
+from hashids import Hashids
+hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 register = template.Library()
 
@@ -38,5 +41,17 @@ def num_format(value):
         magnitude += 1
         t /= 1000.0
     return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
+
+@register.simple_tag(takes_context=True)
+def is_bookmarked(context):
+    request = context['request']
+    id =  hashids.decode(context['hid'])[0]
+    if context['t'] == 'post':
+        return BookmarkPost.objects.filter(user__id=request.user.id, obj__id=id).exists()
+    elif context['t'] == 'blog':
+        return BookmarkBlog.objects.filter(user__id=request.user.id, obj__id=id).exists()
+    elif context['t'] == 'buzz':
+        return BookmarkBuzz.objects.filter(user__id=request.user.id, obj__id=id).exists()
+        
 
 

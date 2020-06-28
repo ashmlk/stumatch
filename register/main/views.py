@@ -1,13 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, EditProfileForm, PasswordResetForm
+from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from hashids import Hashids
+from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
+from home.models import Post, Buzz, Blog
+from django.http import JsonResponse
+from taggit.models import Tag
+
+hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 @login_required
 def user_logout(request):
@@ -58,41 +67,86 @@ def edit_profile(request):
         return render(request, 'main/edit_profile.html', args)
 
 
-# This is for handling friend requests
+@login_required
+def add_bookmark(request, hid, obj_type):
+    data=dict()
+    t=obj_type
+    id =  hashids.decode(hid)[0]
+    if request.method == 'POST':
+        if obj_type=='post':
+            model = BookmarkPost
+        elif obj_type=='blog':
+            model = BookmarkBlog
+        elif obj_type=='buzz':
+            model = BookmarkBuzz
+        user = auth.get_user(request)
+        bookmark, created = model.objects.get_or_create(user=user, obj_id=id)
+        if not created:
+            bookmark.delete()
+        context = {
+                   'hid':hid,
+                   't':t}
+        if obj_type!='blog':
+            data['html_form'] = render_to_string('main/bookmark/bookmark_dropdown.html',context,request=request)
+        else:
+            data['html_form'] = render_to_string('main/bookmark/bookmark.html',context,request=request)
+    return JsonResponse(data)
 
 @login_required
-def send_friend_request(request, id):
-	if request.user.is_authenticated():
-		user = get_object_or_404(User, id=id)
-		frequest, created = FriendRequest.objects.get_or_create(
-			from_user=request.user,
-			to_user=user)
-		return HttpResponseRedirect('/users')
+def bookmarks(request):
+    user = request.user
+    bookmarked_posts = user.bookmarkpost_set.all()
+    bookmarked_blogs = user.bookmarkblog_set.all()
+    bookmarked_buzzes = user.bookmarkbuzz_set.all()
+    context = {
+        'bookmarked_posts':bookmarked_posts,
+        'bookmarked_blogs':bookmarked_blogs,
+        'bookmarked_buzzes':bookmarked_buzzes,
+    }
+    return render(request,'main/bookmark/bookmarks_user.html', context)
 
 @login_required
-def cancel_friend_request(request, id):
-	if request.user.is_authenticated():
-		user = get_object_or_404(User, id=id)
-		frequest = FriendRequest.objects.filter(
-			from_user=request.user,
-			to_user=user).first()
-		frequest.delete()
-		return HttpResponseRedirect('/users')
+def f_post_tag(request, slug):
+    data = dict()
+    user = request.user
+    tag = get_object_or_404(Tag, slug=slug)
+    if request.method == 'POST':
+        if user.favorite_post_tags.filter(slug=slug).exists():
+            user.favorite_post_tags.remove(tag)
+            is_fav = False
+        else:
+            user.favorite_post_tags.add(tag)
+            is_fav = True
+        data['html_form'] = render_to_string('main/tags/fav_post.html',{'is_fav':is_fav,'tag':tag},request=request)
+        return JsonResponse(data)
 
 @login_required
-def accept_friend_request(request, id):
-	from_user = get_object_or_404(User, id=id)
-	frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-	user1 = frequest.to_user
-	user2 = from_user
-	user1.profile.friends.add(user2.profile)
-	user2.profile.friends.add(user1.profile)
-	frequest.delete()
-	return HttpResponseRedirect('/users/{}'.format(request.user.profile.slug))
+def f_buzz_tag(request, slug):
+    data = dict()
+    user = request.user
+    tag = get_object_or_404(Tag, slug=slug)
+    if request.method == 'POST':
+        if user.favorite_buzz_tags.filter(slug=slug).exists():
+            user.favorite_buzz_tags.remove(tag)
+            is_fav = False
+        else:
+            user.favorite_buzz_tags.add(tag)
+            is_fav = True
+        data['html_form'] = render_to_string('main/tags/fav_buzz.html',{'is_fav':is_fav,'tag':tag},request=request)
+        return JsonResponse(data)
 
 @login_required
-def delete_friend_request(request, id):
-	from_user = get_object_or_404(User, id=id)
-	frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-	frequest.delete()
-	return HttpResponseRedirect('/users/{}'.format(request.user.profile.slug))
+def f_blog_tag(request, slug):
+    data = dict()
+    user = request.user
+    tag = get_object_or_404(Tag, slug=slug)
+    if request.method == 'POST':
+        if user.favorite_blog_tags.filter(slug=slug).exists():
+            user.favorite_post_tags.remove(tag)
+            is_fav = False
+        else:
+            user.favorite_blog_tags.add(tag)
+            is_fav = True
+        data['html_form'] = render_to_string('main/tags/fav_blog.html',{'is_fav':is_fav,'tag':tag},request=request)
+        return JsonResponse(data)
+  
