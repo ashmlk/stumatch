@@ -474,3 +474,22 @@ $(document).ready(function (e) {
 		  });
 	  });
 	})
+$(ddocument).ready(function () {
+	var btn;
+	$('.flw-tag-ctr').on("click", ".f-tag-btn", function (e) {
+		btn = $(this)
+		e.preventDefault();
+		$.ajax({
+			type: "POST",
+			url: $(this).attr("data-url"),
+			dataType: 'json',
+			data: $(btn).closest('form').serialize(),
+			success: function (data){
+			$(btn).closest('.flw-tag-ctr').html(data.html_form)
+			},
+			error: function(rs, e){
+				console.log(rs.responeText);
+			},
+		});
+	});
+})

@@ -33,6 +33,39 @@ from django.db.models.functions import Greatest
 #CUSTOM MODEL MANAGERS
 class PostManager(models.Manager):
     
+    def search_topresult(self, search_text):
+        
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title', search_text
+        ) + (TrigramSimilarity(
+            'content', search_text
+        ))
+        )
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.2))
+            .order_by('-bs')[:5]
+        )
+        if qs.count() < 1:
+                return self.search(search_text)[:5]
+        else:
+                return qs
+        
     def search(self, search_text):
         search_vectors = ( 
               SearchVector(
@@ -49,18 +82,55 @@ class PostManager(models.Manager):
         search_rank = SearchRank(search_vectors,search_query)
         trigram = (TrigramSimilarity(
             'title', search_text
+        ) + (TrigramSimilarity(
+            'content', search_text
         ))
+        )
         qs = (
             self.get_queryset()
             .filter(sv=search_query)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
-            .filter(Q(bs__gte=0.25))
+            .filter(Q(bs__gte=0.1))
             .order_by('-bs')
         )
         
         return qs
 
 class BlogManager(models.Manager):
+    
+    def search_topresult(self, search_text):
+    
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title', search_text
+            )
+        )
+        
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.2))
+            .order_by('-bs')[:5]
+        )
+        if qs.count() < 1:
+                return self.search(search_text)[:5]
+        else:
+                return qs
+             
+             
     
     def search(self, search_text):
         search_vectors = ( 
@@ -84,13 +154,48 @@ class BlogManager(models.Manager):
             self.get_queryset()
             .filter(sv=search_query)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
-            .filter(Q(bs__gte=0.25))
+            .filter(Q(bs__gte=0.05))
             .order_by('-bs')
         )
         
         return qs
 
 class BuzzManager(models.Manager):
+    
+    def search_topresult(self, search_text):
+        
+        search_vectors = ( 
+              SearchVector(
+                  'title', weight='A', config='english'
+            
+                ) + SearchVector(
+                    StringAgg('content', delimiter=' '),
+                    weight='B', config='english'
+                )
+              )
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        search_rank = SearchRank(search_vectors,search_query)
+        trigram = (TrigramSimilarity(
+            'title', search_text
+        ) + (TrigramSimilarity(
+            'content', search_text
+        ))
+        )
+        qs = (
+            self.get_queryset()
+            .filter(sv=search_query)
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
+            .filter(Q(bs__gte=0.2))
+            .order_by('-bs')[:5]
+        )
+        if qs.count() < 1:
+                return self.search(search_text)[:5]
+        else:
+                return qs
+            
+             
     
     def search(self, search_text):
         search_vectors = ( 
@@ -118,28 +223,35 @@ class BuzzManager(models.Manager):
             self.get_queryset()
             .filter(sv=search_query)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
-            .filter(Q(bs__gte=0.25))
+            .filter(Q(bs__gte=0.05))
             .order_by('-bs')
         )
         
         return qs
-    
+
+
 class CourseManager(models.Manager):
     
     def search(self, search_text):
+        
         search_vectors = ( 
               SearchVector(
                   'course_code', weight='A', config='english'
             
                 ) + SearchVector(
-                    StringAgg('course_instructor', delimiter=' '),
-                    weight='B', config='english'
+                    'course_instructor', deweight='C', config='english'
                     
                 ) + SearchVector(
                     StringAgg('course_university', delimiter=' '),
                     weight='C', config='english'
                     
+                ) + SearchVector(
+                    'course_code','course_instructor', weight='B', config='english'
+                    
+                ) + SearchVector(
+                    'course_university','course_instructor', weight='B', config='english'
                 )
+                
               )
         search_query = SearchQuery(
             search_text, config='english'
@@ -148,19 +260,30 @@ class CourseManager(models.Manager):
         
         trigram = (TrigramSimilarity(
             'course_code', search_text
-        ) + TrigramSimilarity(
-            'course_instructor', search_text
-        ))
+            ) + TrigramSimilarity(
+                'course_instructor', search_text
+            ) + TrigramSimilarity(
+                'course_university', search_text
+            ) 
+        )
+        
+        ds = self.get_queryset().distinct('course_code','course_instructor','course_university')
         
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
-            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
-            .filter(Q(bs__gte=0.25))
-            .order_by('-bs')
+            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('trigram','rank'))
+            .filter(
+                Q(rank__gte=0.2)|
+                Q(trigram__gte=0.09)|
+                Q(course_code__unaccent__trigram_similar=search_text) 
+            )
+            .filter(id__in=ds).order_by('-bs')
         )
         
         return qs
+    
+    
+    
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 

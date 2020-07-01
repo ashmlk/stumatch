@@ -5,47 +5,263 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_uuid_upload import upload_to_uuid
 from taggit.models import Tag
-from django.contrib.postgres.search import SearchVector
-from django.contrib.postgres.search import SearchQuery
-from django.contrib.postgres.search import SearchRank
+from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
+from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
 import django.contrib.postgres.search as pg_search
 from django.db.models.functions import Greatest
+from django.contrib.auth.models import BaseUserManager
+from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
+from django.db.models import Q, F, Count, Avg, FloatField
+
 
 #CUSTOM MODEL MANAGERS
-class ProfileManager(models.Manager):
+class ProfileManager(BaseUserManager):
     
-    def search(self, search_text):
-        search_vectors = ( 
-              SearchVector(
-                  'username', weight='A', config='english'
-            
-                ) + SearchVector(
-                  'first_name', 'last_name' , weight='B', config='english'
-                ) + SearchVector(
-                  'bio', weight='C', config='english'
-            
+    
+    def search_topresult(self, search_text):
+        
+        search_text=search_text.strip()
+        
+        if len(search_text.strip()) < 2:
+            qs = (
+                self.get_queryset()
+                .annotate(
+                    trigram = Greatest(
+                        TrigramSimilarity('username', search_text),
+                        TrigramSimilarity('first_name', search_text),
+                        TrigramSimilarity('last_name', search_text))
+                    ).filter(
+                        Q(username__unaccent__trigram_similar=search_text) |
+                        Q(last_name__unaccent__trigram_similar=search_text) |
+                        Q(first_name__unaccent__trigram_similar=search_text) |
+                        Q(username__unaccent__icontains=search_text), trigram__gte=0.2
+                    ).order_by('-trigram')
                 )
-              )
-        search_query = SearchQuery(
-            search_text, config=' english__unaccent'
-        )
-        search_rank = SearchRank(search_vectors,search_query)
-        trigram = TrigramSimilarity(
-            'username',search_text
-        ) + TrigramSimilarity(
-            'last_name',search_text
-        ) 
+            if qs.count() < 1:
+                return self.search(search_text)[:5]
+            else:
+                 return qs
+        
+        else:
+            
+            search_text=search_text.strip()
+        
+            search_vectors = ( 
+                SearchVector(
+                    'last_name', weight='B', config='english'
+                    
+                    ) + SearchVector(
+                        'username', delimiter=' ',
+                        weight='A', config='english'
+                        
+                    ) + SearchVector(
+                        'first_name', delimiter=' ',
+                        weight='C', config='english'
+                        
+                    ) 
+                )
+            
+            search_query = SearchQuery(
+                search_text, config='english'
+            )
+            
+            search_rank = SearchRank(search_vectors,search_query)
+            
+            if len(search_text.split()) == 2:
+                #possibly name+lastname, lastname+name, username+lastname
+                search_text_1 ,search_text_2 = search_text.split(' ', 1)
+                
+                trigram = (TrigramSimilarity(
+                        'username', search_text
+                    ) + TrigramSimilarity(
+                        'last_name', search_text
+                    ) + TrigramSimilarity(
+                        'first_name', search_text
+                    ) + TrigramSimilarity(
+                        'username', search_text_1
+                    ) + TrigramSimilarity(
+                        'last_name', search_text_1
+                    ) + TrigramSimilarity(
+                        'first_name', search_text_1
+                    ) + TrigramSimilarity(
+                        'username', search_text_2
+                    ) + TrigramSimilarity(
+                        'last_name', search_text_2
+                    ) + TrigramSimilarity(
+                        'first_name', search_text_2
+                    ) 
+                )
+                
+            else:
+                
+                trigram = (TrigramSimilarity(
+                        'username', search_text
+                    ) + TrigramSimilarity(
+                        'last_name', search_text
+                    ) + TrigramSimilarity(
+                        'first_name', search_text
+                    ) 
+                )
+                
+            
+            qs = (
+                self.get_queryset()
+                .annotate(rank=search_rank, trigram = trigram)
+                .filter(
+                    Q(rank__gte=0.3)|
+                    Q(username__unaccent__trigram_similar=search_text) |
+                    Q(last_name__unaccent__trigram_similar=search_text) |
+                    Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.1
+                ).order_by('-rank')[:5]
+            )
+            
+            if qs.count() < 1:
+                return self.search_combine(search_text)[:5]
+            else:
+                 return qs
+
+
+    def search(self, search_text):
+
+        search_text=search_text.strip()
+        
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
-            .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
-            .filter(Q(bs__gte=0.35))
-            .order_by('-bs')
+            .annotate(
+                trigram = Greatest(
+                    TrigramSimilarity('username', search_text),
+                    TrigramSimilarity('first_name', search_text),
+                    TrigramSimilarity('last_name', search_text))
+                ).filter(
+                    Q(username__unaccent__trigram_similar=search_text) |
+                    Q(last_name__unaccent__trigram_similar=search_text) |
+                    Q(first_name__unaccent__trigram_similar=search_text) |
+                    Q(username__unaccent__icontains=search_text), trigram__gte=0.03
+                ).order_by('-trigram')
+            )
+        return qs
+        
+        
+    def search_combine(self, search_text):
+        
+        search_text=search_text.strip()
+        
+        search_vectors = ( 
+              SearchVector(
+                  'last_name', weight='B', config='english'
+                  
+                ) + SearchVector(
+                    'username', delimiter=' ',
+                    weight='A', config='english'
+                    
+                ) + SearchVector(
+                    'first_name', delimiter=' ',
+                    weight='C', config='english'
+                    
+                ) 
+              )
+        
+        search_query = SearchQuery(
+            search_text, config='english'
+        )
+        
+        search_rank = SearchRank(search_vectors,search_query)
+        
+        if len(search_text.split()) == 2:
+            #possibly name+lastname, lastname+name, username+lastname
+            search_text_1 ,search_text_2 = search_text.split(' ', 1)
+            
+            trigram = (TrigramSimilarity(
+                    'username', search_text
+                ) + TrigramSimilarity(
+                    'last_name', search_text
+                ) + TrigramSimilarity(
+                    'first_name', search_text
+                ) + TrigramSimilarity(
+                    'username', search_text_1
+                ) + TrigramSimilarity(
+                    'last_name', search_text_1
+                ) + TrigramSimilarity(
+                    'first_name', search_text_1
+                ) + TrigramSimilarity(
+                    'username', search_text_2
+                ) + TrigramSimilarity(
+                    'last_name', search_text_2
+                ) + TrigramSimilarity(
+                    'first_name', search_text_2
+                ) 
+            )
+        
+        else:
+            
+            trigram = (TrigramSimilarity(
+                        'username', search_text
+                    ) + TrigramSimilarity(
+                        'last_name', search_text
+                    ) + TrigramSimilarity(
+                        'first_name', search_text
+                    ) 
+                )
+            
+            
+        
+        qs = (
+            self.get_queryset()
+            .annotate(rank=search_rank, trigram = trigram)
+            .filter(
+                Q(rank__gte=0.2)|
+                Q(username__unaccent__trigram_similar=search_text) |
+                Q(last_name__unaccent__trigram_similar=search_text) |
+                Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.03
+            ).order_by('-rank')
         )
         
         return qs
 
+class SearchLogManager(models.Manager):
+    
+    def related_terms(self, term):
+        
+        search_vectors = ( 
+              SearchVector(
+                  'search_text', weight='A', config='english'
+                )
+            )
+        
+        similarity = TrigramSimilarity('search_text', term)
+        
+        search_query = SearchQuery(
+            term, config='english'
+        )
+        
+        search_rank = SearchRank(search_vectors,search_query)
+        
+        qs = (
+            self.get_queryset()
+            .filter(~Q(search_text__iexact=term))
+            .annotate(rank=search_rank, trigram = similarity)
+            .filter(
+                Q(rank__gte=0.2)|
+                Q(trigram__gte=0.1)
+            ).annotate(
+                count=Count('recent_searches')
+            ).order_by('-rank','count','-time_stamp')
+        )
+        
+        return qs
+
+class SearchLog(models.Model):
+    
+    time_stamp =  models.DateTimeField(auto_now_add=True)
+    search_text = models.TextField(db_index=True)
+    
+    objects = SearchLogManager()
+    
+    def __str__(self):
+        return self.search_text     
+        
+        
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
@@ -56,6 +272,8 @@ class Profile(AbstractUser):
     favorite_post_tags = models.ManyToManyField(Tag, related_name='fav_post_tags')
     favorite_buzz_tags = models.ManyToManyField(Tag, related_name='fav_buzz_tags')
     favorite_blog_tags = models.ManyToManyField(Tag, related_name='fav_blog_tags')
+    recent_searches = models.ManyToManyField(SearchLog, related_name='recent_searches')
+    
     sv = pg_search.SearchVectorField(null=True)
     
     objects = ProfileManager()
@@ -101,4 +319,5 @@ class BookmarkBuzz(BookmarkBase):
         
     date = models.DateTimeField(auto_now_add=True)
     obj = models.ForeignKey('home.Buzz',on_delete=models.CASCADE, verbose_name="Buzz")
-    
+
+

@@ -57,12 +57,16 @@
             <div class="my-2">
               <p class="card-text">{{ buzz.content }}</p>
             </div>  
-            </div> 
-            {% for tag in buzz.tags.all %}
-              <div class="mr-1 small">
-                <a href="{% url 'home:tag-buzz' tag.slug %}" class="text-primary">#{{ tag.name }}</a>
+            </div>
+            <div class="w-100">
+              {% for tag in buzz.tags.all %}
+              <div class="d-flex mr-1 small">
+                <div>
+                  <a href="{% url 'home:tag-buzz' tag.slug %}" class="text-primary">#{{ tag.name }}</a>
+                </div>
               </div>
-            {% endfor %} 
+            {% endfor %}
+            </div> 
           </div>
          <hr style="margin: 0;">
             <div class="pb-1 d-flex align-items-center justify-content-center" >

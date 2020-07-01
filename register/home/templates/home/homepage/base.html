@@ -19,6 +19,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
         <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
       </head>
     <body class="pb-5" >
      {% block javascript %}
@@ -199,26 +200,6 @@
         <script src="{% static 'js/post/postall.js' %}"></script>
         <script src="{% static 'js/index.js' %}"></script>
         <script src="{% static 'js/buzz/buzz.js' %}"></script>
-        <script>
-            $(document).ready(function (e) {
-              var btn;
-              $('.flw-tag-ctr').on("click", ".f-tag-btn", function (e) {
-                  btn = $(this)
-                  e.preventDefault();
-                  $.ajax({
-                      type: "POST",
-                      url: $(this).attr("data-url"),
-                      dataType: 'json',
-                      data: $(btn).closest('form').serialize(),
-                      success: function (data){
-                        $(btn).closest('.flw-tag-ctr').html(data.html_form)
-                      },
-                      error: function(rs, e){
-                          console.log(rs.responeText);
-                      },
-                  });
-              });
-            })
-        </script>
+        <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
     </body>
 </html>

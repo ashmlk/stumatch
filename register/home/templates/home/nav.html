@@ -1,30 +1,20 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
-<script>
-    $(function () {
-        $('[data-tooltip="tooltip"]').tooltip()
-        $('[data-tooltip="tooltip"]').click(function () {
-          $('[data-tooltip="tooltip"]').tooltip("hide");
-       });
-    });
-</script>
 <nav class="navbar navbar-expand pl-3 border-bottom p-0" style="background-color: #fafafa;">
     <span class="navbar-brand ml-2"> <img src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.5rem;" ></span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse mr-4" id="navbarSupportedContent">
-        <form class="my-auto form-inline d-inline" action="{% url 'home:search-all' %}" method="GET" style="width: 30%;">
-            <div id="custom-search-input" style="background-color:#e0e0e0!important;">
-                <div class="input-group align-items-center col-md-12" style="height: 1.84rem;" >
-                    <input type="text"  class="form-control input-md" name="q" placeholder="Search" />
-                    <input type="hidden" value="post" name="o"/>
-                    <span class="input-group-btn">
-                        <button class="btn rounded-0 btn-info btn-md" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
+        <form class="my-auto form-inline d-inline" action="{% url 'home:search-all' %}" method="GET" style="width: 22%;">
+            <div id="custom-search-input" class="p-0 d-flex">
+                <div class="input-group align-items-center col-md-12" style="margin-top:2px !important; background-color:#e0e0e0 !important; height: 1.93rem !important; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" >
+                    <input type="text" style="margin-left:-2px !important;" id="searchetal" class="form-control " name="q" placeholder="Search" />
+                    <input type="hidden" value="top" name="o"/>
                 </div>
+                <button class="btn rounded-0  btn-md" style="height: 1.93rem !important; background-color:#e0e0e0 !important; margin-left:-4px; border-top-right-radius: 20px !important;border-bottom-right-radius: 20px !important;" type="submit">
+                    <i class="fa fa-search" style="margin-right: 2px !important;"></i>
+                </button>
             </div>
         </form>
 
@@ -37,15 +27,15 @@
                     </a>
                 </div>
             </li>
-            <li class="nav-item mr-2">
+            <li class="nav-item mt-1 mr-2">
                 <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
                     data-tooltip="tooltip" data-placement="bottom" title="Home"  href="{% url 'home:home' %}"><i class="mt-1 fas fa-2x fa-home text-dark"></i></a>
             </li>
-            <li class="nav-item mr-2">
+            <li class="nav-item mt-1 mr-2">
                 <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
                   data-tooltip="tooltip" data-placement="bottom" title="Notifications" href="#"><i class="mt-1 fas fa-2x fa-bell text-dark" style="transform:rotate(20deg);"></i></a>
             </li>
-            <li class="nav-item mr-2">
+            <li class="nav-item mt-1 mr-2">
                 <a class="nav-link btn-md btn-circle border-light nav-button-bg rounded-circle text-dark"
                     data-tooltip="tooltip" data-placement="bottom" title="Friends" href="#"><i class="mt-1 fas fa-2x fa-user-friends"></i></a>
             </li>
@@ -63,8 +53,19 @@
         </ul>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+        $('[data-tooltip="tooltip"]').tooltip()
+        $('[data-tooltip="tooltip"]').click(function () {
+          $('[data-tooltip="tooltip"]').tooltip("hide");
+       });
+      
+    })
+</script>
 <style>
  .img-btn:hover {
     border:2px solid rgba(210, 230, 248, 0.856);
  }
+ 
 </style>
+

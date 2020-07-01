@@ -117,7 +117,27 @@
     overflow-y: auto;
     min-height: 11rem;
     }
-
+.search-btn:hover {
+    background-color:rgb(207, 205, 205); 
+    cursor: pointer;
+}
+.search-btn-active {
+    background-color:rgb(207, 205, 205); 
+}
+.btn-light-active{
+    background-color: rgb(226,230,234);
+}
+.btn-light-active:hover {
+    opacity: 0.8;
+}
+mark{
+    background: rgb(183, 205, 247);
+    color: black;
+}
+.search-ctr .highlight{
+    font-weight: 600 !important;
+    background: rgba(196, 214, 247, 0.767);
+    }
 .post-create-form #add-images {
     border: 1px solid rgb(207, 205, 205);
     background-color: rgba(210, 230, 248, 0.63);
@@ -264,3 +284,4 @@
     max-height:9rem;
     overflow-y:auto;
   }
+

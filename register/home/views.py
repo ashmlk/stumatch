@@ -24,7 +24,7 @@ from django.views.generic import (
 )
 from django.forms import modelformset_factory 
 from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply
-from main.models import Profile
+from main.models import Profile, SearchLog
 from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .post_guid import uuid2slug, slug2uuid
@@ -913,37 +913,145 @@ def tags_buzz(request, slug):
 def search(request):
     if request.method == 'GET':
         search_term = request.GET.get('q', None)
-        g = request.GET.get('g', None)
-        if o == 'post':
-            posts = Post.objects.search(search_term)
+        if not request.user.recent_searches.filter(search_text__iexact=search_term).exists():
+            sl = SearchLog.objects.create(search_text=search_term)
+            request.user.recent_searches.add(sl)
+            
+        o = request.GET.get('o', None)
+        if o == 'top':
+            
+            posts = Post.objects.search_topresult(search_term)
+            blogs = Blog.objects.search_topresult(search_term)
+            buzzes = Buzz.objects.search_topresult(search_term)
+            users = Profile.objects.search_topresult(search_term)
+            courses = Course.objects.search(search_term)[:3]
+            
+            related_terms = SearchLog.objects.related_terms(search_term)
+            
+            if (posts.exists() or blogs.exists() or buzzes.exists() or users.exists() or courses.exists()):
+                empty = False 
+            else:
+                empty = True
+                
             context = {
-                'posts':posts
+                'posts':posts,
+                'blogs':blogs,
+                'users':users,
+                'buzzes':buzzes,
+                'empty':empty,
+                'related_terms':related_terms,
+                'courses':courses,
+                'q':search_term
+            }
+            
+            return render(request, 'home/search/search_top.html', context)
+        
+            
+        if o == 'post':
+            post_list = Post.objects.search(search_term)
+            tags = Post.tags.most_common(extra_filters={'post__in': post_list })[:5]
+            page = request.GET.get('page', 1)
+            paginator = Paginator(post_list, 10)
+            try:
+                posts = paginator.page(page)
+            except PageNotAnInteger:
+                posts = paginator.page(1)
+            except EmptyPage:
+                posts = paginator.page(paginator.num_pages)
+            context = {
+                'posts':posts,
+                'tags':tags,
+                'q':search_term
             }
             return render(request, 'home/search/search_post.html', context)
         
         if o == 'blog':
-            posts = Blog.objects.search(search_term)
+            blog_list = Blog.objects.search(search_term)
+            page = request.GET.get('page', 1)
+            paginator = Paginator(blog_list, 10)
+            try:
+                blogs = paginator.page(page)
+            except PageNotAnInteger:
+                blogs = paginator.page(1)
+            except EmptyPage:
+                blogs = paginator.page(paginator.num_pages)
             context = {
-                'blogs':blogs
+                'blogs':blogs,
+                'q':search_term
             }
             return render(request, 'home/search/search_blog.html', context)
         
         if o == 'buzz':
-            posts = Buzz.objects.search(search_term)
+            buzzes_list = Buzz.objects.search(search_term)
+            page = request.GET.get('page', 1)
+            paginator = Paginator(buzzes_list, 10)
+            try:
+                buzzes= paginator.page(page)
+            except PageNotAnInteger:
+                buzzes = paginator.page(1)
+            except EmptyPage:
+                buzzes = paginator.page(paginator.num_pages)
             context = {
-                'buzzes':posts
+                'buzzes':buzzes,
+                'q':search_term
             }
             return render(request, 'home/search/search_buzz.html', context)
         
         if o == 'users':
-            users = Profile.objects.search(search_term)
+            if len(search_term.split()) > 1:
+                users_list = Profile.objects.search_combine(search_term)
+            else:
+                users_list = Profile.objects.search(search_term)
+                
+            page = request.GET.get('page', 1)
+            paginator = Paginator(users_list, 10)
+            try:
+                users = paginator.page(page)
+            except PageNotAnInteger:
+                users = paginator.page(1)
+            except EmptyPage:
+                users = paginator.page(paginator.num_pages)
             context = {
-                'users':users
+                'users':users,
+                'q':search_term
             }
             return render(request, 'home/search/search_user.html', context)
+        
+        if o == 'course':
+            
+            course_list = Course.objects.search(search_term)
+                
+            page = request.GET.get('page', 1)
+            paginator = Paginator(course_list, 10)
+            try:
+                courses = paginator.page(page)
+            except PageNotAnInteger:
+                courses = paginator.page(1)
+            except EmptyPage:
+                courses = paginator.page(paginator.num_pages)
+            context = {
+                'courses':courses,
+                'q':search_term
+            }
+            return render(request, 'home/search/search_course.html', context)
+        
+        
     
-    
-    
+@login_required
+def search_dropdown(request):
+    search_term = request.GET.get('q', None)
+    user_recent_search = request.user.recent_searches.order_by('-time_stamp')[:3]
+    most_similar = SearchLog.objects.filter(search_text__icontains=search_term).order_by('-time_stamp')[:4]
+    data1 = [{
+        'search_term':sl.search_text,
+        'context':'Recent Searches'
+    } for sl in user_recent_search]
+    data2 = [{
+        'search_term':sl.search_text,
+        'context':'Top Results'
+    } for sl in most_similar]
+    data = data1+data2
+    return JsonResponse(data,safe=False)
 
 
 

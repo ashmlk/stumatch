@@ -51,4 +51,5 @@ urlpatterns = [
     path('blogs/tag/<slug:slug>/', views.tags_blog, name='tag-blog'),
     path('buzzes/tag/<slug:slug>/', views.tags_buzz, name='tag-buzz'),
     path('search', views.search, name='search-all'),
+    path('search/get', views.search_dropdown, name='search-get'),
   ]
