@@ -99,31 +99,28 @@ $(document).ready(function () {
               enabled: true
           }
       },
-
   theme: "round"
-
   };
-
   $("#searchetal").easyAutocomplete(options);s
+})
+$(document).ready(function () {
   var search_terms = $('#search-term-e').attr('data-value');
   var terms = search_terms.split(/\+s/);
-  
   $(".search-ctr-marked").mark(terms, {
       "element": "span",
       "className": "highlight"
   });
 
-  $('.search-btn').on('click', function () {
-    var target_form = $(this).attr('data-target')
-    $('#'+target_form).submit()
 })
-
-var target_btn;
-target_btn = $('#lister-page').attr("data-target");
-$('.search-btn').each(function () {
-    if($(this).attr('data-target') == target_btn){
-        $(this).addClass('search-btn-active');
-    }
-})
-
-})
+$(document).ready(function () {
+  $(".search-btn").on('click', function () {
+      var target_form = $(this).attr('data-target')
+      $('#'+target_form).submit()
+  });
+  var target_btn = $('#lister-page').attr("data-target");
+  $(".search-btn").each(function () {
+      if($(this).attr('data-target') == target_btn){
+          $(this).addClass('search-btn-active');
+      }
+  });
+});

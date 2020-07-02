@@ -13,7 +13,9 @@ from django.db.models.functions import Greatest
 from django.contrib.auth.models import BaseUserManager
 from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db.models import Q, F, Count, Avg, FloatField
+from hashids import Hashids
 
+hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 #CUSTOM MODEL MANAGERS
 class ProfileManager(BaseUserManager):
@@ -289,6 +291,8 @@ class Profile(AbstractUser):
     def get_absolute_url(self):
         return "{}".format(self.slug)
 
+    def get_hashid(self):
+        return hashids_user.encode(self.id)
 
 class BookmarkBase(models.Model):
     class Meta:

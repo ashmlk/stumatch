@@ -349,7 +349,6 @@ $(document).ready(function (e) {
             $("span", this).addClass("text-danger")
             $(".comment-like-count", this).text(like_count); 
         }
-
         $.ajax({
             type:"POST",
             dataType: 'json',
@@ -415,12 +414,13 @@ $(document).ready(function (e) {
 	  })
 	});
   });
-  $(document).ready(function (e) {
+$(document).ready(function (e) {
+
 	$('.bookmarked-link').on('click', function (e) {
-	  e.preventDefault();
-	  e.stopImmediatePropagation();
-	  window.location = $(this).attr('data-url');
-	  return false;
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		window.location = $(this).attr('data-url');
+		return false;
 	})
 	$('#blog-detail').on("click", ".blog_likeBtn", function (e) {
 		var btn = $(this)
@@ -438,8 +438,27 @@ $(document).ready(function (e) {
 				console.log(rs.responeText);
 			},
 		});
-	  });
-	  $('.blog-reply-card-ctr ').on("click", ".blogreply_likeBtn", function (e) {
+	});
+	$('.blog-reply-card-ctr ').on("click", ".blogreply_likeBtn", function (e) {
+	var btn = $(this)
+	e.preventDefault();
+	e.stopImmediatePropagation();
+	$.ajax({
+		type: "POST",
+		url: $(this).attr("data-url"),
+		dataType: 'json',
+		data: $(this).closest("form").serialize(),
+		success: function (data){
+			$(btn).closest(".blog-reply-like-section").html(data.reply_likes);
+		},
+		error: function(rs, e){
+			console.log(rs.responeText);
+			},
+		});
+	});
+})
+
+$(document).on("click", ".etbm_btnall", function (e) {
 		var btn = $(this)
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -449,32 +468,14 @@ $(document).ready(function (e) {
 			dataType: 'json',
 			data: $(this).closest("form").serialize(),
 			success: function (data){
-				$(btn).closest(".blog-reply-like-section").html(data.reply_likes);
+				$(btn).closest(".bm_allctr").html(data.html_form);
 			},
 			error: function(rs, e){
 				console.log(rs.responeText);
 			},
 		});
-	  });
-	$(document).on("click", ".etbm_btnall", function (e) {
-		  var btn = $(this)
-		  e.preventDefault();
-		  e.stopImmediatePropagation();
-		  $.ajax({
-			  type: "POST",
-			  url: $(this).attr("data-url"),
-			  dataType: 'json',
-			  data: $(this).closest("form").serialize(),
-			  success: function (data){
-				  $(btn).closest(".bm_allctr").html(data.html_form);
-			  },
-			  error: function(rs, e){
-				  console.log(rs.responeText);
-			  },
-		  });
-	  });
-	})
-$(ddocument).ready(function () {
+	});
+$(document).ready(function () {
 	var btn;
 	$('.flw-tag-ctr').on("click", ".f-tag-btn", function (e) {
 		btn = $(this)

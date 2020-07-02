@@ -1,8 +1,8 @@
 <form class="fav-tag-form" method="POST">
     {% csrf_token %}
     {% if is_fav or tag in request.user.fav_blog_tags %}
-    <button class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-blog-tag' slug=tag.slug %}">Following</button>
+    <button type="submit" class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-blog-tag' slug=tag.slug %}">Following</button>
     {% else %}
-    <button class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-blog-tag' slug=tag.slug %}">Follow</button>
+    <button type="submit" class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-blog-tag' slug=tag.slug %}">Follow</button>
     {% endif %}
 </form>

@@ -15,8 +15,11 @@ from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
 from home.models import Post, Buzz, Blog
 from django.http import JsonResponse
 from taggit.models import Tag
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
+
+hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 @login_required
 def user_logout(request):
@@ -149,4 +152,79 @@ def f_blog_tag(request, slug):
             is_fav = True
         data['html_form'] = render_to_string('main/tags/fav_blog.html',{'is_fav':is_fav,'tag':tag},request=request)
         return JsonResponse(data)
-  
+
+@login_required
+def friend_request(request, hid):
+    
+    data=dict()
+    #add friend from request.user to other_user
+    #user recognized by hid
+    id = hashids_user.decode(hid)[0]
+    to_user = Profile.object.get(id=id)
+    from_user = request.user
+    if request.method == 'POST':
+        #Default message is always FROM_USER SENT YOU A FRIEND REQUEST
+        message = from_user.get_full_name() + " sent you a friend request"
+        #create friend request frorm request.user (from_user) to other_user (to_user)
+        Friend.objects.add_friend(from_user,to_user,message=message)
+        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        return JsonResponse(data)
+
+@login_required
+def accept_friend_request(request):
+    
+    #accept friend request
+    pass
+
+@login_required
+def reject_friend_request(request):
+    
+    #reject friend request
+    pass
+
+@login_required
+def unfriend_user(request, hid):
+    
+    data=dict()
+    #remove friend from request.user to the_user
+    #user recognized by hid
+    id = hashids_user.decode(hid)[0]
+    the_user = Profile.object.get(id=id)
+    requested_user = request.user
+    if request.method == 'POST':
+        #remove friend request from request.user to the_user 
+        Friend.objects.remove_friend(requested_user,the_user,message=message)
+        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        return JsonResponse(data)
+    
+
+@login_required
+def block_user(request, id):
+    
+    data=dict()
+    id = hashids_user.decode(hid)[0]
+    if request.method == "POST":
+        wants_to_block = request.user     #request.user submits request to block user
+        will_be_blocked = Profile.object.get(id=id) #user to be blocked by request.user
+        Block.objects.add_block(wants_to_block, will_be_blocked)
+        if Friend.objects.are_friends(wants_to_block, will_be_blocked):
+            Friend.objects.remove_friend(wants_to_block, will_be_blocked)
+        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        return JsonResponse(data)
+
+@login_required
+def unblock_user(request, hid):
+    
+    data=dict()
+    id = hashids_user.decode(hid)[0]
+    if request.method == "POST":
+        wants_to_unblock = request.user     #request.user submits request to unblock user
+        will_be_unblocked = Profile.object.get(id=id) #user to be unblocked by request.user
+        Block.objects.remove_block(wants_to_ublock, will_be_unlocked)
+        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        return JsonResponse(data)
+
+
+
+
+    
