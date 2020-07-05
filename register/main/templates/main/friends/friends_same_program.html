@@ -1,0 +1,71 @@
+{% extends 'main/friends/friends_main.html' %}
+{% load static %}
+{% load ibuilder %}
+{% block content %}
+<div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
+    <div class="m-0">
+        <h6 class="display-4" style="font-size: 1.6rem;">
+            <strong>{{ request.user.university|capfirst }}:</strong><br />"{{ request.user.program|capfirst }}"</h6>
+    </div>
+</div>
+<div class="infinite-container users-list">
+    {% for user in users %}
+    <div class="infinite-item mb-2 card">
+        <div class="mx-1 my-2">
+            <div class="d-flex justify-content-between m-2">
+                <div class="d-flex">
+                    <div>
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
+                            src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg" alt="Profile image">
+                    </div>
+                    <div class="ml-1">
+                        <div>
+                            <span class="mx-0 text-dark font-weight-bolder">{{ user.first_name }}
+                                {{ user.last_name}}</span>
+                        </div>
+                        <div style="margin-top: -0.35rem;">
+                            <a class="small" style="color: rgb(1,119,200)" href="#">@{{ user.get_username }}</a>
+                            <span class="mx-0 small text-muted">·</span>
+                            <span class="text-muted small">{{ user.university|capfirst }}</span>
+                            <span class="mx-0 small text-muted">·</span>
+                            <span class="text-muted small">{{ user.program|capfirst }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-status-ctr">
+                    {% if pending|get_dict_item:user.username %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button data-url="{% url 'main:accept-reject-friend-request' hid=user.get_hashid s=3 %}"
+                            type="submit" class="btn btn-sm no-border btn-light btn-all-status">
+                            Pending
+                        </button>
+                    </form>
+                    {% elif requested|get_dict_item:user.username %}
+                    {% include 'main/friends/accept_reject_request.html' with user=user %}
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No users found.</h5>
+        {{ request.user.univeristy }}
+    </div>
+    {% endfor %}
+</div>
+
+{% if users.has_next %}
+<a class="infinite-more-link" href="?page={{ users.next_page_number }}"></a>
+{% endif %}
+
+<div class="mt-2 loading" style="display: none;">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

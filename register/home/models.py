@@ -14,6 +14,7 @@ import secrets
 from django_uuid_upload import upload_to_uuid
 import uuid 
 import datetime
+from math import log
 import pytz
 from dateutil import tz
 import PIL
@@ -29,6 +30,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
 import django.contrib.postgres.search as pg_search
 from django.db.models.functions import Greatest
+from stream_django.activity import Activity
 
 #CUSTOM MODEL MANAGERS
 class PostManager(models.Manager):
@@ -95,7 +97,24 @@ class PostManager(models.Manager):
         )
         
         return qs
-
+    
+    
+    def get_hot(self,user):
+        
+        qs = (
+            self.get_queryset()
+            .select_related("author")
+            .exclude(author=user)
+        )
+        
+        qs_list = list(qs)
+        sorted_post = sorted(qs_list, key=lambda p: p.hot(), reverse=True)
+        
+        return sorted_post
+        
+        
+        
+        
 class BlogManager(models.Manager):
     
     def search_topresult(self, search_text):
@@ -290,7 +309,7 @@ hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 def max_value_current_year():
     return datetime.date.today().year + 1
  
-class Post(models.Model):
+class Post(models.Model, Activity):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
     content = models.TextField(validators=[MaxLengthValidator(1200)])
@@ -384,6 +403,29 @@ class Post(models.Model):
         if diff.days >= 365:
             years= math.floor(diff.days/365)
             return str(years) + "y" + " ago "
+    
+    epoch = datetime.datetime(1970, 1, 1)
+    
+    def epoch_seconds(date):
+        td = date - epoch
+        return td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
+
+    def score(comments, likes):
+        
+        # comments recieve constant factor of 1.8
+        1.8 * comments + likes
+    
+    def hot(self):
+        
+        comments = self.comments.count()
+        likes = self.likes.count()
+        date = self.last_edited
+        
+        score = score(comments, likes)
+        z = log(max(abs(score), 1), 10)
+        y = 1 if score > 0 else -1 if score < 0 else 0
+        seconds = epoch_seconds(date) - 1134028003
+        return round(y * z + seconds / 45000, 7)
             
 def image_create_uuid_p_u(instance, filename):
     return '/'.join(['post_images', str(uuid.uuid4().hex + ".png")]) 
@@ -667,7 +709,7 @@ class Course(models.Model):
        return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
            course__course_university__iexact=self.course_university).count()
     
-class Buzz(models.Model):
+class Buzz(models.Model, Activity):
     nickname = models.CharField(max_length=30, blank=True, null = True)
     title = models.CharField(max_length=90)
     guid_url = models.CharField(max_length=255,unique=True)

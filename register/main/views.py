@@ -11,11 +11,12 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from hashids import Hashids
-from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
+from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost, Profile
 from home.models import Post, Buzz, Blog
 from django.http import JsonResponse
 from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -153,54 +154,57 @@ def f_blog_tag(request, slug):
         data['html_form'] = render_to_string('main/tags/fav_blog.html',{'is_fav':is_fav,'tag':tag},request=request)
         return JsonResponse(data)
 
+
 @login_required
-def friend_request(request, hid):
-    
-    data=dict()
-    #add friend from request.user to other_user
-    #user recognized by hid
+def accept_reject_friend_request(request,hid, s):
+    data = dict()
     id = hashids_user.decode(hid)[0]
-    to_user = Profile.object.get(id=id)
-    from_user = request.user
+    other_user = get_object_or_404(Profile, id=id)
+    user = request.user
     if request.method == 'POST':
-        #Default message is always FROM_USER SENT YOU A FRIEND REQUEST
-        message = from_user.get_full_name() + " sent you a friend request"
-        #create friend request frorm request.user (from_user) to other_user (to_user)
-        Friend.objects.add_friend(from_user,to_user,message=message)
-        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        action = int(s)
+        is_friend=None
+        if action == 0:   
+            fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+            fr.accept()
+            is_friend=True
+        elif action == 1:   
+            fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+            fr.cancel()
+        elif action == 3:
+            fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+            fr.cancel()
+            is_friend=False
+        data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'user':other_user }, request=request)
         return JsonResponse(data)
 
-@login_required
-def accept_friend_request(request):
-    
-    #accept friend request
-    pass
 
 @login_required
-def reject_friend_request(request):
-    
-    #reject friend request
-    pass
-
-@login_required
-def unfriend_user(request, hid):
+def add_remove_friend(request, hid, s):
     
     data=dict()
     #remove friend from request.user to the_user
     #user recognized by hid
     id = hashids_user.decode(hid)[0]
-    the_user = Profile.object.get(id=id)
-    requested_user = request.user
+    other_user = get_object_or_404(Profile, id=id)
+    user = request.user
     if request.method == 'POST':
-        #remove friend request from request.user to the_user 
-        Friend.objects.remove_friend(requested_user,the_user,message=message)
-        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        pending=None
+        is_friend=None
+        action = int(s)
+        if action == 1:
+            #remove friend request from request.user to the_user 
+            Friend.objects.remove_friend(user,other_user)
+            is_friend = False
+        elif action == 0:
+            Friend.objects.add_friend(user, other_user)
+            pending = True
+        data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'pending':pending,'user':other_user} ,request=request)
         return JsonResponse(data)
     
 
 @login_required
 def block_user(request, id):
-    
     data=dict()
     id = hashids_user.decode(hid)[0]
     if request.method == "POST":
@@ -209,22 +213,188 @@ def block_user(request, id):
         Block.objects.add_block(wants_to_block, will_be_blocked)
         if Friend.objects.are_friends(wants_to_block, will_be_blocked):
             Friend.objects.remove_friend(wants_to_block, will_be_blocked)
-        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
+        data['html_form'] = render_to_string('main/friends/friend_status.html',{ 'is_friend':True }, request=request)
         return JsonResponse(data)
 
 @login_required
-def unblock_user(request, hid):
+def friends_main(request):
     
-    data=dict()
-    id = hashids_user.decode(hid)[0]
-    if request.method == "POST":
-        wants_to_unblock = request.user     #request.user submits request to unblock user
-        will_be_unblocked = Profile.object.get(id=id) #user to be unblocked by request.user
-        Block.objects.remove_block(wants_to_ublock, will_be_unlocked)
-        data['html_form'] = render_to_string('main/friends/friend_status.html',request=request)
-        return JsonResponse(data)
-
-
-
-
+    # dictionaries to keep track of mutual friends between user and 1-param: friends 2-param: friend requests
+    mutual_friends_with_friends = dict()
     
+    # get friends of request.user
+    friends_list = Friend.objects.friends(request.user)
+    blocked = Block.objects.blocking(request.user)
+    pending_requests = Friend.objects.sent_requests(user=request.user)
+    requests = Friend.objects.requests(user=request.user)
+    # total friends vs total requests
+    total_friends = len(friends_list)
+    total_requests = len(requests)
+    total_pending = len(Friend.objects.sent_requests(user=request.user))
+    total_blocked = len(blocked)
+    
+    request.session['total_friends'] = total_friends
+    request.session['total_requests'] = total_requests
+    request.session['total_pending'] = total_pending
+    request.session['total_blocked'] = total_blocked
+    
+    # find number of mutual firneds between user and friends
+    for f in friends_list:
+        friends_friends = Friend.objects.friends(user=f)
+        mutual_friends_with_friends[f.username] = len(set(friends_list) & set(friends_friends))
+       
+    page = request.GET.get('page', 1)
+    paginator = Paginator(friends_list, 10)
+    try:
+        friends = paginator.page(page)
+    except PageNotAnInteger:
+        friends = paginator.page(1)
+    except EmptyPage:
+        friends = paginator.page(paginator.num_pages)
+        
+   
+    context = {
+        'friends':friends,
+        'friend_requests':friend_requests,
+        'mutuals':mutual_friends_with_friends,
+        'total_friends':total_friends,
+        'total_requests':total_requests,
+        'total_pending':total_pending,
+        'is_friend':True,
+        'friend_active':'active'
+    }
+    
+    return render(request, 'main/friends/friends_friends.html', context)
+
+@login_required
+def friend_requests(request):
+    
+    friends_list = Friend.objects.friends(request.user)
+    # param to keep track of ids of users who sent request to request.user
+    ids=[]
+    mutual_friends_with_requests = dict()
+    requests = Friend.objects.requests(user=request.user)
+    #append id of users who send friend request to list
+    for f in requests:
+        ids.append(int(str(f)))  
+    # get user objects who sent friend request
+    friend_requests_list = Profile.objects.filter(id__in=ids).order_by('last_name')
+        # find number ofm utual friends between user an friend requested object @Profile
+    for f in friend_requests_list:
+        friends_friends = Friend.objects.friends(user=f)
+        mutual_friends_with_requests[f.username] = len(set(friends_list) & set(friends_friends))
+        
+    page = request.GET.get('page', 1)
+    paginator = Paginator(friend_requests_list, 10)
+    try:
+        friend_requests = paginator.page(page)
+    except PageNotAnInteger:
+        friend_requests = paginator.page(1)
+    except EmptyPage:
+        friend_requests = paginator.page(paginator.num_pages)
+    
+    total_friends = request.session.get('total_friends')
+    total_requests = request.session.get('total_requests')
+    total_pending = request.session.get('total_pending')
+       
+    context = {
+        'friend_requests':friend_requests,
+        'mutuals_request':mutual_friends_with_requests,
+        'total_friends':total_friends,
+        'request_active':'active',
+        'total_friends':total_friends,
+        'total_requests':total_requests,
+        'total_pending':total_pending,
+    }
+    
+    return render(request, 'main/friends/friend_requests.html', context)
+
+@login_required
+def friend_pending_requests(request):
+    
+    
+    lister = FriendshipRequest.objects.select_related("from_user", "to_user").filter(from_user=request.user).all()
+    
+    usernames = [l.to_user.username for l in lister ]
+    
+    user_list = Profile.objects.filter(username__in=usernames).order_by('last_name')
+    total_friends = request.session.get('total_friends')
+    total_requests = request.session.get('total_requests')
+    total_pending = request.session.get('total_pending')
+    
+    pending = True
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(user_list, 10)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+    
+    context = {
+        'users':users,
+        'total_friends':total_friends,
+        'pending_active':'active',
+        'total_friends':total_friends,
+        'total_requests':total_requests,
+        'total_pending':total_pending,
+        'pending':pending,
+    } 
+
+    return render(request, 'main/friends/friends_pending.html', context)
+
+@login_required
+def user_same_program(request):
+    
+    # @param pending - keeps track of users who request.user sent friend request
+    # @param requested - keeps track of users who sent friend request to user
+    pending = dict()
+    requested = dict()
+ 
+    sent =  FriendshipRequest.objects.select_related("from_user", "to_user").filter(from_user=request.user).all()
+    requests = Friend.objects.requests(user=request.user)
+    #append id of users who send friend request to list
+    for f in requests:
+        p = Profile.objects.get(id = int(str(f))) 
+        requested[p.username] = True
+    
+    for f in sent:
+        pending[f.to_user.username] = True
+    
+    user = request.user
+    uni = user.university
+    pro = user.program
+
+    user_list = Profile.objects.same_program(user=user, program=pro, university=uni)
+   
+    if user_list != None:
+        page = request.GET.get('page', 1)
+        paginator = Paginator(user_list, 10)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+    elif user_list==None:
+        users=None
+        
+    total_friends = request.session.get('total_friends')
+    total_requests = request.session.get('total_requests')
+    total_pending = request.session.get('total_pending')
+    
+    
+    context = {
+        'users':users,
+        'total_friends':total_friends,
+        'total_friends':total_friends,
+        'total_requests':total_requests,
+        'total_pending':total_pending,
+        'pending':pending,
+        'requested':requested,
+        'menu_link_active':'-active',
+    } 
+    
+    return render(request, 'main/friends/friends_same_program.html', context)

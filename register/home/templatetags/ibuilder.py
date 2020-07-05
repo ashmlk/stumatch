@@ -53,5 +53,7 @@ def is_bookmarked(context):
     elif context['t'] == 'buzz':
         return BookmarkBuzz.objects.filter(user__id=request.user.id, obj__id=id).exists()
         
-
+@register.filter(name='get_dict_item')
+def get_dict_item(dictionary, key):
+    return dictionary.get(key)
 

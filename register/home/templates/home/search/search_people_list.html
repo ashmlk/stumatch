@@ -1,6 +1,6 @@
-<div class="users-list">
+<div class="infinite-container users-list">
     {% for user in users %}
-    <div class="mb-2 card">
+    <div class="infinite-item mb-2 card">
         <div class="card-body">
             <div class="d-flex m-2">
                 <div>
@@ -30,4 +30,16 @@
       <h5 class="h5 font-weight-lighter my-3 text-muted">No users found.</h5>
     </div>
 {% endfor %}
+</div>
+
+{% if posts.has_next %}
+<a class="infinite-more-link" href="?page={{ users.next_page_number }}"></a>
+{% endif %}
+
+<div class="mt-2 loading" style="display: none;">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
 </div>

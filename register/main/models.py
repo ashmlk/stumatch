@@ -14,12 +14,52 @@ from django.contrib.auth.models import BaseUserManager
 from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db.models import Q, F, Count, Avg, FloatField
 from hashids import Hashids
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 #CUSTOM MODEL MANAGERS
 class ProfileManager(BaseUserManager):
     
+    def same_program(self, user, program, university):
+        
+        usernames = [user.username]
+        friends = Friend.objects.friends(user)
+        blocked =  Block.objects.blocking(user)
+        
+        if friends:
+            for f in friends:
+                usernames.append(str(f))
+        if blocked:
+            for b in blocked:
+                usernames.append(str(b))
+            
+        search_vectors = ( 
+   
+                    SearchVector(
+                        StringAgg('university', delimiter=' '), 
+                        weight='B', config='english'
+                    
+                    ) + SearchVector(
+                        StringAgg('program', delimiter=' '), 
+                         weight='B', config='english'
+                    )
+        )
+        
+        qs = (
+            self.get_queryset()
+            .exclude(username__in=usernames) 
+            .annotate(
+                similarity_university = TrigramSimilarity('university', university),
+                similarity_program = TrigramSimilarity('program', program)
+            ).filter(
+                (Q(university__unaccent__icontains=university) & Q(program__unaccent__icontains=program)) |
+                (Q(similarity_university__gte=0.01) & Q(similarity_program__gte=0.01)) |
+                (Q(similarity_program__gte=0.4)) 
+            ).order_by('-similarity_university','-similarity_program')
+        )
+    
+        return qs
     
     def search_topresult(self, search_text):
         
@@ -252,7 +292,7 @@ class SearchLogManager(models.Manager):
         )
         
         return qs
-
+    
 class SearchLog(models.Model):
     
     time_stamp =  models.DateTimeField(auto_now_add=True)

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'friendship',
     'django_celery_results',
+    'stream_django',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -95,6 +96,12 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# STREAM CONFIG
+
+STREAM_API_KEY = 'dec3nd9aasae'
+STREAM_API_SECRET = '879qq6gqwk5rf5r53fgfqkye5np8n24wjwctvm55mzvrnnsqk4vpjrrggyz3a9r6'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

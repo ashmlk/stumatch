@@ -1,0 +1,29 @@
+{% if is_friend %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" data-url="{% url 'main:add-rmv-friend' hid=user.get_hashid s=1 %}" class="btn btn-sm no-border btn-primary btn-all-status">
+        Friends
+    </button>
+</form>
+{% elif is_blocked %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm no-border btn-light">
+        Unblock
+    </button>
+</form>
+{% elif pending %}
+<form method="POST">
+    {% csrf_token %}
+    <button data-url="{% url 'main:accept-reject-friend-request' hid=user.get_hashid s=3 %}"  type="submit"  class="btn btn-sm no-border btn-light btn-all-status">
+        Pending
+    </button>
+</form>
+{% else %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" data-url="{% url 'main:add-rmv-friend' hid=user.get_hashid s=0 %}" class="btn btn-sm no-border btn-light btn-all-status">
+        Add Friend
+    </button>
+</form>
+{% endif %}

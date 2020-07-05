@@ -16,5 +16,11 @@ urlpatterns=[
     path('bookmark/<str:hid>/<str:obj_type>/', views.add_bookmark,name='add-bookmark'),
     path('tags/posts/fav/<slug:slug>', views.f_post_tag,name='fav-post-tag'),
     path('tags/buzzes/fav/<slug:slug>', views.f_buzz_tag,name='fav-buzz-tag'),
-    path('tags/blogs/fav/<slug:slug>', views.f_blog_tag,name='fav-blog-tag')
+    path('tags/blogs/fav/<slug:slug>', views.f_blog_tag,name='fav-blog-tag'),
+    path('friends/', views.friends_main,name='friends-main'),
+    path('find/program/', views.user_same_program,name='find-program'),
+    path('friends/requests/', views.friend_requests,name='friend-requests'),
+    path('friends/requests/pending/', views.friend_pending_requests,name='friend-pending'),
+    path('friends/request/<str:hid>/action/<str:s>', views.accept_reject_friend_request,name='accept-reject-friend-request'),
+    path('friends/<str:hid>/<str:s>/', views.add_remove_friend,name='add-rmv-friend'),
 ]

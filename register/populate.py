@@ -1,4 +1,5 @@
 import os, django, random
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "register.settings")
 django.setup()
@@ -112,5 +113,47 @@ def update_sv():
     Blog.objects.all().update(sv=SearchVector('title','content'))
     Buzz.objects.all().update(sv=SearchVector('title','content','nickname'))
     Course.objects.all().update(sv=SearchVector('course_code','course_instructor','course_university','course_university_slug','course_instructor_slug'))
-    Profile.objects.all().update(sv=SearchVector('username','first_name','last_name','university'))
+    Profile.objects.all().update(sv=SearchVector('username','first_name','last_name','university','program'))
+    return "Success"
+
+def create_friends():
+    user = Profile.objects.get(username="squishy")
+    idl = [31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
+        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    for i in idl:
+        other_user = Profile.objects.get(pk=i)
+        Friend.objects.add_friend(user,other_user,message='Hi! I would like to add you')
+        fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+        fr.accept()
+    return "success"
+
+def create_mutual():
+    id1 = [39 ,40, 41, 42 ,43 ,44 ,45, 46,47, 48 ,49, 50, 51, 52]
+    id2= [ 53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 , 64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    
+    for i in id1:
+        user = Profile.objects.get(pk=i)
+        for j in id2:
+            other_user = Profile.objects.get(pk=j)
+            Friend.objects.add_friend(user,other_user,message='Hi! I would like to add you')
+            fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+            fr.accept()
+    
+    
+def create_request():
+    idlk = [9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28]     
+    for k in idlk:
+        print(k)
+        user = Profile.objects.get(username="squishy")
+        other_user = Profile.objects.get(pk=k)
+        print(other_user)
+        fr = Friend.objects.add_friend(other_user,user,message='Hi! I would like to add you')
+    return "success"
+
+def set_program():
+    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29]
+    for i in idl:
+        u = Profile.objects.get(id = i)
+        u.program = "computer science"
+        u.save()
     return "Success"

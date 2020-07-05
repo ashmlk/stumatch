@@ -37,6 +37,7 @@ from django.utils.timezone import make_aware
 from django.utils import timezone
 from dal import autocomplete
 from taggit.models import Tag
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -45,7 +46,9 @@ hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 @login_required
 def home(request):
     
-    posts_list = Post.objects.all().select_related('author').order_by('-last_edited')
+    friends = Friend.objects.friends(request.user)
+    posts_list = Post.objects.select_related('author').filter(author__in=friends).order_by('-last_edited')
+    print(posts_list.count())
     time_threshold = timezone.now() - timedelta(days=7)
     qs = posts_list.filter(last_edited__gte=time_threshold)
     is_home = True
