@@ -1,5 +1,6 @@
 import os
 from django.urls import reverse_lazy
+from celery.schedules import crontab   
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'friendship',
     'django_celery_results',
     'stream_django',
+    'django_celery_beat',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -91,13 +93,41 @@ CKEDITOR_CONFIGS = {
 
 #CELERY CONFIG
 
-BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_TRANSPORT = 'redis'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS = (
+    'home.tasks',
+)
+CELERY_BEAT_SCHEDULE = {
+    'update-hot-posts': {
+        'task':'home.tasks.get_hot_posts',
+        'schedule': 3600.0,
+    },
+    'update-top-posts': {
+        'task':'home.tasks.get_top_posts',
+        'schedule': 86400.0,
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,  
+        },
+        "KEY_PREFIX": "redis_one"
+    }
+}
 
 # STREAM CONFIG
+
+CACHE_TTL = 60 * 15
 
 STREAM_API_KEY = 'dec3nd9aasae'
 STREAM_API_SECRET = '879qq6gqwk5rf5r53fgfqkye5np8n24wjwctvm55mzvrnnsqk4vpjrrggyz3a9r6'

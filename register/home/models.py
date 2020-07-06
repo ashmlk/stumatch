@@ -99,21 +99,24 @@ class PostManager(models.Manager):
         return qs
     
     
-    def get_hot(self,user):
+    def get_hot(self):
         
         qs = (
             self.get_queryset()
             .select_related("author")
-            .exclude(author=user)
         )
         
         qs_list = list(qs)
         sorted_post = sorted(qs_list, key=lambda p: p.hot(), reverse=True)
         
         return sorted_post
+    
+    def get_top(self):
+        pass
         
         
         
+          
         
 class BlogManager(models.Manager):
     
@@ -306,9 +309,21 @@ class CourseManager(models.Manager):
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
+epoch = datetime.datetime(1970, 1, 1).replace(tzinfo=pytz.UTC)
+
+
 def max_value_current_year():
     return datetime.date.today().year + 1
- 
+
+def epoch_seconds(date):
+    
+    td = date - epoch
+    return td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
+
+def score(comments, likes):
+    # comments recieve constant factor of 1.8
+    return  1.8 * comments + likes
+        
 class Post(models.Model, Activity):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
@@ -404,28 +419,31 @@ class Post(models.Model, Activity):
             years= math.floor(diff.days/365)
             return str(years) + "y" + " ago "
     
-    epoch = datetime.datetime(1970, 1, 1)
-    
-    def epoch_seconds(date):
-        td = date - epoch
-        return td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
-
-    def score(comments, likes):
-        
-        # comments recieve constant factor of 1.8
-        1.8 * comments + likes
-    
     def hot(self):
         
         comments = self.comments.count()
         likes = self.likes.count()
         date = self.last_edited
         
-        score = score(comments, likes)
-        z = log(max(abs(score), 1), 10)
-        y = 1 if score > 0 else -1 if score < 0 else 0
+        s = score(comments, likes)
+        z = log(max(abs(s), 1), 10)
+        y = 1 if s> 0 else -1 if s < 0 else 0
         seconds = epoch_seconds(date) - 1134028003
         return round(y * z + seconds / 45000, 7)
+    
+    def top(self):
+        
+        comments = self.comments.count()
+        likes = self.likes.count()
+        date = self.last_edited
+        
+        score = comment + likes 
+        divider = comment / likes
+        
+        return 0
+        
+        
+        
             
 def image_create_uuid_p_u(instance, filename):
     return '/'.join(['post_images', str(uuid.uuid4().hex + ".png")]) 

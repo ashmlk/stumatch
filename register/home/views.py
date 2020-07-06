@@ -38,10 +38,16 @@ from django.utils import timezone
 from dal import autocomplete
 from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.conf import settings
+from django.core.cache import cache
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
+
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
     
 @login_required
 def home(request):
@@ -76,11 +82,9 @@ def users_posts(request,username):
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
-def latest_posts(request):
-    now = datetime.datetime.now(tz=timezone.utc)
-    t_24 = now - datetime.timedelta(hours=24)
-    posts = Post.objects.filter(last_edited__range=(t_24,now))
-    context = { 'posts':posts,'latest':True }
+def hot_posts(request):
+    posts = cache.get("hot_posts")
+    context = { 'posts':posts, 'hot_active':'-active'}
     return render(request, 'home/homepage/home.html', context)
    
 @login_required
