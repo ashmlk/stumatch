@@ -6,7 +6,8 @@
     </button>
 </div>
 <div class="modal-body" style="overflow-y: auto;margin-top: -12px;">
-    {% for user in post_likes %}
+    <div class="infinite-container">
+        {% for user in post_likes %}
     <div class="row border-bottom">
         <div class="col-xs m-1">
             <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
@@ -23,6 +24,20 @@
         <p class="m-0 small text-muted">No Likes</p>
     </div>
     {% endfor %}
+    </div>
+    
+
+    {% if post_likes.has_next %}
+    <a class="infinite-more-link" href="?page={{ post_likes.next_page_number }}"></a>
+    {% endif %}
+  
+    <div class="mt-2 loading" style="display: none;">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>

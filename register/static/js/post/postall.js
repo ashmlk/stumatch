@@ -233,48 +233,6 @@ $(document).ready(function () {
 		$('textarea').val('')
 		$("#post-comment-form-div").fadeIn();
 	  });
-	$('.post-ctr').on('submit','.post-comment-form', function (e) {
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		var form = $(this).serialize();
-		$.ajax({
-		  url: $(this).attr('data-url'),
-		  type: 'POST',
-		  data: form,
-		  dataType: 'json',
-		  success: function(data) {
-			$("#like-section").html(data.likes);
-			$("#post-linked-comments").html(data.comments); 
-			$('textarea').val('');
-		  },
-		  error: function(rs, e){
-					console.log(rs.responeText);
-				},
-		});
-	  });
-	  $(document).on("submit",'.comment-reply-form',function (e) {
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		var form = $(this).serialize();
-		$.ajax({
-		  url: $(this).attr('data-url'),
-		  type: 'POST',  
-		  data: form,
-		  dataType: 'json',
-		  success: function(data) {
-			$('#modal-comment-reply').modal('hide');
-			$('body').removeClass('modal-open');
-			$('.modal-backdrop').remove();
-			$("#like-section").html(data.likes);
-			$("#post-linked-comments").html(data.comments);
-			$('textarea').val('');
-		  },
-		  error: function(rs, e){
-					console.log(rs.responeText);
-				},
-		})
-	  });
-
 	if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
     }
@@ -333,47 +291,73 @@ $(document).ready(function () {
 		})
 	});
 });
+$(document).ready(function(){
+	$(document).on('submit','.post-comment-form', function (e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var form = $(this).serialize();
+		$.ajax({
+		  url: $(this).attr('data-url'),
+		  type: 'POST',
+		  data: form,
+		  dataType: 'json',
+		  success: function(data) {
+			var i = parseInt($('#cc_n').text());
+			i++;
+			$('#cc_n').text(i)
+			$('#panc_q').prepend(data.comment)
+			$('textarea').val('');
+		  },
+		  error: function(rs, e){
+					console.log(rs.responeText);
+				},
+		});
+	  });
+	  $(document).on("submit",'.comment-reply-form',function (e) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var form = $(this).serialize();
+		var uuid = $(this).attr('data-target')
+		$.ajax({
+		  url: $(this).attr('data-url'),
+		  type: 'POST',  
+		  data: form,
+		  dataType: 'json',
+		  success: function(data) {
+			$('#c-'+uuid).find('.rp_container_new').prepend(data.reply)
+			var r_c = parseInt($(document).find('.cr_rb_'+uuid).attr('data-value'));
+			r_c++;
+			var new_text = "Replies  "+r_c;
+			$(document).find('.cr_rb_'+uuid).attr('text',new_text);
+			$(document).find('.cr_rb_'+uuid).attr('data-value',r_c);
+			$('textarea').val('');
+		  },
+		  error: function(rs, e){
+					console.log(rs.responeText);
+				},
+		})
+	  });
+});
 $(document).ready(function (e) {
-    $(document).on("click", ".comment-like-btn", function (e) {
+    var form_c_like;
+    $(document).on("submit", ".post-comment-like-form", function (e) {
+        form_c_like = $(this)
         e.stopImmediatePropagation();
         e.preventDefault();
-        var like_count = parseInt($(".comment-like-count", this).text());
-        if($(this).find("span").hasClass("text-danger")){
-            like_count--;
-            $(".comment-input-like-count", this).val(like_count);
-            $("span", this).removeClass("text-danger")
-            $(".comment-like-count", this).text(like_count);
-        } else {
-            like_count++;
-            $(".comment-input-like-count", this).val(like_count);
-            $("span", this).addClass("text-danger")
-            $(".comment-like-count", this).text(like_count); 
-        }
         $.ajax({
             type:"POST",
             dataType: 'json',
-            url: $(this).closest("form").attr("data-url"),     
-            data: $(this).closest("form").serialize(),
+            url: $(this).attr("data-url"),     
+            data: $(this).serialize(),
             success: function (data) {
-                if($(this).find("span").hasClass("text-danger")){
-                    like_count--;
-                    $(".comment-input-like-count", this).val(like_count);
-                    $("span", this).removeClass("text-danger")
-                    $(".comment-like-count", this).text(like_count);
-                } else {
-                    like_count++;
-                    $(".comment-input-like-count", this).val(like_count);
-                    $("span", this).addClass("text-danger")
-                    $(".comment-like-count", this).text(like_count); 
-                }
-
+                var k = $(form_c_like).closest('.clcntr').html(data.comment)
             },
             error: function(rs, e){
                 console.log(rs.responeText);
             },
         });
     });
-});
+})
 $(document).ready(function (e) {
 	var btn;
 	$('#blog-list').on("click",".show-form-delete", function (e) {

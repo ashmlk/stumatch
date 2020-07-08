@@ -43,6 +43,7 @@ $(document).ready(function () {
       fontWeight: 400,
     });
   });
+  
 
   var infinite = new Waypoint.Infinite({
     element: $('.infinite-container')[0],
@@ -123,4 +124,11 @@ $(document).ready(function () {
           $(this).addClass('search-btn-active');
       }
   });
+});
+$(document).ready(function () {
+  var parent = $("#menureform");
+  var divs = parent.children();
+  while (divs.length) {
+      parent.append(divs.splice(Math.floor(Math.random() * divs.length), 1)[0]);
+  }
 });

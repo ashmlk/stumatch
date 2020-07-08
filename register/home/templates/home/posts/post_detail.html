@@ -115,24 +115,24 @@
             src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
           </div>
           <div class="mr-1">
-            <form method="POST" data-url="{% url 'home:post-detail' guid_url %}" class="post-comment-form">
+            <form method="POST"  class="post-comment-form">
               {% csrf_token %}
               <div class="input-group">
                 {{ form }}
                 <div class="input-group-append">
-                  <button class="btn btn-sm small btn-outline-primary ml-1" style="height: 2.3rem; border-radius: 20px; text-decoration: none;" type="submit">Add</button>
+                  <button data-url="{% url 'home:post-detail' guid_url %}" class="submit-post-comment-form btn btn-sm small btn-outline-primary ml-1" style="height: 2.3rem; border-radius: 20px; text-decoration: none;" type="submit">Add</button>
                 </div>
               </div>     
             </form>
           </div>
         </div>
         <div id="post-linked-comments" class="pb-1">
-            {% include 'home/posts/post_comment.html'  %}
+            {% include 'home/posts/post_comment.html' with comments=comments %}
         </div>
       </div>
     </div>
   </div>
-  <div class="modal fade" id="modal-post-list" style="overflow-y: show;">
+  <div class="infinite-container modal fade" tabindex="-1" id="modal-post-list" >
     <div class="modal-dialog modal-md">
       <div class="modal-content"></div>
     </div>

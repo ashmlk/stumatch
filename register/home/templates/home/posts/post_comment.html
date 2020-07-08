@@ -5,158 +5,198 @@
   <div class="w-100" style="font-size: 0.8rem;">
     <div class="d-flex justify-content-end mx-2">
       <div class="ml-1">
-        <span id="like-count-d" class="text-muted mr-1">{{ post.likes.count }}</span><span data-url="{% url 'home:post-like-list' post.guid_url %}" class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
+        <span id="like-count-d" class="text-muted mr-1">{{ post.likes.count }}</span><span
+          data-url="{% url 'home:post-like-list' post.guid_url %}"
+          class="u show-likes font-weight-bold text-dark font-size-small">Likes</span>
       </div>
       <div class="ml-1">
-        <span id="cc_n" class="comment-count text-muted mr-1">{{ comment_count }}</span><span data-url="{% url 'home:post-comment-list' post.guid_url %}" class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>
+        <span id="cc_n" class="comment-count text-muted mr-1">{{ comment_count }}</span><span
+          data-url="{% url 'home:post-comment-list' post.guid_url %}"
+          class="u show-comments font-weight-bold text-dark font-size-small">Comments</span>
       </div>
     </div>
   </div>
   <hr class="mx-2 px-2" style="margin: 0;">
-  {% for comment in comments %}
-  {% with comment_uuid=comment.get_uuid %}
-  <div class="comment-box m-1">
-    <div class="row w-100 pt-1 pl-4">
-      <div class="col-xs">
-        <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
-      </div>
-      <div class="col-xs">
+  <div class='m-1'>
+    <div id="panc_q"></div>
+  </div>
+  <div class="infinite-container">
+    {% for comment in comments %}
+    {% with comment_uuid=comment.get_uuid %}
+    <div class="infinite-item comment-box m-1">
+      <div class="row w-100 pt-1 pl-4">
+        <div class="col-xs">
+          <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
+            src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
+        </div>
+        <div class="col-xs">
           <div>
             <div class="d-flex">
               <div style="display: inline-block !important;">
-                <div class="border border-light d-block" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
+                <div class="border border-light d-block"
+                  style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
                   <div class="m-1 px-2" style="font-size: 0.9rem;">
-                      <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }} {{ comment.name.last_name }}</span>
-                      <span class="font-weight-light pl-2">{{ comment.body }}</span>
+                    <span class="text-dark font-size-smaller" href="#"
+                      style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }}
+                      {{ comment.name.last_name }}</span>
+                    <span class="font-weight-light pl-2">{{ comment.body }}</span>
                   </div>
                 </div>
               </div>
-            
               <div class="dropdown">
-                <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
                   <i class="fas fa-ellipsis-h"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
                   {% if comment.name == request.user or post.author == request.user %}
-                  <button class="small dropdown-item show-comment-delete-form"  data-url="{% url 'home:comment-delete' comment.get_hashid %}"><i class="mr-1 fas fa-trash"></i>Remove comment</button>
+                  <button class="small dropdown-item show-comment-delete-form"
+                    data-url="{% url 'home:comment-delete' comment.get_hashid %}"><svg class="bi mr-1 bi-trash"
+                      width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                      <path fill-rule="evenodd"
+                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                    </svg>Delete</button>
                   {% endif %}
-                  <button class="small dropdown-item "  data-type="comment" data-url="#"><i class="mr-1 fas fa-flag"></i>Report</button>
+                  {% if comment.name != request.user %}
+                  <button class="small dropdown-item " data-type="comment" data-url="#"><svg width="1em" height="1em"
+                      viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
+                      <path fill-rule="evenodd"
+                        d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                    </svg>Report</button>
+                  {% endif %}
                 </div>
               </div>
-           
             </div>
-            <div class="d-flex justify-content-start">
-                <div>
-                  {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
-                </div>
-                <div class="mx-1">
-                  <span class="text-muted small">·</span>
-                </div>
-                <div>
-                  <span class="small text-muted u reply-btn button-hide-outline" type="button" 
-                  data-id="{{ comment.id }}" data-toggle="modal" data-target="modal-comment-reply">Reply</span>
-                </div>
-                <div class="mx-1">
-                    <span class="text-muted small">·</span>
-                </div>
-                <div>
-                <input type="hidden" value="{{ comment.relpies.count }}" id="rsrcp"/>
-                <span  id="srfc" class="text-muted small view-replies" data-hidden="1" data-id="{{ comment_uuid }}" text="Hide replies">Replies ({{ comment.replies.count|num_format }})</span>
-                </div>
-                <div class="mx-1">
-                    <span class="text-muted small">·</span>
-                </div>
-                <div>
-                    <span class="text-muted small">{{ comment.get_created_on }}</span>
-                </div>   
-            </div> 
+            <div class="comment-box-comment-like d-flex justify-content-start">
+              <div class="clcntr">
+                {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
+              </div>
+              <div class="mx-1">
+                <span class="text-muted small">·</span>
+              </div>
+              <div>
+                <input type="hidden" value="{{ comment.relpies.count }}" id="rsrcp" />
+                <span id="srfc" class="cr_rb_{{ comment_uuid }} text-muted small view-replies"
+                  data-value="{{ comment.replies.count }}" data-hidden="1" data-id="{{ comment_uuid }}"
+                  text="Hide replies">Replies {{ comment.replies.count|num_format }}</span>
+              </div>
+              <div class="mx-1">
+                <span class="text-muted small">·</span>
+              </div>
+              <div>
+                <span class="text-muted small">{{ comment.get_created_on }}</span>
+              </div>
+            </div>
           </div>
           <div class="comment-replies pl-4" id="c-{{ comment_uuid }}" style="display: none;">
-              {% for reply in comment.replies.all %}
-              <div class="row pl-4 py-2 reply-box">
-                <div class="col-xs">
-                  <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
-                </div>
-                <div class="col-xs">
+            <div class="form-group row">
+              <form method="POST" data-target="{{ comment_uuid }}" data-url="{% url 'home:post-detail' guid_url %}"
+                class="comment-reply-form">
+                {% csrf_token %}
+                <input type="hidden" id="c-get-id" name="comment_id" value="{{ comment.id }}">
+                <div class="w-75">
                   <div class="d-flex">
-                    <div class="border border-light" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
-                      <div class="m-1 px-2" style="font-size: 0.9rem;">
-                          <span class="text-dark font-size-smaller" href="#" style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
-                              {{ reply.name.first_name }} {{ reply.name.last_name }}</span>
-                          <span class="font-weight-light pl-1">{{ reply.body }}</span>
-                      </div>      
-                    </div>
-                    <div class="dropdown">
-                      <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-h"></i>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
-                        {% if reply.name == request.user or post.author == request.user %}
-                        <button class="small dropdown-item show-comment-delete-form"  data-type="reply" data-url="{% url 'home:comment-delete' reply.get_hashid %}"><i class="mr-1 fas fa-trash"></i>Remove comment</button>
-                        {% endif %}
-                        <button class="small dropdown-item "  data-type="reply" data-url="#"><i class="mr-1 fas fa-flag"></i>Report</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-left">
                     <div>
-                      {% include 'home/posts/comment_like.html' with comment=reply guid_url=guid_url %}
-                    </div>
-                    <div class="mx-1">
-                      <span class="text-muted small">·</span>
-                    </div>
-                    <div>
-                      <span class="text-muted small">{{ reply.get_created_on }}</span>
-                    </div>  
-                  </div>
-                </div>
-              </div>
-              {% empty %}
-              <div class="d-flex justify-content-center">
-                <p class="m-0 small text-muted">No replies to show</p>
-              </div>
-              {% endfor %}
-          </div>
-          <div class="modal fade" id="modal-comment-reply">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header" style="margin-top: -10px;">
-                  <p style="font-weight: bold;font-size: 1.4rem;"><span class="font-weight-light">replying to </span>@{{ comment.name.username }}</p>
-                  <button type="button" class="button-hide-outline close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form method="POST" data-url="{% url 'home:post-detail' guid_url %}" class="comment-reply-form" >
-                    {% csrf_token %}
-                    <input type="hidden" id="c-get-id" name="comment_id" value="">
-                    <div style="min-height: 10rem;">
                       {{ form }}
                     </div>
-                    <div class="d-flex my-2 justify-content-between">
-                      <div></div>
-                      <div>
-                        <button class="btn btn-md small btn-outline-primary ml-1" style="border-radius: 20px;" type="submit">Reply</button>
-                      </div>
+                    <div>
+                      <button class="btn btn-md small btn-outline-primary ml-1" style="border-radius: 20px;"
+                        type="submit">Reply
+                      </button>
                     </div>
-                  </form>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="rp_container_new"></div>
+            {% for reply in comment.replies.all %}
+            <div class="row pl-4 py-2 reply-box">
+              <div class="col-xs">
+                <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
+                  src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
+              </div>
+              <div class="col-xs">
+                <div class="d-flex">
+                  <div class="border border-light" style="background-color: rgb(242, 243, 245); border-radius: 1rem;">
+                    <div class="m-1 px-2" style="font-size: 0.9rem;">
+                      <span class="text-dark font-size-smaller" href="#"
+                        style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
+                        {{ reply.name.first_name }} {{ reply.name.last_name }}</span>
+                      <span class="font-weight-light pl-1">{{ reply.body }}</span>
+                    </div>
+                  </div>
+                  <div class="dropdown">
+                    <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                      aria-expanded="false">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                      {% if reply.name != request.user  %}
+                      <button class="small dropdown-item show-comment-delete-form" data-type="reply"
+                        data-url="{% url 'home:comment-delete' reply.get_hashid %}"><svg class="bi mr-1 bi-trash"
+                          width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                          <path fill-rule="evenodd"
+                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                        </svg>Delete</button>
+                      {% endif %}
+                      {% if reply.name == request.user or post.author != request.user %}
+                      <button class="small dropdown-item " data-type="reply" data-url="#"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
+                          <path fill-rule="evenodd"
+                            d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                        </svg>Report</button>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-left">
+                  <div class="clcntr">
+                    {% include 'home/posts/comment_like.html' with comment=reply guid_url=guid_url %}
+                  </div>
+                  <div class="mx-1">
+                    <span class="text-muted small">·</span>
+                  </div>
+                  <div>
+                    <span class="text-muted small">{{ reply.get_created_on }}</span>
+                  </div>
                 </div>
               </div>
             </div>
+            {% empty %}
+            <div class="d-flex justify-content-center">
+              <p class="m-0 small text-muted">No replies to show</p>
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
+    </div>
+    {% endwith %}
+    {% empty %}
+    <div class="d-flex justify-content-center">
+      <p class="font-weight-lighter text-muted">No comments to show</p>
+    </div>
+    {% endfor %}
   </div>
-  {% endwith %}
-  {% empty %}
-  <div class="d-flex justify-content-center">
-  <p class="font-weight-lighter text-muted">No comments to show</p>
-  </div>
-  {% endfor %}
-</div>
-<div class="modal fade" id="modal-comment-delete">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content">
+  {% if comments.has_next %}
+  <a class="infinite-more-link" href="?page={{ comments.next_page_number }}"></a>
+  {% endif %}
+  <div class="mt-2 loading" style="display: none;">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
   </div>
 </div>
@@ -166,7 +206,3 @@
 <!-- comment.js -->
 <!-- comment delete -->
 {% endwith %}
-
-
-
-

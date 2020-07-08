@@ -1,38 +1,16 @@
 $(document).ready(function (e) {
-    $(document).on("click", ".comment-like-btn", function (e) {
+    var form_c_like;
+    $(document).on("submit", ".post-comment-like-form", function (e) {
+        form_c_like = $(this)
         e.stopImmediatePropagation();
         e.preventDefault();
-        var like_count = parseInt($(".comment-like-count", this).text());
-        if($(this).find("span").hasClass("text-danger")){
-            like_count--;
-            $(".comment-input-like-count", this).val(like_count);
-            $("span", this).removeClass("text-danger")
-            $(".comment-like-count", this).text(like_count);
-        } else {
-            like_count++;
-            $(".comment-input-like-count", this).val(like_count);
-            $("span", this).addClass("text-danger")
-            $(".comment-like-count", this).text(like_count); 
-        }
-
         $.ajax({
             type:"POST",
             dataType: 'json',
-            url: $(this).closest("form").attr("data-url"),     
-            data: $(this).closest("form").serialize(),
+            url: $(this).attr("data-url"),     
+            data: $(this).serialize(),
             success: function (data) {
-                if($(this).find("span").hasClass("text-danger")){
-                    like_count--;
-                    $(".comment-input-like-count", this).val(like_count);
-                    $("span", this).removeClass("text-danger")
-                    $(".comment-like-count", this).text(like_count);
-                } else {
-                    like_count++;
-                    $(".comment-input-like-count", this).val(like_count);
-                    $("span", this).addClass("text-danger")
-                    $(".comment-like-count", this).text(like_count); 
-                }
-
+                var k = $(form_c_like).closest('.clcntr').html(data.comment)
             },
             error: function(rs, e){
                 console.log(rs.responeText);

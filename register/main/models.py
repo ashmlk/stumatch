@@ -310,6 +310,7 @@ class Profile(AbstractUser):
     program = models.CharField(blank=True,max_length=100)
     image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     courses = models.ManyToManyField('home.Course',related_name='profiles')
+    public = models.BooleanField(default=True, blank=True)
     saved_courses = models.ManyToManyField('home.Course',related_name='saved_courses')
     favorite_post_tags = models.ManyToManyField(Tag, related_name='fav_post_tags')
     favorite_buzz_tags = models.ManyToManyField(Tag, related_name='fav_buzz_tags')

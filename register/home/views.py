@@ -54,12 +54,14 @@ def home(request):
     
     friends = Friend.objects.friends(request.user)
     posts_list = Post.objects.select_related('author').filter(author__in=friends).order_by('-last_edited')
-    print(posts_list.count())
-    time_threshold = timezone.now() - timedelta(days=7)
-    qs = posts_list.filter(last_edited__gte=time_threshold)
-    is_home = True
-    tags = Post.tags.most_common(extra_filters={'post__in': qs })[:7]
     
+    # get hot words and tags related to posts form tags
+    tags = cache.get("tt_buzzes")
+    top_words = cache.get("trending_words_posts")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
+    
+    is_home = True
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
     try:
@@ -69,7 +71,7 @@ def home(request):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
    
-    context = { 'posts':posts, 'is_home':is_home, 'tags':tags }
+    context = { 'posts':posts, 'is_home':is_home, 'tags':tags, 'words':words }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
@@ -83,9 +85,48 @@ def users_posts(request,username):
 
 @login_required
 def hot_posts(request):
-    posts = cache.get("hot_posts")
+    posts_list = cache.get("hot_posts")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
     context = { 'posts':posts, 'hot_active':'-active'}
     return render(request, 'home/homepage/home.html', context)
+
+@login_required
+def top_posts(request):
+    posts_list = cache.get("top_posts")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    context = { 'posts':posts, 'top_active':'-active'}
+    return render(request, 'home/homepage/home.html', context)
+
+@cache_page(60*60*24*7)
+@login_required
+def top_word_posts(request):
+    if request.method == 'GET':
+        word = request.GET.get('w', None)
+        posts_list = Post.objects.select_related("author").filter(author__public=True, content__unaccent__icontains=word)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(posts_list, 10)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        context = { 'posts':posts, 'word':word, 'is_word':True }
+        return render(request, 'home/homepage/home.html', context)
    
 @login_required
 def post_create(request):
@@ -150,8 +191,9 @@ def post_delete(request, guid_url):
 def post_detail(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    comments = post.comments.filter(reply=None)
+    comment_list = post.comments.filter(reply=None)
     if request.method == 'POST':
+        is_reply = None
         form = CommentForm(request.POST or None)
         if form.is_valid():
             comment = form.save(False)
@@ -159,35 +201,47 @@ def post_detail(request, guid_url):
             comment_qs = None
             if reply_id:
                 comment_qs = Comment.objects.get(id=reply_id)
+                is_reply = True
+                data['is_reply'] = is_reply
             comment.name = request.user
             comment.post = post
             comment.reply = comment_qs
             comment.save()
         else:
             data['is_valid'] = False
+        if is_reply:
+            form = CommentForm()
+            context = { 'guid_url':post.guid_url,
+                        'reply':comment,
+                        'form':form }
+            data['reply'] = render_to_string('home/posts/post_comment_reply_new.html',context,request=request)
+        else:
+            form = CommentForm()
+            context = { 'guid_url':post.guid_url,
+                        'comment':comment,
+                        'form':form }
+            data['comment'] = render_to_string('home/posts/post_comment_new.html',context,request=request)
+        return JsonResponse(data)
+    
     else:
         form = CommentForm()
     guid_url = post.guid_url
     comment_count = post.comment_count()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(comment_list, 10)
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        comments = paginator.page(1)
+    except EmptyPage:
+        comments = paginator.page(paginator.num_pages)
     context = {'post':post,
                 'form':form,
                 'comments':comments,
                 'comment_count':comment_count,
                 'guid_url':guid_url,
                 }
-    if request.is_ajax():
-        #changed from Comments.objects/filter(post=post, reply=None)
-        comments_new = post.comments.filter(reply=None)
-        comment_count_new = post.comment_count()
-        context_new = {'post':post,
-                        'comments':comments_new,
-                        'comment_count':comment_count_new,
-                        'guid_url':guid_url,
-                        'form':form,
-                    }
-        data['comments'] = render_to_string('home/posts/post_comment.html',context_new,request=request)
-        data['likes'] = render_to_string('home/posts/likes.html',context_new,request=request)
-        return JsonResponse(data)
+
     return render(request,'home/posts/post_detail.html',context)
     
 
@@ -240,7 +294,15 @@ def comment_delete(request,hid):
 def post_like_list(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    post_likes = post.likes.all()
+    post_likes_list = post.likes.all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(post_likes_list , 10)
+    try:
+        post_likes = paginator.page(page)
+    except PageNotAnInteger:
+        post_likes = paginator.page(1)
+    except EmptyPage:
+        post_likes = paginator.page(paginator.num_pages)
     data['html'] = render_to_string('home/posts/post_like_list.html',{'post_likes':post_likes},request=request)
     return JsonResponse(data)
 

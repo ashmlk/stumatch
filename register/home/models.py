@@ -31,6 +31,23 @@ from django.contrib.postgres.indexes import GinIndex
 import django.contrib.postgres.search as pg_search
 from django.db.models.functions import Greatest
 from stream_django.activity import Activity
+from collections import Counter
+from itertools import chain
+import nltk
+from nltk.collocations import *
+from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
+import string
+import datetime
+from math import log
+from home.algo import score, _commonwords, common_words, epoch_seconds, top_score_posts, hot_buzz, top_buzz
+
+
+hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
+
+def max_value_current_year():
+    return datetime.date.today().year + 1
+
 
 #CUSTOM MODEL MANAGERS
 class PostManager(models.Manager):
@@ -58,7 +75,7 @@ class PostManager(models.Manager):
         )
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
+            .filter(sv=search_query, author__public=True)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
             .filter(Q(bs__gte=0.2))
             .order_by('-bs')[:5]
@@ -90,7 +107,7 @@ class PostManager(models.Manager):
         )
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
+            .filter(sv=search_query, author__public=True)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
             .filter(Q(bs__gte=0.1))
             .order_by('-bs')
@@ -104,6 +121,7 @@ class PostManager(models.Manager):
         qs = (
             self.get_queryset()
             .select_related("author")
+            .filter(author__public=True)
         )
         
         qs_list = list(qs)
@@ -112,12 +130,48 @@ class PostManager(models.Manager):
         return sorted_post
     
     def get_top(self):
-        pass
         
+        time_threshold = timezone.now() - datetime.timedelta(days=14)
         
+        qs = (
+            self.get_queryset()
+            .select_related("author")
+            .filter(author__public=True,last_edited__gte=time_threshold)
+        )
+
+        qs_list = list(qs)
+        sorted_post = sorted(qs_list, key=lambda p: p.top(), reverse=True)
         
+        return sorted_post
+        
+    def get_trending_words(self):
+        
+        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        
+        qs = self.get_queryset().filter(author__public=True, last_edited__gte=time_threshold) 
           
+        words = list()
+        ''' 
+        for p in qs:
+            words.append(common_words(p.content))
+        counter = Counter(chain.from_iterable(words))
+        result = [word for word, word_count in counter.most_common(11)]
+        return result
+        '''
+        for p in qs:
+            words.append((p.content).split())
+        words = chain.from_iterable(words)
+        result  = _commonwords(' '.join(words))
+        return result
         
+    def trending_tags(self):
+        
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
+        qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
+        tags = Post.tags.most_common(extra_filters={'post__in': qs })[:7]
+        
+        return tags
+                    
 class BlogManager(models.Manager):
     
     def search_topresult(self, search_text):
@@ -207,7 +261,7 @@ class BuzzManager(models.Manager):
         )
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
+            .filter(sv=search_query, author__public=True)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
             .filter(Q(bs__gte=0.2))
             .order_by('-bs')[:5]
@@ -243,14 +297,70 @@ class BuzzManager(models.Manager):
         
         qs = (
             self.get_queryset()
-            .filter(sv=search_query)
+            .filter(sv=search_query, author__public=True)
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('rank','trigram'))
             .filter(Q(bs__gte=0.05))
             .order_by('-bs')
         )
         
         return qs
+    
+    def get_hot(self):
+        
+        qs = (
+            self.get_queryset()
+            .select_related("author")
+            .filter(author__public=True)
+        )
+        
+        qs_list = list(qs)
+        sorted_buzz = sorted(qs_list, key=lambda p: p.hot(), reverse=True)
+        
+        return sorted_buzz
+    
+    def get_top(self):
+        
+        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        
+        qs = (
+            self.get_queryset()
+            .select_related("author")
+            .filter(author__public=True,last_edited__gte=time_threshold)
+        )
 
+        qs_list = list(qs)
+        sorted_buzz = sorted(qs_list, key=lambda p: p.top(), reverse=True)
+        
+        return sorted_buzz
+        
+        
+    def get_trending_words(self):
+        
+        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        
+        qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
+          
+        words = list()
+        ''' 
+        for p in qs:
+            words.append(common_words(p.content))
+        counter = Counter(chain.from_iterable(words))
+        result = [word for word, word_count in counter.most_common(11)]
+        return result
+        '''
+        for p in qs:
+            words.append((p.content).split())
+        words = chain.from_iterable(words)
+        result  = _commonwords(' '.join(words))
+        return result
+
+    def trending_tags(self):
+        
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
+        qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
+        tags = Buzz.tags.most_common(extra_filters={'buzz__in': qs })[:7]
+        
+        return tags
 
 class CourseManager(models.Manager):
     
@@ -304,25 +414,6 @@ class CourseManager(models.Manager):
         
         return qs
     
-    
-    
-
-hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
-
-epoch = datetime.datetime(1970, 1, 1).replace(tzinfo=pytz.UTC)
-
-
-def max_value_current_year():
-    return datetime.date.today().year + 1
-
-def epoch_seconds(date):
-    
-    td = date - epoch
-    return td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
-
-def score(comments, likes):
-    # comments recieve constant factor of 1.8
-    return  1.8 * comments + likes
         
 class Post(models.Model, Activity):
     title = models.CharField(max_length=100)
@@ -435,16 +526,10 @@ class Post(models.Model, Activity):
         
         comments = self.comments.count()
         likes = self.likes.count()
-        date = self.last_edited
         
-        score = comment + likes 
-        divider = comment / likes
+        return top_score_posts(likes,comments)
         
-        return 0
-        
-        
-        
-            
+               
 def image_create_uuid_p_u(instance, filename):
     return '/'.join(['post_images', str(uuid.uuid4().hex + ".png")]) 
         
@@ -813,7 +898,24 @@ class Buzz(models.Model, Activity):
                 if diff.days >= 365:
                     years= math.floor(diff.days/365)
                     return "expired " + str(years) + "y" + " ago"
-                
+    def hot(self):
+        
+        comments = self.breplies.count()
+        likes = self.likes.count()
+        dislikes = self.dislikes.count()
+        wots = self.wots.count()
+        date = self.last_edited
+        
+        return hot_buzz(likes, dislikes, wots, comments, date)
+    
+    def top(self):
+        
+        comments = self.breplies.count()
+        likes = self.likes.count()
+        dislikes = self.dislikes.count()
+        wots = self.wots.count()  
+        
+        return top_buzz(likes, dislikes, wots, comments)
 
 class BuzzReply(models.Model):
     
