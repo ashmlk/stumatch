@@ -6,7 +6,7 @@ django.setup()
 
 from faker import Faker
 from main.models import Profile
-from home.models import Post, Blog, Buzz, Course, Comment
+from home.models import Post, Blog, Buzz, Course, Comment, BuzzReply
 from django.contrib.postgres.search import SearchVector
 from django.utils import timezone
 
@@ -169,4 +169,19 @@ def create_comments():
             c = fake.sentence(nb_words=6)
             comment = Comment.objects.create(post=p,name=profile,body=c)
             comment.save()
+    return "Success"
+
+def create_buzz_comments():
+    fake=Faker()
+    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
+        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    
+    for p in Buzz.objects.all():
+        
+        for i in range(random.randint(21,173)):
+            profile = Profile.objects.get(id=random.choice(idl))
+            c = fake.sentence(nb_words=4)
+            n = fake.word()
+            r = BuzzReply.objects.create(buzz=p,reply_author=profile,reply_nickname=n,reply_content=c)
+            r.save()
     return "Success"

@@ -25,7 +25,7 @@ $('.b_dlfx').ready( function () {
 			dataType: 'json',
 			success: function(data){
 				$('#modal-buzz-c').modal('hide');
-				$('.buzz-comment-container').html(data.replies);
+				$('#bznwre_').prepend(data.reply);
 				$('#_cct').text(data.r_count);
 				$('textarea').val('');
 				$('#id_reply_nickname').val('');

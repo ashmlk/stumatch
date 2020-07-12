@@ -1,34 +1,60 @@
 {% extends 'home/homepage/base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% load ibuilder %}
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% block item %}
-<div>
-    <div class="p-2 mb-2" id="_pol3">
-        <div class="p-2 rounded menu-link">
-          <a href="#" class="card-link h6 text-dark"><i class="fas fa-clock pr-1"></i>Latest</a>
-        </div>
-        <hr class="m-1">
-        <div class="p-2 rounded menu-link">
-          <a href="#" class="card-link h6  text-dark"><i class="fas fa-fire pr-1"></i>Hot</a>
-        </div>
-        <hr class="m-1">
-        <div class="p-2 rounded menu-link">
-          <a href="#" class="card-link h6  text-dark"><i class="fas fa-hourglass-end pr-1"></i>Expirying</a>
-        </div>
-    </div> 
-    <div class="ml-2 p-1 pb-4 card border-light" style=" background-color: rgba(210, 230, 248, 0.192);">
-        <div class="row justify-content-center mb-2">
-            <div class="col-5" style="border-radius: 0px 0px 26px 26px !important;">
-                <img class="img-fluid" src="{% static 'default/buzz/stayqtg.png' %}"  alt="Buzz">
-            </div>
-        </div>
-        <div class="row m-1 mb-2 justify-content-center" >
-            <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip" data-placement="bottom" title="Buzz and comment anonymously!"
-             data-url="{% url 'home:buzz-create' %}">Create a Buzz</button> 
-        </div>  
+<div class="mb-2">
+  <div class="p-1 pb-4 card border-light" style=" background-color: rgba(210, 230, 248, 0.192);">
+    <div class="row justify-content-center mb-2">
+      <div class="col-5" style="border-radius: 0px 0px 26px 26px !important;">
+        <img class="img-fluid" src="{% static 'default/buzz/stayqtg.png' %}" alt="Buzz">
+      </div>
     </div>
+    <div class="row m-1 mb-2 justify-content-center">
+      <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip" data-placement="bottom"
+        title="Buzz and comment anonymously!" data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
+    </div>
+  </div>
 </div>
+{% if tags or words %}
+<div class="le_m_bx">
+  <div class="card border-0" style="background-color: rgba(210, 230, 248, 0.356); border-radius: 20px;">
+    <div class="content-holder">
+      <div class="pl-3 pr-3 pt-3 border-bottom">
+        <div>
+          <h5 class="font-weight-bolder card-title">Trending</h5>
+        </div>
+      </div>
+      <div id="menureform">
+        {% for tag in tags %}
+        <div class="shdv" data-url="{% url 'home:tag-buzz' tag.slug %}"
+          class="trending-box-r mnpglk pl-3 pr-3 pb-1 pt-2 border-bottom">
+          <a href="{% url 'home:tag-buzz' tag.slug %}" class="card-link text-dark"><strong>#{{tag.name}}</strong></a>
+          <br>
+          <span class="card-subtitle small">{{ tag.num_times|num_format }} Buzzes</span>
+        </div>
+        {% endfor %}
+        {% for word in words %}
+        <div class="shdv mnpgl search-btn" data-target="sd3f0v">
+          <form id="sd3f0v" action="{% url 'home:top-word-post' %}" method="GET"
+            class="strending-box-r pl-3 pr-3 pb-1 pt-2 border-bottom">
+            <input name="w" value="{{ word }}" type="hidden" />
+            <div>
+              <span class="text-muted mx-2 my-0 small">Trending in buzzes</span>
+            </div>
+            <button class="btn btn-md no-border no-outline" type="submit">
+              <strong>{{ word|capfirst }}</strong>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="pl-3 pr-3 pb-1 pt-1 m-1"></div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
@@ -52,16 +78,14 @@
               <span class="related-tags">
                 {% for tag in related_tags %}
                 <span class="mr-1">
-                  <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a>
-                  </span>
-                {% endfor %} 
+                  <a href="{% url 'home:tag-blog' tag.slug %}" class="text-dark"
+                    style="text-decoration: none;">#{{ tag.name }}</a>
+                </span>
+                {% endfor %}
               </span>
-             </h6>
+            </h6>
           </div>
-          <div class="small ml-2">
-            <!-- Display Related tags -->
-          </div>
-        </div>
+        </div> 
         <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
           {% include 'main/tags/fav_buzz.html' with tag=tag %}
         </div>
@@ -69,8 +93,63 @@
     </div>
   </div>
 </div>
+{% else %}
+<div class="mt-2 mb-2 p-1 ml-1 ">
+  <div class="d-flex justify-content-start" id="_pol3">
+    <div class="d-flex align-items-center card border-primary p-2 mr-3 menu-link" style="border-radius: 20px;">
+      <a href="#" style="text-decoration: none;">
+      <div>
+        <span class="h6"><svg style="margin-top: -2px !important;" class="bi bi-layout-wtf" width="1em" height="1em"
+          viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M5 1H1v8h4V1zM1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm13 2H9v5h5V2zM9 1a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9zM5 13H3v2h2v-2zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3zm12-1H9v2h6v-2zm-6-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9z" />
+        </svg><span class="ml-2">Feed</span></span>
+      </div>
+    </a>
+    </div>
+    <div class="d-flex align-items-center card border-primary p-2  mr-3 menu-link" style="border-radius: 20px;">
+      <a href="#" style="text-decoration: none;">
+        <div>
+          <span class="h6"><svg style="margin-top: -2px !important;margin-left: 0.7rem; transform: rotate(35deg);" width="1em" height="1em" viewBox="0 0 16 16"
+            class="bi ml-32bi-binoculars" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M3 2.5A1.5 1.5 0 0 1 4.5 1h1A1.5 1.5 0 0 1 7 2.5V5h2V2.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5v2.382a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V14.5a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 14.5v-3a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5v3A1.5 1.5 0 0 1 5.5 16h-3A1.5 1.5 0 0 1 1 14.5V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V2.5zM4.5 2a.5.5 0 0 0-.5.5V3h2v-.5a.5.5 0 0 0-.5-.5h-1zM6 4H4v.882a1.5 1.5 0 0 1-.83 1.342l-.894.447A.5.5 0 0 0 2 7.118V13h4v-1.293l-.854-.853A.5.5 0 0 1 5 10.5v-1A1.5 1.5 0 0 1 6.5 8h3A1.5 1.5 0 0 1 11 9.5v1a.5.5 0 0 1-.146.354l-.854.853V13h4V7.118a.5.5 0 0 0-.276-.447l-.895-.447A1.5 1.5 0 0 1 12 4.882V4h-2v1.5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V4zm4-1h2v-.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5V3zm4 11h-4v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5V14zm-8 0H2v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5V14z" />
+          </svg><span class="ml-2">Explore</span></span>
+        </div>
+      </a>
+    </div>
+    <div class="d-flex align-items-center card border-primary p-2 mr-3 menu-link{{ top_active }}"
+      data-url="{% url 'home:top-buzzes' %}" style="border-radius: 20px;">
+      <a href="{% url 'home:top-buzzes' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6">
+            <svg style="margin-top: -2px !important;" class="bi bi-bar-chart" width="1em" height="1em" viewBox="0 0 16 16"
+            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5h-2v12h2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z" />
+          </svg><span class="ml-2">Top</span></span>
+        </div>
+      </a>
+    </div>
+    <div class="d-flex align-items-center card border-primary p-2 menu-link{{ hot_active }}" data-url="{% url 'home:hot-posts' %}"
+      style="border-radius: 20px;">
+      <a href="{% url 'home:hot-buzzes' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6"><svg style="margin-top: -3px !important; margin-right:-1px !important; "
+            class="bi bi-chevron-double-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M7.646 2.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 3.707 2.354 9.354a.5.5 0 1 1-.708-.708l6-6z" />
+            <path fill-rule="evenodd"
+              d="M7.646 6.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 7.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" />
+          </svg><span class="ml-2"> Hot</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
 {% endif %}
 <div id="buzz-list">
-    {% include 'home/buzz/buzz_list.html' %}
+  {% include 'home/buzz/buzz_list.html' %}
 </div>
 {% endblock content %}

@@ -1,28 +1,86 @@
 {% load static %}
+<style>
+    .searchbar{
+    margin-bottom: auto;
+    margin-top: auto;
+    height: 35px;
+    background-color: #e9e9e9;
+    border-radius: 20px;
+    padding: 5px;
+    }
+
+    .search_input{
+    color: white;
+    border: 0;
+    outline: 0;
+    background: none;
+    width: 0;
+    caret-color:transparent;
+    line-height: 20px;
+    transition: width 0.4s linear;
+    }
+
+    .searchbar .search_input{
+    padding: 0 10px;
+    width: 250px;
+    caret-color:rgb(0, 0, 0);
+    color: black;
+    }
+
+    .searchbar .search_icon{
+    background: transparent;
+    color: rgb(136, 136, 136);
+    }
+
+    .search_icon{
+    height: 25px !important;
+    width: 25px !important;
+    float: right !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 50% !important;
+    text-decoration:none !important;
+    }
+    .easy-autocomplete input  {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        -moz-box-shadow:none !important;
+        -webkit-box-shadow:none !important;
+    }
+    .easy-autocomplete {
+        width: fit-content !important;
+    }
+</style>
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
-<nav class="navbar navbar-expand pl-3 border-bottom p-0" style="background-color: #fafafa;">
-    <span class="navbar-brand ml-2"> <img src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.5rem;" ></span>
+<nav class="navbar navbar-expand pl-3 bg-white border-bottom p-0">
+    <div class="ml-2 mr-1">
+        <span class="navbar-brand ml-2"> <img src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.5rem;" ></span>
+    </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse mr-4" id="navbarSupportedContent">
-        <form class="my-auto form-inline d-inline" action="{% url 'home:search-all' %}" method="GET" style="width: 22%;">
-            <div id="custom-search-input" class="p-0 d-flex">
-                <div class="input-group align-items-center col-md-12" style="margin-top:2px !important; background-color:#e0e0e0 !important; height: 1.93rem !important; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" >
-                    <input type="text" style="margin-left:-2px !important;" id="searchetal" class="form-control " name="q" placeholder="Search" />
-                    <input type="hidden" value="top" name="o"/>
-                </div>
-                <button class="btn rounded-0  btn-md" style="height: 1.93rem !important; background-color:#e0e0e0 !important; margin-left:-4px; border-top-right-radius: 20px !important;border-bottom-right-radius: 20px !important;" type="submit">
-                    <i class="fa fa-search" style="margin-right: 2px !important;"></i>
-                </button>
+        <form class="my-auto ml-3 form-inline d-inline" action="{% url 'home:search-all' %}" method="GET" style="width: 22%;">
+            <div class="d-flex justify-content-center h-100">
+                <div class="d-flex searchbar">
+                    <div>
+                        <input id="searchetal" class="mr-5 search_input" type="text" name="q" placeholder="Search"/>
+                        <input type="hidden" value="top" name="o"/>
+                    </div>
+                    <div>
+                        <button type="submit" class="search_icon"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                  </div>
             </div>
         </form>
-
         <ul class="navbar-nav ml-auto my-1">
             <li class="nav-item mr-2">
                 <div class="p-0 border-light" data-tooltip="tooltip" data-placement="bottom" title="Profile">
                     <a href="#" style="text-decoration: none;">
-                        <img class="img-create-post img-btn rounded-circle " style="height: 44px;width: 44px; margin-top: 1px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                        <img class="img-create-post img-btn rounded-circle " style="height: 42px;width: 42px; margin-top: 6px;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
                         alt="Profile image">
                     </a>
                 </div>

@@ -30,7 +30,6 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
 import django.contrib.postgres.search as pg_search
 from django.db.models.functions import Greatest
-from stream_django.activity import Activity
 from collections import Counter
 from itertools import chain
 import nltk
@@ -168,7 +167,7 @@ class PostManager(models.Manager):
         
         time_threshold = timezone.now() - datetime.timedelta(days=3)
         qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
-        tags = Post.tags.most_common(extra_filters={'post__in': qs })[:7]
+        tags = Post.tags.most_common(extra_filters={'post__in': qs })[:5]
         
         return tags
                     
@@ -358,7 +357,7 @@ class BuzzManager(models.Manager):
         
         time_threshold = timezone.now() - datetime.timedelta(days=3)
         qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
-        tags = Buzz.tags.most_common(extra_filters={'buzz__in': qs })[:7]
+        tags = Buzz.tags.most_common(extra_filters={'buzz__in': qs })[:5]
         
         return tags
 
@@ -415,7 +414,7 @@ class CourseManager(models.Manager):
         return qs
     
         
-class Post(models.Model, Activity):
+class Post(models.Model):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
     content = models.TextField(validators=[MaxLengthValidator(1200)])
@@ -812,7 +811,7 @@ class Course(models.Model):
        return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\
            course__course_university__iexact=self.course_university).count()
     
-class Buzz(models.Model, Activity):
+class Buzz(models.Model):
     nickname = models.CharField(max_length=30, blank=True, null = True)
     title = models.CharField(max_length=90)
     guid_url = models.CharField(max_length=255,unique=True)

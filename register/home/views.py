@@ -53,10 +53,10 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 def home(request):
     
     friends = Friend.objects.friends(request.user)
-    posts_list = Post.objects.select_related('author').filter(author__in=friends).order_by('-last_edited')
+    posts_list = Post.objects.select_related('author').filter(Q(author__in=friends)|Q(author=request.user)).order_by('-last_edited')
     
     # get hot words and tags related to posts form tags
-    tags = cache.get("tt_buzzes")
+    tags = cache.get("tt_posts")
     top_words = cache.get("trending_words_posts")
     words = top_words['phrases']
     words = words + top_words['common_words']
@@ -71,7 +71,7 @@ def home(request):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
    
-    context = { 'posts':posts, 'is_home':is_home, 'tags':tags, 'words':words }
+    context = { 'posts':posts, 'is_home':is_home, 'tags':tags, 'words':words,'home_active':'-active' }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
@@ -610,6 +610,12 @@ def saved_courses(request):
 @login_required
 def buzz(request):
     buzzes_list = Buzz.objects.select_related('author').filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
+    
+    tags = cache.get("tt_buzzes")
+    top_words = cache.get("trending_words_buzzes")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
+    
     page = request.GET.get('page', 1)
     paginator = Paginator(buzzes_list, 10)
     try:
@@ -620,10 +626,40 @@ def buzz(request):
         buzzes = paginator.page(paginator.num_pages)
     time_threshold = timezone.now() - timedelta(days=7)
     context = {
-        'buzzes':buzzes
+        'buzzes':buzzes,
+        'words':words,
+        'rags':tags
     }
     return render(request,'home/buzz/buzz.html', context)
-    
+
+@login_required
+def hot_buzzes(request):
+    buzz_list = cache.get("hot_buzzes")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(buzz_list, 10)
+    try:
+        buzzes = paginator.page(page)
+    except PageNotAnInteger:
+        buzzes = paginator.page(1)
+    except EmptyPage:
+        buzzes = paginator.page(paginator.num_pages)
+    context = { 'buzzes':buzzes, 'hot_active':'-active'}
+    return render(request, 'home/buzz/buzz.html', context)
+
+@login_required
+def top_buzzes(request):
+    buzz_list = cache.get("top_buzzes")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(buzz_list, 10)
+    try:
+        buzzes = paginator.page(page)
+    except PageNotAnInteger:
+        buzzes = paginator.page(1)
+    except EmptyPage:
+        buzzes = paginator.page(paginator.num_pages)
+    context = { 'buzzes':buzzes, 'top_active':'-active'}
+    return render(request, 'home/buzz/buzz.html', context)
+ 
 @login_required
 def buzz_create(request):
     data = dict()
@@ -697,12 +733,12 @@ def buzz_delete(request, guid_url):
         context = {'buzz':buzz}
         data['html_form'] = render_to_string('home/buzz/buzz_delete.html',context,request=request)
     return JsonResponse(data)
-
+    
 @login_required
 def buzz_detail(request, guid_url):
     data = dict()
     buzz = get_object_or_404(Buzz, guid_url=guid_url)
-    replies = buzz.breplies.all()
+    replies_list = buzz.breplies.all()
     if request.method == 'POST':
         form = BuzzReplyForm(request.POST or None)
         if form.is_valid():
@@ -710,25 +746,35 @@ def buzz_detail(request, guid_url):
             reply.reply_author = request.user
             reply.buzz = buzz
             reply.save()
+            r_count = buzz.breplies.count()
+            context = {
+                    'buzz':buzz,
+                    'guid_url':guid_url,
+                    'reply':reply,
+                    }
+            data['reply'] = render_to_string('home/buzz/buzz_new_reply.html',context,request=request)
+            data['r_count'] = r_count
+            return JsonResponse(data)
     else: 
         form = BuzzReplyForm()
     guid_url = buzz.guid_url
-    context = {'buzz':buzz,
-                'form':form,
-                'replies':replies,
-                'guid_url':guid_url,
-                }
-    if request.is_ajax():
-        r_new = BuzzReply.objects.filter(buzz=buzz)
-        r_count = buzz.breplies.count()
-        context_new = {'buzz':buzz,
-                        'replies':r_new,
-                        'guid_url':guid_url,
-                        'form':form,
-                    }
-        data['replies'] = render_to_string('home/buzz/buzz_replies.html',context_new,request=request)
-        data['r_count'] = r_count
-        return JsonResponse(data)
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(replies_list, 10)
+    try:
+        replies = paginator.page(page)
+    except PageNotAnInteger:
+        replies = paginator.page(1)
+    except EmptyPage:
+        replies = paginator.page(paginator.num_pages)
+        
+    context = {
+            'buzz':buzz,
+            'form':form,
+            'replies':replies,
+            'guid_url':guid_url,
+            }
+        
     return render(request,'home/buzz/buzz_detail.html',context)
 
 @login_required
@@ -952,8 +998,8 @@ def tags_blog(request, slug):
 @login_required
 def tags_buzz(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
-    buzz_list = Buzz.objects.select_related("name").filter(tags=tag).order_by('-last_edited')
-    related_tags = Blog.tags.most_common(extra_filters={'buzz__in': buzz_list })[:5]
+    buzz_list = Buzz.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
+    related_tags = Buzz.tags.most_common(extra_filters={'buzz__in': buzz_list })[:5]
     num_obj = buzz_list.count()
     if num_obj > 1:
         s="buzzes" 
@@ -970,7 +1016,7 @@ def tags_buzz(request, slug):
     is_tag = True
     context = {
         'tag' : tag,
-        'buzes':blogs,
+        'buzzes':buzzes,
         'is_tag':is_tag,
         'num_obj':num_obj,
         's':s,

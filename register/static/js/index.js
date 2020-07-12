@@ -34,7 +34,8 @@ $(document).ready(function () {
     });
   });
 
-  $('.buzz-comment-container').ready(function () {
+  /* buzz comments image loader 
+  $('.bzrbx').ready(function () {
     $('.bzrvmuim').initial({
       charCount: 2, 
       textColor: '#ffffff',
@@ -43,7 +44,7 @@ $(document).ready(function () {
       fontWeight: 400,
     });
   });
-  
+*/
 
   var infinite = new Waypoint.Infinite({
     element: $('.infinite-container')[0],

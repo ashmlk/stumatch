@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'dal_select2',
     'friendship',
     'django_celery_results',
-    'stream_django',
     'django_celery_beat',
 ]
 
@@ -155,8 +154,7 @@ CACHES = {
 
 CACHE_TTL = 60 * 15
 
-STREAM_API_KEY = 'dec3nd9aasae'
-STREAM_API_SECRET = '879qq6gqwk5rf5r53fgfqkye5np8n24wjwctvm55mzvrnnsqk4vpjrrggyz3a9r6'
+
 
 
 MIDDLEWARE = [

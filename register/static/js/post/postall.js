@@ -161,7 +161,7 @@ $(document).ready(function (e) {
             type: "POST",
             url: $(this).attr("data-url"),
             dataType: 'json',
-            data: { 'csrfmiddlewaretoken':tk },
+            data: $(btn).closest('form').serialize(),
             success: function (data){
                 $(btn).closest(".like-section").html(data.post_likes);
                 $('#like-count-d').html(data.likescount);
@@ -172,6 +172,7 @@ $(document).ready(function (e) {
         });
     });
 });
+
 $(document).ready(function () {
     $('.post-ctr').on("click", ".reply-btn",function () {
         $("#modal-comment-reply textarea").attr("placeholder","Add your reply")
