@@ -3,10 +3,12 @@ from register.celery import app
 from django.core import serializers
 import celery
 from celery import shared_task
-from home.models import Post, Buzz
+from home.models import Post, Buzz, Blog
+from main.models import Profile
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.conf import settings
 from django.core.cache import cache
+from django.utils import timezone
 
 # Celery tasks for Post model 
 
@@ -61,6 +63,42 @@ def trending_tags_buzz(self):
     tt_buzzes = Buzz.objects.trending_tags()
     cache.set("tt_buzzes", tt_buzzes, timeout=None)
     
+@shared_task(bind=True)
+def uni_posts(self):
+    
+    time_threshold = timezone.now() - datetime.timedelta(days=5)
+    uni_list = Profile.objects.values_list('university', flat=True),distinct()
+    
+    posts_list = Post.objects.select_related('author').filter(author__public=True,last_edited__gte=time_threshold)
 
+    for u in uni_list:
+        
+        np = posts_list.annotate(trigram = TrigramSimilarity(
+            'author__university',u
+        ))\
+        .filter(Q(author__university=u)|Q(author__university__unaccent__icontains=u)|Q(trigram__gte=0.1))\
+        .order_by('trigram','last_edited')
+        
+        t = u.lower().replace(' ','_') +"_post"
+        
+        cache.set(u,np, timeout=None)
 
+@shared_task(bind=True)
+def uni_buzzes(self):
+    
+    time_threshold = timezone.now() - datetime.timedelta(days=5)
+    uni_list = Profile.objects.values_list('university', flat=True),distinct()
+    
+    buzz_list = Buzz.objects.select_related('author').filter(author__public=True,last_edited__gte=time_threshold)
 
+    for u in uni_list:
+        
+        nb = buzz_list.annotate(trigram = TrigramSimilarity(
+            'author__university',u
+        ))\
+        .filter(Q(author__university=u)|Q(author__university__unaccent__icontains=u)|Q(trigram__gte=0.1))\
+        .order_by('trigram','last_edited')
+        
+        t = u.lower().replace(' ','_')+"_buzz"
+        
+        cache.set(u,nb, timeout=None)

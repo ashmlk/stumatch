@@ -1,0 +1,85 @@
+{% extends "home/homepage/base.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block content %}
+<ul class="nav ubu nav-pills nav-fill mb-3 border-bottom border-primary" id="pills-tab" role="tablist" style="border-width: 2px !important;">
+    <li class="nav-item">
+        <a class="nav-link active" id="pills-post-tab" data-toggle="pill" href="#post-list" role="tab" aria-controls="pills-post" aria-selected="true">Posts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="pills-buzz-tab" data-toggle="pill" href="#buzz-list" role="tab" aria-controls="pills-buzz" aria-selected="false">Buzzes</a>
+    </li>
+    <li class="nav-item" style="margin-right: -0.01rem;">
+        <a class="nav-link" id="pills-blog-tab" data-toggle="pill" href="#blog-list" role="tab" aria-controls="pills-blog" aria-selected="false">Blog</a>
+    </li>
+</ul>
+  <div class="tab-content" id="pills-tabContent">
+    <div  id="post-list" class="tab-pane fade show active"  role="tabpanel" aria-labelledby="pills-post-tab">
+        {% for tag in p_tags %}
+        <div class="rounded-0 mt-1 border-bottom ml-1">
+            <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div >
+                <h4 class="card-title"><a href="{% url 'home:tag-post' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a></h4>
+                </div>
+                <div>
+                <div class="flw-tag-ctr" style="margin-top: -4px !important;" >
+                    {% include 'main/tags/fav_post.html' with tag=tag %}
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No tags to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="buzz-list" class="tab-pane fade"  role="tabpanel" aria-labelledby="pills-buzz-tab">
+        {% for tag in bz_tags %}
+        <div class="rounded-0 mt-1 border-bottom ml-1">
+            <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div >
+                <h4 class="card-title"><a href="{% url 'home:tag-buzz' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a></h4>
+                </div>
+                <div>
+                <div class="flw-tag-ctr" style="margin-top: -4px !important;" >
+                    {% include 'main/tags/fav_post.html' with tag=tag %}
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No tags to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="blog-list" class="tab-pane fade"  role="tabpanel" aria-labelledby="pills-blog-tab">
+        {% for tag in bl_tags %}
+        <div class="rounded-0 mt-1 border-bottom ml-1">
+            <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div >
+                <h4 class="card-title"><a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a></h4>
+                </div>
+                <div>
+                <div class="flw-tag-ctr" style="margin-top: -4px !important;" >
+                    {% include 'main/tags/fav_post.html' with tag=tag %}
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No tags to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+{% endblock %}

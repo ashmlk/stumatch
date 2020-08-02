@@ -12,15 +12,15 @@
                         <span class="mx-0 text-dark font-weight-bolder">{{ user.first_name }} {{ user.last_name}}</span>
                     </div>
                     <div style="margin-top: -0.35rem;">
-                    <a class="small" style="color: rgb(1,119,200)" href="#">@{{ user.get_username }}</a>
+                        <a class="small" style="color: rgb(1,119,200)" href="#">@{{ user.get_username }}</a>
                         <span class="mx-0 small text-muted">·</span>
                         <span class="text-muted small">{{ user.university|capfirst }}</span>
                     </div>
                 </div>
             </div>
             {% if request.user.university == user.university %}
-                <span class="text-muted font-weight-bolder small">
-                    You both go to {{ request.user.univeristy }}
+                <span class="text-muted ml-2 small">
+                    You both go to {{ request.user.university }}
                 </span>
             {% endif %}
         </div>

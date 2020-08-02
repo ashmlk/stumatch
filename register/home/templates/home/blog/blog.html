@@ -2,13 +2,72 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load ibuilder %}
-{% block contentleft %}
-  <div class="row h5 rounded font-weight-bold p-3  mnpglk" data-url="{% url 'home:blog-create' %}">
-    <div class="col-2">
-      <i class="btn-light btn-b-circle material-icons" style="font-size: 28px; ">create</i>
+{% block userinfo %}
+<div class="pr-2 mb-1 info-all d-none d-lg-block" style="margin-left: -2px !important;">
+  <div>
+    <div class="card-body">
+      <div class="pb-2">
+        <div class="pro-img">
+          <img class="img-create-post rounded-circle" style="height: 3.6rem;width: 3.6rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"/>
+        </div>
+        <div>
+          <div>
+            <strong >{{ request.user.get_full_name }}</strong>
+          </div>
+          <span class="small text-muted">{{ request.user.program|capfirst }} student at {{ request.user.university|capfirst }}</span>
+        </div>       
+      </div>
+      <div class="pb-2 pro-info-a" style="font-size: 0.88rem;">
+        <div class="my-2 d-flex justify-content-between">
+          <div>
+            <strong class="font-size-smaller">Courses</strong>
+          </div>
+          <div>
+            <span class="navbarMainHeaderuser-num">{{ cnum }}</span>
+          </div>
+        </div>
+        <div class="my-2  d-flex justify-content-between">
+          <div>
+            <strong class="font-size-smaller">Posts</strong>
+          </div>
+          <div>
+            <span class="navbarMainHeaderuser-num">{{ pnum }}</span>
+          </div>
+        </div>
+        <div class="my-2 d-flex justify-content-between">
+          <div>
+            <strong class="font-size-smaller">Buzzes</strong>
+          </div>
+          <div>
+            <span class="navbarMainHeaderuser-num">{{ bznum }}</span>
+          </div>
+        </div>
+        <div class="my-2  d-flex justify-content-between">
+          <div>
+            <strong class="font-size-smaller">Blogs</strong>
+          </div>
+          <div>
+            <span class="navbarMainHeaderuser-num">{{ blnum }}</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-10 d-none d-lg-block mt-2">
-      <span class="ml-2">Create Blog</span>
+  </div>
+</div>
+{% endblock %}
+{% block contentleft %}
+  <div class="rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
+    data-url="{% url 'home:blog-create' %}">
+    <div class="col-1">
+      <svg width="22" height="22" style="margin-top: -2px;" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z" />
+        <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z" />
+      </svg>
+    </div>
+    <div class="col-10 d-none d-lg-block">
+      <span  style="margin-top: 3px !important;" class="ml-2">Create Blog</span>
     </div>
   </div>
 {% endblock %}

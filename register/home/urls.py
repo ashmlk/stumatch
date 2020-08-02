@@ -5,11 +5,14 @@ from home import views
 
 # removed trailing backslashes
 urlpatterns = [
-    url(r'^$',views.home, name='home'),
+    url(r'^home/',views.home, name='home'),
     path('posts/trending', views.top_word_posts, name='top-word-post'),
     path('posts/hot/', views.hot_posts, name='hot-posts'),
     path('posts/top/', views.top_posts, name='top-posts'),
-    path('posts/<str:username>/', views.users_posts, name='users-posts'),
+    path('posts/university/', views.uni_posts, name='uni-posts'),
+    path('you/posts/', views.users_posts, name='users-posts'),
+    path('you/buzzes/', views.users_buzzes, name='users-buzzes'),
+    path('you/blogs/', views.users_blogs, name='users-blogs'),
     path('post/create/', views.post_create, name='post-create'),
     path('post/<str:guid_url>/', views.post_detail, name='post-detail'),
     path('post/<str:guid_url>/c/<str:hid>/like/', views.comment_like, name='comment-like'),

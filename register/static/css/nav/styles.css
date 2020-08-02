@@ -47,39 +47,41 @@
     -moz-box-shadow:none !important;
     -webkit-box-shadow:none !important;
 }
-.searchbar{
+.searchbar {
     margin-bottom: auto;
     margin-top: auto;
     height: 35px;
     background-color: #e9e9e9;
     border-radius: 20px;
     padding: 5px;
-    }
+}
 
-    .search_input{
+.search_input {
     color: white;
     border: 0;
     outline: 0;
     background: none;
     width: 0;
-    caret-color:transparent;
+    caret-color: transparent;
     line-height: 20px;
     transition: width 0.4s linear;
-    }
+}
 
-    .searchbar .search_input{
+.searchbar .search_input {
     padding: 0 10px;
     width: 250px;
-    caret-color:rgb(0, 0, 0);
+    caret-color: rgb(0, 0, 0);
     color: black;
-    }
+}
 
-    .searchbar .search_icon{
-    background: transparent;
-    color: rgb(136, 136, 136);
-    }
+.searchbar .search_icon {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    color: rgb(136, 136, 136) !important;
+}
 
-    .search_icon{
+.search_icon {
     height: 25px !important;
     width: 25px !important;
     float: right !important;
@@ -87,15 +89,60 @@
     justify-content: center !important;
     align-items: center !important;
     border-radius: 50% !important;
-    text-decoration:none !important;
-    }
-    .easy-autocomplete input  {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-        -moz-box-shadow:none !important;
-        -webkit-box-shadow:none !important;
-    }
-    .easy-autocomplete {
-        width: fit-content !important;
-    }
+    text-decoration: none !important;
+}
+
+.easy-autocomplete input {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.easy-autocomplete {
+    width: fit-content !important;
+}
+
+.main-top-nav .nav-link svg {
+    margin-top: 2px !important;
+    color: rgb(136, 136, 136) !important;
+}
+
+.main-top-nav .nav-link i {
+    margin-bottom: -3px !important;
+    color: rgb(136, 136, 136) !important;
+}
+
+.main-top-nav .nav-link {
+    border-color: transparent !important;
+    cursor: pointer !important;
+    background-color: rgba(136, 136, 136, 0.144) !important;
+}
+
+.main-top-nav .nav-link:hover {
+    cursor: pointer !important;
+    opacity: 0.8;
+}
+
+.main-top-nav .nav-link:hover i {
+    opacity: 1 !important;
+}
+.main-top-nav .navbar-toggler {
+    border-color: transparent !important;
+    cursor: pointer !important;
+    background-color: rgba(136, 136, 136, 0.144) !important;
+}
+.main-top-nav .navbar-toggler svg {
+    margin-top: 2px !important;
+    color: rgb(136, 136, 136) !important;
+}
+.main-top-nav .nav-name-icons {
+    font-size: 1.1rem !important;
+    font-weight: 400 !important;
+    color: rgb(136, 136, 136) !important;
+}
+.main-top-nav .nav-goto-holder:hover {
+    opacity: 0.8;
+    cursor: pointer  !important;
+}

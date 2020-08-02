@@ -8,19 +8,22 @@
   <div id="_pc_{{ veid }}" class="post-ctr infinite-item">
     <div class="row">
       <div class="col-sm-12 col-12">
-        <div class="card rounded-0 ml-1 mb-2 mt-2">
+        {% if  is_upage %}
+        <div class="ml-1 mb-2 mt-2 pb-3 card" style="padding-bottom: 0px !important;">
+        {% else %}
+        <div class="ml-1 mb-2 mt-2 pb-3" style="border-bottom:solid 1px rgba(136, 136, 136, 0.288) ;">
+        {% endif %}
           <div class="d-flex justify-content-between ml-1">
             <div class="d-flex m-2">
               <div>
-                  <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
-                  alt="Profile image">
+                  <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;" src="{{ post.author.image.url }}"/>
               </div>
               <div class="ml-1">
                 <div>
-                  <span class="mx-0 text-dark font-weight-bolder">{{ post.author.first_name }} {{ post.author.last_name}}</span>
+                  <strong class="mx-0">{{ post.author.get_full_name }}</strong>
                 </div>
                 <div style="margin-top: -0.35rem;">
-                  <a class="small" style="color: rgb(1,119,200)" href="#">@{{ post.author.get_username }}</a>
+                  <a class="small" style="color: rgb(1,119,200)" href="{{ post.author.get_absolute_url }}">@{{ post.author.get_username }}</a>
                   <span class="mx-0 small text-muted">·</span>
                   <span class="text-muted small">{% if post.edited %}Edited {{ post.get_edited_on }}{% else %}{{ post.get_created_on }}{% endif %}</span>
                 </div>
@@ -60,7 +63,7 @@
           <div class="card-body text-dark post-details-view" data-url="{% url 'home:post-detail' post.guid_url  %}">
             <div class="d-flex justify-content-between">
               <div>
-                <h5 class="font-weight-bolder" style="margin-bottom: 0px; margin-top: -10px;">
+                <h5 class="font-weight-bolder" style="margin-left:-9px;margin-bottom: 0px; margin-top: -10px;">
                   <a class="text-dark" style="text-decoration: none;" href="{% url 'home:post-detail' post.guid_url  %}">{{ post.title }}</a>
                   </h5>
               </div>
@@ -92,9 +95,9 @@
                 </div>
                 {% endif %}
               </div>
-              <p class="card-text" style="margin-top: -0.9rem;">{{ post.content }}</p>
+              <p class="card-text" style="margin-left:-9px;margin-top: -0.9rem;">{{ post.content }}</p>
             </div> 
-            <div class="post-tags d-flex">
+            <div style="margin-left:-9px;" class="post-tags d-flex">
               {% for tag in post.tags.all %}
               <div class="mr-1 small">
                 <a href="{% url 'home:tag-post' tag.slug %}" class="text-primary">#{{ tag.name }}</a>
@@ -102,12 +105,11 @@
               {% endfor %} 
             </div>
           </div>
-         <hr style="margin: 0;">
-            <div class="post-option-action pt-1 pb-1 d-flex align-items-center justify-content-center" >
-              <div class="like-section px-4">
+            <div class="post-option-action pb-1 d-flex align-items-center justify-content-start" >
+              <div class="like-section">
                 {% include 'home/posts/likes.html' with post=post %}
               </div>
-              <div class="px-4"> 
+              <div> 
                 <a class="btn btn-md" href="{% url 'home:post-detail' post.guid_url %}">
                   <span  style="color:  rgb(158, 158, 158);">
                     <svg class="bi bi-chat" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -119,7 +121,7 @@
                   </span>
                 </a>
               </div>
-              <div class="px-4"> 
+              <div style="margin-top: -2px !important; margin-left: -1px !important;"> 
                 <a class="btn btn-md" href="#">
                   <svg class="bi bi-reply" style="color:  rgb(158, 158, 158);" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M9.502 5.013a.144.144 0 0 0-.202.134V6.3a.5.5 0 0 1-.5.5c-.667 0-2.013.005-3.3.822-.984.624-1.99 1.76-2.595 3.876C3.925 10.515 5.09 9.982 6.11 9.7a8.741 8.741 0 0 1 1.921-.306 7.403 7.403 0 0 1 .798.008h.013l.005.001h.001L8.8 9.9l.05-.498a.5.5 0 0 1 .45.498v1.153c0 .108.11.176.202.134l3.984-2.933a.494.494 0 0 1 .042-.028.147.147 0 0 0 0-.252.494.494 0 0 1-.042-.028L9.502 5.013zM8.3 10.386a7.745 7.745 0 0 0-1.923.277c-1.326.368-2.896 1.201-3.94 3.08a.5.5 0 0 1-.933-.305c.464-3.71 1.886-5.662 3.46-6.66 1.245-.79 2.527-.942 3.336-.971v-.66a1.144 1.144 0 0 1 1.767-.96l3.994 2.94a1.147 1.147 0 0 1 0 1.946l-3.994 2.94a1.144 1.144 0 0 1-1.767-.96v-.667z"/>
@@ -138,8 +140,14 @@
   {% endfor %}
 </div>
 
-{% if posts.has_next %}
-<a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
+{% if is_upage %}
+  {% if posts.has_next %}
+    <a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
+  {% endif %}
+{% else %}
+  {% if posts.has_next %}
+  <a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
+  {% endif %}
 {% endif %}
 
 <div class="mt-2 loading" style="display: none;">

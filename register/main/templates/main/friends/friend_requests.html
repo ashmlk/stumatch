@@ -29,8 +29,8 @@
             
             </div>
             {% if request.user.university == user.university %}
-                <span class="text-muted font-weight-bolder small">
-                    You both go to {{ request.user.univeristy }}
+                <span class="ml-2 text-muted small">
+                    You both go to {{ request.user.university|capfirst }}
                 </span>
             {% endif %}
         </div>

@@ -10,7 +10,7 @@
         {% for user in post_likes %}
     <div class="row border-bottom">
         <div class="col-xs m-1">
-            <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" alt="Profile image">
+            <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="{{ post.author.image.url }}">
         </div>
         <div class="col-xs">
             <a class="text-dark font-size-smaller" href="#" style="font-weight: 500;">{{ user.first_name }} {{ user.last_name }}</a>

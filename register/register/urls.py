@@ -31,7 +31,8 @@ urlpatterns = [
     path('ckeditor/',include('ckeditor_uploader.urls')),
     path('',views.user_login,name='user_login'),
     path('',include('main.urls'),name='main'), 
-    url(r'^home/',include(('home.urls','home'), namespace='home')),
+    # removed r'^home/' 
+    url(r'',include(('home.urls','home'), namespace='home')),
     url(r'^friendship/', include('friendship.urls')),
         
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

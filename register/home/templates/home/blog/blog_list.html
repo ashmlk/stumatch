@@ -2,8 +2,12 @@
     <div class="mx-1">
         <div class="mb-1 infinite-container">
             {% for blog in blogs %}
+            {% if is_upage %}
+            <div class="infinite-item blog-ctr card mb-2">
+            {% else %}
             <div class="infinite-item card blog-ctr border-left-0 border-right-0 border-top-0 rounded-0 mb-2">
-                <div class="card-body" style="margin-left: -1.2rem !important;">
+            {% endif %}
+                <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h3 class="card-title font-weight-bolder" style="font-size: 1.678rem;"><a class="text-dark" style="text-decoration: none;"href="{% url 'home:blog-detail' hid=blog.guid_url t=blog.slug %}">{{ blog.title }}</a></h3>
@@ -56,26 +60,34 @@
                             </div> 
                         </div>
                     </div>
-                    <div class="mt-1 blog-tags  d-flex">
+                    <div class="mt-1 blog-tags row  pl-3 pr-3 d-flex">
                         {% for tag in blog.tags.all %}
-                        <div class="btn-light btn btn-sm mr-1 mnpglk small" data-url="{% url 'home:tag-blog' tag.slug %}">
+                        <div class="btn-light btn btn-sm mr-1 mb-1 mnpglk small" data-url="{% url 'home:tag-blog' tag.slug %}">
                           <span class="text-dark"  style="text-decoration: none;">{{ tag.name }}</span>
                         </div>
                         {% endfor %} 
                     </div>
                 </div>
-               
             </div>
             {% empty %}
             <div class="d-flex justify-content-center">
-                <h5 class="h5 font-weight-lighter my-3 text-muted">No blogs to show</h5>
-              </div>
+                <div>
+                    <h5 class="h5 font-weight-lighter my-3 text-muted">No blogs to show</h5>
+                </div>
+            </div>
             {% endfor %}
         </div>
 
-{% if blogs.has_next %}
-<a class="infinite-more-link" href="?page={{ blogs.next_page_number }}"></a>
+{% if is_upage %}
+    {% if blogs.has_next %}
+        <a class="infinite-more-link" href="?page_blogs={{ blogs.next_page_number }}"></a>
+    {% endif %}
+{% else %}
+    {% if blogs.has_next %}
+        <a class="infinite-more-link" href="?page={{ blogs.next_page_number }}"></a>
+    {% endif %}
 {% endif %}
+
 <div class="mt-2 loading" style="display: none;">
     <div class="d-flex justify-content-center">
       <div class="spinner-border text-primary" role="status">

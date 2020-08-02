@@ -3,11 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 from main.models import Profile
 from django.db import models
 from django.core.validators import RegexValidator
-
+from django.forms.widgets import ClearableFileInput
 
 username_regex = RegexValidator(r'^(?!.*\.{2})[0-9a-zA-Z-_]*$', 'Only alphanumeric, underscore, dash or nonconsecutive periods are allowed.')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
-
 
 class SignUpForm(UserCreationForm):
 	username = forms.CharField(
@@ -117,7 +116,6 @@ class SignUpForm(UserCreationForm):
 class EditProfileForm(UserChangeForm):
     
 	username = forms.CharField(
-		label='',
 		max_length=50,
 		min_length=2,
 		required=False,
@@ -125,13 +123,13 @@ class EditProfileForm(UserChangeForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Username",
-				"class": "form-control"
+				"class": "form-control",
+				"disabled":"disabled",
 			}
 		)
 	)
 
 	first_name = forms.CharField(
-		label='',
 		max_length=50,
 		min_length=2,
 		required=False,
@@ -139,13 +137,13 @@ class EditProfileForm(UserChangeForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "First name",
-				"class": "form-control"
+				"class": "form-control",
+    			"disabled":"disabled"
 			}
 		)
 	)
 
 	last_name = forms.CharField(
-		label='',
 		max_length=50,
 		min_length=2,
 		required=False,
@@ -153,13 +151,13 @@ class EditProfileForm(UserChangeForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Last name",
-				"class": "form-control"
+				"class": "form-control",
+    			"disabled":"disabled"
 			}
 		)
 	)
 
 	university = forms.CharField(
-		label='',
 		max_length=50,
 		min_length=2,
 		required=False,
@@ -167,19 +165,21 @@ class EditProfileForm(UserChangeForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "University",
-				"class": "form-control"
+				"class": "form-control",
+    			"disabled":"disabled"
 			}
 		)
 	)
 
 	email = forms.EmailField(
-		label='',
+     
 		max_length=100,
 		required=False,
 		widget=forms.EmailInput(
 			attrs={
 				"placeholder": "Email",
-				"class": "form-control"
+				"class": "form-control",
+    			"disabled":"disabled"
 			}
 		)
 	)
@@ -189,27 +189,28 @@ class EditProfileForm(UserChangeForm):
 		widget=forms.Textarea(
 			attrs={
 				"placeholder":"Enter something about yourself",
-				"class": "form-control"
+				"class": "form-control",
+				"rows":"4",
+    			"disabled":"disabled"
 			}
 		)
 	)
 	program = forms.CharField(
 		required=False,
-		widget=forms.Textarea(
+		widget=forms.TextInput(
 			attrs={
 				"placeholder":"What are you studying?",
-				"class": "form-control"
+				"class": "form-control",
+				"disabled":"disabled"
 			}
 		)
 	)
-	
-	image = models.ImageField(upload_to='profile_image')
-
+  
 	password = None
 
 	class Meta:
 		model = Profile
-		fields=('username','first_name','last_name','university','program','email','bio','image',)
+		fields=('username','first_name','last_name','university','program','email','bio',)
 		def save(self, commit = True):
 			user = super(UserChangeForm, self).save(commit=False)
 			user.bio = self.cleaned_data['bio']

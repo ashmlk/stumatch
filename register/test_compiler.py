@@ -185,3 +185,67 @@ def create_buzz_comments():
             r = BuzzReply.objects.create(buzz=p,reply_author=profile,reply_nickname=n,reply_content=c)
             r.save()
     return "Success"
+
+def update_posts():
+    fake=Faker()
+    for p in Post.objects.all():
+        c = p.content
+        cn = c + " " +  fake.word()
+        p.content = cn
+        p.save()
+    return "success"        
+
+
+def create_courses():
+    
+    codes = ['CPS109','HST543','ENG234','LST751','CPS209','CPS732','CPS821','POL209','POL902','POL532','ARB233','ABR432','TTL','CDF342','BIO9430','BIO489','CHM2434','CHE239','PHL8249','CPL3489','FSS290',\
+        'FIN300','FIN234','GEO3490', 'GEO792','GEO2378','GEO2389','ITM130','ITM2390','TIY2849','ROL239','RIL3489','RMS349','RMG248','RMG348','POL781','CPS721','GEO123','GEO934','GEO607','HST901',\
+            'RST349','GLS348','PSY833','PSY892','PSY389','PSY4489','CPS902']
+    years = [2018,2019,2020]
+    
+    dif = [1,2,3,4]
+    
+    semester = [1,2,3,4]
+    
+    uni = ['Ryerson University','York University','University of Toronto']
+    
+    instructors = ['Jamson','Leonard','Adams','Smith','Taylor','Hemsworth','Evans','Nelson','Browns','Richardson','Andrews','Malik','Polsky','Reynolds Adamson','Trinter']
+    
+    for c in codes:
+        
+        for _ in range(3):
+            i = random.choice(instructors)
+            u = random.choice(uni)
+            d = random.choice(dif)
+            s = random.choice(semester)
+            y = random.choice(years)
+            
+            course = Course.objects.create(course_code=c,course_instructor=i,course_university=u,course_difficulty=d,course_year=y,course_semester=s)
+            
+            course.save()
+            
+    return 'Success'
+
+def add_courses():
+    
+    cc = Course.objects.all().count()
+    
+    for p in Profile.objects.all():
+        random_id = random.sample(range(19,173),20) 
+        for i in random_id:
+            c = Course.objects.get(id=i)
+            p.courses.add(c)
+    return 'Success'
+
+def delete_courses():
+    
+    for p in Profile.objects.all():
+        
+        for c in p.courses.all():
+            p.courses.remove(c)
+            
+    return 'success'
+    
+            
+            
+    

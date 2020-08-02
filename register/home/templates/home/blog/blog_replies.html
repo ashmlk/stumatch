@@ -16,14 +16,15 @@
         <div class="card-body">
             <p class="card-text">
                 You are seeing replies for:
-                <div class="d-flex justify-content-between">
+                <div>
                     <div>
                         <h3><a class="text-dark" style="text-decoration: none;"href="{% url 'home:blog-detail' hid=blog.guid_url t=blog.slug %}">{{ blog.title }}</a></h3>
-                        <a href="#" class="card-link small font-weight-bolder">{{ blog.author.get_full_name }}</a>
+                        
                     </div>
-                    <div class="small text-muted">
-                        <span>
-                            {{ blog.last_edited|date:"M d, Y" }}
+                    <div>
+                        <a href="#" class="card-link small font-weight-bolder">{{ blog.author.get_full_name }}</a>
+                        <span  class="small text-muted">
+                           on {{ blog.last_edited|date:"M d, Y" }}
                         </span>
                     </div>
                 </div>
@@ -80,8 +81,7 @@
                 <div>
                     <div class="d-flex info" style="margin-bottom: 2rem !important;">
                         <div class="img mr-2">
-                            <img class="img-create-post rounded-circle" style="margin-top:1px !important; height: 2.7rem;width: 2.7rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
-                            alt="Profile image">
+                            <img class="img-create-post rounded-circle" style="margin-top:1px !important; height: 2.7rem;width: 2.7rem;" src="{{ reply.author.image.url }}"/>
                         </div>
                         <div style="margin-top: -0.147rem !important;">
                             <span class="text-muted">
@@ -107,15 +107,10 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        $('.blog-reply-form').on('submit', function () {
-            
-        })
-    })
     var textarea = document.getElementById("id_content");
     textarea.oninput = function() {
     textarea.style.height = "";
     textarea.style.height = Math.min(textarea.scrollHeight) + "px";
     };
-    </script>
+</script>
 {% endblock content %}

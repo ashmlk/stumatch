@@ -42,6 +42,7 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.core.cache import cache
+from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -53,6 +54,14 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 def home(request):
     
     friends = Friend.objects.friends(request.user)
+    
+    pnum = request.user.post_set.count()
+    bznum = request.user.buzz_set.count()
+    blnum = request.user.blog_set.count()
+    cnum = request.user.courses.count()
+    
+    not_friends = Profile.objects.exclude(id__in=[u.id for u in friends])[:5]
+    
     posts_list = Post.objects.select_related('author').filter(Q(author__in=friends)|Q(author=request.user)).order_by('-last_edited')
     
     # get hot words and tags related to posts form tags
@@ -70,17 +79,40 @@ def home(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-   
-    context = { 'posts':posts, 'is_home':is_home, 'tags':tags, 'words':words,'home_active':'-active' }
+    
+    
+    context = { 
+               'not_friends':not_friends,
+               'posts':posts,
+                'is_home':is_home,
+                'tags':tags,
+                'words':words,
+                'home_active':'-active',
+                'pnum':pnum,
+                'blnum':blnum,
+                'bznum':bznum,
+                'cnum':cnum,
+                 }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
-def users_posts(request,username):
-    u = get_object_or_404(Profile,username=username)
+def users_posts(request):
+    posts = request.user.post_set.order_by('-last_edited')
+    context = { 'posts':posts, 'post_active':'active' }
+    return render(request, 'home/homepage/user_byyou.html', context)
+
+@login_required
+def users_buzzes(request):
     posts = request.user.post_set.order_by('-last_edited')
     buzzes = request.user.buzz_set.order_by('-date_posted')
     blogs = request.user.blog_set.order_by('-last_edited')
-    context = { 'posts':posts,'buzzes':buzzes, 'blogs':blogs }
+    context = {'buzzes':buzzes, 'buzz_active':'active' }
+    return render(request, 'home/homepage/user_byyou.html', context)
+
+@login_required
+def users_blogs(request):
+    blogs = request.user.blog_set.order_by('-last_edited')
+    context = {'blogs':blogs, 'blog_active':'active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
@@ -111,7 +143,25 @@ def top_posts(request):
     context = { 'posts':posts, 'top_active':'-active'}
     return render(request, 'home/homepage/home.html', context)
 
-@cache_page(60*60*24*7)
+@login_required
+def uni_posts(request):
+    
+    u = request.user.university 
+    t = u.lower().replace(' ','_')+"_post"
+    posts_list = cache.get(t)
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    context = { 'posts':posts, 'uni_active':'-active'}
+    return render(request, 'home/homepage/home.html', context)
+
+@cache_page(60*60*24*1)
 @login_required
 def top_word_posts(request):
     if request.method == 'GET':
@@ -609,7 +659,13 @@ def saved_courses(request):
 
 @login_required
 def buzz(request):
+    
     buzzes_list = Buzz.objects.select_related('author').filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
+    
+    pnum = request.user.post_set.count()
+    bznum = request.user.buzz_set.count()
+    blnum = request.user.blog_set.count()
+    cnum = request.user.courses.count()
     
     tags = cache.get("tt_buzzes")
     top_words = cache.get("trending_words_buzzes")
@@ -628,7 +684,11 @@ def buzz(request):
     context = {
         'buzzes':buzzes,
         'words':words,
-        'rags':tags
+        'rags':tags,
+        'pnum':pnum,
+        'blnum':blnum,
+        'bznum':bznum,
+        'cnum':cnum,
     }
     return render(request,'home/buzz/buzz.html', context)
 
@@ -817,6 +877,12 @@ def comment_buzz_delete(request, hid):
 
 @login_required
 def blog(request):
+    
+    pnum = request.user.post_set.count()
+    bznum = request.user.buzz_set.count()
+    blnum = request.user.blog_set.count()
+    cnum = request.user.courses.count()
+    
     blogs_list = Blog.objects.select_related('author').all().order_by('-last_edited')
     page = request.GET.get('page', 1)
     paginator = Paginator(blogs_list, 10)
@@ -826,7 +892,13 @@ def blog(request):
         blogs = paginator.page(1)
     except EmptyPage:
         blogs = paginator.page(paginator.num_pages)
-    context = {'blogs':blogs}
+    context = {
+        'blogs':blogs,
+        'pnum':pnum,
+        'blnum':blnum,
+        'bznum':bznum,
+        'cnum':cnum,
+        }
     return render(request, 'home/blog/blog.html', context)
 
 def blog_create(request):
@@ -1154,25 +1226,22 @@ def search(request):
     
 @login_required
 def search_dropdown(request):
-    search_term = request.GET.get('q', None)
-    user_recent_search = request.user.recent_searches.order_by('-time_stamp')[:3]
-    most_similar = SearchLog.objects.filter(search_text__icontains=search_term).order_by('-time_stamp')[:4]
-    data1 = [{
-        'search_term':sl.search_text,
-        'context':'Recent Searches'
-    } for sl in user_recent_search]
-    data2 = [{
-        'search_term':sl.search_text,
-        'context':'Top Results'
-    } for sl in most_similar]
-    data = data1+data2
-    return JsonResponse(data,safe=False)
-
-
-
-
-
-
+    if request.method == 'GET':
+        search_term = request.GET.get('q', None)
+        user_recent_search = request.user.recent_searches.order_by('-time_stamp')[:3]
+        most_similar = SearchLog.objects.filter(search_text__icontains=search_term).order_by('-time_stamp')[:4]
+        data1 = [{
+            'search_term':sl.search_text,
+            'context':'Recent Searches'
+        } for sl in user_recent_search]
+        data2 = [{
+            'search_term':sl.search_text,
+            'context':'Top Results'
+        } for sl in most_similar]
+        data = data1+data2
+        print(data)
+        return JsonResponse(data,safe=False)
+    
 
 
         

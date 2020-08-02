@@ -130,7 +130,7 @@ class PostManager(models.Manager):
     
     def get_top(self):
         
-        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
         
         qs = (
             self.get_queryset()
@@ -145,7 +145,7 @@ class PostManager(models.Manager):
         
     def get_trending_words(self):
         
-        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
         
         qs = self.get_queryset().filter(author__public=True, last_edited__gte=time_threshold) 
           
@@ -166,7 +166,7 @@ class PostManager(models.Manager):
     def trending_tags(self):
         
         time_threshold = timezone.now() - datetime.timedelta(days=3)
-        qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
+        qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
         tags = Post.tags.most_common(extra_filters={'post__in': qs })[:5]
         
         return tags
@@ -319,7 +319,7 @@ class BuzzManager(models.Manager):
     
     def get_top(self):
         
-        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
         
         qs = (
             self.get_queryset()
@@ -335,7 +335,7 @@ class BuzzManager(models.Manager):
         
     def get_trending_words(self):
         
-        time_threshold = timezone.now() - datetime.timedelta(days=14)
+        time_threshold = timezone.now() - datetime.timedelta(days=3)
         
         qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
           
@@ -356,7 +356,7 @@ class BuzzManager(models.Manager):
     def trending_tags(self):
         
         time_threshold = timezone.now() - datetime.timedelta(days=3)
-        qs = qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
+        qs = self.get_queryset().filter(author__public=True,last_edited__gte=time_threshold) 
         tags = Buzz.tags.most_common(extra_filters={'buzz__in': qs })[:5]
         
         return tags

@@ -33,7 +33,7 @@
     <div class="d-flex justify-content-between">
         <div class="d-flex info" style="margin-bottom: 2rem !important;">
             <div class="img mr-2">
-                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;" src="{{ blog.author.image.url }}"
                 alt="Profile image">
             </div>
             <div style="margin-top: -0.147rem !important;">
@@ -80,8 +80,8 @@
             <a href="{% url 'home:blog-replies' slug=blog.slug guid_url=blog.guid_url %}" class="btn border btn-lg" style="border-radius: 20px;">
                 <span  style="font-size:1rem; color:  rgb(158, 158, 158);">
                     View Replies           
-                    <span class="like-count small ml-1">
-                        ({{ replies_count|num_format  }})
+                    <span class="ml-1">
+                        {{ replies_count|num_format  }}
                     </span>
                 </span>
             </a>
@@ -92,7 +92,7 @@
         <div class="d-flex justify-content-between">
             <div class="d-flex info" style="margin-bottom: 2rem !important;">
                 <div class="img mr-2">
-                    <img class="img-create-post rounded-circle" style="margin-top:1px !important;height: 2.7rem !important;width: 2.7rem !important;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"
+                    <img class="img-create-post rounded-circle" style="margin-top:1px !important;height: 2.7rem !important;width: 2.7rem !important;" src="{{ blog.author.image.url }}"
                     alt="Profile image">
                 </div>
                 <div style="margin-top: -0.140rem !important;">

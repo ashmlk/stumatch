@@ -36,7 +36,7 @@
 }
 
 .menu-link-active {
-    background-color:rgb(214, 211, 211);
+    background-color:rgb(214, 211, 211) !important;
     border-color: transparent !important;
     color: #000000;
 }

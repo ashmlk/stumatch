@@ -152,7 +152,7 @@ $(document).on('click', '.p_ico', function(event) {
 });
 
 $(document).ready(function (e) {
-    $('.post-ctr').on("click", ".likeBtn", function (e) {
+    $(document).on("click", ".likeBtn", function (e) {
         var btn = $(this)
         e.preventDefault();
         e.stopImmediatePropagation();

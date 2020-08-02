@@ -22,7 +22,7 @@
 {% else %}
 <form method="POST">
     {% csrf_token %}
-    <button type="submit" data-url="{% url 'main:add-rmv-friend' hid=user.get_hashid s=0 %}" class="btn btn-sm no-border btn-light btn-all-status">
+    <button type="submit" data-url="{% url 'main:add-rmv-friend' hid=user.get_hashid s=0 %}" style="background-color: rgb(226,230,234) !important;" class="btn btn-sm no-border btn-all-status">
         Add Friend
     </button>
 </form>

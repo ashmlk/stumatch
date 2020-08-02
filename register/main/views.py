@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, EditProfileForm, PasswordResetForm
 from django.template.loader import render_to_string
@@ -58,19 +58,184 @@ def user_login(request):
     return render(request, 'main/user_login.html', {'message': message})
 
 @login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated.')
+            return redirect('main:change-password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'main/settings/change_password.html', {
+        'form': form,
+        'privacy_active':'setting-link-active',
+    })
+    
+@login_required
 def edit_profile(request):
     if request.method=='POST':
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             #return redirect('main:home')
-            return redirect(reverse('home:home')) 
+            return redirect(reverse('main:settings-edit')) 
     else:
         form = EditProfileForm(instance=request.user)
-        args = {'form':form}
-        return render(request, 'main/edit_profile.html', args)
+        if request.user.image.url != '/media/defaults/user/default_u_i.png':
+            image_not_default = True
+        else:
+            image_not_default = False
+        context = {
+            'form':form,
+            'image_not_default':image_not_default,
+            'account_active':'setting-link-active'
+            }
+        print(request.user.image.url)
+        return render(request, 'main/settings/edit_profile.html', context)
 
+@login_required
+def update_image(request, hid):
+    
+    data = dict()
+    id = hashids_user.decode(hid)[0]
+    user = Profile.objects.get(id=id)
+    if request.method == "POST":
+        image_not_default = True
+        if request.user == user:
+            user = request.user
+            if request.user.is_authenticated:
+                print(request.FILES)
+                image = request.FILES['image']
+                user.image = image
+                user.save()
+        if request.user.image.url == '/media/defaults/user/default_u_i.png':
+            image_not_default = False  
+        context = {
+            'image_not_default':image_not_default
+        } 
+        data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)
+        return JsonResponse(data)
 
+@login_required
+def remove_image(request, hid):
+    image_not_default = True
+    data = dict()
+    id = hashids_user.decode(hid)[0]
+    user = Profile.objects.get(id=id)
+    if request.method == "POST":
+        if request.user == user:
+            if user.image != '/media/defaults/user/default_u_i.png':
+                user.set_image_to_default()
+                image_not_default = False 
+        context = {
+            'image_not_default':image_not_default
+        }        
+        data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)   
+    else:
+        if request.user == user:
+            if request.user.is_authenticated: 
+                context = {
+                    'user':request.user,
+                }   
+                data['html_form'] = render_to_string('main/settings/image_delete_confirm.html',context,request=request)   
+    return JsonResponse(data)    
+
+@login_required
+def privacy_security(request):
+    
+    if request.user.is_authenticated:
+        user = request.user
+        context = {
+            'user':user,
+            'privacy_active':'setting-link-active',
+
+        }
+        return render(request, 'main/settings/privacy_security_menu.html', context)
+
+@login_required
+def set_public_private(request):
+    
+    data = dict()
+    
+    if request.method=="POST":
+        hid = request.POST.get('hid', None)
+        id = hashids_user.decode(hid)[0]
+        user = Profile.objects.get(id=id)
+        if user == request.user:
+            
+            choice = request.POST.get('publicprivate-input-check', None)
+            if choice == "pupstvbevo":
+                if user.public == False:
+                    user.public = True
+                    disable_ranking = ''
+                    user.save()
+            elif choice == "prpstvbfo":
+                if user.public == True:
+                    user.public = False
+                    disable_ranking = 'disabled'
+                    user.save()
+    
+            if choice != None:
+                if user.rank_objects == True:
+                    ranking_on = 'checked'
+                    ranking_off = ''
+                elif user.rank_objects == False:
+                    ranking_off = 'checked'  
+                    ranking_on = ''
+                context = {
+                    'ranking_on':ranking_on,
+                    'ranking_off':ranking_off,
+                    'disable_ranking': disable_ranking
+                }
+                data['update_ranking'] = True
+                data['ranking_form'] = render_to_string('main/settings/ranking_form.html',context,request=request)
+                
+            else:
+                choice_r = request.POST.get('ranking-input-check', None)
+                if choice_r == 'rfuon':
+                    user.rank_objects = True
+                    user.save()
+                elif choice_r == 'rfuoff':
+                    user.rank_objects = False
+                    user.save()
+                data['complete'] = 'completed'
+            return JsonResponse(data)
+            
+    else:
+        if request.user.is_authenticated:
+            disable_ranking = ''
+            user = request.user
+            if user.public == True:
+                public_check = 'checked'
+                private_check = ''
+            elif user.public == False:
+                private_check = 'checked'
+                disable_ranking = 'disabled'
+                public_check = '' 
+            if user.rank_objects == True:
+                ranking_on = 'checked'
+                ranking_off = ''
+            elif user.rank_objects == False:
+                ranking_off = 'checked'  
+                ranking_on = ''
+            context = {
+                'public_check':public_check,
+                'private_check':private_check,
+                'privacy_active':'setting-link-active',
+                'ranking_on':ranking_on,
+                'ranking_off':ranking_off,
+                'disable_ranking': disable_ranking
+            }
+            return render(request,'main/settings/public_private.html', context)
+        
+@login_required
+def get_blocking(request):
+    pass
+    
 @login_required
 def add_bookmark(request, hid, obj_type):
     data=dict()
@@ -204,17 +369,39 @@ def add_remove_friend(request, hid, s):
     
 
 @login_required
-def block_user(request, id):
+def block_user(request, hid):
     data=dict()
     id = hashids_user.decode(hid)[0]
+    wants_to_block = request.user     #request.user submits request to block user
+    will_be_blocked = Profile.objects.get(id=id) #user to be blocked by request.user
     if request.method == "POST":
-        wants_to_block = request.user     #request.user submits request to block user
-        will_be_blocked = Profile.object.get(id=id) #user to be blocked by request.user
         Block.objects.add_block(wants_to_block, will_be_blocked)
         if Friend.objects.are_friends(wants_to_block, will_be_blocked):
             Friend.objects.remove_friend(wants_to_block, will_be_blocked)
-        data['html_form'] = render_to_string('main/friends/friend_status.html',{ 'is_friend':True }, request=request)
-        return JsonResponse(data)
+        if FriendshipRequest.objects.filter(from_user=will_be_blocked,to_user=wants_to_block).exists():
+            fr = FriendshipRequest.objects.get(from_user=will_be_blocked,to_user=wants_to_block)
+            fr.delete()
+        elif FriendshipRequest.objects.filter(from_user=wants_to_block,to_user=will_be_blocked).exists():
+            fr = FriendshipRequest.objects.get(from_user=wants_to_block,to_user=will_be_blocked)
+            fr.delete()
+        return redirect('main:get_user',username=will_be_blocked.username)
+    else:
+        data['html_form'] = render_to_string('main/userhome/block_user_form.html',\
+            {'wants_to_block':wants_to_block,'will_be_blocked':will_be_blocked} ,request=request)  
+    return JsonResponse(data)
+
+@login_required
+def unblock_user(request, hid):
+    
+    id = hashids_user.decode(hid)[0]
+    wants_to_unblock = request.user     #request.user submits request to unblock user
+    will_be_unblock = Profile.objects.get(id=id) #user to be unblocked by requiest.user (SIGNED IN USER)
+    
+    if request.method=="POST":
+        if Block.objects.is_blocked(wants_to_unblock, will_be_unblock):
+            Block.objects.remove_block(wants_to_unblock,will_be_unblock)
+            return redirect('main:get_user',username=will_be_unblock.username)
+        
 
 @login_required
 def friends_main(request):
@@ -279,7 +466,7 @@ def friend_requests(request):
         ids.append(int(str(f)))  
     # get user objects who sent friend request
     friend_requests_list = Profile.objects.filter(id__in=ids).order_by('last_name')
-        # find number ofm utual friends between user an friend requested object @Profile
+        # find number ofm mutual friends between user an friend requested object @Profile
     for f in friend_requests_list:
         friends_friends = Friend.objects.friends(user=f)
         mutual_friends_with_requests[f.username] = len(set(friends_list) & set(friends_friends))
@@ -398,3 +585,382 @@ def user_same_program(request):
     } 
     
     return render(request, 'main/friends/friends_same_program.html', context)
+
+@login_required
+def user_tags(request,username=None):
+
+    username = request.user.get_username()
+    p_tags = request.user.favorite_post_tags.all()
+    bz_tags = request.user.favorite_buzz_tags.all()
+    bl_tags = request.user.favorite_blog_tags.all()
+
+    context = {
+        'p_tags':p_tags,
+        'bz_tags':bz_tags,
+        'bl_tags':bl_tags,
+         }
+    
+    return render(request, 'main/tags/user_tags.html', context)
+
+@login_required
+def get_user(request,username):
+    
+    user = get_object_or_404(Profile, username=username)
+      
+    if request.user==user:
+        pnum = user.post_set.count()
+        bznum = user.buzz_set.count()
+        blnum = user.blog_set.count()
+        cnum = user.courses.count()
+        courses = user.courses.distinct('course_code','course_instructor')[:4]
+        posts = user.post_set.order_by('last_edited')[:4]
+        blogs = user.blog_set.order_by('last_edited')[:4]
+        friends = Friend.objects.friends(user)
+        num_friends = len(friends)
+        context = {
+            'user':user,
+            'pnum':pnum,
+            'blnum':blnum,
+            'bznum':bznum,
+            'cnum':cnum,
+            'courses':courses,
+            'pro_active':'-active',
+            'friends':friends[:6],
+            'num_friends':num_friends,
+            'posts':posts,
+            'blogs':blogs
+        }
+        return render(request, 'main/userhome/request_user.html', context)
+    
+    elif Friend.objects.are_friends(request.user, user):
+        
+        mutual_courses = \
+            user.courses.values('course_code','course_instructor','course_university','course_university_slug','course_instructor_slug') & \
+                request.user.courses.values('course_code','course_instructor','course_university','course_university_slug','course_instructor_slug')
+        
+
+        pnum = user.post_set.count()
+        blnum = user.blog_set.count()
+        cnum = user.courses.count()
+        
+        friends = Friend.objects.friends(user)[:6]
+        num_friends = len(friends)
+
+        post_list = user.post_set.order_by('last_edited')
+        page = request.GET.get('page_posts', 1)
+        paginator = Paginator(post_list, 4)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        
+        blog_list = user.blog_set.order_by('last_edited')
+        page = request.GET.get('page_blogs', 1)
+        paginator = Paginator(blog_list, 4)
+        try:
+            blogs = paginator.page(page)
+        except PageNotAnInteger:
+            blogs = paginator.page(1)
+        except EmptyPage:
+            blogs = paginator.page(paginator.num_pages)
+        
+        context = {
+            'user':user,
+            'is_friend':True,
+            'pnum':pnum,
+            'blnum':blnum,
+            'cnum':cnum,
+            'posts':posts, 
+            'blogs':blogs,
+            'friends':friends,
+            'num_friends':num_friends,'pro_active':'-active',
+            'courses':mutual_courses
+        }
+        
+        return render(request, 'main/userhome/view_profile.html', context)
+    
+    elif Block.objects.is_blocked(request.user, user):
+        context = {
+            'user':user,
+        }
+        return render(request, 'main/userhome/blocked_user.html', context)
+    
+    elif Block.objects.is_blocked(user, request.user):
+        context = {
+            'message':'User not found.'
+        }
+        return render(request, 'main/userhome/request_blocked.html', context)
+    
+    # if use is private just do not show anything
+    elif user.public==False:
+        sent_request=False
+        pending=False
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            status_message = user.get_full_name() + " has sent you a friend request."
+            sent_request=True
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            status_message = "Your friend request is pending."
+            pending=True
+        else:
+            status_message = "Do you know " + user.get_full_name() + "?"
+        context = {
+            'user':user,
+            'sent_request':sent_request,
+            'pending':pending,
+            'status_message':status_message
+        }
+        return render(request, 'main/userhome/private_user.html', context)
+    
+    # if use page is public it will be same as friend except the add button, pending status of friend
+    elif user.public==True and not Friend.objects.are_friends(request.user, user):
+        
+        requested=pending=addfriend=False
+        
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            requested=True   
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            pending=True
+        else:
+            addfriend=True  
+
+        mutual_courses = \
+            user.courses.values('course_code','course_instructor','course_university','course_university_slug','course_instructor_slug') & \
+                request.user.courses.values('course_code','course_instructor','course_university','course_university_slug','course_instructor_slug')
+        
+        pnum = user.post_set.count()
+        blnum = user.blog_set.count()
+        cnum = user.courses.count()
+        
+        friends = Friend.objects.friends(user)[:6]
+        num_friends = len(friends)
+        
+        print(num_friends)
+
+        post_list = user.post_set.order_by('last_edited')
+        page = request.GET.get('page_posts', 1)
+        paginator = Paginator(post_list, 4)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        
+        blog_list = user.blog_set.order_by('last_edited')
+        page = request.GET.get('page_blogs', 1)
+        paginator = Paginator(blog_list, 4)
+        try:
+            blogs = paginator.page(page)
+        except PageNotAnInteger:
+            blogs = paginator.page(1)
+        except EmptyPage:
+            blogs = paginator.page(paginator.num_pages)
+        
+        context = {
+            'user':user,
+            'pnum':pnum,
+            'blnum':blnum,
+            'cnum':cnum,
+            'posts':posts, 
+            'blogs':blogs,
+            'friends':friends,
+            'requested':requested,
+            'addfriend':addfriend,
+            'pending':pending,
+            'num_friends':num_friends,'pro_active':'-active',
+            'courses':mutual_courses
+        }
+        
+        return render(request, 'main/userhome/view_profile.html', context)
+
+@login_required   
+def get_user_friends(request):
+    
+    is_blocked = False
+    hid = request.GET.get('id', None)
+    id = hashids_user.decode(hid)[0]
+    
+    user = get_object_or_404(Profile, id=id)
+    
+    if  Friend.objects.are_friends(request.user, user):
+        is_friend=True
+    
+    elif Block.objects.is_blocked(request.user, user):
+        you_blocked=True
+        is_blocked=True
+        
+    elif Block.objects.is_blocked(user, request.user):
+        youre_blocked=True
+        #return to page not found
+        
+    if (is_friend or user.public==True) and not (is_blocked and youre_blocked):
+        
+        friend_list = Friend.objects.friends(user)
+        num_friends = len(friend_list)
+        
+        page = request.GET.get('page', 1)
+        paginator = Paginator(friend_list, 12)
+        try:
+            friends = paginator.page(page)
+        except PageNotAnInteger:
+            friends = paginator.page(1)
+        except EmptyPage:
+            friends = paginator.page(paginator.num_pages)
+        
+        context = {
+            'friends_active':'-active',
+            'user':user,
+            'is_friend':is_friend,
+            'friends':friends,
+            'num_friends':num_friends,
+        }
+
+        return render(request,  'main/userhome/view_friends.html', context)
+    
+    elif user.public==False:
+        return redirect('main.get_user',username=user.username)
+        
+
+@login_required
+def get_user_posts(request):
+    
+    is_blocked = is_friend = False
+    hid = request.GET.get('id', None)
+    id = hashids_user.decode(hid)[0]
+    
+    user = get_object_or_404(Profile, id=id)
+    
+    if  Friend.objects.are_friends(request.user, user):
+        is_friend=True
+    
+    elif Block.objects.is_blocked(request.user, user):
+        you_blocked=True
+        is_blocked=True
+        
+    elif Block.objects.is_blocked(user, request.user):
+        youre_blocked=True
+        #return to page not found
+        
+    if (is_friend or user.public==True) and not is_blocked:
+        
+        post_list = user.post_set.order_by('last_edited')
+        num_posts = post_list.count()
+        
+        page = request.GET.get('page', 1)
+        paginator = Paginator(post_list, 6)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            friends = paginator.page(paginator.num_pages)
+        
+        context = {
+            'posts_active':'-active',
+            'user':user,
+            'is_friend':is_friend,
+            'posts':posts,
+            'num_posts':num_posts
+        }
+
+        return render(request,  'main/userhome/view_posts.html', context)
+    
+    elif user.public==False:
+        return redirect('main.get_user',username=user.username)
+
+@login_required
+def get_user_blogs(request):
+    
+    is_blocked = is_friend = False
+    hid = request.GET.get('id', None)
+    id = hashids_user.decode(hid)[0]
+    
+    user = get_object_or_404(Profile, id=id)
+    
+    if  Friend.objects.are_friends(request.user, user):
+        is_friend=True
+    
+    elif Block.objects.is_blocked(request.user, user):
+        you_blocked=True
+        is_blocked=True
+        
+    elif Block.objects.is_blocked(user, request.user):
+        youre_blocked=True
+        #return to page not found
+        
+    if (is_friend or user.public==True) and not (is_blocked and youre_blocked):
+        
+        blog_list = user.blog_set.order_by('last_edited')
+        num_blogs = blog_list.count()
+        
+        page = request.GET.get('page', 1)
+        paginator = Paginator(blog_list, 6)
+        try:
+            blogs = paginator.page(page)
+        except PageNotAnInteger:
+            blogs = paginator.page(1)
+        except EmptyPage:
+            blogs = paginator.page(paginator.num_pages)
+        
+        context = {
+            'blogs_active':'-active',
+            'user':user,
+            'is_friend':is_friend,
+            'blogs':blogs,
+            'num_blogs':num_blogs
+        }
+
+        return render(request,  'main/userhome/view_blogs.html', context)
+    
+    elif user.public==False:
+        return redirect('main.get_user',username=user.username)
+        
+        
+@login_required
+def get_user_courses(request):
+    
+    is_blocked = is_friend = False
+    hid = request.GET.get('id', None)
+    id = hashids_user.decode(hid)[0]
+    
+    user = get_object_or_404(Profile, id=id)
+    
+    if  Friend.objects.are_friends(request.user, user):
+        is_friend=True
+    
+    elif Block.objects.is_blocked(request.user, user):
+        you_blocked=True
+        is_blocked=True
+        
+    elif Block.objects.is_blocked(user, request.user):
+        youre_blocked=True
+        #return to page not found
+        
+    if (is_friend or user.public==True) and not is_blocked:
+        
+        course_list = user.courses.order_by('course_year')
+        num_courses = course_list.count()
+        
+        page = request.GET.get('page', 1)
+        paginator = Paginator(course_list, 12)
+        try:
+            courses = paginator.page(page)
+        except PageNotAnInteger:
+            courses = paginator.page(1)
+        except EmptyPage:
+            courses = paginator.page(paginator.num_pages)
+        
+        context = {
+            'courses_active':'-active',
+            'user':user,
+            'is_friend':is_friend,
+            'courses':courses,
+            'num_courses':num_courses
+        }
+
+        return render(request,  'main/userhome/view_courses.html', context)
+    
+    elif user.public==False:
+        return redirect('main.get_user',username=user.username)

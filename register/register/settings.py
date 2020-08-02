@@ -110,6 +110,10 @@ CELERY_BEAT_SCHEDULE = {
         'task':'home.tasks.get_top_posts',
         'schedule': 4563.0,
     },
+    'update-uni-posts': {
+        'task':'home.tasks.uni_posts',
+        'schedule':5400.0,
+    },
     'update-trending-words-post': {
         'task':'home.tasks.get_trending_words_posts',
         'schedule':2800.0,
@@ -127,6 +131,10 @@ CELERY_BEAT_SCHEDULE = {
         'task':'home.tasks.get_top_buzzes',
         'schedule': 4563.0,
     },
+    'update-uni-buzzes': {
+        'task':'home.tasks.uni_buzzes',
+        'schedule':5400.0,
+    },
     'update-trending-words-buzz': {
         'task':'home.tasks.get_trending_words_buzzes',
         'schedule':3000.0,
@@ -134,7 +142,7 @@ CELERY_BEAT_SCHEDULE = {
     'update-trending-tags-buzz': {
         'task':'home.tasks.trending_tags_buzz',
         'schedule':3600.0,
-    }, 
+    },
     
 }
 

@@ -2,11 +2,11 @@
 {% load static %}
 {% load ibuilder %}
 {% block content %}
-<div id="lister-page" data-target="_tsre"></div>
+<div id="lister-page" data-target="_tsre">
 {% if empty %}
 <div class="d-flex justify-content-center">
     <h5 class="h5 font-weight-lighter my-3 text-muted">No results found, please try again</h5>
-  </div>
+</div>
 {% else %}
 {% if users %}
 <div class="card shadow p-2 mb-2">
@@ -113,7 +113,7 @@
     <form method="GET" action="{% url 'home:search-all' %}">
         <input type="hidden" name="q" value="{{ q }}"/>
         <input type="hidden" name="o" value="buzz"/>
-        <div class="ro2 w-100 col-12">
+        <div class="row w-100 col-12">
             <button type="submit" class="w-100 btn " style="background-color: rgb(226,230,234);">See More</button>
         </div>
     </form>

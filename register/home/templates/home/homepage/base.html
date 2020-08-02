@@ -1,8 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html>
-
 <head>
   <div id="#headerPlaceholder"></div>
   <style>
@@ -22,6 +20,41 @@
     .menu-bottom-fix {
       min-width: 3rem !important;
     }
+    .main-border-l{
+      border-left: solid 3px rgba(136, 136, 136, 0.144);
+    }
+    .side-tab-link-holder .mnpglk:hover{
+      border-left: solid 3px rgb(126, 192, 243) !important;
+ 
+    }
+    .side-tab-link-holder .mnpglk:hover .col-1{
+      margin-left: -3px !important;
+    }
+
+    .side-tab-link-holder .mnpglk-active {
+      border-left: solid 3px rgb(126, 192, 243) !important; 
+    }
+    
+    .side-tab-link-holder .mnpglk-active .col-1{
+      margin-left: -3px !important;
+    }
+
+    .info-all .user-num {
+      color:rgb(1,119,200);
+      font-weight: 400 !important;
+    }
+    .info-all .badge {
+      font-size: 0.7rem !important;
+    }
+    .t {
+      letter-spacing: 1px !important;
+    }
+    #_pol3 .h6 {
+      color: rgb(80, 80, 80) !important;
+    }
+    #_pol3 .menu-link  {
+        border-radius: 8px;
+      }
   </style>
   <title>StuMatch</title>
   <meta charset="utf-8">
@@ -39,51 +72,21 @@
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
 </head>
-
 <body class="pb-5" style="background-color: white !important;">
-  {% block javascript %}
-  {% endblock javascript %}
   <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
   <div class="wrapper">
     <div class="container-fluid pt-4">
       <div class="row">
         <div class="d-none d-sm-block pl-5 col-sm-3"
-          style="padding-right: 3rem !important;font-size:1.2rem; margin-top: 54px;">
-          <div class="position-fixed mr-5" style="width: 22%;">
-            <div class="side-tab-link-holder">
-              <div class="ml-3 mr-1 pr-2">
-                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
-                  data-url="{% url 'home:buzz' %}">
-                  <div class="col-1">
-                    <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-eyeglasses" fill="currentColor"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd"
-                        d="M4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8-1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                      <path fill-rule="evenodd"
-                        d="M8 7a1 1 0 0 0-1 1H6a2 2 0 1 1 4 0H9a1 1 0 0 0-1-1zM0 8a.5.5 0 0 1 .5-.5h1v1h-1A.5.5 0 0 1 0 8zm15.5.5h-1v-1h1a.5.5 0 0 1 0 1z" />
-                    </svg>
-                  </div>
-                  <div class="col-10 d-none d-lg-block">
-                    <span class="ml-2 ">Buzz</span>
-                  </div>
-                </div>
-                <div class="rounded d-flex align-items-center font-weight-bold  p-3 mnpglk"
-                  data-url="{% url 'home:blog' %}">
-                  <div class="col-1">
-                    <svg style="margin-top: -2px !important" width="22" height="22" viewBox="0 0 16 16"
-                      class="bi bi-card-heading" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd"
-                        d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
-                      <path fill-rule="evenodd"
-                        d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
-                      <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z" />
-                    </svg>
-                  </div>
-                  <div class="col-10 d-none d-lg-block">
-                    <span class="ml-2">Blogs</span>
-                  </div>
-                </div>
-                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
+          style="padding-right: 2rem !important;font-size:1rem; margin-top: 34px;padding-top:10px;">
+          {% block userinfo %}{% endblock %}
+          <div class="sticky-top mr-5" >
+            <div class="h5 ml-3 t d-none d-lg-block">
+              <strong>Menu</strong>
+            </div>
+            <div class="mt-4 side-tab-link-holder pt-2" >
+              <div class="ml-3 pr-2 main-border-l">
+                <div style="margin-left: -2px !important;"class="mb-1 rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
                   data-url="{% url 'home:courses' %}">
                   <div class="col-1">
                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
@@ -98,8 +101,36 @@
                     <span class="ml-2">Courses</span>
                   </div>
                 </div>
-                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
-                  data-url="{% url 'home:users-posts' request.user.get_username %}">
+                <div style="margin-left: -3px !important;">
+                <div class="mb-1 rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
+                  data-url="{% url 'home:buzz' %}">
+                  <div class="col-1">
+                    <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-eyeglasses" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8-1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                      <path fill-rule="evenodd"
+                        d="M8 7a1 1 0 0 0-1 1H6a2 2 0 1 1 4 0H9a1 1 0 0 0-1-1zM0 8a.5.5 0 0 1 .5-.5h1v1h-1A.5.5 0 0 1 0 8zm15.5.5h-1v-1h1a.5.5 0 0 1 0 1z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2 ">Buzz</span>
+                  </div>
+                </div>
+                <div class="mb-1 rounded-0 d-flex align-items-center font-weight-bold  p-3 mnpglk"
+                  data-url="{% url 'home:blog' %}">
+                  <div class="col-1">
+                    <svg style="margin-top: -2px !important" width="22" height="22" viewBox="0 0 16 16"
+                    class="bi bi-justify" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                  </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2">Blogs</span>
+                  </div>
+                </div>
+                <div class="mb-1 rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
+                  data-url="{% url 'home:users-posts' %}">
                   <div class="col-1">
                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +142,7 @@
                     <span class="ml-2">By You</span>
                   </div>
                 </div>
-                <div class="rounded mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk"
+                <div class="mb-1 rounded-0 mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk"
                   data-url="{% url 'main:bookmarks' %}">
                   <div class="col-1">
                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-bookmark" fill="currentColor"
@@ -124,7 +155,7 @@
                     <span class="ml-2 ">Bookmarks</span>
                   </div>
                 </div>
-                <div class="rounded mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk" data-url="#">
+                <div class="mb-1 rounded-0 mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk" data-url="{% url 'main:usertags' username=request.user.get_username %}">
                   <div class="col-1">
                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-hash" fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg">
@@ -135,6 +166,7 @@
                   <div class="col-10 d-none d-lg-block">
                     <span class="ml-2 ">Tags</span>
                   </div>
+                </div>
                 </div>
               </div>
             </div>
@@ -233,21 +265,6 @@
       </div>
     </div>
   </div>
-  <!--
-        <script src="{% static 'js/post/like-api.js' %}"></script>
-        <script src="{% static 'js/post/post-comments.js' %}"></script>
-        <script src="{% static 'js/post/post_list.js' %}"></script>
-        <script src="{% static 'js/post/comment.js' %}"></script>
-        <script src="{% static 'js/post/comment-delete.js' %}"></script>
-        <script src="{% static 'js/post/like-comment-api.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
-        <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
-        <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
-        <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
-        <script src="{% static 'js/post/comment.js' %}"></script>
-        <script src="{% static 'js/post/like-comment-api.js' %}"></script>
-        -->
   <div class="fixed-bottom d-sm-none bg-white border-top">
     <div class="side-tab-link-holder px-5">
       <div class="d-flex mx-3 justify-content-between">
@@ -289,7 +306,7 @@
           </div>
         </div>
         <div class="row rounded font-weight-bold p-3 mnpglk menu-bottom-fix"
-          data-url="{% url 'home:users-posts' request.user.get_username %}">
+          data-url="{% url 'home:users-posts' %}">
           <div>
             <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
               xmlns="http://www.w3.org/2000/svg">
@@ -328,6 +345,83 @@
   <script src="{% static 'js/buzz/buzz.js' %}"></script>
   <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
   <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+    <!--
+    <script src="{% static 'js/post/like-api.js' %}"></script>
+    <script src="{% static 'js/post/post-comments.js' %}"></script>
+    <script src="{% static 'js/post/post_list.js' %}"></script>
+    <script src="{% static 'js/post/comment.js' %}"></script>
+    <script src="{% static 'js/post/comment-delete.js' %}"></script>
+    <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+    <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
+    <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
+    <script src="{% static 'js/post/comment.js' %}"></script>
+    <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+  -->
+  <script>
+    /*
+    $(document).ready(function () {
+      alert('search')
+          $('#searchbar_n').on('change',function (e) {
+            e.preventDefault();
+              var q = $(this).val();
+              alert(q);
+              $.ajax({
+                  type:"GET",
+                  url:'/home/search/get?q=' + q,
+                  dataType:'json',
+                  success: function (data) {
+                      $.each(data, function (i, obj) {
+                        alert(data)
+                          alert(obj.search_term+":"+obj.context)
+                      })
+                  },
+              });
+          })
+        })
+               
+                */
+    </script>
+    <script type="text/javascript">
+
+      $(document).ready(function () {
+            
+            var options = {
+                url: function(q) {
+                  return '/home/search/get?q=' + q;
+                },
+                getValue: "search_term",
+                requestDelay: 100,
+                adjustWidth: true,
+                template: {
+                type: "description",
+                fields: {
+                    description: "context"
+                    },
+                },
+                list: {
+                    maxNumberOfElements: 10,
+                    showAnimation: {
+                    type: "slide", //normal|slide|fade
+                    time: 200,
+                    callback: function() {}
+                    },
+                    hideAnimation: {
+                    type: "slide", //normal|slide|fade
+                    time: 200,
+                    callback: function() {}
+                    },
+                    match: {
+                        enabled: true
+                    }
+                },
+            theme: "round",
+            };
+            $("#searchbar_n").easyAutocomplete(options);
+      })
+  </script>
 </body>
 
 </html>

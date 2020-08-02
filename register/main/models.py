@@ -15,6 +15,7 @@ from django.core.validators import MaxLengthValidator, MinValueValidator, MaxVal
 from django.db.models import Q, F, Count, Avg, FloatField
 from hashids import Hashids
 from friendship.models import Friend, Follow, Block, FriendshipRequest
+from django.urls import reverse
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
@@ -303,7 +304,9 @@ class SearchLog(models.Model):
     def __str__(self):
         return self.search_text     
         
-        
+
+DEFAULT_IMAGE = 'defaults/user/default_u_i.png'
+     
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
@@ -311,6 +314,7 @@ class Profile(AbstractUser):
     image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     courses = models.ManyToManyField('home.Course',related_name='profiles')
     public = models.BooleanField(default=True, blank=True)
+    rank_objects = models.BooleanField(default=True, blank=True)
     saved_courses = models.ManyToManyField('home.Course',related_name='saved_courses')
     favorite_post_tags = models.ManyToManyField(Tag, related_name='fav_post_tags')
     favorite_buzz_tags = models.ManyToManyField(Tag, related_name='fav_buzz_tags')
@@ -330,10 +334,15 @@ class Profile(AbstractUser):
         return self.username
     
     def get_absolute_url(self):
-        return "{}".format(self.slug)
+        return reverse('main:get_user', kwargs={'username':self.username})
 
     def get_hashid(self):
         return hashids_user.encode(self.id)
+    
+    def set_image_to_default(self):
+        self.image.delete(save=False)  # delete old image file
+        self.image = DEFAULT_IMAGE
+        self.save()
 
 class BookmarkBase(models.Model):
     class Meta:

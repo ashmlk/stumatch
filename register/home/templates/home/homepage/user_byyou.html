@@ -5,27 +5,31 @@
 {% block content %}
 <ul class="nav ubu nav-pills nav-fill mb-3 border-bottom border-primary" id="pills-tab" role="tablist" style="border-width: 2px !important;">
     <li class="nav-item">
-        <a class="nav-link active" id="pills-post-tab" data-toggle="pill" href="#post-list" role="tab" aria-controls="pills-post" aria-selected="true">Posts</a>
+        <a class="nav-link {{ post_active }}" href="{% url 'home:users-posts' %}">Posts</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="pills-buzz-tab" data-toggle="pill" href="#buzz-list" role="tab" aria-controls="pills-buzz" aria-selected="false">Buzzes</a>
+        <a class="nav-link {{ buzz_active }}" href="{% url 'home:users-buzzes' %}">Buzzes</a>
     </li>
-    <li class="nav-item" style="margin-right: -0.01rem;">
-        <a class="nav-link" id="pills-blog-tab" data-toggle="pill" href="#blog-list" role="tab" aria-controls="pills-blog" aria-selected="false">Blog</a>
+    <li class="nav-item {{ blog_active }}" style="margin-right: -0.01rem;">
+        <a class="nav-link" href="{% url 'home:users-blogs' %}">Blog</a>
     </li>
 </ul>
-  <div class="tab-content" id="pills-tabContent">
-    <div  id="post-list" class="tab-pane fade show active"  role="tabpanel" aria-labelledby="pills-post-tab">
+  <div>
+    {% if post_active %}
+    <div  id="post-list">
         <div id="_np2u"></div>
         {% include 'home/posts/home_post.html' with posts=posts %}
     </div>
-    <div id="buzz-list" class="tab-pane fade"  role="tabpanel" aria-labelledby="pills-buzz-tab">
+    {% elif buzz_active %}
+    <div id="buzz-list">
         <div id="_nb21" class="buzz-ctr"></div>
         {% include 'home/buzz/buzz_list.html' with buzzes=buzzes %}
     </div>
-    <div id="blog-list" class="tab-pane fade"  role="tabpanel" aria-labelledby="pills-blog-tab">
+    {% elif blog_active %}
+    <div id="blog-list">
         {% include 'home/blog/blog_list.html' with blogs=blogs %}
     </div>
+    {% endif %}
   </div>
 <script src="{% static 'js/post/post.js' %}"></script>
 {% endblock %}

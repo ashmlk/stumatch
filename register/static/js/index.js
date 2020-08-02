@@ -70,41 +70,7 @@ $(document).ready(function () {
       $('[data-tooltip="tooltip"]').tooltip("hide");
    });
 });
-$(document).ready(function () {
-          
-  var options = {
-      url: function(q) {
-        return '/home/search/get?q=' + q + "&format=json";
-      },
-      getValue: "search_term",
-      requestDelay: 100,
-      adjustWidth: true,
-      template: {
-      type: "description",
-      fields: {
-          description: "context"
-          },
-      },
-      list: {
-          maxNumberOfElements: 10,
-          showAnimation: {
-          type: "slide", //normal|slide|fade
-          time: 200,
-          callback: function() {}
-          },
-          hideAnimation: {
-          type: "slide", //normal|slide|fade
-          time: 200,
-          callback: function() {}
-          },
-          match: {
-              enabled: true
-          }
-      },
-  theme: "round"
-  };
-  $("#searchetal").easyAutocomplete(options);s
-})
+
 $(document).ready(function () {
   var search_terms = $('#search-term-e').attr('data-value');
   var terms = search_terms.split(/\+s/);
@@ -133,3 +99,71 @@ $(document).ready(function () {
       parent.append(divs.splice(Math.floor(Math.random() * divs.length), 1)[0]);
   }
 });
+$(document).ready(function (e) {
+  e.preventDefault();
+  var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+      onBeforePageLoad: function () {
+          $('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+          $('.loading').hide();
+      }
+  });
+})
+$(document).ready(function () {
+  var btn;
+  $(document).on("click", '.accept-reject-btn', function (e) {
+      btn = $(this)
+      e.preventDefault();
+      $.ajax({
+          type: "POST",
+          url: $(this).attr("data-url"),
+          dataType: 'json',
+          data: $(this).closest('form').serialize(),
+          success: function (data) {
+              $(btn).closest(".friend-status-ctr").html(data.html_form);
+          },
+          error: function (rs, e) {
+              console.log(rs.responeText);
+          },
+      });
+  });
+})
+
+$(document).ready(function () {
+  var btn;
+  $(document).on("click", '.btn-all-status', function (e) {
+      btn = $(this)
+      e.preventDefault();
+      $.ajax({
+          type: "POST",
+          url: $(this).attr("data-url"),
+          dataType: 'json',
+          data: $(this).closest('form').serialize(),
+          success: function (data) {
+              $(btn).closest(".friend-status-ctr").html(data.html_form);
+          },
+          error: function (rs, e) {
+              console.log(rs.responeText);
+          },
+      });
+  });
+
+  ('mngpl').on('click', function () {
+      window.location = $(this).find('a').attr('href');
+  })
+})
+$(document).ready(function () {
+  $('.main-top-nav .nav-goto-holder').on('click', function () {
+      window.location = $(this).attr('data-url');
+      return false;
+  })
+})
+$(document).ready(function () {
+  $('[data-tooltip="tooltip"]').tooltip()
+  $('[data-tooltip="tooltip"]').click(function () {
+      $('[data-tooltip="tooltip"]').tooltip("hide");
+  });
+
+})

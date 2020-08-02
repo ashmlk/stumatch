@@ -1,0 +1,271 @@
+{% extends "main/userhome/base_request_private.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block content %}
+<div class="row mt-5">
+    <div class="mx-auto col-sm-10">
+        <div class="img-user name-user mt-4 p-2">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="ppro-img">
+                        <img class="img-create-post rounded-circle" style="height: 8rem;width: 8rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg"/>
+                    </div>
+                </div> 
+            </div>
+            <div class="f-name mt-3">
+                <div class="content-holder">
+                    <h4 class="text-center text-dark">{{ user.get_full_name }}</h4>
+                </div>
+            </div>
+            <div class="mt-2 p-2 u-bio">
+                <p class="text-center text-muted">{{ user.bio }}</p>
+            </div>
+        </div>
+        <div class="sticky-top my-2 p-2 mb-3 bg-white profile-header-main-links d-flex justify-content-between" style="top:54px !important;">
+            <div class="options-user-r">
+                <div class="d-flex justify-content-start">
+                    <div class="rounded-0 p-2 pro-link-goto{{ pro_active }}" data-url="{% url 'main:get_user' user.username %}">
+                        <span class="pro-link-goto-text">
+                            Profile
+                        </span>
+                    </div>
+                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'main:friends-main' %}">
+                        <span class="pro-link-goto-text">
+                            Friends
+                        </span>
+                    </div>
+                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:courses' %}">
+                        <span class="pro-link-goto-text">
+                            Courses
+                        </span>
+                    </div>
+                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:users-posts' %}">
+                        <span class="pro-link-goto-text">
+                            By You
+                        </span>
+                    </div>
+                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'main:bookmarks' %}">
+                        <span class="pro-link-goto-text">
+                            Bookmarks
+                        </span>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="pt-2 editable-al-view">
+                <div class="d-flex justify-content-end">
+                      <div class="btn btn-sm d-flex align-items-center mr-1 pro-menu-link" data-url="{% url 'main:settings-edit' %}">
+                          <div>
+                            <svg style="margin-top:-2px !important;"width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+                                <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+                              </svg>
+                          </div>
+                          <div class="ml-1"> 
+                            <span class="h6 ml-1">Settings</span>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="my-2  content-boxes info-user-all">
+            <div class="row p-2">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                   <strong>About</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 border-bottom info-et-all">
+                                <div class="d-flex pb-3 uni-user">
+                                    {% if user.program or user.university %}
+                                    <div class="mr-2">
+                                        <span class="mr-2" >
+                                            <svg style="margin-top:-5px !important;" width="16" height="16" viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z"/>
+                                                </svg>
+                                            </span>
+                                    </div>
+                                    <div class="u_pui">
+                                        {% if user.program %}
+                                        <span class="text-muted">
+                                            Studies {{ user.program|capfirst }}
+                                        </span>
+                                        {% endif %}
+                                        {% if user.university and user.program %}
+                                        <span class="text-muted"> at </span>
+                                        <strong>
+                                            {{ user.university|capfirst }}
+                                        </strong>
+                                        {% elif user.university and not user.program %}
+                                        <span class="text-muted">Goes to </span>
+                                        <strong>
+                                            {{ user.university|capfirst }}
+                                        </strong>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                          <div class="pb-2 pro-info-a" style="font-size: 0.88rem;">
+                            <div class="my-2 d-flex justify-content-between">
+                              <div>
+                                <strong class="font-size-smaller">Courses</strong>
+                              </div>
+                              <div>
+                                <span class="navbarMainHeaderuser-num">{{ cnum }}</span>
+                              </div>
+                            </div>
+                            <div class="my-2  d-flex justify-content-between">
+                              <div>
+                                <strong class="font-size-smaller">Posts</strong>
+                              </div>
+                              <div>
+                                <span class="navbarMainHeaderuser-num">{{ pnum }}</span>
+                              </div>
+                            </div>
+                            <div class="my-2 d-flex justify-content-between">
+                              <div>
+                                <strong class="font-size-smaller">Buzzes</strong>
+                              </div>
+                              <div>
+                                <span class="navbarMainHeaderuser-num">{{ bznum }}</span>
+                              </div>
+                            </div>
+                            <div class="my-2  d-flex justify-content-between">
+                              <div>
+                                <strong class="font-size-smaller">Blogs</strong>
+                              </div>
+                              <div>
+                                <span class="navbarMainHeaderuser-num">{{ blnum }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header bg-transparent">
+                            <strong>Courses</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-columns mt-1" >
+                                {% for course in courses %}
+                                {% bg_rand as bgrnd %}
+                                <div class="card mb-2 bg-white">
+                                    <div class="d-flex justify-content-between course-title-box course-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:6rem; background-color: {{ bgrnd }};">
+                                        <div class="ml-3"> 
+                                            <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body d-flex flex-colum align-items-center" >
+                                        <div class="course-user-detail" style="margin-bottom:-0.9rem !important;margin-left: -2px !important;">
+                                            <a href="{%url 'home:course-instructor'  par1=course.course_university_slug par2=course.course_instructor_slug %}" class="h6">Professor {{ course.course_instructor }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="mt-2 add-course-btn">
+                                <div class="w-100 pro-link-goto" data-url="{% url 'home:courses' %}">
+                                    <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">View All</button>
+                                </div>
+                            </div>
+                            <div class="mt-2 add-course-btn">
+                                <div class="w-100 pro-link-goto" data-url="{% url 'home:courses-add' %}">
+                                    <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">Add courses</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 user-friends">
+            <div class="friends-all my-2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div>
+                            <strong>Friends</strong>
+                        </div>
+                        {% if friends %}
+                        <div>
+                            <span class="text-muted">{{ num_friends }} friends</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if friends %}
+                    <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
+                        {% for friend in friends %}
+                        <div class="m-1 card" style="width: 8.7rem !important;">
+                            <img class="card-img-top" src="{{ friend.image.url }}">
+                            <div class="card-body">
+                                <div class="card-friend-name-holder">
+                                    <a class="card-link text-dark" href="{{ friend.author.get_absolute_url }}">{{ friend.get_full_name }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if friends %}
+                    <div class="pb-2 friend-sbtn" style="margin-left: 0.8rem !important; margin-right: 0.8rem !important;">
+                        <div class="w-100 pro-link-goto" data-url="{% url 'main:friends-main' %}">
+                            <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">View All</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="pb-2 friend-sbtn" style="margin-left: 0.8rem !important; margin-right: 0.8rem !important;">
+                        <div class="w-100 pro-link-goto" data-url="">
+                            <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">Find Friends</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row p-2 authored-by-user my-1">
+            <div class="col-sm-6 posts-by-user p-2">
+                <div class="d-flex justify-content-between">
+                    <div class="post-title-view p-1 mt-2">
+                        <strong>Posts</strong>
+                    </div>
+                    <div class="p-1 mt-2">
+                        <a class="card-link" href="{% url 'home:users-posts' %}">View All</a>
+                    </div>
+                </div>
+                <div class="u_pctr">
+                    <div id="post-list">
+                        <div id="_np2u"></div>
+                        {% include 'home/posts/home_post.html' with posts=posts is_upage=True %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 blog-by-user p-2">
+                <div class="d-flex justify-content-between">
+                    <div class="post-title-view p-1 mt-2">
+                        <strong>Blogs</strong>
+                    </div>
+                    <div class="p-1 mt-2">
+                        <a class="card-link" href="{% url 'home:users-blogs' %}">View All</a>
+                    </div>
+                </div>
+                <div class="u_blgctr mt-2">
+                    <div id="blog-list">
+                        {% include 'home/blog/blog_list.html' with blogs=blogs is_upage=True %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+@media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}
+</style>
+{% endblock %}

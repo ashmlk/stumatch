@@ -1,0 +1,335 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <div id="#headerPlaceholder"></div>
+  <style>
+    .mnpglk-active svg {
+      color: rgb(126, 192, 243) !important;
+    }
+
+    .mnpglk-active span {
+      color: rgb(126, 192, 243) !important;
+    }
+
+    .side-tab-link-holder svg {
+      color: rgb(71, 71, 71);
+      margin-top: -2px;
+    }
+
+    .menu-bottom-fix {
+      min-width: 3rem !important;
+    }
+
+    
+  </style>
+  <title>StuMatch</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_io/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+</head>
+
+<body class="pb-5" style="background-color: white !important;">
+  {% block javascript %}
+  {% endblock javascript %}
+  <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
+  <div class="wrapper">
+    <div class="container-fluid pt-4">
+      <div class="row">
+        <div class="d-none d-sm-block pl-5 col-sm-3"
+          style="padding-right: 3rem !important;font-size:1.1rem; margin-top: 34px;padding-top:10px;">
+          <div class="position-fixed mr-5" style="width: 22%;">
+            <div class="side-tab-link-holder pt-2" >
+              <div class="ml-3 mr-1 pr-2">
+                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
+                  data-url="{% url 'home:buzz' %}">
+                  <div class="col-1">
+                    <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-eyeglasses" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8-1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                      <path fill-rule="evenodd"
+                        d="M8 7a1 1 0 0 0-1 1H6a2 2 0 1 1 4 0H9a1 1 0 0 0-1-1zM0 8a.5.5 0 0 1 .5-.5h1v1h-1A.5.5 0 0 1 0 8zm15.5.5h-1v-1h1a.5.5 0 0 1 0 1z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2 ">Buzz</span>
+                  </div>
+                </div>
+                <div class="rounded d-flex align-items-center font-weight-bold  p-3 mnpglk"
+                  data-url="{% url 'home:blog' %}">
+                  <div class="col-1">
+                    <svg style="margin-top: -2px !important" width="22" height="22" viewBox="0 0 16 16"
+                      class="bi bi-card-heading" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+                      <path fill-rule="evenodd"
+                        d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+                      <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2">Blogs</span>
+                  </div>
+                </div>
+                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
+                  data-url="{% url 'home:courses' %}">
+                  <div class="col-1">
+                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
+                      <path fill-rule="evenodd"
+                        d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
+                    </svg>
+                  </div>
+                  <div class="col-10  d-none d-lg-block">
+                    <span class="ml-2">Courses</span>
+                  </div>
+                </div>
+                <div class="rounded d-flex align-items-center font-weight-bold p-3 mnpglk"
+                  data-url="{% url 'home:users-posts' request.user.get_username %}">
+                  <div class="col-1">
+                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M14.5 13.5h-13A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5zm-13 1A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zM2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 mt-1 d-none d-lg-block">
+                    <span class="ml-2">By You</span>
+                  </div>
+                </div>
+                <div class="rounded mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk"
+                  data-url="{% url 'main:bookmarks' %}">
+                  <div class="col-1">
+                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-bookmark" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2 ">Bookmarks</span>
+                  </div>
+                </div>
+                <div class="rounded mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk" data-url="#">
+                  <div class="col-1">
+                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-hash" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M8.39 12.648a1.32 1.32 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1.06 1.06 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.512.512 0 0 0-.523-.516.539.539 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532 0 .312.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531 0 .313.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242l-.515 2.492zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z" />
+                    </svg>
+                  </div>
+                  <div class="col-10 d-none d-lg-block">
+                    <span class="ml-2 ">Tags</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ml-3 mr-2 pr-2 mt-2">
+              {% block contentleft %}
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="mt-5" style="top: 44px !important;">
+            <div class="pt-2">
+              {% block content %}
+              {% endblock %}
+            </div>
+            <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+          </div>
+        </div>
+        <div class="col-sm-3 d-none d-lg-block" style="margin-left: 3rem !important;">
+          <div class="pt-2 mt-5">
+            {% block item %}
+            {% endblock %}
+          </div>
+          <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="modal fade" id="modal-post">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post-update">
+    <div class="modal-dialog modal-dialog-centered ">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-comment-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="createModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title col-12 text-center" id="createModal">Create</h5>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div class="row mb-2 justify-content-center">
+              <button class="col-10 ml-1 btn btn-primary border-0 create-post-btn"
+                data-url="{% url 'home:post-create' %}">
+                Create a Post
+              </button>
+            </div>
+            <div class="row mb-2 justify-content-center">
+              <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip"
+                data-placement="bottom" title="Buzz and comment anonymously!"
+                data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
+            </div>
+            <div class="row justify-content-center">
+              <button class="col-10 btn btn-primary border-0 " data-url="{% url 'home:blog-create' %}">Create a
+                Blog</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer col-12">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+            style="border-radius: 20px;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+        <script src="{% static 'js/post/like-api.js' %}"></script>
+        <script src="{% static 'js/post/post-comments.js' %}"></script>
+        <script src="{% static 'js/post/post_list.js' %}"></script>
+        <script src="{% static 'js/post/comment.js' %}"></script>
+        <script src="{% static 'js/post/comment-delete.js' %}"></script>
+        <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+        <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
+        <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
+        <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
+        <script src="{% static 'js/post/comment.js' %}"></script>
+        <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+        -->
+  <div class="fixed-bottom d-sm-none bg-white border-top">
+    <div class="side-tab-link-holder px-5">
+      <div class="d-flex mx-3 justify-content-between">
+        <div class="row rounded d-flex align-items-center font-weight-bold p-3  mnpglk menu-bottom-fix"
+          data-url="{% url 'home:buzz' %}">
+          <div>
+            <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-eyeglasses" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8-1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+              <path fill-rule="evenodd"
+                d="M8 7a1 1 0 0 0-1 1H6a2 2 0 1 1 4 0H9a1 1 0 0 0-1-1zM0 8a.5.5 0 0 1 .5-.5h1v1h-1A.5.5 0 0 1 0 8zm15.5.5h-1v-1h1a.5.5 0 0 1 0 1z" />
+            </svg>
+          </div>
+        </div>
+        <div class="row rounded d-flex align-items-center font-weight-bold p-3 mnpglk menu-bottom-fix"
+          data-url="{% url 'home:blog' %}">
+          <div>
+            <svg style="margin-top: -2px !important" width="22" height="22" viewBox="0 0 16 16"
+              class="bi bi-card-heading" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+              <path fill-rule="evenodd"
+                d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+              <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z" />
+            </svg>
+          </div>
+        </div>
+        <div class="row rounded d-flex align-items-center font-weight-bold p-3 mnpglk menu-bottom-fix"
+          data-url="{% url 'home:courses' %}">
+          <div>
+            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
+              <path fill-rule="evenodd"
+                d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
+            </svg>
+          </div>
+        </div>
+        <div class="row rounded font-weight-bold p-3 mnpglk menu-bottom-fix"
+          data-url="{% url 'home:users-posts' request.user.get_username %}">
+          <div>
+            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M14.5 13.5h-13A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5zm-13 1A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zM2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1z" />
+            </svg>
+          </div>
+        </div>
+        <div class="row rounded mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk menu-bottom-fix"
+          data-url="{% url 'main:bookmarks' %}">
+          <div>
+            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-bookmark" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+  <script src="{% static 'initial/initial.js' %}"></script>
+  <script src="{% static 'js/buzz/buzzall.js' %}"></script>
+  <script src="{% static 'js/post/postall.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'js/buzz/buzz.js' %}"></script>
+  <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
+  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+</body>
+
+</html>
