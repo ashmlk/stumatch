@@ -3,6 +3,9 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% load ibuilder %}
+{% block title %}
+<title>Blog - Corscope</title>
+{% endblock %}
 {% block item %}
 <div class="cr-blg-ctr fixedbutton">
     <a href="{% url 'home:blog-create' %}" class="btn btn-primary btn-f-circle">  

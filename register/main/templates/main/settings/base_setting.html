@@ -119,12 +119,9 @@
         font-weight: 600;
     }
     .title-setting-all {
-      margin-right: -15px !important;
-      border-bottom: solid 2px rgba(226, 226, 226, 0.849);
+      margin-right: -35px !important;
     }
-    .link-to-action ul .list-group-item {
-      margin-right:  -15px !important;
-    }
+ 
     .edit-profile-clickable:hover {
       cursor: pointer;
       opacity: 0.7;
@@ -142,6 +139,9 @@
     .messages .text-error {
       color: red;
     }
+    .link-to-action .no-style {
+      list-style-type: none;
+    }
   </style>
   <title>StuMatch</title>
   <meta charset="utf-8">
@@ -156,6 +156,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
   <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
+  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body class="pb-5" style="background-color: white !important;">
@@ -166,33 +167,33 @@
             <div class="col-sm-4 border-right">
                 <div class="link-setting all-link">
                     <div class="title-setting-all mb-2">
-                        <h5 class="ml-3 mb-3">
+                        <h5 class="pl-4 ml-3 mb-3">
                             Settings
                         </h5>
                     </div>
                     <div class="link-to-action">
-                        <ul class="list-group list-group-flush">
-                            <li class="{{ account_active }} list-group-item">
+                        <ul class="no-style" style="padding-left: 41px !important;">
+                            <li class="{{ account_active }} my-4">
                                 <a class="text-dark" href="{% url 'main:settings-edit' %}">
                                     Account
                                 </a>
                             </li>
-                            <li class="list-group-item">
+                            <li class="my-2">
                                 <a class="text-dark" href="#">
                                     Notification
                                 </a>
                             </li>
-                            <li class="{{ privacy_active }}  list-group-item">
+                            <li class="{{ privacy_active }} my-4">
                                 <a class="text-dark" href="{% url 'main:privacy-security' %}">
                                     Privacy and Security
                                 </a>
                             </li>
-                            <li class="list-group-item">
-                                <a class="text-dark" href="#">
+                            <li class="{{ blocked_active }} my-4">
+                                <a class="text-dark" href="{% url 'main:settings-blocked' %}">
                                     Blocking
                                 </a>
                             </li>
-                            <li class="list-group-item">
+                            <li class="my-4">
                                 <a class="text-dark" href="#">
                                     About
                                 </a>
@@ -242,6 +243,7 @@
               $('.edit-pro-all #updtimgbtn').append(btn);
               $('.edit-pro-all #remrevctr').html(revert_btn);
           }
+
           function readURL(input) {
                   if (input.files && input.files[0]) {
                       reader.readAsDataURL(input.files[0]);
@@ -275,7 +277,6 @@
                     console.log(rs.responeText);
                 },
             });
-
           })
 
           $(document).on("click","#rmvproimg", function (e) {
@@ -294,6 +295,7 @@
                   }
               });
           });
+
           $('#modal-profile').on("submit",".remove-user-image-form",function (e){
               e.preventDefault();
               e.stopImmediatePropagation();
@@ -350,12 +352,13 @@
           },
             theme: "square"
           };
-          $("#id_university").easyAutocomplete(options);
-        })
 
+        $("#id_university").easyAutocomplete(options);
+        
         $('.easy-autocomplete').ready( function () {
           $('div.easy-autocomplete').removeAttr('style')
           $('div').removeClass('easy-autocomplete');
+        })
 
         $('.menu-link').on('click', function () {
           window.location = $(this).attr('data-url');

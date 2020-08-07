@@ -39,6 +39,7 @@ urlpatterns = [
     path('buzz/', views.buzz, name='buzz'),
     path('buzzes/hot/', views.hot_buzzes, name='hot-buzzes'),
     path('buzzes/top/', views.top_buzzes, name='top-buzzes'),
+    path('buzzes/university/', views.uni_buzzes, name='uni-buzzes'),
     path('buzz/create/', views.buzz_create, name='buzz-create'),
     path('buzz/<str:guid_url>/like/<str:status>/', views.buzz_like, name='buzz-like'),
     path('buzz/<str:guid_url>/wot/<str:status>/', views.buzz_wot, name='buzz-wot'),

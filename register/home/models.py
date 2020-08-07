@@ -37,7 +37,6 @@ from nltk.collocations import *
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
-import datetime
 from math import log
 from home.algo import score, _commonwords, common_words, epoch_seconds, top_score_posts, hot_buzz, top_buzz
 
@@ -120,13 +119,15 @@ class PostManager(models.Manager):
         qs = (
             self.get_queryset()
             .select_related("author")
-            .filter(author__public=True)
+            .filter(author__rank_objects=True,author__public=True)
         )
         
         qs_list = list(qs)
         sorted_post = sorted(qs_list, key=lambda p: p.hot(), reverse=True)
         
-        return sorted_post
+        sorted_post_ids = [p.id for p in sorted_post]
+        
+        return sorted_post_ids
     
     def get_top(self):
         
@@ -135,13 +136,15 @@ class PostManager(models.Manager):
         qs = (
             self.get_queryset()
             .select_related("author")
-            .filter(author__public=True,last_edited__gte=time_threshold)
+            .filter(author__public=True,author__rank_objects=True,last_edited__gte=time_threshold)
         )
 
         qs_list = list(qs)
         sorted_post = sorted(qs_list, key=lambda p: p.top(), reverse=True)
         
-        return sorted_post
+        sorted_post_ids = [p.id for p in sorted_post]
+        
+        return sorted_post_ids
         
     def get_trending_words(self):
         
@@ -309,13 +312,15 @@ class BuzzManager(models.Manager):
         qs = (
             self.get_queryset()
             .select_related("author")
-            .filter(author__public=True)
+            .filter(author__rank_objects=True,author__public=True)
         )
         
         qs_list = list(qs)
         sorted_buzz = sorted(qs_list, key=lambda p: p.hot(), reverse=True)
         
-        return sorted_buzz
+        sorted_buzz_ids = [b.id for b in sorted_buzz]
+        
+        return sorted_buzz_ids
     
     def get_top(self):
         
@@ -324,13 +329,15 @@ class BuzzManager(models.Manager):
         qs = (
             self.get_queryset()
             .select_related("author")
-            .filter(author__public=True,last_edited__gte=time_threshold)
+            .filter(author__public=True,author__rank_objects=True,last_edited__gte=time_threshold)
         )
 
         qs_list = list(qs)
         sorted_buzz = sorted(qs_list, key=lambda p: p.top(), reverse=True)
         
-        return sorted_buzz
+        sorted_buzz_ids = [b.id for b in sorted_buzz]
+        
+        return sorted_buzz_ids
         
         
     def get_trending_words(self):

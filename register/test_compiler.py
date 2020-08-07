@@ -9,7 +9,8 @@ from main.models import Profile
 from home.models import Post, Blog, Buzz, Course, Comment, BuzzReply
 from django.contrib.postgres.search import SearchVector
 from django.utils import timezone
-
+import datetime
+from notifications.signals import notify
 
 def create_users(n):
     fake=Faker()
@@ -162,7 +163,10 @@ def create_comments():
     fake=Faker()
     idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
         64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
-    for p in Post.objects.all():
+    
+    time_threshold = timezone.now() - datetime.timedelta(days=5)
+    
+    for p in Post.objects.filter(last_edited__gte=time_threshold):
         
         for i in range(random.randint(7,303)):
             profile = Profile.objects.get(id=random.choice(idl))
@@ -248,4 +252,23 @@ def delete_courses():
     
             
             
+def n():
+    u = Profile.objects.get(username="starwars")
+    users = Profile.objects.all()[:5]
+    posts = Post.objects.filter(author=u)[:5]
+    for p in posts:
+        for i in users:
+            p.likes.add(i)
+    return "success"
+
+def generate_comment_like_notifications():
     
+    u = Profile.objects.get(username="starwars")
+    posts = Post.objects.filter(author=u)[:5]
+    comments = Comment.objects.filter(name=u,reply=None)[:15]
+    users = Profile.objects.all()[:15]
+    for (comment,user) in zip(comments,users):
+        message = "CON_POST" + user.get_full_name() + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
+        description = comment.body
+        notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
+    return 'success'

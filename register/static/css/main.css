@@ -311,3 +311,55 @@ mark{
 .likeBtn:hover .like-count {
     color:  rgba(43, 98, 153, 0.678);
 }
+
+.mnpglk-active svg {
+    color: rgb(126, 192, 243) !important;
+  }
+
+  .mnpglk-active span {
+    color: rgb(126, 192, 243) !important;
+  }
+
+  .side-tab-link-holder svg {
+    color: rgb(71, 71, 71);
+    margin-top: -2px;
+  }
+
+  .menu-bottom-fix {
+    min-width: 3rem !important;
+  }
+  .main-border-l{
+    border-left: solid 3px rgba(136, 136, 136, 0.144);
+  }
+  .side-tab-link-holder .mnpglk:hover{
+    border-left: solid 3px rgb(126, 192, 243) !important;
+
+  }
+  .side-tab-link-holder .mnpglk:hover .col-1{
+    margin-left: -3px !important;
+  }
+
+  .side-tab-link-holder .mnpglk-active {
+    border-left: solid 3px rgb(126, 192, 243) !important; 
+  }
+  
+  .side-tab-link-holder .mnpglk-active .col-1{
+    margin-left: -3px !important;
+  }
+
+  .info-all .user-num {
+    color:rgb(1,119,200);
+    font-weight: 400 !important;
+  }
+  .info-all .badge {
+    font-size: 0.7rem !important;
+  }
+  .t {
+    letter-spacing: 1px !important;
+  }
+  #_pol3 .h6 {
+    color: rgb(80, 80, 80) !important;
+  }
+  #_pol3 .menu-link  {
+      border-radius: 8px;
+    }

@@ -9,6 +9,7 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
+import datetime
 
 # Celery tasks for Post model 
 
@@ -35,7 +36,6 @@ def trending_tags_post(self):
     
     tt_posts = Post.objects.trending_tags()
     cache.set("tt_post", tt_posts, timeout=None)
-
 
 #  Celery tasks for Buzz model
 
@@ -67,9 +67,9 @@ def trending_tags_buzz(self):
 def uni_posts(self):
     
     time_threshold = timezone.now() - datetime.timedelta(days=5)
-    uni_list = Profile.objects.values_list('university', flat=True),distinct()
+    uni_list = Profile.objects.values_list('university', flat=True).distinct()
     
-    posts_list = Post.objects.select_related('author').filter(author__public=True,last_edited__gte=time_threshold)
+    posts_list = Post.objects.select_related('author').filter(author__public=True, author__rank_objects=True, last_edited__gte=time_threshold)
 
     for u in uni_list:
         
@@ -87,9 +87,9 @@ def uni_posts(self):
 def uni_buzzes(self):
     
     time_threshold = timezone.now() - datetime.timedelta(days=5)
-    uni_list = Profile.objects.values_list('university', flat=True),distinct()
+    uni_list = Profile.objects.values_list('university', flat=True).distinct()
     
-    buzz_list = Buzz.objects.select_related('author').filter(author__public=True,last_edited__gte=time_threshold)
+    buzz_list = Buzz.objects.select_related('author').filter(author__public=True, author__rank_objects=True, last_edited__gte=time_threshold)
 
     for u in uni_list:
         

@@ -22,6 +22,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
 import friendship
+import notifications.urls
 
 urlpatterns = [
     #Has to be included for Forgot Password funcitonality on main page
@@ -30,7 +31,8 @@ urlpatterns = [
     url(r'^taggit/', include('taggit_selectize.urls')),
     path('ckeditor/',include('ckeditor_uploader.urls')),
     path('',views.user_login,name='user_login'),
-    path('',include('main.urls'),name='main'), 
+    path('',include('main.urls'),name='main'),
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     # removed r'^home/' 
     url(r'',include(('home.urls','home'), namespace='home')),
     url(r'^friendship/', include('friendship.urls')),

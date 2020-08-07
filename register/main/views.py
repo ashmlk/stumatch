@@ -17,11 +17,55 @@ from django.http import JsonResponse
 from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from datetime import datetime, timezone
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
+@login_required
+def get_notifications(request):
+    
+    notifications_unread = request.user.notifications.unread()
+    notifications_read = request.user.notifications.read()
+    read_count = notifications_read.count()
+    
+    context = {
+        'notifications_read':notifications_read,
+        'notifications_unread':notifications_unread,
+        'read_count':read_count
+        }
+    
+    return render(request, 'main/notifications/notifications_list.html', context)
+
+
+@login_required
+def delete_notification(request):
+    data = dict()
+    """marking notification(s) as read"""
+    notice_id = request.GET.get("notice_id", None)
+    if notice_id: # if notice_id exists means one notification is being updated
+        request.user.notifications.get(id=notice_id).delete()
+        data['single_notification_delete'] = True
+        return JsonResponse(data)
+    else: # if notice_id does not exists we are marking all user notifications as read
+        request.user.notifications.all().delete()
+        return redirect('main:get-notifications')
+
+@login_required
+def mark_notification_as_read(request):
+    
+    data = dict()
+    """marking notification(s) as read"""
+    notice_id = request.GET.get("notice_id", None)
+    if notice_id: # if notice_id exists means one notification is being updated
+        request.user.notifications.get(id=notice_id).mark_as_read()
+        data['single_notification_marked'] = True
+        return JsonResponse(data)
+    else: # if notice_id does not exists we are marking all user notifications as read
+        request.user.notifications.mark_all_as_read()
+        return redirect('main:get-notifications')
+    
 @login_required
 def user_logout(request):
     logout(request)
@@ -234,8 +278,35 @@ def set_public_private(request):
         
 @login_required
 def get_blocking(request):
-    pass
     
+    if request.user.is_authenticated:
+        blocked = Block.objects.blocking(request.user)
+        is_blocked = True
+        context = {
+            'users':blocked,
+            'is_blocked':is_blocked,
+            'blocked_active':'setting-link-active',
+        }
+        return render(request,'main/settings/blocked_users.html', context)
+    
+@login_required
+def login_info(request):
+    
+    if request.user.is_authenticated:
+        last_login_utc = Profile.objects.get(username=request.user.username).last_login
+        last_login = last_login_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        date_joined_utc = Profile.objects.get(username=request.user.username).date_joined
+        date_joined = date_joined_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        
+        context = {
+            'last_login':last_login,
+            'date_joined':date_joined,
+            'privacy_active':'setting-link-active',
+        }
+        
+        return render(request,'main/settings/login_info.html', context)
+        
+        
 @login_required
 def add_bookmark(request, hid, obj_type):
     data=dict()

@@ -2,58 +2,8 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load ibuilder %}
-{% block userinfo %}
-<div class="pr-2 mb-1 info-all d-none d-lg-block" style="margin-left: -2px !important;">
-  <div>
-    <div class="card-body">
-      <div class="pb-2">
-        <div class="pro-img">
-          <img class="img-create-post rounded-circle" style="height: 3.6rem;width: 3.6rem;" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg"/>
-        </div>
-        <div>
-          <div>
-            <strong >{{ request.user.get_full_name }}</strong>
-          </div>
-          <span class="small text-muted">{{ request.user.program|capfirst }} student at {{ request.user.university|capfirst }}</span>
-        </div>       
-      </div>
-      <div class="pb-2 pro-info-a" style="font-size: 0.88rem;">
-        <div class="my-2 d-flex justify-content-between">
-          <div>
-            <strong class="font-size-smaller">Courses</strong>
-          </div>
-          <div>
-            <span class="navbarMainHeaderuser-num">{{ cnum }}</span>
-          </div>
-        </div>
-        <div class="my-2  d-flex justify-content-between">
-          <div>
-            <strong class="font-size-smaller">Posts</strong>
-          </div>
-          <div>
-            <span class="navbarMainHeaderuser-num">{{ pnum }}</span>
-          </div>
-        </div>
-        <div class="my-2 d-flex justify-content-between">
-          <div>
-            <strong class="font-size-smaller">Buzzes</strong>
-          </div>
-          <div>
-            <span class="navbarMainHeaderuser-num">{{ bznum }}</span>
-          </div>
-        </div>
-        <div class="my-2  d-flex justify-content-between">
-          <div>
-            <strong class="font-size-smaller">Blogs</strong>
-          </div>
-          <div>
-            <span class="navbarMainHeaderuser-num">{{ blnum }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{% block title %}
+<title>Blog - Corscope</title>
 {% endblock %}
 {% block contentleft %}
   <div class="rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"

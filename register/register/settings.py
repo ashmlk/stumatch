@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'friendship',
     'django_celery_results',
     'django_celery_beat',
+    'notifications',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

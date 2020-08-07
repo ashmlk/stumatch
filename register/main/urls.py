@@ -16,6 +16,8 @@ urlpatterns=[
     path('settings/privacy/', views.privacy_security, name='privacy-security'),
     path('settings/privacy/account/', views.set_public_private, name='set-public-private'),
     path('settings/privacy/password/', views.change_password, name='change-password'),
+    path('settings/login_info/', views.login_info, name='login-info'),
+    path('settings/blocked/', views.get_blocking, name='settings-blocked'),
     path('', include('django.contrib.auth.urls')),
     path('u/<str:username>/', views.get_user, name='get_user'),
     path('u/friends', views.get_user_friends, name='get_user_friends'),
@@ -36,4 +38,8 @@ urlpatterns=[
     path('friends/<str:hid>/<str:s>/', views.add_remove_friend,name='add-rmv-friend'),
     path('block/<str:hid>/', views.block_user,name='block-user'),
     path('unblock/<str:hid>/', views.unblock_user,name='unblock-user'),
+    path('your_notifications/', views.get_notifications,name='get-notifications'),
+    path('your_notifications/mark_as_read', views.mark_notification_as_read,name='mark-notification-as-read'),
+    path('your_notifications/delete', views.delete_notification,name='delete-notification'),
+    
 ]
