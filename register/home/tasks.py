@@ -10,6 +10,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 import datetime
+from django.db.models import Q, F, Count, Avg, FloatField
+from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
 
 # Celery tasks for Post model 
 

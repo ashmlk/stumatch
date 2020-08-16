@@ -34,17 +34,6 @@ $(document).ready(function () {
     });
   });
 
-  /* buzz comments image loader 
-  $('.bzrbx').ready(function () {
-    $('.bzrvmuim').initial({
-      charCount: 2, 
-      textColor: '#ffffff',
-      seed: 12,
-      fontSize: 40,
-      fontWeight: 400,
-    });
-  });
-*/
 
   var infinite = new Waypoint.Infinite({
     element: $('.infinite-container')[0],
@@ -73,11 +62,14 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   var search_terms = $('#search-term-e').attr('data-value');
-  var terms = search_terms.split(/\+s/);
-  $(".search-ctr-marked").mark(terms, {
-      "element": "span",
-      "className": "highlight"
-  });
+  if(search_terms) {
+    var terms = search_terms.split(/\+s/);
+    $(".search-ctr-marked").mark(terms, {
+        "element": "span",
+        "className": "highlight"
+    });
+  }
+  
 
 })
 $(document).ready(function () {
@@ -99,8 +91,7 @@ $(document).ready(function () {
       parent.append(divs.splice(Math.floor(Math.random() * divs.length), 1)[0]);
   }
 });
-$(document).ready(function (e) {
-  e.preventDefault();
+$(document).ready(function () {
   var infinite = new Waypoint.Infinite({
       element: $('.infinite-container')[0],
       onBeforePageLoad: function () {
@@ -111,6 +102,7 @@ $(document).ready(function (e) {
       }
   });
 })
+
 $(document).ready(function () {
   var btn;
   $(document).on("click", '.accept-reject-btn', function (e) {
@@ -150,7 +142,7 @@ $(document).ready(function () {
       });
   });
 
-  ('mngpl').on('click', function () {
+  $('.mngpl').on('click', function () {
       window.location = $(this).find('a').attr('href');
   })
 })

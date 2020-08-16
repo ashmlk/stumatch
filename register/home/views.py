@@ -23,9 +23,9 @@ from django.views.generic import (
     RedirectView
 )
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply
+from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply, CourseList, CourseListObjects
 from main.models import Profile, SearchLog
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm
+from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm, CourseListForm, CourseListObjectsForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .post_guid import uuid2slug, slug2uuid
 from django.http import HttpResponse, HttpResponseRedirect
@@ -48,7 +48,10 @@ from notifications.signals import notify
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
+
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
+
+hashid_list = Hashids(salt='e5896e mqwefv0t mvSOUH b90 NS0ds90',min_length=16)
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -91,7 +94,7 @@ def home(request):
                 'tags':tags,
                 'words':words,
                 'home_active':'-active',
-                 }
+            }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
@@ -126,6 +129,12 @@ def hot_posts(request):
     
     posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
     
+    """ get hot words and tags related to posts form tags """
+    tags = cache.get("tt_post")
+    top_words = cache.get("trending_words_posts")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
+    
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
     try:
@@ -134,7 +143,14 @@ def hot_posts(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-    context = { 'posts':posts, 'hot_active':'-active'}
+
+    context = { 
+                'posts':posts, 
+                'hot_active':'-active',
+                'tags':tags,
+                'words':words,
+                'is_home':True,
+            }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
@@ -148,6 +164,12 @@ def top_posts(request):
     
     posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
     
+    """ get hot words and tags related to posts form tags """
+    tags = cache.get("tt_post")
+    top_words = cache.get("trending_words_posts")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
+    
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
     try:
@@ -156,7 +178,14 @@ def top_posts(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-    context = { 'posts':posts, 'top_active':'-active'}
+        
+    context = { 
+                'posts':posts,
+                'top_active':'-active',
+                'tags':tags,
+                'words':words,
+                'is_home':True
+            }
     return render(request, 'home/homepage/home.html', context)
 
 @login_required
@@ -165,11 +194,20 @@ def uni_posts(request):
     u = request.user.university 
     t = u.lower().replace(' ','_')+"_post"
     
+    print(t)
+    
     posts_list = cache.get(t)
     
     blockers_id = request.session.get('blockers')
     
-    posts_list = posts_list.exclude(author__id__in=blockers_id)
+    if posts_lists:
+        posts_list = posts_list.exclude(author__id__in=blockers_id)
+    
+    """ get hot words and tags related to posts form tags """
+    tags = cache.get("tt_post")
+    top_words = cache.get("trending_words_posts")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
     
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
@@ -179,7 +217,14 @@ def uni_posts(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-    context = { 'posts':posts, 'uni_active':'-active'}
+    
+    context = { 
+                'posts':posts,
+                'uni_active':'-active',
+                'tags':tags,
+                'words':words,
+                'is_home':True
+            }
     return render(request, 'home/homepage/home.html', context)
 
 @cache_page(60*60*24*1)
@@ -197,7 +242,19 @@ def top_word_posts(request):
             posts = paginator.page(1)
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
-        context = { 'posts':posts, 'word':word, 'is_word':True }
+        
+        """ get hot words and tags related to posts form tags """
+        tags = cache.get("tt_post")
+        top_words = cache.get("trending_words_posts")
+        words = top_words['phrases']
+        words = words + top_words['common_words']
+    
+        context = { 
+                    'posts':posts,
+                    'word':word, 
+                    'is_word':True,
+                    'tags':tags,
+                    'words':words }
         return render(request, 'home/homepage/home.html', context)
    
 @login_required
@@ -205,12 +262,13 @@ def post_create(request):
     
     data = dict()
     if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():  
+        form = PostForm(request.POST, request.FILES or None)
+        if form.is_valid(): 
             post = form.save(False)
             post.author = request.user
             post.save()
             form.save_m2m()
+            print(request.FILES)
             if request.FILES is not None:
                 images = [request.FILES.get('images[%d]' % i) for i in range(0, len(request.FILES))]  
                 for i in images:
@@ -221,7 +279,8 @@ def post_create(request):
         else:
             data['form_is_valid'] = False
     else:
-        form = PostForm      
+        form = PostForm  
+            
     context = {
     'form':form,
 	}
@@ -280,8 +339,8 @@ def post_detail(request, guid_url):
                 message_comment = "CON_POST" + " replied to your comment on " + post.author.get_full_name() + "'s post." # message comment is sent to the parent comment
                 message_post = "CON_POST" + " replied to a comment on your post." # message_post is sent to the post author of the reply's parent comment
                 description = "Reply: " + comment_qs.body 
-                notify.send(sender=request.user, recipient=comment.name, verb=message, description=description, target=post, action_object=comment_qs)
-                notify.send(sender=request.user, recipient=post.author, verb=message, description=description, target=post, action_object=comment_qs)
+                notify.send(sender=request.user, recipient=comment_qs.name, verb=message_comment, description=description, target=post, action_object=comment_qs)
+                notify.send(sender=request.user, recipient=post.author, verb=message_post, description=description, target=post, action_object=comment_qs)
             comment.name = request.user
             comment.post = post
             comment.reply = comment_qs
@@ -371,8 +430,7 @@ def comment_delete(request,hid):
     id =  hashids.decode(hid)[0]
     comment=get_object_or_404(Comment,id=id)
     if request.method=="POST":
-        if comment.name==request.user:
-            author = commen.post.author 
+        if comment.name==request.user or request.user == comment.post.author:
             comment.delete()
             data['form_is_valid'] = True
     else:
@@ -394,23 +452,50 @@ def post_like_list(request, guid_url):
         post_likes = paginator.page(1)
     except EmptyPage:
         post_likes = paginator.page(paginator.num_pages)
-    data['html'] = render_to_string('home/posts/post_like_list.html',{'post_likes':post_likes},request=request)
+    
+    data['list'] = render_to_string('home/posts/user_like_list.html',{'post_likes':post_likes, 'post':post},request=request)
+    data['html'] = render_to_string('home/posts/post_like_list.html',{'post_likes':post_likes, 'post':post},request=request)
     return JsonResponse(data)
 
 """ Method for returning a list of all users who commented on a post """
 @login_required
 def post_comment_list(request, guid_url):
+    
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    post_comments = Comment.objects.filter(post=post,reply=None)
-    data['html'] = render_to_string('home/posts/post_comment_list.html',{'post_comments':post_comments},request=request)
+    
+    page = request.GET.get('page', 1)
+    post_comment_list = post.comments.all()
+    
+    paginator = Paginator(post_comment_list , 10)
+    try:
+        post_comments = paginator.page(page)
+    except PageNotAnInteger:
+        post_comments = paginator.page(1)
+    except EmptyPage:
+        post_comments = paginator.page(paginator.num_pages)
+  
+    data['list'] = render_to_string('home/posts/user_comment_list.html',{'post_comments':post_comments, 'post':post},request=request)
+    data['html'] = render_to_string('home/posts/post_comment_list.html',{'post_comments':post_comments, 'post':post},request=request)
     return JsonResponse(data)
 
 
 @login_required
-def courses(request):
-    courses = request.user.courses.all()
-    courses = courses.order_by("course_code")
+def course_menu(request):
+    return render(request,'home/courses/course_menu.html',{'menu':True})
+
+@login_required
+def course_list(request):
+    course_list = request.user.courses.order_by("course_code")
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(course_list , 7)
+    try:
+        courses = paginator.page(page)
+    except PageNotAnInteger:
+        courses = paginator.page(1)
+    except EmptyPage:
+         courses = paginator.page(paginator.num_pages)
     context = { 'courses':courses }
     return render(request,'home/courses/course_list.html',context)
 
@@ -564,23 +649,56 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
             course.course_reviews.add(review)
         data['reviews_count'] = course.reviews_count()
         data['reviews_all_count'] = course.reviews_all_count()
-        data['review'] = render_to_string('home/courses/new_review.html',{'review': review},request=request)
+        data['review'] = render_to_string('home/courses/new_review.html',{'review': review, 'course':course},request=request)
         return JsonResponse(data)
     else:
         form = ReviewForm
+    
+    o = request.GET.get('rw', None)
+    if o == 'all':
+        reviews_list = course.get_reviews_all()
+    else:
+        reviews_list = course.get_reviews()
+    
+    if o == 'all':
+        review_a='active'
+        review_s=''
+        aria_rea='true'
+        aria_res='false'
+        link_get=True
+    else:
+        review_a=''
+        review_s='active'
+        link_get=False
+        aria_res='true'
+        aria_rea='false'
+           
+    page = request.GET.get('page', 1)
+    paginator = Paginator(reviews_list , 7)
+    try:
+        reviews = paginator.page(page)
+    except PageNotAnInteger:
+        reviews = paginator.page(1)
+    except EmptyPage:
+        reviews = paginator.page(paginator.num_pages)
+    
     reviews_count = course.reviews_count()
     reviews_all_count = course.reviews_all_count()
-    reviews = course.get_reviews()
-    reviews_all = course.get_reviews_all()
+   
     
     context = {
         'course':course,
         'reviews_count':reviews_count,
         'reviews_all_count':reviews_all_count,
         'reviews':reviews,
-        'reviews_all':reviews_all,
         'taken':taken,
         'form':form,
+        'course_detail':True,
+        'review_a':review_a,
+        'review_s':review_s,
+        'link_get':link_get,
+        'aria_res': aria_res,
+        'aria_rea': aria_rea,
     }
     
     return render(request,'home/courses/course_detail.html', context)  
@@ -615,31 +733,40 @@ def course_instructors(request,course_university_slug,course_code):
     return render(request,'home/courses/course_instructors.html', context)
     
 @login_required
-def review_like(request,hid,status=None):
+def review_like(request, hid, hidc, status):
+    
     data = dict()
-    id =  hashids.decode(hid)[0]
-    review = get_object_or_404(Review, id=id)
+    
+    id1 = hashids.decode(hid)[0]
+    id2 =  hashids.decode(hidc)[0]
+    
+    review = get_object_or_404(Review, id=id1)
+    course = get_object_or_404(Course, id=id2)
+    
     user = request.user
     if request.method == "POST":
         if status=="like":
             
             """ Send a notification to the review author that someone has disliked their review
                 The identity of the user who performed the action (actor) will not be disclosed """
-                
-            message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
-            description = review.body
-            notify.send(sender=user, recipient=review.author, verb=message, description=description, target=review.course, action_object=review)
-            review.likes.add(user)
+            if review.author != user:    
+                message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
             
+            review.dislikes.remove(user)
+            review.likes.add(user)
+
         elif status=="dislike":
             
             """ Send a notification to the review author that someone has disliked their review
                 The identity of the user who performed the action (actor) will not be disclosed """
-                
-            message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
-            description = review.body
-            notify.send(sender=user, recipient=review.author, verb=message, description=description, target=review.course, action_object=review)
-            review.likes.add(user)
+            if review.author != user: 
+                message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
+            
+            review.likes.remove(user)
             review.dislikes.add(user)
             
         elif status=="rmvlike":
@@ -656,25 +783,34 @@ def review_like(request,hid,status=None):
             review.likes.remove(user)
             review.dislikes.add(user)
             
-    data['review'] = render_to_string('home/courses/review_like.html',{'review':review},request=request)
+    data['review'] = render_to_string('home/courses/review_like.html',{'review':review, 'course':course},request=request)
     return JsonResponse(data)
 
 @login_required
-def review_delete(request, id):
+def review_delete(request, hidc, hid):
+    
     data = dict()
-    review = get_object_or_404(Review, id=id)
+    
+    id1 = hashids.decode(hid)[0]
+    id2 =  hashids.decode(hidc)[0]
+    
+    review = get_object_or_404(Review, id=id1)
+    course = get_object_or_404(Course, id=id2)
+    
     if request.method == 'POST':
         if review.author == request.user:
             review.delete()
             data['form_is_valid'] = True
+            data['reviews_count'] = course.reviews_count()
+            data['reviews_all_count'] = course.reviews_all_count()
     else:
-        context = {'review':review}
+        context = {'review':review,'course':course}
         data['html_form'] = render_to_string('home/courses/review_delete.html',context,request=request)
     return JsonResponse(data)
 
 @login_required
 def university_detail(request, course_university_slug):
-    courses = Course.objects.filter(course_university_slug__icontains=course_university_slug)
+    courses = Course.objects.filter(course_university_slug__icontains=course_university_slug).distinct()
     users = courses.select_related('profiles')
     course_instructors = courses.order_by('course_instructor','course_code','course_year').distinct('course_instructor','course_code')
     context = {
@@ -682,17 +818,264 @@ def university_detail(request, course_university_slug):
         'users':users,
         'course_instructors':course_instructors,
     }
-    return render('home/courses/univerist_detail.html',context,request)
+    return render('home/courses/university_detail.html',context,request)
 
 """ Method to show users that user may interact with based specifically on users courses and university + instructors
     Method to be executed and result to cached - recieve query set from cache - method constructed on daily basis """    
          
 @login_required
-def related_students(request):
-    pass        
+def find_students(request):  
+    
+    prgm_active = '' 
+    crs_active = ''
+    
+    sl = request.GET.get('sl', None)
+    print(sl)
+    if sl == 'crs':
+        course_codes = request.user.courses.order_by('course_code','course_university','course_instructor','course_year').distinct('course_code','course_university','course_instructor','course_year').values_list('course_code')
+        crs_active='-active'
+        student_list = Course.objects.same_courses(user=request.user,course_list=course_codes,university=request.user.university)
+    elif sl == 'prgm':
+        student_list = Profile.objects.same_program(user=request.user,program=request.user.program,university=request.user.university)
+        prgm_active='-active'
+        
+    page = request.GET.get('page', 1)
+    paginator = Paginator(student_list, 7)
+    try:
+        students = paginator.page(page)
+    except PageNotAnInteger:
+        students = paginator.page(1)
+    except EmptyPage:
+        students = paginator.page(paginator.num_pages)
+        
+    context = {
+        'students':students,
+        'sl':sl,
+        'prgm_active':prgm_active,
+        'crs_active':crs_active
+    }
+    
+    return render(request,'home/courses/related_students/student_list.html',context)
+    
 
 @login_required
+def course_list_manager(request):
+    
+    lists = request.user.course_lists.order_by('created_on')
+    
+    context = {
+        'lists':lists
+    }
+    return render(request,'home/courses/course_lists/main_menu.html',context)
+
+@login_required
+def course_list_create(request):
+    
+    data = dict()
+    
+    if request.method == 'POST':
+        
+        form = CourseListForm(request.POST)
+        if form.is_valid():  
+            li = form.save(False)
+            li.creator = request.user
+            li.save()
+            data['form_is_valid'] = True
+            data['list'] = render_to_string('home/courses/course_lists/list_obj.html',{'list':li},request=request)
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = CourseListForm      
+    context = {
+    'form':form,
+	}
+    
+    data['html_form'] = render_to_string('home/courses/course_lists/list_create_form.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def course_list_edit(request, hid):
+    
+    data = dict()
+    fc = ''
+    
+    id = hashid_list.decode(hid)[0]
+    li = get_object_or_404(CourseList, id=id)
+
+    if request.method == 'POST':
+        form = CourseListForm(request.POST,instance=li)
+        if form.is_valid():  
+            li = form.save(False)
+            li.creator = request.user
+            li.save()
+            data['form_edit_is_valid'] = True
+            data['new_url'] = reverse('home:course-list-obj',kwargs={'hid':li.get_hashid()})
+            data['list'] = render_to_string('home/courses/course_lists/list_obj.html',{'list':li},request=request)
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = CourseListForm(instance=li)
+        form.instance.creator = request.user
+        
+    a=request.GET.get('a',None)
+    if a == 're':
+        fc = 'form-redirect-go'
+        
+    context = {
+    'form':form,
+    'list':li,
+    'fc':fc
+    }
+    
+    data['html_form'] = render_to_string('home/courses/course_lists/list_edit_form.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def course_list_delete(request, hid):
+    
+    data = dict()
+    id = hashid_list.decode(hid)[0]
+    li = get_object_or_404(CourseList, id=id)
+    
+    if request.method == 'POST':
+        if li.creator == request.user:
+            li.delete()
+            data['form_delete_is_valid'] = True
+            a = request.POST.get('ac',None)
+            if a == 'h':
+                data['new_url'] = reverse('home:course-list-manager')
+                data['redirect'] = True
+                print(data['new_url'])
+                
+    else:
+        a = request.GET.get('a', None)
+        context = {'list':li, 'a':a }
+        data['html_form'] = render_to_string('home/courses/course_lists/list_delete_form.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def course_list_obj(request, hid):
+    
+    id = hashid_list.decode(hid)[0]
+    li = get_object_or_404(CourseList, id=id)
+    
+    
+    num_items = li.added_courses.count()
+    
+    o = request.GET.get('ol', 'co')
+    if o:
+        order = {'co':'-created_on', 'cu':'course_university','ci':'course_instructor','cc':'course_code'}
+        objects = li.added_courses.order_by(order[o])
+    else:
+        objects = li.added_courses.order_by('created_on')
+    
+    context = {
+        'list':li,
+        'courses':objects,
+        'num_items': num_items,
+        o+'_selected':'selected'
+    }
+    return render(request,'home/courses/course_lists/course_list.html',context)
+
+@login_required
+def course_list_obj_add_course(request, hid):
+    
+    id = hashid_list.decode(hid)[0]
+    li = get_object_or_404(CourseList, id=id)
+    
+    data = dict()
+    
+    if request.method == 'POST':
+        print("cool")
+        form = CourseListObjectsForm(request.POST)
+        if form.is_valid(): 
+            print("hi")
+            cr = form.save(False)
+            cr.parent_list = li
+            cr.author = request.user
+            cr.save()
+            data['form_crsaction_is_valid'] = True
+            data['new_url'] = reverse('home:course-list-obj',kwargs={'hid':li.get_hashid()})
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = CourseListObjectsForm
+    
+    action_url = reverse('home:course-list-addcrs',kwargs={'hid':li.get_hashid()})
+    context = {
+    'form':form,
+    'list':li,
+    'title_m':'Add Course',
+    'actionbtn_m':'Add',
+    'form_class':'crs-itm-',
+    "action_url":action_url
+	}
+    
+    data['html_form'] = render_to_string('home/courses/course_lists/list_create_form.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def course_list_obj_remove_course(request, hid, hid_item):
+    
+    data=dict()
+    
+    id = hashid_list.decode(hid)[0]
+    id2 = hashids.decode(hid_item)[0]
+    li = get_object_or_404(CourseList, id=id)
+    crs = get_object_or_404(CourseListObjects, id=id2)
+    
+    if request.method == 'POST':
+        if li.creator == request.user and crs.author == request.user:
+            crs.delete()
+            data['form_crsaction_is_valid'] = True
+            data['new_url'] = reverse('home:course-list-obj',kwargs={'hid':li.get_hashid()})    
+    else:
+        action_url = reverse('home:course-list-deletecrs',kwargs={'hid':li.get_hashid(),'hid_item':crs.get_hashid()})
+        context = {
+        'list':li, 
+        'crs':crs,
+        'delete_text':"Are you sure you want to permanently remove this item from your list?",
+        'form_class':'crs-itm-',
+        'action_url':action_url,
+         }
+        data['html_form'] = render_to_string('home/courses/course_lists/list_delete_form.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def course_list_obj_edit_course(request, hid, hid_item):
+    
+    data=dict()
+    
+    id = hashid_list.decode(hid)[0]
+    id2 = hashids.decode(hid_item)[0]
+    li = get_object_or_404(CourseList, id=id)
+    crs = get_object_or_404(CourseListObjects, id=id2)
+    
+    if request.method == 'POST':
+        form = CourseListObjectsForm(request.POST,instance=crs)
+        if li.creator == request.user and crs.author == request.user:
+            crs = form.save(False)
+            crs.parent_list = li
+            crs.author = request.user
+            crs.save()
+            data['form_crsaction_is_valid'] = True
+            data['new_url'] = reverse('home:course-list-obj',kwargs={'hid':li.get_hashid()})    
+    else:
+        form = CourseListObjectsForm(instance=crs)
+        action_url = reverse('home:course-list-editcrs',kwargs={'hid':li.get_hashid(),'hid_item':crs.get_hashid()})
+        context = {
+        'form':form,
+        'list':li, 
+        'crs':crs,
+        'form_class':'crs-itm-',
+        'action_url':action_url,
+         }
+        data['html_form'] = render_to_string('home/courses/course_lists/list_edit_form.html',context,request=request)
+    return JsonResponse(data)
+    
+@login_required
 def course_save(request,id):
+    
     data = dict()
     course = get_object_or_404(Course,id=id)
     if request.method == "POST":
@@ -705,6 +1088,7 @@ def course_save(request,id):
     
 @login_required
 def remove_saved_course(request,hid):
+    
     data = dict()
     id =  hashids.decode(hid)[0]
     course = get_object_or_404(Course, id=id)
@@ -1214,8 +1598,12 @@ def tags_buzz(request, slug):
 def search(request):
     if request.method == 'GET':
         search_term = request.GET.get('q', None)
-        if not request.user.recent_searches.filter(search_text__iexact=search_term).exists():
+        if not SearchLog.objects.filter(search_text__iexact=search_term).exists():
+            search_term = search_term.lower()
             sl = SearchLog.objects.create(search_text=search_term)
+            request.user.recent_searches.add(sl)
+        elif SearchLog.objects.filter(search_text__iexact=search_term).exists():
+            sl = SearchLog.objects.filter(search_text__iexact=search_term).first()
             request.user.recent_searches.add(sl)
             
         o = request.GET.get('o', None)
@@ -1353,11 +1741,26 @@ def search_dropdown(request):
 
         return JsonResponse(data,safe=False)
     
-
-
-
-        
-        
+@login_required
+def remove_search(request):
+    
+    data = dict()
+    term = request.GET.get('t',None)
+    if request.method == 'POST': 
+        if term:
+            term = term.lower()
+            if request.user.is_authenticated:
+                search_object = SearchLog.objects.get(search_text=term)
+                request.user.recent_searches.remove(search_object)
+                data['indv_search_remove'] = True
+                return JsonResponse(data)
+        else:
+            request.user.recent_searches.all().remove()
+            data['all_search_remove'] = True
+            return JsonResponse(data)
+    
+    
+    
         
         
         

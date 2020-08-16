@@ -1,8 +1,10 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
+{% block title %}
+    <title>{{ code }} - {{ university|capfirst }} - Corscope</title>
+{% endblock %}
 {% block content %}
 {% load ibuilder %}
-<link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
         <h4 class="font-weight-bolder">{{ code }}</h4>

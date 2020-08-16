@@ -34,10 +34,8 @@ $(document).ready(function (e) {
 					$('body').removeClass('modal-open');
 					$('.modal-backdrop').remove();  
                     $('#_rc_'+veid).remove();
-                    var cs = parseInt($("#review-all-tab").find("span").text())
-                    var ca = parseInt($("#review-spec-tab").find("span").text())
-                    $("#review-all-tab").find("span").html(""+cs--)
-                    $("#review-spec-tab").find("span").html(""+ca--)
+					$("#review-all-tab").find("span").text(data.reviews_all_count)
+					$("#review-spec-tab").find("span").text(data.reviews_count)
                 }
                 else{
                     $('#modal-review-delete .modal-content').html(data.html_form);

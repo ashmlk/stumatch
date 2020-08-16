@@ -17,6 +17,7 @@ from hashids import Hashids
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 from django.urls import reverse
 
+
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 #CUSTOM MODEL MANAGERS
@@ -188,6 +189,7 @@ class ProfileManager(BaseUserManager):
         
     def search_combine(self, search_text):
         
+        
         search_text=search_text.strip()
         
         search_vectors = ( 
@@ -261,7 +263,8 @@ class ProfileManager(BaseUserManager):
         )
         
         return qs
-
+        
+        
 class SearchLogManager(models.Manager):
     
     def related_terms(self, term):

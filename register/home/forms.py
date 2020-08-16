@@ -1,4 +1,4 @@
-from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply, Blog, BlogReply
+from .models import Comment, Course, Post, Images, Review, Buzz, BuzzReply, Blog, BlogReply, CourseList, CourseListObjects
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import Textarea
@@ -9,7 +9,8 @@ from dal import autocomplete
 from taggit.models import Tag
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
-alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]+$', 'Only alphanumeric characters are allowed( No spaces ).')
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
+alphanumeric_s = RegexValidator(r'^[0-9a-zA-Z ]+$', 'Only alphanumeric characters are allowed')
 alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
 
 def year_choices():
@@ -72,8 +73,8 @@ class CommentForm(forms.ModelForm):
         label='',
         widget=forms.Textarea(
             attrs={
-                'style':'border-radius: 1.2rem; resize:none; outline:none;',
-                'class':'form-control',
+                'style':'border-radius: 20px; resize:none; outline:none;',
+                'class':'form-control form-control-sm',
                 'placeholder':'Add a comment',
                 'rows': 1 ,
                 'cols': 60}))
@@ -107,7 +108,7 @@ class ReviewForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     course_code = forms.CharField(
 		label='',
-		max_length=12,
+		max_length=20,
 		min_length=5,
 		required=True,
   		validators=[alphanumeric_v2],
@@ -261,3 +262,83 @@ class BlogReplyForm(forms.ModelForm):
         fields = ['content']
         
         
+class CourseListForm(forms.ModelForm):
+    
+    title = forms.CharField(
+		label='Title',
+		max_length=1000,
+		min_length=2,
+		required=True,
+  		validators=[alphanumeric_s],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "List Name",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    year = forms.TypedChoiceField(
+        coerce=int,
+        choices=year_choices,
+        initial=current_year,
+        widget=forms.TextInput(
+		    attrs={
+				"placeholder": "Year",
+				"class": "form-control"
+			}
+		)
+    )
+    
+    class Meta:
+        model = CourseList
+        fields=('title','year',)
+        
+        
+class CourseListObjectsForm(forms.ModelForm):
+    course_code = forms.CharField(
+		label='',
+		max_length=20,
+		min_length=5,
+		required=True,
+  		validators=[alphanumeric_v2],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Course Code",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    course_instructor = forms.CharField(
+		label='', 
+		max_length=50,
+		min_length=2,
+		required=True,
+  		validators=[alphabetical],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Instructor Lastname",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    course_university = forms.CharField(
+		label='',
+		max_length=50,
+		min_length=2,
+		required=True,
+		validators=[alphanumeric_s],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "University",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    
+    class Meta:
+        model = CourseListObjects
+        fields=('course_code','course_university','course_instructor',)

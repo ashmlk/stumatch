@@ -1,5 +1,5 @@
 $(document).ready(function (e) {
-    $('.review-like-form').on("click", ".review-like-btn", function (e) {
+    $(document).on("click", ".review-like-btn", function (e) {
         var btn = $(this)
         e.preventDefault();
         e.stopImmediatePropagation();

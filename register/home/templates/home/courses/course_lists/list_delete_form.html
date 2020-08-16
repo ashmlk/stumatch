@@ -1,0 +1,32 @@
+{% load crispy_forms_tags %}
+{% if request.user == list.creator %}
+<form method="POST" {% if action_url %} data-url="{{ action_url }}" {% else %} data-url="{% url 'home:course-list-delete' hid=list.get_hashid %}" {% endif %} class="{{ form_class }}course-list-delete-form">
+	{% csrf_token %}
+		<div class="modal-header border-0 pl-0 pr-0 mb-0">
+			<h5 class="modal-title col-12 text-center" >Delete List
+				<button type="button" class="close"   style="margin-left: 10x; margin-right: -10px;"  data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</h5>
+		</div>
+		{% if delete_text %}
+		<div class="modal-body text-center p-2">
+			<p class="mx-1">{{ list.creator.get_full_name|capfirst }}, {{ delete_text }}</p>
+		</div>
+		{% else %}
+		<div class="modal-body text-center p-2">
+			<p class="mx-1">{{ list.creator.get_full_name|capfirst }}, Are you sure you want to permanently delete your list and all its items?</p>
+		</div>
+		{% endif %}
+		{% if a == "gh" %}
+		<input type="hidden" name="ac" value="h"/>
+		{% endif %}
+		<div class="modal-footer border-0">
+			<button type="submit" class="mx-1 btn btn-danger text-center" style="border-radius: 20px;">Delete</button>
+		</div>
+</form>
+{% else %}
+<div class="d-flex justify-content-enter">
+	<h5 class="m-1">There seems to be an error with your request</h5>
+</div>
+{% endif %}

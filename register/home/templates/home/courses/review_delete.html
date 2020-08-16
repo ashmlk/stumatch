@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 {% if request.user == review.author %}
-<form method="POST" data-url="{% url 'home:review-delete' review.id %}" class="delete-form">
+<form method="POST" data-url="{% url 'home:review-delete' hidc=course.get_hashid hid=review.get_hashid %}" class="delete-form">
 	{% csrf_token %}
 		<div class="modal-header border-0 pl-0 pr-0 mb-0">
 			<h5 class="modal-title col-12 text-center" >Delete Review

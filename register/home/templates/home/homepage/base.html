@@ -3,64 +3,22 @@
 <html>
 <head>
   <div id="#headerPlaceholder"></div>
-  <style>
-    .mnpglk-active svg {
-      color: rgb(126, 192, 243) !important;
-    }
-
-    .mnpglk-active span {
-      color: rgb(126, 192, 243) !important;
-    }
-
-    .side-tab-link-holder svg {
-      color: rgb(71, 71, 71);
-      margin-top: -2px;
-    }
-
-    .menu-bottom-fix {
-      min-width: 3rem !important;
-    }
-    .main-border-l{
-      border-left: solid 3px rgba(136, 136, 136, 0.144);
-    }
-    .side-tab-link-holder .mnpglk:hover{
-      border-left: solid 3px rgb(126, 192, 243) !important;
- 
-    }
-    .side-tab-link-holder .mnpglk:hover .col-1{
-      margin-left: -3px !important;
-    }
-
-    .side-tab-link-holder .mnpglk-active {
-      border-left: solid 3px rgb(126, 192, 243) !important; 
-    }
-    
-    .side-tab-link-holder .mnpglk-active .col-1{
-      margin-left: -3px !important;
-    }
-
-    .info-all .user-num {
-      color:rgb(1,119,200);
-      font-weight: 400 !important;
-    }
-    .info-all .badge {
-      font-size: 0.7rem !important;
-    }
-    .t {
-      letter-spacing: 1px !important;
-    }
-    #_pol3 .h6 {
-      color: rgb(80, 80, 80) !important;
-    }
-    #_pol3 .menu-link  {
-        border-radius: 8px;
-      }
-  </style>
   {% block title %}
   {% endblock %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+  <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <link
     href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
@@ -78,7 +36,7 @@
   <div class="wrapper">
     <div class="container-fluid pt-4">
       <div class="row">
-        <div class="col-md-2 col-sm-auto"></div>
+        <div class="col-md-3 col-sm-auto"></div>
         <div class="col-md-5 col-sm-10">
           <div class="mt-5" style="top: 44px !important;">
             <div class="pt-2">
@@ -88,7 +46,6 @@
             <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
           </div>
         </div>
-        <div class="col-md-1 col-sm-auto"></div>
         <div class="col-md-3 col-sm-2 d-none d-md-block" style="margin-left: 3rem !important;">
           <div class="pt-2 mt-5">
             {% block item %}
@@ -98,7 +55,6 @@
         </div>
       </div>
     </div>
-  </div>
   </div>
   <div class="modal fade" id="modal-post">
     <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
@@ -169,15 +125,6 @@
       </div>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
   <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
   <script src="{% static 'initial/initial.js' %}"></script>
   <script src="{% static 'js/buzz/buzzall.js' %}"></script>
@@ -185,8 +132,6 @@
   <script src="{% static 'js/index.js' %}"></script>
   <script src="{% static 'js/buzz/buzz.js' %}"></script>
   <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
-  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
-  <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
     <!--
     <script src="{% static 'js/post/like-api.js' %}"></script>
     <script src="{% static 'js/post/post-comments.js' %}"></script>
@@ -204,56 +149,45 @@
   -->
   <script>
     $(document).ready(function () {
-      $(document).on('keyup','#searchbar_n', function () {
-
-        if($(this).val()){
-          
-          var q = $(this).val();
-          $.ajax({
-            type: "GET",
-            url: "{% url 'home:search-get' %}?q=" + q,
-            dataType: 'json',
-            success: function (data){
-              if(data.search_user.length > 0){
-                $('._rcntrsltctr').find('li').remove();
-                $('._rcntrslt').text("Recent Searches")
-                for(i in data.search_user) {
-                  $('._rcntrsltctr').append("<li class='list-group-item searchable-selectable'>"+data.search_user[i]+"</li>")
-                }
-              }
-              if(data.search_top.length > 0){
-                $('._tprsltctr').find('li').remove()
-                $('._tprslt').text("Top Searches")
-                for(i in data.search_top) {
-                  $('._tprsltctr').append("<li class='list-group-item searchable-selectable'>"+data.search_top[i]+"</li>")
-                }
-              }
-              if(data.search_user.length <= 0 ) {
-                $('._rcntrslt').empty();
-                $('._rcntrsltctr').find('li').remove();
-              }
-              if(data.search_top.length <= 0 ) {
-                $('._tprslt').empty();
-                $('._tprsltctr').find('li').remove();
-              }
-              
-              $('.search-query-result').show()
-            },
-            error: function(rs, e){
-                console.log(rs.responeText);
-            },
-        });
-
-        } else {
-          $('.search-query-result').hide()
-        }
-        
-      })
-      $(document).on('click', function () {
-        $('.search-query-result').hide()
-      })
+      $('.carousel').each(function() {
+        var c = this;
+        $(c).find(".carousel-item").removeClass('active');
+        $(c).find(".carousel-item").filter(':first').addClass("active");
+      });
     })
   </script>
+    <script>
+      $(document).ready(function () {
+        $(document).on('click', '.post-comment-infinite-link', function (e){
+          var btn = $(this);
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          $.ajax({
+            url:  $(btn).attr('data-url'),
+            type: "GET",
+            dataType: 'json',
+            success: function (data){
+              $(btn).closest('.modal-infinite').append(data.list);
+              $(btn).remove();
+            },
+            error: function(rs, e){
+              console.log(rs.responeText);
+            },
+          })
+        })
+      })
+    </script>
+    <style>
+      .neocircle {
+        border-radius: 150px;
+        background: linear-gradient(225deg, #ffffff, #e3e3e3) !important;
+        box-shadow:  -5px 5px 10px #cacaca, 
+                      5px -5px 10px #ffffff !important;
+                    margin: 9px 9px 9px 9px !important;
+      }
+      
+      
+    </style>
+ 
 </body>
-
 </html>

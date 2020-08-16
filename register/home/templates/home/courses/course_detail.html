@@ -1,14 +1,37 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
-{% block item %}
+{% block title %}
+    <title>{{ course.course_code }} - Corscope </title>
+{% endblock %}
+{% block contentright %}
 {% load ibuilder %}
 {% bg_rand as bgrnd %}
-<div class="mt-3">
+<div class="d-none d-md-block">
+    <div class="row">
+        <div class="col-md-12">
+            <div>
+                <div class="mb-1 menu-go-back">
+                    <div class="pb-1 l d-flex align-item-center ">
+                        <button class="no-border no-outline btn mnbtn menu-link-active btn-sm text-dark" style="border-radius: 20px !important;" data-url="{% url 'home:course-menu' %}">
+                            <div class="clicker float-left">
+                                <svg width="16" height="16" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                    </svg>
+                            </div>
+                            <span class="mx-2" style="padding-top: 4px !important; font-size: 1.1rem;">Menu</span>
+                        </button>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
     <div class="bg-white rounded shadow-sm border">
         <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
             <div class="d-flex justify-content-between pt-4 p-1">
                 <div>
-                    <h5 class="text-white display-4" style="font-weight:500; font-size: 1.9rem;">
+                    <h5 class="mt-1 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
                         {{ course.course_code }}
                     </h5>
                 </div>
@@ -26,10 +49,10 @@
                     <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                 </a>
                 <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
-                    <span>Difficulty:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
+                    <span>Difficulty With this Professor:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
                 </div>
                 <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
-                    <span>Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                    <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
                 </div>
                 <hr>
                 <div class="c_dis mb-1" style="display: inline-block;">
@@ -117,24 +140,24 @@
     <div id="reviews" class="p-0 mt-1">
         <ul class="d-flex justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
             <li class="nav-item ">
-              <a class="nav-link active" id="review-spec-tab" data-toggle="pill" href="#review-spec" role="tab" aria-controls="review-spec" aria-selected="false">Reviews
+              <a class="nav-link d-flex align-items-center {{ review_s }}" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
                 <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" id="review-all-tab" data-toggle="pill" href="#review-all" role="tab" aria-controls="review-all" aria-selected="false">Reviews All
+              <a class="nav-link d-flex align-items-center {{ review_a }}"  href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">Reviews All
                 <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
               </a>
             </li>
           </ul>
-          <div class="tab-content" id="pills-tabContent">
-            <div class="c-review-list tab-pane fade show active" id="review-spec" role="tabpanel" aria-labelledby="review-spec-tab">
-                <div id="new-review-s"></div>
-                {% include 'home/courses/course_reviews.html' with reviews=reviews all=0 %}
+          <div class="tab-content">
+            <div class="c-review-list ">
+                {% if link_get %}
+                   {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=1 %}
+                {% else %}
+                    {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=0 %}
+                {% endif %}
             </div>
-            <div class="c-review-list tab-pane fade" id="review-all" role="tabpanel" aria-labelledby="review-all-tab">
-                <div id="new-review-a"></div>
-                {% include 'home/courses/course_reviews.html' with reviews=reviews_all all=1 %}</div>
           </div>
     </div>
 </div>

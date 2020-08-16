@@ -35,9 +35,9 @@
               <div style="display: inline-block !important;">
                 <div class="d-block">
                   <div class="m-1 px-2" style="font-size: 0.9rem;">
-                    <span class="text-dark font-size-smaller" href="#"
+                    <a class="text-dark font-size-smaller" href="{{ comment.name.get_absolute_url }}"
                       style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }}
-                      {{ comment.name.last_name }}</span>
+                      {{ comment.name.last_name }}</a>
                     <span class="font-weight-light pl-2">{{ comment.body }}</span>
                   </div>
                 </div>
@@ -93,7 +93,7 @@
             </div>
           </div>
           <div class="comment-replies pl-4" id="c-{{ comment_uuid }}" style="display: none;">
-            <div class="form-group row">
+            <div class="ml-3 form-group row">
               <form method="POST" data-target="{{ comment_uuid }}" data-url="{% url 'home:post-detail' guid_url %}"
                 class="comment-reply-form">
                 {% csrf_token %}
@@ -104,7 +104,7 @@
                       {{ form }}
                     </div>
                     <div>
-                      <button class="btn btn-md small btn-outline-primary ml-1" style="border-radius: 20px;"
+                      <button class="btn btn-sm small no-border no-outline btn-primary ml-1" style="border-radius: 20px;"
                         type="submit">Reply
                       </button>
                     </div>
@@ -117,15 +117,15 @@
             <div class="row pl-4 py-2 reply-box">
               <div class="col-xs">
                 <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
-                  src="{{ post.author.image.url }}" alt="Profile image">
+                  src="{{ reply.name.image.url }}">
               </div>
               <div class="col-xs">
                 <div class="d-flex">
-                  <div class="border border-light">
+                  <div>
                     <div class="m-1 px-2" style="font-size: 0.9rem;">
-                      <span class="text-dark font-size-smaller" href="#"
+                      <a class="text-dark font-size-smaller" href="{{ reply.author.get_absolute_url }}"
                         style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
-                        {{ reply.name.first_name }} {{ reply.name.last_name }}</span>
+                        {{ reply.name.get_full_name }} </a>
                       <span class="font-weight-light pl-1">{{ reply.body }}</span>
                     </div>
                   </div>
@@ -135,7 +135,7 @@
                       <i class="fas fa-ellipsis-h"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
-                      {% if reply.name != request.user  %}
+                      {% if reply.name == request.user  %}
                       <button class="small dropdown-item show-comment-delete-form" data-type="reply"
                         data-url="{% url 'home:comment-delete' reply.get_hashid %}"><svg class="bi mr-1 bi-trash"
                           width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
@@ -146,7 +146,7 @@
                             d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
                         </svg>Delete</button>
                       {% endif %}
-                      {% if reply.name == request.user or post.author != request.user %}
+                      {% if reply.name != request.user %}
                       <button class="small dropdown-item " data-type="reply" data-url="#"><svg width="1em" height="1em"
                           viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
                           xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +159,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="d-flex justify-content-left">
+                <div class="ml-2 pl-1 d-flex justify-content-left">
                   <div class="clcntr">
                     {% include 'home/posts/comment_like.html' with comment=reply guid_url=guid_url %}
                   </div>

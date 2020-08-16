@@ -1,11 +1,13 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
+{% block title %}
+    <title>Professor {{ instructor|capfirst }} - Corscope</title>
+{% endblock %}
 {% block content %}
 {% load ibuilder %}
 <!--
 <script src="{% static 'js/courses/save-course.js' %}"></script>-->
 <script src="{% static 'js/courses/course-instructor.js' %}"></script>
-
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
         <h4 class="font-weight-bolder">Professor {{ instructor|capfirst }}</h4>

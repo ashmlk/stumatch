@@ -39,9 +39,11 @@ from nltk.stem.porter import PorterStemmer
 import string
 from math import log
 from home.algo import score, _commonwords, common_words, epoch_seconds, top_score_posts, hot_buzz, top_buzz
-
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
+
+hashid_list = Hashids(salt='e5896e mqwefv0t mvSOUH b90 NS0ds90',min_length=16)
 
 def max_value_current_year():
     return datetime.date.today().year + 1
@@ -420,7 +422,26 @@ class CourseManager(models.Manager):
         
         return qs
     
+    def same_courses(self, user, course_list, university):
         
+        n_id = [user.id]
+        friends = Friend.objects.friends(user)
+        blocked =  Block.objects.blocking(user)
+        
+        if friends:
+            for f in friends:
+                n_id.append(int(f.id))
+        if blocked:
+            for b in blocked:
+                n_id.append(int(b.id))
+                
+        courses = self.get_queryset().filter(course_code__in=course_list, profiles__university__iexact=university).\
+            order_by('course_code','course_university','course_instructor').distinct('course_code','course_university','course_instructor')
+        
+        users = Profile.objects.filter(courses__in=courses).exclude(id__in=n_id).order_by('username','-date_joined').distinct('username')
+        
+        return users
+    
 class Post(models.Model):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
@@ -640,27 +661,30 @@ class Review(models.Model):
     def get_hashid(self):
         return hashids.encode(self.id)
 
+    def get_interest(self):
+        interest = {'1':'Interesting','2':'Relatively Interesting','3':'Not Interesting','4':'No Opinion'}
+        return interest[self.review_interest]
+    
     def get_created_on(self):
         now = timezone.now()
         diff= now - self.created_on
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds 
-            return str(seconds) + " s"     
+            return 'Just now'  
         if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
             minutes= math.floor(diff.seconds/60)
             return str(minutes) + "m"
         if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
-            hours= math.floor(diff.seconds/3600)            
+            hours= math.floor(diff.seconds/3600)
             return str(hours) + "h"
-        # 1 day to 30 days
         if diff.days >= 1 and diff.days < 30:
-            days= diff.days          
+            days= diff.days
             return str(days) + "d"
         if diff.days >= 30 and diff.days < 365:
-            months= math.floor(diff.days/30)                
-            return str(months) + "m"
+            months= math.floor(diff.days/7)       
+            return str(months) + "w"
         if diff.days >= 365:
-            years= math.floor(diff.days/365)            
+            years= math.floor(diff.days/365)
             return str(years) + "y"
         
     def get_course_prof(self):
@@ -681,6 +705,7 @@ class Course(models.Model):
         WINTER = '4', 'Winter'
         NONE = '0', 'None'
     class Difficulty(models.TextChoices):
+        NONE = '0', 'TBD'
         EASY = '1', 'Easy'
         MEDIUM = '2', 'Medium'
         HARD = '3', 'Hard'
@@ -702,7 +727,8 @@ class Course(models.Model):
     course_difficulty = models.CharField(
         max_length=2,
         choices=Difficulty.choices,
-        default=Difficulty.MEDIUM
+        default=Difficulty.NONE,
+        blank=True
         )
     sv = pg_search.SearchVectorField(null=True)
     
@@ -712,6 +738,7 @@ class Course(models.Model):
         indexes = [
             GinIndex(fields=['sv'],name='search_idx_course'),
         ]
+        
     def __str__(self):
         return self.course_code
     
@@ -776,14 +803,14 @@ class Course(models.Model):
         
     def average_complexity(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).\
+        avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).exclude(course_difficulty=0).\
             annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def average_complexity_ins(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
         avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
-            course_instructor__iexact=self.course_instructor).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
+            course_instructor__iexact=self.course_instructor).exclude(course_difficulty=0).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         return r_dic[int(avg.get('as_float__avg'))]
     
     def user_complexity(self):
@@ -1034,5 +1061,61 @@ class BlogReply(models.Model):
             years= math.floor(diff.days/365)
             return str(years) + "y"
     
-            
+class CourseList(models.Model):
+    
+    creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='course_lists')
+    title = models.CharField(max_length=1000)
+    created_on = models.DateTimeField(auto_now_add=True) 
+    year = models.IntegerField(('year'), validators=[MinValueValidator(1984), MaxValueValidator(max_value_current_year())], blank=True)
+    guid = models.CharField(max_length=255,unique=True, null=True)
+    
+    def __str__(self):
+        return self.title
+    
+    def get_hashid(self):
+        return hashid_list.encode(self.id)
+    
+    def save(self, *args, **kwargs):
+        self.guid = secrets.token_urlsafe(16)
+        super(CourseList, self).save(*args, **kwargs)
         
+        
+class CourseListObjects(models.Model):
+    
+    parent_list = models.ForeignKey(CourseList, on_delete=models.CASCADE, related_name='added_courses')
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    course_code = models.CharField(max_length=20)
+    course_university = models.CharField(max_length=100)
+    course_instructor = models.CharField(max_length=100,blank=True)
+    created_on = models.DateTimeField(auto_now_add=True) 
+    
+    def __str__(self):
+        return self.parent_list.title+"-"+self.course_code
+    
+    def get_created_on(self):
+        now = timezone.now().replace(tzinfo=timezone.utc).astimezone(tz=None)
+
+        diff= now - self.created_on.replace(tzinfo=timezone.utc).astimezone(tz=None)
+
+        if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
+            seconds= diff.seconds 
+            return 'Just now'  
+        if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
+            minutes= math.floor(diff.seconds/60)
+            return str(minutes) + "m ago"
+        if diff.days == 0 and diff.seconds >= 3600 and diff.seconds < 86400:
+            hours= math.floor(diff.seconds/3600)
+            return str(hours) + "h ago"
+        if diff.days >= 1 and diff.days < 30:
+            days= diff.days
+            return str(days) + "d ago"
+        if diff.days >= 30 and diff.days < 365:
+            months= math.floor(diff.days/7)       
+            return str(months) + "w ago"
+        if diff.days >= 365:
+            years= math.floor(diff.days/365)
+            return str(years) + "y ago"
+        
+    def get_hashid(self):
+        return hashids.encode(self.id)
+    

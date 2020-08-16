@@ -4,75 +4,125 @@
 <html>
     <head>
       <div id="#headerPlaceholder"></div>
-        <style>
-            #navBarSearchForm input[type=text]{width:400px !important;}
-        </style>
-        <title>StuMatch</title>
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
-        <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
+        {% block title %}
+        {% endblock %}
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+        <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico' %}" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+          integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+          crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
         <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
-        <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
-        <link rel="shortcut icon" href="{% static 'logo/favicon_io/favicon.ico  ' %}" />
+        <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link
+          href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+          rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_io/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
     </head>
     <body>
         <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
         <div class="wrapper mb-5">
-            <div class="container-fluid pl-4 pr-5">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="position-fixed" style="top: 64px;">
-                            <div class="mb-2">
-                                <div class="border-bottom">
-                                    <h4 class="m-1 display-4 card-tittle" style="font-size: 2rem;">
-                                        Courses
-                                    </h4>
+            <div class="container-fluid pl-4 pr-5" style="margin-top: 64px !important;">
+                {% if not menu %}
+                <div class="d-md-none">
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-5">
+                            <div class="pt-3">
+                                <div class="mb-1 menu-go-back">
+                                    <div class="pb-1 l d-flex align-item-center ">
+                                        <button class="no-border no-outline btn mnbtn menu-link-active btn-sm text-dark" style="border-radius: 20px !important;" data-url="{% url 'home:course-menu' %}">
+                                            <div class="clicker float-left">
+                                                <svg width="16" height="16" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                    </svg>
+                                            </div>
+                                            <span class="mx-2" style="padding-top: 4px !important; font-size: 1.1rem;">Menu</span>
+                                        </button>        
+                                    </div>
                                 </div>
                             </div>
-                            <div class="list-group bg-transparent">
-                                <a href="{% url 'home:courses' %}" id="user-courses" class="list-group-item list-group-item-action"><span class="mr-2">
-                                    <img src="{% static 'default/courses/books.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="row">
+                    {% if menu %}
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div>
+                            <div>
+                                <div>
+                                    {% block contentmenu %}
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-md-4">
+                        {% if not course_detail %}
+                        <div class="sticky-top d-none d-md-block w-75 bg-transparent" style="top: 64px !important;">
+                            <div class="list-group">
+                                <a href="{% url 'home:course-list' %}" id="user-courses" class="list-group-item list-group-item-action"><span class="mr-2">
+                                    <img src="{% static 'default/courses/books.png' %}"  style="height:36px;width: 36px;">
                                 </span>Your Courses</a>
                                 <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item list-group-item-action">
                                     <span class="mr-2">
-                                        <img src="{% static 'default/courses/addc.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                        <img src="{% static 'default/courses/addc.png' %}"  style="height:36px;width: 36px;">
                                     </span>Add a Course</a>
                                 <a href="#" class="list-group-item list-group-item-action"><span class="mr-2">
-                                    <img src="{% static 'default/courses/studentsgroup.png' %}" alt="Course Image" style="height:36px;width: 36px;">
-                                </span>Students you may know</a>
+                                    <img src="{% static 'default/courses/studentsgroup.png' %}"  style="height:36px;width: 36px;">
+                                </span>Find Students</a>
                                 <a href="{% url 'home:courses-saved' %}" class="list-group-item list-group-item-action"><span class="mr-2">
-                                    <img src="{% static 'default/courses/clk.png' %}" alt="Course Image" style="height:36px;width: 36px;">
+                                    <img src="{% static 'default/courses/clk.png' %}"  style="height:36px;width: 36px;">
                                 </span>Saved Courses</a>
+                                <a href="{% url 'home:course-list-manager' %}" class="list-group-item list-group-item-action"><span class="mr-2">
+                                    <img src="{% static 'default/courses/mcrsli.png' %}"  style="height:36px;width: 36px;">
+                                </span>My Lists</a>
+                            </div>
+                            <div class="sticky-top d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>     
+                        </div>
+                        {% endif %}
+                        {% block contentright %}
+                        {% endblock %}
+                    </div>
+                    <div class="col-md-5">
+                        <div>
+                            <div>
+                                {% block content %}
+                                {% endblock %}
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-5 order-2 mt-4">
-                        <div class="mt-5">
-                            {% block content %}
+                    {% endif %}
+                    <div class="col-md-3 d-none d-md-block">
+                        <div>
+                            {% block item %}
                             {% endblock %}
-                            <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4 order-sm-2 mt-4 order-sm-2">
-                            <div class="mt-5">
-                                {% block item %}
-                                {% endblock %}
-                            </div>  
-                            <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+                        </div>  
                     </div>
                 </div>       
             </div>
         </div>
         <div class="modal fade" id="modal-course-remove">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
               <div class="modal-content"></div>
             </div>
         </div>
@@ -86,10 +136,143 @@
               <div class="modal-content"></div>
             </div>
           </div>
+        <div class="modal fade" id="modal-course-list" >
+            <div class="modal-dialog modal-dialog-centered" style="height: fit-content;">
+              <div class="modal-content" style="display: table;"></div>
+            </div>
+          </div>
         <script src="{% static 'js/courses/vote_course.js' %}"></script>
         <script src="{% static 'js/courses/course-detail.js' %}"></script>
         <script src="{% static 'js/courses/save-course.js' %}"></script>
         <script src="{% static 'js/courses/course-review.js' %}"></script>
         <script src="{% static 'js/courses/review-delete.js' %}"></script>
+        <style>
+            .neoblock {
+                border-radius: 41px;
+                background: #f7f7f7;
+                box-shadow:  5px 5px 10px #bcbcbc, 
+                            -5px -5px 10px #ffffff;
+                            padding: 10px 10px 10px 10px;
+                            width: 15rem;
+            }
+            .neosquare {
+                border-radius: 20px;
+background: #ebf8ff;
+box-shadow:  -9px 9px 18px #949ca1, 
+             9px -9px 18px #ffffff;
+            }
+        </style>
+        <script>$(document).ready(function (){$('.mnbtn').on('click',function (){window.location=$(this).attr('data-url')})})</script>
+        <script>
+            $(document).ready(function () {
+            var infinite = new Waypoint.Infinite({
+                    element: $('.infinite-container')[0],
+                    onBeforePageLoad: function () {
+                    $('.loading').show();
+                    },
+                    onAfterPageLoad: function ($items) {
+                    $('.loading').hide();
+                    }
+                });
+                $(document).ajaxSend(function (event, jqxhr, settings) {
+                    jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+                });
+                var btn_list_co;
+                var ShowForm = function(e){
+                    e.stopImmediatePropagation();
+                    btn_list_co = $(this);
+                    $.ajax({
+                        url: btn_list_co.attr("data-url"),
+                        type: 'get',
+                        dataType:'json',
+                        beforeSend: function(){
+                            $('#modal-course-list').modal('show');
+                        },
+                        success: function(data){
+                            $('#modal-course-list .modal-content').html(data.html_form);
+                        }
+                    });
+                    return false;
+                };
+                var SaveForm =  function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var f = $(this);
+                    var form = $(this).serialize();
+                    $.ajax({
+                        url: $(this).attr('data-url'),
+                        type: $(this).attr('method'),
+                        data: form,
+                        dataType: 'json',
+                        success: function(data){
+                            if(data.form_is_valid){
+                                var obj = data.list
+                                $('#crslistul').append(obj);
+                                $('#modal-course-list').modal('hide');
+                            } 
+                            else if(data.form_delete_is_valid){
+                                if (data.redirect){
+                                    window.location = data.new_url
+                                    $('#modal-course-list').modal('hide');
+                                }
+                                else if($(btn_list_co).attr('data-type') == 'list'){
+                                    $(btn_list_co).closest('li').remove();
+                                    $('#modal-course-list').modal('hide');
+                                }
+                            } 
+                            else if(data.form_edit_is_valid){
+                                if ($(f).hasClass('form-redirect-go')){
+                                    window.location = data.new_url 
+                                    $('#modal-course-list').modal('hide');
+                                }
+                                else {
+                                    $(btn_list_co).closest('li').replaceWith(data.list);
+                                    $('#modal-course-list').modal('hide');
+                                }  
+                            }
+                            else if (data.form_crsaction_is_valid){
+                                window.location = data.new_url 
+                                $('#modal-course-list').modal('hide');
+                            } 
+                            else {
+                                $('#modal-course-list .modal-content').html(data.html_form)
+                            }
+                        }
+                    })
+                    return false;
+                }
+                $(document).on('click','.create-list-btn',ShowForm);
+                $('#modal-course-list').on("submit",".course-list-create-form",SaveForm)
+                $(document).on('click','.delete-crslist-btn',ShowForm);
+                $('#modal-course-list').on("submit",".course-list-delete-form",SaveForm)
+                $(document).on('click','.edit-crslist-btn',ShowForm);
+                $('#modal-course-list').on("submit",".course-list-edit-form",SaveForm)
+                $(document).on('click','.list-addcrs-btn',ShowForm);
+                $('#modal-course-list').on("submit",".crs-itm-course-list-create-form",SaveForm)
+                $(document).on('click','.list-deletecrs-btn',ShowForm); 
+                $('#modal-course-list').on("submit",".crs-itm-course-list-delete-form",SaveForm)
+                $(document).on('click','.list-editcrs-btn',ShowForm); 
+                $('#modal-course-list').on("submit",".crs-itm-course-list-edit-form",SaveForm);
+
+                $(document).on("click", ".review-like-btn", function (e) {
+                    var btnre = $(this)
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var tk = $(this).attr("data-token");
+                    $.ajax({
+                        type: "POST",
+                        url: $(this).attr("data-url"),
+                        dataType: 'json',
+                        data: $(this).closest("form").serialize(),
+                        success: function (data){
+                            $(btnre).closest(".review-likes-container").html(data.review);
+                        },
+                        error: function(rs, e){
+                            console.log(rs.responeText);
+                        },
+                    });
+                });
+            })
+        </script>
     </body>
 </html>

@@ -9,12 +9,13 @@
 			</button>
 		</h5>
 		</div>
-	<div class="modal-body" style="height:350px;overflow-y: auto; margin:0;">
+	<div class="modal-body" style="height:350px; overflow-y: auto; margin:0;">
 		{{ form|crispy }}
+		{{ form.media }}
 		<div class="fallback">
 			<input name="file" type="file" multiple />
 		</div>
-		<div class="row" id="preview-selected"></div>
+		<div class="row mt-3 p-1" id="preview-selected"></div>
 		  <div id="preview-template" class="mx-auto col-6 dz-preview dz-file-preview" style="display: none;">
 				<div class="d-flex flex-column align-items-center dz-details border rounded mb-1 mr-1">
 				<img data-dz-thumbnail/>
@@ -26,13 +27,18 @@
 		  </div>
 	</div>
 	<button type="button" class="m-1 btn border border-dark rounded btn-md " id="add-images"><i class="mx-1 fas fa-camera"></i>Photo</button>
-	<button type="button" class="m-1 btn border border-dark rounded btn-md " id="add-tagstp"><i class="mx-1 fas fa-hashtag"></i>Tags</button>
 	<div class="dz-default dz-message"></div>
 	<div class="modal-footer col-12">
 		<button type="submit" id="sub-etal" class="btn btn-primary"  style="border-radius: 20px; ">Post</button>
 	</div>
 </form>
 <script src="{% static 'js/post/post-dz.js' %}"></script>
+<style>
+	.selectize-input.items .item {
+		margin-top: -3px !important;
+	}
+</style>
+
 
 
 

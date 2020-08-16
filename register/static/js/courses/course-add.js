@@ -30,4 +30,10 @@ $(document).ready(function () {
     theme: "square"
     };
     $("#id_course_university").easyAutocomplete(options);
+
+    $('.easy-autocomplete').ready( function () {
+        $('div.easy-autocomplete').removeAttr('style')
+        $('div').removeClass('easy-autocomplete');
+      })
+      
     })

@@ -2,22 +2,22 @@
 {% load crispy_forms_tags %}
 {% load ibuilder %}
 {% load static %}
+{% block title %}
+    <title>Your Courses - Corscope</title>
+{% endblock %}
 {% block content %}
-<div class="mb-4">
+<div class="infinite-container mb-4">
     {% if courses %}
     <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
         <div class="m-0">
             <h6 class="display-4" style="font-size: 2.2rem;">Courses you've taken</h4>
-        </div>
-        <div>
-            <span class="text-muted small" style="margin-left: 0.2rem;">Learn about how your courses are displayed <a href="#">here.</a></span>
         </div>
     </div>
     {% endif %}
     {% for course in courses %}
     {% div_class as veid %}
     {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-    <div class="mb-2" id="_cc_{{ veid }}" >
+    <div class="infinite-item mb-2" id="_cc_{{ veid }}" >
         <div class="row border bg-white rounded-0">
             <div class="col-sm-12 p-0">
                 <div class="d-flex justify-content-between ml-1 mr-1 border-bottom">
@@ -77,18 +77,20 @@
         </div>
     </div>
     {% endfor %}
+
+    {% if courses.has_next %}
+    <a class="infinite-more-link" href="?page={{ courses.next_page_number }}"></a>
+    {% endif %}
+    <div class="mt-2 loading" style="display: none;">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="{% static 'js/courses/courses.js' %}"></script>
 {% endblock content %}
 {% block item %}
-<div class="mt-1">
-    <div class="border-bottom p-2 border-light" style="background-color:  rgba(210, 230, 248, 0.356); border-radius: 20px 20px 0px 0px !important;">
-        <h5 class="m-2">Courses for you</h5>
-    </div>
-    <div class="card border-top-0 rounded-0" style="margin-top: -0.08rem;">
-        <div class="card-body">
-            <!--fill in with courses recommended by users-->
-        </div>
-    </div>
-</div>
+
 {% endblock %}

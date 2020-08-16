@@ -1,0 +1,30 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<form method="POST" {% if action_url %} data-url="{{ action_url }}" {% else %} data-url="{% url 'home:course-list-create' %}" {% endif %}  class="{{ form_class }}course-list-create-form">
+	{% csrf_token %}
+		<div class="modal-header text-center">
+			<h5 class="modal-title col-12 text-center">
+				{% if title_m %}{{ title_m }}{% else %}Create a List{% endif %}
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</h5>
+		</div>
+	<div class="modal-body">
+		{{ form|crispy }}
+	</div>
+	<div class="modal-footer col-12">
+		<button type="submit" class="{{ form_class }}-btn btn btn-primary no-border"  style="border-radius: 20px; ">{% if actionbtn_m %}{{ actionbtn_m }}{% else %}Create{% endif %}</button>
+	</div>
+</form>
+
+
+
+
+
+
+			
+
+
+
+

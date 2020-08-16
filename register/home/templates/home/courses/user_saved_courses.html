@@ -1,5 +1,8 @@
 {% extends 'home/courses/base.html' %} 
 {% load static %}
+{% block title %}
+    <title>Saved Courses - Corscope</title>
+{% endblock %}
 {% block content %}
 {% load ibuilder %}
 {% if courses %}
@@ -12,9 +15,6 @@
             <img  src="{% static 'default/courses/sv_nts.png' %}" alt="Course Image" style="margin-top:-15px;height:100px;width: 100px;">
         </div>
     </div>
-    <div>
-        <span class="text-muted small" style="margin-left: 0.2rem;">Learn about how your courses are displayed <a href="#">here.</a></span>
-    </div>
 </div>
 {% endif %}
 <div class="card-columns mt-1" style="margin-left: -0.85rem;margin-right: -0.85rem;">
@@ -23,7 +23,7 @@
     <div class="card mb-2 bg-white">
         <div class="d-flex justify-content-between course-title-box course-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
             <div class="ml-2"> 
-                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
+                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
             </div>
         </div>
         <div class="row p-1">
