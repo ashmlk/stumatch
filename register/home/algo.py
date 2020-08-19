@@ -10,6 +10,8 @@ from nltk.stem.porter import PorterStemmer
 import string
 import datetime
 from math import log, sqrt
+import json 
+from difflib import SequenceMatcher
 
 stop_words = stopwords.words('english')
 bigram_measures = nltk.collocations.BigramAssocMeasures()
@@ -100,3 +102,14 @@ def top_buzz(likes, dislikes, wots, comments):
     under = 1+1/n*z*z
 
     return (left - right) / under
+
+def similar_string_ratio(a, b):
+    
+    return SequenceMatcher(None, a, b).ratio()
+
+def get_uni_info(university):
+    
+    with open('static/jsons/world_universities_and_domains.json') as file:
+        data = json.load(file)
+        return next(item for item in data if similar_string_ratio(item["name"], university) > 0.9)
+        

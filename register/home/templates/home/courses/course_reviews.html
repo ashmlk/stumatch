@@ -2,8 +2,8 @@
 {% load ibuilder %}
 {% if all == 1 and reviews %}
 <div class="dropdown">
-    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
         Sort By
     </button>
     <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
@@ -16,8 +16,8 @@
 <div id="new-review-a"></div>
 {% elif all != 1 and reviews %}
 <div class="dropdown">
-    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
         Sort By
     </button>
     <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
@@ -73,7 +73,9 @@
                                                         href="{{ review.author.get_absolute_url }}">@{{ review.author.get_username }}</a>
                                                     <span>·</span>
                                                     <span>{{ review.get_created_on }}</span>
-                                                    <span class="rounded p-1 small" style="background-color: rgb(209, 209, 209);"><strong style="color: black;">{{ review.get_interest }}</strong></span>
+                                                    <span class="rounded p-1 small"
+                                                        style="background-color: rgb(209, 209, 209);"><strong
+                                                            style="color: black;">{{ review.get_interest }}</strong></span>
                                                 </div>
                                             </div>
                                         </div>

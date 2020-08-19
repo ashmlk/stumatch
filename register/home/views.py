@@ -10,8 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
 from django.utils import timezone
-from django.db.models import Q
-from django.db.models import Max, Min
+from django.db.models import Q, F, Count, Avg, FloatField, Max, Min
 from hashids import Hashids
 from django.views.generic import (
     ListView,
@@ -45,6 +44,8 @@ from django.core.cache import cache
 from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
 from django.db.models import Case, When
 from notifications.signals import notify
+import json
+from home.algo import get_uni_info 
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -809,16 +810,73 @@ def review_delete(request, hidc, hid):
     return JsonResponse(data)
 
 @login_required
-def university_detail(request, course_university_slug):
-    courses = Course.objects.filter(course_university_slug__icontains=course_university_slug).distinct()
-    users = courses.select_related('profiles')
-    course_instructors = courses.order_by('course_instructor','course_code','course_year').distinct('course_instructor','course_code')
-    context = {
-        'courses':courses,
-        'users':users,
-        'course_instructors':course_instructors,
-    }
-    return render('home/courses/university_detail.html',context,request)
+def university_detail(request):
+    
+    blockers_id = request.session.get('blockers')
+    
+    uni = request.GET.get('u',request.user.university)
+    obj = request.GET.get('obj','std')
+    u_empty = ''
+    
+    data = get_uni_info(uni)
+        
+    user_list = Profile.objects.filter(university__iexact=uni).exclude(id__in=blockers_id).order_by('last_name')
+    
+    cr = Course.objects.filter(course_university__iexact=uni).annotate(uc=Count('profiles', distinct=True))
+    
+    num_enrolled = user_list.count() + cr[0].uc
+    
+    if obj == 'std':
+        if user_list.count() < 1:
+            u_empty='No students found'
+        
+        page = request.GET.get('page', 1)
+        paginator = Paginator(user_list , 7)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+         
+        return render(request,'home/courses/university_detail.html',{'uni':uni,'users':users,'sa':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+    
+    elif obj == 'crs':
+        course_list = Course.objects.filter(course_university__iexact=uni).order_by('course_code','course_instructor','course_university').distinct('course_code','course_instructor','course_university')
+        if course_list.count() < 1:
+            u_empty='No courses found'
+            
+        page = request.GET.get('page', 1)
+        paginator = Paginator(course_list , 7)
+        try:
+            courses = paginator.page(page)
+        except PageNotAnInteger:
+            courses = paginator.page(1)
+        except EmptyPage:
+         courses = paginator.page(paginator.num_pages)
+         
+        return render(request,'home/courses/university_detail.html',{'uni':uni,'courses':courses, 'ca':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+    
+    elif obj == 'ins':
+        qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_university').distinct('course_instructor','course_university')
+        instructor_list = Course.objects.filter(course_university__iexact=uni).annotate(user_count=Count('profiles')).\
+            order_by('-user_count').filter(id__in=qs).values_list('course_university','course_instructor','user_count','course_university_slug','course_instructor_slug')
+        if instructor_list.count() < 1:
+            u_empty='No instructors found'
+            
+        page = request.GET.get('page', 1)
+        paginator = Paginator(instructor_list , 7)
+        try:
+            instructors = paginator.page(page)
+        except PageNotAnInteger:
+            instructors = paginator.page(1)
+        except EmptyPage:
+            instructors = paginator.page(paginator.num_pages)
+         
+        return render(request,'home/courses/university_detail.html',{'uni':uni,'instructors':instructors,'ia':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+    
+    else:
+        return render(request,'home/courses/university_detail.html',{'is_empty':True})
 
 """ Method to show users that user may interact with based specifically on users courses and university + instructors
     Method to be executed and result to cached - recieve query set from cache - method constructed on daily basis """    
@@ -857,7 +915,34 @@ def find_students(request):
     
     return render(request,'home/courses/related_students/student_list.html',context)
     
-
+@login_required
+def get_course_mutual_students(request):
+    
+    blockers_id = request.session.get('blockers')
+    
+    hid = request.GET.get('id',None)
+    id = hashids.decode(hid)[0]
+    
+    course = get_object_or_404(Course, id=id)
+    
+    student_list = Profile.objects.get_students(user=request.user, code=course.course_code, instructor=course.course_instructor, university=course.course_university)
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(student_list, 7)
+    try:
+        students = paginator.page(page)
+    except PageNotAnInteger:
+        students = paginator.page(1)
+    except EmptyPage:
+        students = paginator.page(paginator.num_pages)
+        
+    context = {
+        'students':students,
+        'course':course
+    }
+    
+    return render(request,'home/courses/student_list.html',context)
+    
 @login_required
 def course_list_manager(request):
     
@@ -1107,10 +1192,13 @@ def saved_courses(request):
     courses = request.user.saved_courses.all()
     return render(request,'home/courses/user_saved_courses.html',{'courses':courses})
 
+
 @login_required
 def buzz(request):
     
-    buzzes_list = Buzz.objects.select_related('author').filter(Q(expiry__gt=Now()) | Q(expiry__isnull=True)).order_by('-date_posted')
+    blockers_id = request.session.get('blockers')
+    
+    buzzes_list = Buzz.objects.select_related('author').filter(~Q(author__id__in=blockers_id) & (Q(expiry__gt=Now()) | Q(expiry__isnull=True))).order_by('-date_posted') #show not expired and buzzes which have expiration date
     
     tags = cache.get("tt_buzzes")
     top_words = cache.get("trending_words_buzzes")
@@ -1126,10 +1214,12 @@ def buzz(request):
     except EmptyPage:
         buzzes = paginator.page(paginator.num_pages)
     time_threshold = timezone.now() - timedelta(days=7)
+    
     context = {
         'buzzes':buzzes,
         'words':words,
         'tags':tags,
+        'home_active':'-active'
     }
     
     return render(request,'home/buzz/buzz.html', context)
@@ -1138,11 +1228,16 @@ def buzz(request):
 def hot_buzzes(request):
     
     buzz_list_ids = cache.get("hot_buzzes")
-    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(buzz_list_ids)])
+    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(buzz_list_ids)]) #preserve order of buzzes in order to filter results
     
     blockers_id = request.session.get('blockers')
     
-    buzz_list = Buzz.objects.select_related("author").filter(id__in=buzz_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+    buzz_list = Buzz.objects.select_related("author").exclude(author__id__in=blockers_id).filter(id__in=buzz_list_ids).order_by(preserved) #exclude buzzes that their author has blocked request.user (cannot see buzz author)
+    
+    tags = cache.get("tt_buzzes")
+    top_words = cache.get("trending_words_buzzes")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
     
     page = request.GET.get('page', 1)
     paginator = Paginator(buzz_list, 10)
@@ -1153,7 +1248,12 @@ def hot_buzzes(request):
     except EmptyPage:
         buzzes = paginator.page(paginator.num_pages)
         
-    context = { 'buzzes':buzzes, 'hot_active':'-active'}
+    context = { 
+        'buzzes':buzzes,
+        'words':words,
+        'tags':tags,
+        'hot_active':'-active'
+    }
     return render(request, 'home/buzz/buzz.html', context)
 
 @login_required
@@ -1164,7 +1264,12 @@ def top_buzzes(request):
     
     blockers_id = request.session.get('blockers')
     
-    buzz_list = Buzz.objects.select_related("author").filter(id__in=buzz_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+    buzz_list = Buzz.objects.select_related("author").exclude(author__id__in=blockers_id).filter(id__in=buzz_list_ids).order_by(preserved)
+    
+    tags = cache.get("tt_buzzes")
+    top_words = cache.get("trending_words_buzzes")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
     
     page = request.GET.get('page', 1)
     paginator = Paginator(buzz_list, 10)
@@ -1175,11 +1280,18 @@ def top_buzzes(request):
     except EmptyPage:
         buzzes = paginator.page(paginator.num_pages)
         
-    context = { 'buzzes':buzzes, 'top_active':'-active'}
+    context = { 
+        'buzzes':buzzes,
+        'words':words,
+        'tags':tags,
+        'top_active':'-active'
+    }
     return render(request, 'home/buzz/buzz.html', context)
 
 @login_required
 def uni_buzzes(request):
+    
+    buzzes = None 
     
     u = request.user.university 
     t = u.lower().replace(' ','_')+"_buzz"
@@ -1188,18 +1300,29 @@ def uni_buzzes(request):
     
     blockers_id = request.session.get('blockers')
     
-    buzz_list = buzz_list.exclude(author__id__in=blockers_id)
+    tags = cache.get("tt_buzzes")
+    top_words = cache.get("trending_words_buzzes")
+    words = top_words['phrases']
+    words = words + top_words['common_words']
     
-    page = request.GET.get('page', 1)
-    paginator = Paginator(buzz_list, 10)
-    try:
-        buzzes = paginator.page(page)
-    except PageNotAnInteger:
-        buzzes = paginator.page(1)
-    except EmptyPage:
-        buzzes = paginator.page(paginator.num_pages)
+    if buzz_list:
+        buzz_list = buzz_list.exclude(author__id__in=blockers_id)
+       
+        page = request.GET.get('page', 1)
+        paginator = Paginator(buzz_list, 10)
+        try:
+            buzzes = paginator.page(page)
+        except PageNotAnInteger:
+            buzzes = paginator.page(1)
+        except EmptyPage:
+            buzzes = paginator.page(paginator.num_pages)
         
-    context = { 'buzzes':buzzes, 'uni_active':'-active'}
+    context = { 
+        'buzzes':buzzes,
+        'words':words,
+        'tags':tags,
+        'uni_active':'-active'
+    }
     return render(request, 'home/buzz/buzz.html', context)
  
 @login_required
@@ -1261,9 +1384,11 @@ def buzz_like(request,guid_url,status=None):
             
         data['buzz'] = render_to_string('home/buzz/buzz_like.html',{'buzz':buzz},request=request)
         return JsonResponse(data)
-    
+
+""" Buzzes have 'wot'  attribute that has more value in there value """  
 @login_required
-def buzz_wot(request,guid_url,status=None):
+def buzz_wot(request,guid_url,status=None): # implement one time use only for users or remove (TBD)
+    
     data = dict()
     buzz = get_object_or_404(Buzz, guid_url=guid_url)
     user = request.user
@@ -1279,6 +1404,7 @@ def buzz_wot(request,guid_url,status=None):
 
 @login_required
 def buzz_delete(request, guid_url):
+    
     data = dict()
     buzz = get_object_or_404(Buzz, guid_url=guid_url)
     if request.method == 'POST':
@@ -1289,9 +1415,11 @@ def buzz_delete(request, guid_url):
         context = {'buzz':buzz}
         data['html_form'] = render_to_string('home/buzz/buzz_delete.html',context,request=request)
     return JsonResponse(data)
-    
+
+# show buzz comments and details
 @login_required
 def buzz_detail(request, guid_url):
+    
     data = dict()
     buzz = get_object_or_404(Buzz, guid_url=guid_url)
     replies_list = buzz.breplies.all()
@@ -1335,6 +1463,7 @@ def buzz_detail(request, guid_url):
 
 @login_required
 def comment_buzz_like(request,hid,status=None):
+    
     data = dict()
     id = hashids.decode(hid)[0]
     r = get_object_or_404(BuzzReply, id=id)
@@ -1363,6 +1492,7 @@ def comment_buzz_like(request,hid,status=None):
     
 @login_required
 def comment_buzz_delete(request, hid):
+    
     data = dict()
     id = hashids.decode(hid)[0]
     reply = get_object_or_404(BuzzReply, id=id)

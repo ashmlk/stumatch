@@ -89,7 +89,7 @@
                 {% include 'home/buzz/buzz_wot.html' %}
               </div>
               <div>
-                <a class="btn no-border p-0 mr-4 btn-md" href="#">
+                <a class="btn no-border p-0 mr-4 btn-md" href="{% url 'home:buzz-detail' buzz.guid_url %}">
                   <span style="color:  rgb(158, 158, 158);">
                     <svg class="bi bi-chat" width="20" height="20" viewBox="0 0 16 16" fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg">

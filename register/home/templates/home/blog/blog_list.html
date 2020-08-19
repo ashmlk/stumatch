@@ -29,7 +29,7 @@
                     <div class="d-flex justify-content-between">
                         <div style="font-size: 0.8656rem;">
                             <p class="text-muted">By 
-                                <a href="#" class="card-link">
+                                <a href="{{ blog.author.get_absolute_url }}" class="card-link">
                                 {{ blog.author.get_full_name }}
                                 </a>
                                 on {{ blog.last_edited|date:"M d, Y" }}

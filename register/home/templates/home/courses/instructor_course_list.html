@@ -11,10 +11,10 @@
 <div class="d-flex border-bottom justify-content-between">
     <div class="mr-2">
         <h4 class="font-weight-bolder">Professor {{ instructor|capfirst }}</h4>
-        <a class="h6 text-muted">{{ university|capfirst }}</a>
+        <a href="{% url 'home:university-detail' %}?u={{ university }}&obj=std"><h6 class="text-muted">{{ university|capfirst }}</h6></a> 
     </div>
     <div>
-        <img class="mb-1" src="{% static 'default/courses/instructors-char-1.png' %}" alt="Course Image" style="margin-top:-20px;height:120px;width: 100px;">
+        <img class="mb-1" src="{% static 'default/courses/instructors-char-1.png' %}" alt="Course Image" style="margin-top:-10px;height:120px;width: 100px;">
     </div>
 </div>
 <div class="course-list mt-1">
@@ -56,9 +56,20 @@
                         <div class="dropdown-menu bg-white dropdown-menu-left mt-1" aria-labelledby="d_li">
                             <form method="POST" class="course-save-form">
                                 {% csrf_token %}
-                                <button class="small btn no-border dropdown-item save-course" type="submit" data-url="{% url 'home:course-save' course.id %}"><i class="mr-1 m fas fa-bookmark"></i>Save</button>
+                                <button class="small btn-sm btn no-border dropdown-item save-course" type="submit" data-url="{% url 'home:course-save' course.id %}">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bookmark-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M4.5 2a.5.5 0 0 0-.5.5v11.066l4-2.667 4 2.667V8.5a.5.5 0 0 1 1 0v6.934l-5-3.333-5 3.333V2.5A1.5 1.5 0 0 1 4.5 1h4a.5.5 0 0 1 0 1h-4zm9-1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V1.5a.5.5 0 0 1 .5-.5z"/>
+                                        <path fill-rule="evenodd" d="M13 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
+                                      </svg>
+                                      <span class="mx-1">Save</span></button>
                             </form>
-                          <a class="small btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}"><i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
+                          <a class="small btn btn-sm no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-up-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M14.5 3A1.5 1.5 0 0 0 13 1.5H3A1.5 1.5 0 0 0 1.5 3v5a.5.5 0 0 0 1 0V3a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H9a.5.5 0 0 0 0 1h4a1.5 1.5 0 0 0 1.5-1.5V3z"/>
+                                <path fill-rule="evenodd" d="M4.5 6a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V6.5H5a.5.5 0 0 1-.5-.5z"/>
+                                <path fill-rule="evenodd" d="M10.354 5.646a.5.5 0 0 1 0 .708l-8 8a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708 0z"/>
+                              </svg>
+                              <span class="mx-1">All Instructors</span></a>
                         </div>
                     </div>
                 </div> 

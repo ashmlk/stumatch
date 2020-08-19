@@ -1,7 +1,7 @@
 $(document).ready( function (e) {
-    var btn;
+    var sbtn=null;
     $(document).on("click",".scrmvbtn", function (e) {
-        btn = $(this)
+        sbtn = $(this);
         e.stopImmediatePropagation();
         var btn = $(this);
         $.ajax({
@@ -16,21 +16,19 @@ $(document).ready( function (e) {
             }
         });
     });
+
     $('#modal-course-remove').on("submit",".saved-course-remove-form",function (e){
         e.preventDefault();
         e.stopImmediatePropagation();
-        var form = new FormData(this);
+        var form = $(this).serialize();
         $.ajax({
             url: $(this).attr('data-url'),
-            type: $(this).attr('method'),
+            type: "POST",
             data: form,
-            cache: false,
-            processData: false,
-            contentType: false,
             dataType: 'json',
             success: function(data){
+                $(sbtn).closest('.card').remove();
                 $('#modal-course-remove').modal('hide');
-                $(btn).closest('.card').remove();
             }
         })
     });

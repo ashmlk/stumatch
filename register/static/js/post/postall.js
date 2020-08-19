@@ -468,6 +468,7 @@ $(document).on("click", ".etbm_btnall", function (e) {
 			},
 		});
 	});
+
 $(document).ready(function () {
 	var btn;
 	$('.flw-tag-ctr').on("click", ".f-tag-btn", function (e) {
@@ -477,9 +478,9 @@ $(document).ready(function () {
 			type: "POST",
 			url: $(this).attr("data-url"),
 			dataType: 'json',
-			data: $(btn).closest('form').serialize(),
+			data: $(tbtn).closest('form').serialize(),
 			success: function (data){
-			$(btn).closest('.flw-tag-ctr').html(data.html_form)
+			$(tbtn).closest('.flw-tag-ctr').html(data.html_form)
 			},
 			error: function(rs, e){
 				console.log(rs.responeText);

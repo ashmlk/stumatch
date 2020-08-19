@@ -264,6 +264,22 @@ class ProfileManager(BaseUserManager):
         
         return qs
         
+    def get_students(self, user, code, instructor, university):
+        
+        usernames = [user.username]
+        blocked =  Block.objects.blocking(user)
+        if blocked:
+            for b in blocked:
+                usernames.append(str(b))
+        
+        qs = (
+            self.get_queryset()
+            .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor)
+            .exclude(username__in=usernames)
+            .order_by('username')
+        )
+        
+        return qs
         
 class SearchLogManager(models.Manager):
     

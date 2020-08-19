@@ -1,8 +1,7 @@
 $(document).ready(function () {
-        $('.c_dis').addClass("border rounded p-1 mr-2")
-        $('.c_dis').css({'font-size':'0.94rem'});
-        $('.c_dis').find('span.text-dark').css({'font-weight':'600'});
-        $('._ar').addClass("border rounded-circle");
+
+		$('._ar').addClass("border rounded-circle");
+		
         $(document).on('click', '.course-goto', function (e) {
         e.stopImmediatePropagation();
         var url = $(this).attr("data-url")
@@ -50,6 +49,40 @@ $(document).ready(function () {
 			}
 		})
 	});
+
+	var sbtn=null;
+    $(document).on("click",".scrmvbtn", function (e) {
+        sbtn = $(this);
+        e.stopImmediatePropagation();
+        var btn = $(this);
+        $.ajax({
+            url: btn.attr("data-url"),
+            type: 'get',
+            dataType:'json',
+            beforeSend: function(){
+                $('#modal-course-remove').modal('show');
+            },
+            success: function(data){
+                $('#modal-course-remove .modal-content').html(data.html_form);
+            }
+        });
+    });
+
+    $('#modal-course-remove').on("submit",".saved-course-remove-form",function (e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        var form = $(this).serialize();
+        $.ajax({
+            url: $(this).attr('data-url'),
+            type: "POST",
+            data: form,
+            dataType: 'json',
+            success: function(data){
+                $(sbtn).closest('.card').remove();
+                $('#modal-course-remove').modal('hide');
+            }
+        })
+    });
 
 });
 

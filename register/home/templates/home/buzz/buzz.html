@@ -110,14 +110,7 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link" >
-      <a  href="#" style="text-decoration: none;">
-        <div>
-          <span class="h6"><span >Explore</span></span>
-        </div>
-      </a>
-    </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ top_active }}"
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ top_active }}"
       data-url="{% url 'home:top-buzzes' %}" >
       <a  href="{% url 'home:top-buzzes' %}" style="text-decoration: none;">
         <div>
@@ -126,7 +119,7 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ hot_active }}"
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ hot_active }}"
       data-url="{% url 'home:hot-buzzes' %}" >
       <a  href="{% url 'home:hot-buzzes' %}" style="text-decoration: none;">
         <div>
@@ -134,8 +127,8 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ uni_active }}" data-url="{% url 'home:uni-buzzes' %}">
-      <a  href="#" style="text-decoration: none;">
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-buzzes' %}">
+      <a  href="{% url 'home:uni-buzzes' %}" style="text-decoration: none;">
         <div>
           <span class="h6"><span >University</span></span>
         </div>

@@ -83,12 +83,6 @@
     </div>
   </div>
 </div>
-
-<!--
-{% for f in not_friends %}
-<a href="{{ f.get_absolute_url }}">{{ f.username }}</a>
-{% endfor %}
--->
 <div class="mt-3 mb-2 p-1 ml-1 ">
   <div class="d-flex justify-content-start" id="_pol3">
     <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{home_active}}">
@@ -98,7 +92,7 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ top_active }}"
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ top_active }}"
       data-url="{% url 'home:top-posts' %}" >
       <a  href="{% url 'home:top-posts' %}" style="text-decoration: none;">
         <div>
@@ -107,7 +101,7 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ hot_active }}"
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ hot_active }}"
       data-url="{% url 'home:hot-posts' %}" >
       <a  href="{% url 'home:hot-posts' %}" style="text-decoration: none;">
         <div>
@@ -115,7 +109,7 @@
         </div>
       </a>
     </div>
-    <div class="btn d-flex align-items-center mr-1 menu-link{{ uni_active }}" data-url="{% url 'home:uni-posts' %}">
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-posts' %}">
       <a  href="{% url 'home:uni-posts' %}" style="text-decoration: none;">
         <div>
           <span class="h6"><span >University</span></span>

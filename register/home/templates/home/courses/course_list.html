@@ -30,10 +30,21 @@
                                 <i class="fas fa-caret-down"></i>
                             </button>
                             <div class="dropdown-menu mt-1" aria-labelledby="d_l">
-                                <button class="dropdown-item sh-shr-c" data-url="{% url 'home:course-share' hid=course.get_hashid %}"><i class="mr-1 fas fa-share"></i>Share</button>
-                                <button class="dropdown-item sh-rmv-c" data-veid="{{ veid }}" data-url="{% url 'home:course-remove' hid=course.get_hashid %}">
-                                <i class="mr-1 fas fa-trash"></i>Remove Course</button>
-                                <a class="btn no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
+                                <button class="btn btn-sm dropdown-item sh-shr-c" data-url="{% url 'home:course-share' hid=course.get_hashid %}">
+                                    <svg class="bi bi-reply" style="color:  rgb(158, 158, 158);" width="20" height="20"
+                                    viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                      d="M9.502 5.013a.144.144 0 0 0-.202.134V6.3a.5.5 0 0 1-.5.5c-.667 0-2.013.005-3.3.822-.984.624-1.99 1.76-2.595 3.876C3.925 10.515 5.09 9.982 6.11 9.7a8.741 8.741 0 0 1 1.921-.306 7.403 7.403 0 0 1 .798.008h.013l.005.001h.001L8.8 9.9l.05-.498a.5.5 0 0 1 .45.498v1.153c0 .108.11.176.202.134l3.984-2.933a.494.494 0 0 1 .042-.028.147.147 0 0 0 0-.252.494.494 0 0 1-.042-.028L9.502 5.013zM8.3 10.386a7.745 7.745 0 0 0-1.923.277c-1.326.368-2.896 1.201-3.94 3.08a.5.5 0 0 1-.933-.305c.464-3.71 1.886-5.662 3.46-6.66 1.245-.79 2.527-.942 3.336-.971v-.66a1.144 1.144 0 0 1 1.767-.96l3.994 2.94a1.147 1.147 0 0 1 0 1.946l-3.994 2.94a1.144 1.144 0 0 1-1.767-.96v-.667z" />
+                                  </svg><span class="mx-1">Share</span></button>
+                                <button class="btn btn-sm dropdown-item sh-rmv-c" data-veid="{{ veid }}" data-url="{% url 'home:course-remove' hid=course.get_hashid %}">
+                                    <svg class="bi mr-1 bi-trash" width="1em"
+                                    height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                    <path fill-rule="evenodd"
+                                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                  </svg><span class="mx-1">Remove</span></button>
+                                <a class="btn btn-sm no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
                                     <i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
                             </div>
                         </div>
@@ -43,16 +54,16 @@
                     </div>
                 </div>
                 <div class="row mt-1 mx-1">
-                    <div class="c_dis mb-1 course-goto btn-outline-primary text-center" data-url="{%url 'home:course-instructor' par1 par2 %}">
+                    <div class="c_dis border rounded p-1 mr-2 mb-1 course-goto btn-outline-primary text-center" data-url="{%url 'home:course-instructor' par1 par2 %}">
                         <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                     </div>
-                    <div class="c_dis mb-1 course-goto btn-outline-primary text-center">
+                    <div class="c_dis border rounded p-1 mr-2 mb-1 course-goto btn-outline-primary text-center" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                         <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
                     </div>
-                    <div class="c_dis mb-1 text-center">
+                    <div class="c_dis border rounded p-1 mr-2 mb-1 text-center">
                         <span class="text-dark">Year:</span><span class="ml-1">{{ course.course_year }}</span>
                     </div>
-                    <div class="c_dis mb-1 text-center">
+                    <div class="c_dis border rounded p-1 mr-2 mb-1 text-center">
                         <span class="text-dark">Semester:</span><span class="ml-1">{{ course.sem }}</span>
                     </div>
                 </div>
@@ -61,7 +72,8 @@
                         {% include 'home/courses/course_vote.html' with course=course %}
                     </div>
                     <div class="mb-0">
-                        <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}<span>people have</span>{% endif %} enrolled in this course. See them <a href="#">here</a>.</span>
+                        <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
+                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">here</a>.</span>
                     </div>
                 </div>
             </div>   
@@ -89,7 +101,6 @@
         </div>
     </div>
 </div>
-<script src="{% static 'js/courses/courses.js' %}"></script>
 {% endblock content %}
 {% block item %}
 
