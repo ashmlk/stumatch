@@ -44,7 +44,7 @@
               <span class="related-tags">
                 {% for tag in related_tags %}
                 <span class="mr-1">
-                  <a href="{% url 'home:tag-blog' tag.slug %}" class="text-dark"
+                  <a href="{% url 'home:tag-post' tag.slug %}" class="text-dark"
                     style="text-decoration: none;">#{{ tag.name }}</a>
                 </span>
                 {% endfor %}

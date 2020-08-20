@@ -1508,7 +1508,8 @@ def comment_buzz_delete(request, hid):
 @login_required
 def blog(request):
     
-    blogs_list = Blog.objects.select_related('author').all().order_by('-last_edited')
+    blogs_list = Blog.objects.get_blogs(user=request.user)
+    
     
     page = request.GET.get('page', 1)
     paginator = Paginator(blogs_list, 10)
@@ -1541,6 +1542,7 @@ def blog_create(request):
     return render(request,'home/blog/blog_create.html', context)
 
 def blog_detail(request, hid, t):
+    
     blog = get_object_or_404(Blog, guid_url=hid, slug=t)
     replies_count = blog.blog_replies.count()
     context = {'blog':blog,'replies_count':replies_count}
@@ -1548,6 +1550,7 @@ def blog_detail(request, hid, t):
 
 @login_required
 def blog_update(request, hid, t):
+    
     data = dict()
     blog = get_object_or_404(Blog, guid_url=hid, slug=t)
     if blog.author == request.user:
@@ -1570,6 +1573,7 @@ def blog_update(request, hid, t):
 
 @login_required
 def blog_delete(request, hid, t):
+    
     data = dict()
     blog = get_object_or_404(Blog, guid_url=hid, slug=t)
     if request.method == 'POST':
@@ -1583,6 +1587,7 @@ def blog_delete(request, hid, t):
         
 @login_required
 def blog_like(request,guid_url):
+    
     data = dict()
     blog = get_object_or_404(Blog, guid_url=guid_url)
     user = request.user
@@ -1598,10 +1603,22 @@ def blog_like(request,guid_url):
 
 @login_required
 def blog_replies(request,guid_url,slug):
+    
     data = dict()
     blog = get_object_or_404(Blog, guid_url=guid_url,slug=slug)
-    replies = blog.blog_replies.order_by('-date_replied')
+    replies_list = blog.blog_replies.order_by('-date_replied')
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(replies_list, 10)
+    try:
+        replies = paginator.page(page)
+    except PageNotAnInteger:
+        replies = paginator.page(1)
+    except EmptyPage:
+        replies = paginator.page(paginator.num_pages)
+        
     replies_count = blog.blog_replies.count()
+    user=request.user
     if request.method == 'POST':   
         form = BlogReplyForm(request.POST or None)
         if form.is_valid():
@@ -1609,10 +1626,13 @@ def blog_replies(request,guid_url,slug):
             reply.author = request.user
             reply.blog  = blog
             reply.save()
-            message = "CON_BLOG" + "liked your blog post." 
-            description = reply.content
-            notify.send(sender=user, recipient=blog.author, description=description, verb=message, target=blog)
             form = BlogReplyForm()
+            if user != blog.author:
+                message = "CON_BLOG" + "liked your blog post." 
+                description = reply.content
+                notify.send(sender=user, recipient=blog.author, description=description, verb=message, target=blog)
+            data['form_is_valid'] = True
+            return JsonResponse(data)
     else: 
         form = BlogReplyForm
     context = {'blog':blog,
@@ -1625,6 +1645,7 @@ def blog_replies(request,guid_url,slug):
 
 @login_required
 def blog_reply_like(request,hid):
+    
     data = dict()
     id = hashids.decode(hid)[0]
     reply = get_object_or_404(BlogReply, id=id)
@@ -1638,7 +1659,51 @@ def blog_reply_like(request,hid):
         return JsonResponse(data)
     
 @login_required
+def blog_reply_delete(request,hid, guid_url):
+    
+    data = dict()
+    id = hashids.decode(hid)[0]
+    reply = get_object_or_404(BlogReply, id=id)
+    blog = get_object_or_404(Blog, guid_url=guid_url)
+    
+    if request.method == 'POST':
+        if request.user == blog.author or request.user == reply.author:
+            reply.delete()
+            data['form_is_valid'] = True
+    else:
+        context = {'blog':blog,'reply':reply}
+        data['html_form'] = render_to_string('home/blog/blog_reply_delete.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def blog_reply_edit(request,hid, guid_url, slug):
+    
+    data = dict()
+    id = hashids.decode(hid)[0]
+    reply = get_object_or_404(BlogReply, id=id)
+    blog = get_object_or_404(Blog, guid_url=guid_url, slug=slug)
+    
+    if request.method == 'POST':
+        if request.user == blog.author or request.user == reply.author:
+            form = BlogReplyForm(request.POST,instance=reply)
+            form.instance.author = request.user
+            if form.is_valid():
+                form.save()
+                return redirect('home:blog-replies',guid_url=blog.guid_url, slug=blog.slug) 
+    else:
+        form = BlogReplyForm(instance=reply)
+        context = {
+            'form':form,
+            'blog':blog,
+            'reply':reply
+            }
+    return render(request,'home/blog/blog_replies_edit.html',context)
+    
+    
+    
+@login_required
 def tags_post(request, slug):
+    
     tag = get_object_or_404(Tag, slug=slug)
     posts_list = Post.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
     related_tags = Post.tags.most_common(extra_filters={'post__in': posts_list })[:5]
@@ -1668,6 +1733,7 @@ def tags_post(request, slug):
 
 @login_required
 def tags_blog(request, slug):
+    
     tag = get_object_or_404(Tag, slug=slug)
     blog_list = Blog.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
     related_tags = Blog.tags.most_common(extra_filters={'blog__in': blog_list })[:5]
@@ -1697,6 +1763,7 @@ def tags_blog(request, slug):
 
 @login_required
 def tags_buzz(request, slug):
+    
     tag = get_object_or_404(Tag, slug=slug)
     buzz_list = Buzz.objects.select_related("author").filter(tags=tag).order_by('-last_edited')
     related_tags = Buzz.tags.most_common(extra_filters={'buzz__in': buzz_list })[:5]

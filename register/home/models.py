@@ -240,6 +240,31 @@ class BlogManager(models.Manager):
         
         return qs
 
+    def get_blogs(self, user):
+        
+        fl = bl = []
+        friends = Friend.objects.friends(user)
+        blocked =  Block.objects.blocking(user)
+        
+        if friends:
+            for f in friends:
+                fl.append(str(f))
+        if blocked:
+            for b in blocked:
+                bl.append(str(b))
+                
+        time_threshold = timezone.now() - datetime.timedelta(days=1)
+
+        
+        qs = (
+            self.get_queryset()
+            .annotate(like_count=Count('likes'))
+            .filter( (~Q(author__username__in=bl)) & (  Q(author__username__in=friends) | Q(author__university__iexact=user.university) | (Q(like_count__gte=350) & Q(last_edited__gte=time_threshold)) ) )
+            .order_by('last_edited', 'like_count')
+        )
+        
+        return qs 
+    
 class BuzzManager(models.Manager):
     
     def search_topresult(self, search_text):
@@ -1078,8 +1103,7 @@ class CourseList(models.Model):
     def save(self, *args, **kwargs):
         self.guid = secrets.token_urlsafe(16)
         super(CourseList, self).save(*args, **kwargs)
-        
-        
+             
 class CourseListObjects(models.Model):
     
     parent_list = models.ForeignKey(CourseList, on_delete=models.CASCADE, related_name='added_courses')

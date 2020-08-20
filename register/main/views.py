@@ -309,6 +309,7 @@ def login_info(request):
         
 @login_required
 def add_bookmark(request, hid, obj_type):
+    
     data=dict()
     t=obj_type
     id =  hashids.decode(hid)[0]
@@ -334,6 +335,7 @@ def add_bookmark(request, hid, obj_type):
 
 @login_required
 def bookmarks(request):
+    
     user = request.user
     bookmarked_posts = user.bookmarkpost_set.all()
     bookmarked_blogs = user.bookmarkblog_set.all()
@@ -362,6 +364,7 @@ def f_post_tag(request, slug):
 
 @login_required
 def f_buzz_tag(request, slug):
+    
     data = dict()
     user = request.user
     tag = get_object_or_404(Tag, slug=slug)
@@ -382,8 +385,9 @@ def f_blog_tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     if request.method == 'POST':
         if user.favorite_blog_tags.filter(slug=slug).exists():
-            user.favorite_post_tags.remove(tag)
+            user.favorite_blog_tags.remove(tag)
             is_fav = False
+            print("oh no")
         else:
             user.favorite_blog_tags.add(tag)
             is_fav = True
@@ -393,6 +397,7 @@ def f_blog_tag(request, slug):
 
 @login_required
 def accept_reject_friend_request(request,hid, s):
+    
     data = dict()
     id = hashids_user.decode(hid)[0]
     other_user = get_object_or_404(Profile, id=id)
@@ -660,15 +665,27 @@ def user_same_program(request):
 @login_required
 def user_tags(request,username=None):
 
+    s = 'Tags'
     username = request.user.get_username()
-    p_tags = request.user.favorite_post_tags.all()
-    bz_tags = request.user.favorite_buzz_tags.all()
-    bl_tags = request.user.favorite_blog_tags.all()
+    
+    o = request.GET.get('o','post')
+    
+    num_obj = request.user.favorite_post_tags.count() + request.user.favorite_buzz_tags.count() + request.user.favorite_blog_tags.count()
+    if num_obj < 1:
+        s= "Tag"
+    if o == 'post':
+        tags = request.user.favorite_post_tags.all()
+    elif o == 'buzz':
+        tags = request.user.favorite_buzz_tags.all()
+    elif o == 'blog':
+        tags = request.user.favorite_blog_tags.all()
 
     context = {
-        'p_tags':p_tags,
-        'bz_tags':bz_tags,
-        'bl_tags':bl_tags,
+            'tags':tags,
+            o+'_active':'-active',
+            'is_'+o:True,
+            's':s,
+            'num_obj':num_obj
          }
     
     return render(request, 'main/tags/user_tags.html', context)
@@ -849,7 +866,8 @@ def get_user(request,username):
 @login_required   
 def get_user_friends(request):
     
-    is_blocked = False
+    is_blocked = is_friend = is_blocked = youre_blocked = False
+    
     hid = request.GET.get('id', None)
     id = hashids_user.decode(hid)[0]
     

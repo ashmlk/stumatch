@@ -41,7 +41,7 @@
             </div>
             <div style="margin-top: -0.147rem !important;">
                 <span class="text-muted">
-                    <a href="#" class="card-link">
+                    <a href="{{ blog.author.get_absolute_url }}" class="card-link">
                         {{ blog.author.get_full_name }}
                     </a>
                 </span><br>
@@ -100,7 +100,7 @@
                 </div>
                 <div style="margin-top: -0.140rem !important;">
                     <span class="text-muted">
-                        <a href="#" class="card-link">
+                        <a href="{{ blog.author.get_absolute_url }}" class="card-link">
                             {{ blog.author.get_full_name }}
                         </a>
                     </span><br>

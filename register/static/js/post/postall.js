@@ -478,9 +478,9 @@ $(document).ready(function () {
 			type: "POST",
 			url: $(this).attr("data-url"),
 			dataType: 'json',
-			data: $(tbtn).closest('form').serialize(),
+			data: $(btn).closest('form').serialize(),
 			success: function (data){
-			$(tbtn).closest('.flw-tag-ctr').html(data.html_form)
+			$(btn).closest('.flw-tag-ctr').html(data.html_form)
 			},
 			error: function(rs, e){
 				console.log(rs.responeText);

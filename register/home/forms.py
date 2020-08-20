@@ -252,7 +252,7 @@ class BlogReplyForm(forms.ModelForm):
         label='',
         widget=forms.Textarea(
             attrs={
-                'style':'resize:none; outline:none;min-height:5rem',
+                'style':'resize:none; outline:none;min-height:4rem',
                 'class':'form-control no-border border-0',
                 'placeholder':'Write a reply',
                 'rows': 2,
