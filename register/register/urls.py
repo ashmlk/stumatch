@@ -32,6 +32,7 @@ urlpatterns = [
     path('ckeditor/',include('ckeditor_uploader.urls')),
     path('',views.user_login,name='user_login'),
     path('',include('main.urls'),name='main'),
+    path('accounts/', include('allauth.urls')),
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     # removed r'^home/' 
     url(r'',include(('home.urls','home'), namespace='home')),

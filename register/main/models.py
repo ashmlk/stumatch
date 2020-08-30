@@ -10,7 +10,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
 import django.contrib.postgres.search as pg_search
 from django.db.models.functions import Greatest
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import BaseUserManager, UserManager
 from django.core.validators import MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db.models import Q, F, Count, Avg, FloatField
 from hashids import Hashids
@@ -21,7 +21,7 @@ from django.urls import reverse
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 #CUSTOM MODEL MANAGERS
-class ProfileManager(BaseUserManager):
+class ProfileManager(UserManager):
     
     def same_program(self, user, program, university):
         
@@ -57,7 +57,8 @@ class ProfileManager(BaseUserManager):
             ).filter(
                 (Q(university__unaccent__icontains=university) & Q(program__unaccent__icontains=program)) |
                 (Q(similarity_university__gte=0.01) & Q(similarity_program__gte=0.01)) |
-                (Q(similarity_program__gte=0.4)) 
+                (Q(similarity_program__gte=0.4)) & 
+                (Q(public=True))
             ).order_by('-similarity_university','-similarity_program')
         )
     
@@ -334,11 +335,25 @@ class Profile(AbstractUser):
     courses = models.ManyToManyField('home.Course',related_name='profiles')
     public = models.BooleanField(default=True, blank=True)
     rank_objects = models.BooleanField(default=True, blank=True)
+    save_searches = models.BooleanField(default=True, blank=True)
     saved_courses = models.ManyToManyField('home.Course',related_name='saved_courses')
     favorite_post_tags = models.ManyToManyField(Tag, related_name='fav_post_tags')
     favorite_buzz_tags = models.ManyToManyField(Tag, related_name='fav_buzz_tags')
     favorite_blog_tags = models.ManyToManyField(Tag, related_name='fav_blog_tags')
     recent_searches = models.ManyToManyField(SearchLog, related_name='recent_searches')
+    # notification settings
+    get_notify = models.BooleanField(default=True, blank=True)
+    get_post_notify_all = models.BooleanField(default=True, blank=True)
+    get_post_notify_likes = models.BooleanField(default=True, blank=True)
+    get_post_notify_comments = models.BooleanField(default=True, blank=True)
+    get_buzz_notify_all = models.BooleanField(default=True, blank=True)
+    get_buzz_notify_likes = models.BooleanField(default=True, blank=True)
+    get_buzz_notify_comments = models.BooleanField(default=True, blank=True)
+    get_blog_notify_all = models.BooleanField(default=True, blank=True)
+    get_blog_notify_likes = models.BooleanField(default=True, blank=True)
+    get_blog_notify_comments = models.BooleanField(default=True, blank=True)
+    get_friendrequest_notify = models.BooleanField(default=True, blank=True)
+    get_friendrequestaccepted_notify = models.BooleanField(default=True, blank=True)
     
     sv = pg_search.SearchVectorField(null=True)
     
@@ -393,4 +408,58 @@ class BookmarkBuzz(BookmarkBase):
     date = models.DateTimeField(auto_now_add=True)
     obj = models.ForeignKey('home.Buzz',on_delete=models.CASCADE, verbose_name="Buzz")
 
+class ReportBase(models.Model):
+    class Meta:
+        abstract = True
+        
+    class Reason(models.TextChoices):
+        NOT_INTERESTED = 'not_interested', 'Not Interested in this content'
+        SPAM = 'spam', 'It appears to be spam'
+        SENSITIVE = 'sensitive', 'It displays sensitive content'
+        HARMFUL = 'harmful', 'I find it abusive or harmful'
+        SELF_HARM = 'self_harm', 'It display and portrays expression of self-harm or suicide'
+        HATE = 'hate', 'It appears to be inflammatory speech towards a demographic'
+        MISLEADING = 'misleading', 'It appears to share misleading content'
+        THREAT = 'threat', 'It is threatening and expressing violent harm'
+        NONE = 'null', 'None'
+    
+    reporter = models.ForeignKey(Profile,on_delete=models.CASCADE)
+    date_reported =  models.DateTimeField(auto_now_add=True)
+    reason = models.CharField(
+        max_length=250,
+        choices=Reason.choices,
+        default=Reason.NONE
+        )
+    
+    
+class ReportUser(ReportBase):
+    
+    reported_obj = models.ForeignKey(Profile,on_delete=models.CASCADE, verbose_name='report_user', related_name='reported_users')
+    
+class ReportPost(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.Post',on_delete=models.CASCADE, verbose_name='report_post', related_name='reported_posts')
+    
+class ReportComment(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.Comment',on_delete=models.CASCADE, verbose_name='report_comment', related_name='reported_comments')
+    
+class ReportBuzz(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.Buzz',on_delete=models.CASCADE, verbose_name='report_buzz', related_name='reported_buzzes')
 
+class ReportBuzzReply(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.BuzzReply',on_delete=models.CASCADE, verbose_name='report_buzzreply', related_name='reported_buzzreplies')
+    
+class ReportBlog(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.Blog',on_delete=models.CASCADE, verbose_name='report_blog', related_name='reported_blogs')
+    
+class ReportBlogReply(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.BlogReply',on_delete=models.CASCADE, verbose_name='report_blogreply', related_name='reported_blogreplies')
+    
+class ReportCourseReview(ReportBase):
+    
+    reported_obj = models.ForeignKey('home.Review',on_delete=models.CASCADE, verbose_name='report_coursereview', related_name='reported_coursereviews')

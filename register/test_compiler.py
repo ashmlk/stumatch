@@ -272,3 +272,5 @@ def generate_comment_like_notifications():
         description = comment.body
         notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
     return 'success'
+
+

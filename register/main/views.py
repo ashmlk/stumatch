@@ -6,7 +6,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, EditProfileForm, PasswordResetForm
+from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm
+from django.views.generic.edit import UpdateView
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -18,10 +19,28 @@ from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime, timezone
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from main.decorators import confirm_password
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
+
+class ConfirmPasswordView(UpdateView):
+    
+    form_class = ConfirmPasswordForm
+    template_name = 'main/settings/confirm_password.html'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self):
+        return self.request.get_full_path()  
+
+def policy_html(request):
+    
+    return render(request, 'web_docs/policy/index.html')
 
 @login_required
 def get_notifications(request):
@@ -121,7 +140,8 @@ def change_password(request):
     
 @login_required
 def edit_profile(request):
-    if request.method=='POST':
+    
+    if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
@@ -205,7 +225,7 @@ def set_public_private(request):
     
     data = dict()
     
-    if request.method=="POST":
+    if request.method == "POST":
         hid = request.POST.get('hid', None)
         id = hashids_user.decode(hid)[0]
         user = Profile.objects.get(id=id)
@@ -275,6 +295,271 @@ def set_public_private(request):
                 'disable_ranking': disable_ranking
             }
             return render(request,'main/settings/public_private.html', context)
+
+        
+@login_required
+def search_settings(request):
+    
+    data = dict()
+    
+    searches = request.user.recent_searches.order_by('-time_stamp')
+    
+    if request.method == 'POST':
+        
+        if request.user.is_authenticated:
+            choice = request.POST.get('onoffinput-check', None)
+            if choice == "searchoff":
+                if request.user.save_searches == True:
+                    request.user.save_searches = False
+                    if request.user.recent_searches:
+                        request.user.recent_searches.clear()
+                    request.user.save()
+                    data['update_search_settings'] = True
+            elif choice == "searchon":
+                if request.user.save_searches == False:
+                    request.user.save_searches = True
+                    request.user.save()
+                    data['update_search_settings'] = True
+            
+            data['search_settings_form'] = render_to_string('main/settings/search_settings_input.html',request=request)
+            return JsonResponse(data)
+    
+    else:
+        
+        context = {
+            'searches':searches,
+            'privacy_active':'setting-link-active',
+        }         
+
+        return render(request, 'main/settings/search_settings_main.html', context)
+
+@login_required
+def notification_settings_all(request):
+    
+    data = dict()
+    
+    if request.method == 'POST':
+        
+        if request.user.is_authenticated:
+                choice = request.POST.get('onoffinput-check', None)
+                if choice == "notifyoff":
+                    if request.user.get_notify  == True:
+                        request.user.get_notify  = False
+                        request.user.save()
+                        data['update_notifications_settings'] = True
+                elif choice == "notifyon":
+                    if request.user.get_notify == False:
+                        request.user.get_notify = True
+                        request.user.save()
+                        data['update_notifcaions_settings'] = True
+                
+                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_pause_all.html',request=request)
+                return JsonResponse(data)
+            
+    else:
+        context = {
+            'notifcation_active':'setting-link-active',
+        }
+        return render(request, 'main/settings/notifications/notifications_all.html', context)
+    
+@login_required
+def notifications_post_all(request):
+    
+    data = dict()
+    
+    if request.user.is_authenticated:
+        choice = request.POST.get('onoffinput-check', None)
+        if choice == "postalloff":
+            if request.user.get_post_notify_all == True:
+                request.user.get_post_notify_all = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_all.html',request=request)
+            return JsonResponse(data)
+            
+        if choice == "postallon":
+            if request.user.get_post_notify_all == False:
+                request.user.get_post_notify_all = True
+                request.user.save()
+                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_all.html',request=request)
+                return JsonResponse(data)
+                
+        if choice == "postcommentson":
+            if request.user.get_post_notify_comments == False:
+                request.user.get_post_notify_comments = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_comments.html',request=request)
+            return JsonResponse(data)
+          
+        if choice == "postcommentsoff":
+            if request.user.get_post_notify_comments == True:
+                request.user.get_post_notify_comments = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_comments.html',request=request)
+            return JsonResponse(data)
+                         
+        if choice == "postlikeson":
+            if request.user.get_post_notify_likes == False:
+                request.user.get_post_notify_likes = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_likes.html',request=request)
+            return JsonResponse(data)
+                          
+        if choice == "postlikesoff":
+            if request.user.get_post_notify_likes == True:
+                request.user.get_post_notify_likes = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_post_likes.html',request=request)
+            return JsonResponse(data)
+    context = {
+        'notifcation_active':'setting-link-active',
+    }
+    return render(request, 'main/settings/notifications/notifications_post.html', context)
+
+@login_required
+def notifications_buzz_all(request):
+    
+    data = dict()
+    
+    if request.user.is_authenticated:
+        choice = request.POST.get('onoffinput-check', None)
+        if choice == "buzzalloff":
+            if request.user.get_buzz_notify_all == True:
+                request.user.get_buzz_notify_all = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_all.html',request=request)
+            return JsonResponse(data)
+        if choice == "buzzallon":
+            if request.user.get_buzz_notify_all == False:
+                request.user.get_buzz_notify_all = True
+                request.user.save()
+                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_all.html',request=request)
+            return JsonResponse(data)    
+        
+        if choice == "buzzcommentson":
+            if request.user.get_buzz_notify_comments == False:
+                request.user.get_buzz_notify_comments = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_comments.html',request=request)
+            return JsonResponse(data)   
+        
+        if choice == "buzzcommentsoff":
+            if request.user.get_buzz_notify_comments == True:
+                request.user.get_buzz_notify_comments = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_comments.html',request=request)
+            return JsonResponse(data)   
+        
+        if choice == "buzzlikeson":
+            if request.user.get_buzz_notify_likes == False:
+                request.user.get_buzz_notify_likes = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_likes.html',request=request)
+            return JsonResponse(data)   
+         
+        if choice == "buzzlikesoff":
+            if request.user.get_buzz_notify_likes == True:
+                request.user.get_buzz_notify_likes = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_likes.html',request=request)
+            return JsonResponse(data)
+        
+    context = {
+            'notifcation_active':'setting-link-active',
+        }
+    return render(request, 'main/settings/notifications/notifications_buzz.html', context)
+
+@login_required
+def notifications_blog_all(request):
+    
+    data = dict()
+    
+    if request.user.is_authenticated:
+        choice = request.POST.get('onoffinput-check', None)
+        if choice == "blogalloff":
+            if request.user.get_blog_notify_all == True:
+                request.user.get_blog_notify_all = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_all.html',request=request)
+            return JsonResponse(data)
+        
+        if choice == "blogallon":
+            if request.user.get_blog_notify_all == False:
+                request.user.get_blog_notify_all = True
+                request.user.save()
+                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_all.html',request=request)
+            return JsonResponse(data)    
+        
+        if choice == "blogcommentson":
+            if request.user.get_blog_notify_comments == False:
+                request.user.get_blog_notify_comments = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)  
+        
+        if choice == "blogcommentsoff":
+            if request.user.get_blog_notify_comments == True:
+                request.user.get_blog_notify_comments = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)   
+        
+        if choice == "bloglikeson":
+            if request.user.get_blog_notify_likes == False:
+                request.user.get_blog_notify_likes = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)
+        
+        if choice == "bloglikesoff":
+            if request.user.get_blog_notify_likes == True:
+                request.user.get_blog_notify_likes = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)
+    context = {
+        'notifcation_active':'setting-link-active',
+    }
+    return render(request, 'main/settings/notifications/notifications_blog.html', context)        
+
+@login_required
+def notifications_friends_all(request):
+    
+    data = dict()
+    
+    if request.user.is_authenticated:
+        choice = request.POST.get('onoffinput-check', None)
+        if choice == "friendrequestoff":
+            if request.user.get_friendrequest_notify == True:
+                request.user.get_friendrequest_notify = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_friends_all.html',request=request)
+            return JsonResponse(data)
+        
+        if choice == "friendrequeston":
+            if request.user.get_friendrequest_notify == False:
+                request.user.get_friendrequest_notify = True
+                request.user.save()
+                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_friends_all.html',request=request)
+            return JsonResponse(data)    
+        
+        if choice == "friendrequestacceptedon":
+            if request.user.get_friendrequestaccepted_notify == False:
+                request.user.get_friendrequestaccepted_notify = True
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)  
+        
+        if choice == "friendrequestacceptedoff":
+            if request.user.get_friendrequestaccepted_notify == True:
+                request.user.get_friendrequestaccepted_notify = False
+                request.user.save()
+            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_blog_comments.html',request=request)
+            return JsonResponse(data)   
+        
+    context = {
+        'notifcation_active':'setting-link-active',
+    }
+    return render(request, 'main/settings/notifications/notifications_friends.html', context)     
         
 @login_required
 def get_blocking(request):
@@ -306,7 +591,261 @@ def login_info(request):
         
         return render(request,'main/settings/login_info.html', context)
         
+@login_required
+def deletion_menu(request):
+    
+    if request.user.is_authenticated:
+        return render(request, 'main/settings/deletion/menu.html',{'privacy_active':'setting-link-active'})
+    else:
+        return redirect('main:settings-edit')
+    
+@login_required
+@confirm_password
+def deletion_post(request):
+    
+    if request.user.is_authenticated:
+        obj = request.GET.get('t', None)
+        msg_dict = {
+                    'all':'Are you sure you want to delete all your posts permanently?',
+                    'comments':'Are you sure you want to delete all your comments permanently?',
+                    'likes':'Are you sure you want to remove all your likes permanently?'
+        }
         
+        title_dict = {
+                    'all':'Delete all your posts',
+                    'comments':'Delete all your comments',
+                    'likes':'Remove all your likes'
+        }
+        
+        message = msg_dict[obj]
+        title = title_dict[obj]
+        
+        if request.method == 'POST':
+            
+            if obj == 'all':
+                if request.user.posts.exists():
+                    request.user.posts.all().delete()
+                success_message = "Deleted all your posts successfully"
+                
+            elif obj == 'comments':
+                if request.user.comment_set.exists():
+                    request.user.comment_set.all().delete()
+                success_message = "Deleted all your comments successfully"
+            
+            elif obj == 'likes':
+                if request.user.post_likes.exists():
+                    request.user.post_likes.all().clear()
+                success_message = "Removed all your likes successfully"
+                
+            messages.success(request,success_message)
+            return redirect('main:delete-menu')
+        
+        context = {
+            'message':message,
+            'obj':obj,
+            'title':title,
+            'privacy_active':'setting-link-active',
+        }
+        
+        return render(request, 'main/settings/deletion/post.html', context)
+    
+    else:
+        error_message = "There was an issue processing your request"
+        messages.error(request,error_message)
+        return redirect('main:delete-menu')
+        
+@login_required
+@confirm_password
+def deletion_buzz(request):
+    
+    if request.user.is_authenticated:
+        obj = request.GET.get('t', None)
+        msg_dict = {
+                    'all':'Are you sure you want to delete all your buzzes permanently?',
+                    'replies':'Are you sure you want to delete all your replies permanently?',
+                    'likes':'Are you sure you want to remove all your likes, dislikes, and wots permanently?'
+        }
+        
+        title_dict = {
+                    'all':'Delete all your buzzes',
+                    'replies':'Delete all your replies',
+                    'likes':'Remove all your likes, dislikes, and wots'
+        }
+        
+        message = msg_dict[obj]
+        title = title_dict[obj]
+        
+        if request.method == 'POST':
+            
+            if obj == 'all':
+                if request.user.buzz_set.exists():
+                    request.user.buzz_set.all().delete()
+                success_message = "Deleted all your buzzes successfully"
+                
+            elif obj == 'replies':
+                if request.user.buzzreply_set.exists():
+                    request.user.buzzreply_set.all().delete()
+                success_message = "Deleted all your replies successfully"
+            
+            elif obj == 'likes':
+                if request.user.likes.exists():
+                    request.user.likes.clear()
+                if request.user.dislikes.exists():
+                    request.user.dislikes.clear()
+                if request.user.wots.exists():
+                    request.user.wots.clear()
+                success_message = "Removed all your likes, dislikes and wots successfully"
+            
+            messages.success(request,success_message)
+            return redirect('main:delete-menu')
+        
+        context = {
+            'message':message,
+            'obj':obj,
+            'title':title,
+            'privacy_active':'setting-link-active',
+        }
+        
+        return render(request, 'main/settings/deletion/buzz.html', context)
+    
+    else:
+        error_message = "There was an issue processing your request"
+        messages.error(request,error_message)
+        return redirect('main:delete-menu')
+    
+@login_required
+@confirm_password
+def deletion_blog(request):
+    
+    if request.user.is_authenticated:
+        obj = request.GET.get('t', None)
+        msg_dict = {
+                    'all':'Are you sure you want to delete all your blogs permanently?',
+                    'replies':'Are you sure you want to delete all your blog replies permanently?',
+                    'likes':'Are you sure you want to remove all your blog likes permanently?'
+        }
+        
+        title_dict = {
+                    'all':'Delete all your blogs',
+                    'replies':'Delete all your blog replies',
+                    'likes':'Remove all your likes'
+        }
+        
+        message = msg_dict[obj]
+        title = title_dict[obj]
+        
+        if request.method == 'POST':
+            
+            if obj == 'all':
+                if request.user.blog_set.exists():
+                    request.user.blog_set.all().delete()
+                success_message = "Deleted all your blogs successfully"
+                
+            elif obj == 'replies':
+                if request.user.blogreply_set.exists():
+                    request.user.blogreply_set.all().delete()
+                success_message = "Deleted all your blog replies successfully"
+            
+            elif obj == 'likes':
+                if request.user.blog_likes.exists():
+                    request.user.blog_likes.all().clear()
+                success_message = "Removed all your blog likes successfully"
+            
+            messages.success(request,success_message)
+            return redirect('main:delete-menu')
+        
+        context = {
+            'message':message,
+            'obj':obj,
+            'title':title,
+            'privacy_active':'setting-link-active',
+        }
+        
+        return render(request, 'main/settings/deletion/blog.html', context)
+
+    else:
+        error_message = "There was an issue processing your request"
+        messages.error(request,error_message)
+        return redirect('main:delete-menu')
+    
+@login_required
+@confirm_password
+def deletion_course(request):
+    
+    if request.user.is_authenticated:
+        obj = request.GET.get('t', None)
+        msg_dict = {
+                    'all':'Are you sure you want to remove all your courses permanently?',
+                    'reviews':'Are you sure you want to delete all your course reviews permanently?',
+        }
+        
+        title_dict = {
+                    'all':'Delete all your courses',
+                    'reviews':'Delete all your course reviews',
+        }
+        
+        message = msg_dict[obj]
+        title = title_dict[obj]
+        
+        if request.method == 'POST':
+            
+            if obj == 'all':
+                if request.user.courses.exists():
+                    request.user.courses.clear()
+                success_message = "Removed all your courses successfully"
+                
+            elif obj == 'reviews':
+                if request.user.review_set.exists():
+                    request.user.review_set.all().delete()
+                success_message = "Deleted all your course reviews successfully"
+            
+            
+            messages.success(request,success_message)
+            return redirect('main:delete-menu')
+        
+        context = {
+            'message':message,
+            'obj':obj,
+            'title':title,
+            'privacy_active':'setting-link-active',
+        }
+        
+        return render(request, 'main/settings/deletion/course.html', context)
+
+    else:
+        error_message = "There was an issue processing your request"
+        messages.error(request,error_message)
+        return redirect('main:delete-menu')
+    
+    
+@login_required
+@confirm_password
+def deletion_account(request):
+    
+    if request.user.is_authenticated:  
+        if request.method == 'POST':
+   
+            form = ConfirmPasswordForm(request.POST, instance=request.user)
+            if form.is_valid():
+                #request.user.delete()
+                print("lol")
+                success_message = "Your account has been removed"
+                messages.success(request,success_message)
+                return redirect('main:delete-menu')
+
+            else:
+                error_message = "There was an issue processing your request, please try again"
+                messages.error(request,error_message)
+                return redirect('main:account-deletion')
+
+        form = ConfirmPasswordForm(instance=request.user)        
+        return render(request, 'main/settings/deletion/account.html', {'form':form,'privacy_active':'setting-link-active'})
+        
+    else:
+        error_message = "There was an issue processing your request"
+        messages.error(request,error_message)
+        return redirect('main:delete-menu')
+           
 @login_required
 def add_bookmark(request, hid, obj_type):
     
@@ -409,6 +948,9 @@ def accept_reject_friend_request(request,hid, s):
             fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
             fr.accept()
             is_friend=True
+            if other_user.get_friendrequestaccepted_notify:
+                message = "CON_FRRE" + "has accepted your friend request"
+                notify.send(sender=user, recipient=other_user, verb=message, target=fr)
         elif action == 1:   
             fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
             fr.cancel()
@@ -435,23 +977,31 @@ def add_remove_friend(request, hid, s):
         action = int(s)
         if action == 1:
             #remove friend request from request.user to the_user 
-            Friend.objects.remove_friend(user,other_user)
+            Friend.objects.remove_friend(user, other_user)
             is_friend = False
         elif action == 0:
-            Friend.objects.add_friend(user, other_user)
+            Friend.objects.add_friend(user, other_user) # send a friend request to other_user
             pending = True
+            if other_user.get_friendrequest_notify:
+                fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+                message = "CON_FRRE" + "has sent you a friend request"
+                notify.send(sender=user, recipient=other_user, verb=message, target=fr)
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'pending':pending,'user':other_user} ,request=request)
         return JsonResponse(data)
     
 
 @login_required
 def block_user(request, hid):
+    
     data=dict()
     id = hashids_user.decode(hid)[0]
     wants_to_block = request.user     #request.user submits request to block user
     will_be_blocked = Profile.objects.get(id=id) #user to be blocked by request.user
     if request.method == "POST":
         Block.objects.add_block(wants_to_block, will_be_blocked)
+        """ After blocking a user update the session holding the blockers_id """
+        blockers_list = Block.objects.blocked(request.user)
+        request.session['blockers'] = [u.id for u in blockers_list]
         if Friend.objects.are_friends(wants_to_block, will_be_blocked):
             Friend.objects.remove_friend(wants_to_block, will_be_blocked)
         if FriendshipRequest.objects.filter(from_user=will_be_blocked,to_user=wants_to_block).exists():
@@ -471,8 +1021,10 @@ def unblock_user(request, hid):
     
     id = hashids_user.decode(hid)[0]
     wants_to_unblock = request.user     #request.user submits request to unblock user
-    will_be_unblock = Profile.objects.get(id=id) #user to be unblocked by requiest.user (SIGNED IN USER)
-    
+    will_be_unblock = Profile.objects.get(id=id) #user to be unblocked by request.user (SIGNED IN USER)
+    """ After blocking a user update the session holding the blockers_id """
+    blockers_list = Block.objects.blocked(request.user)
+    request.session['blockers'] = [u.id for u in blockers_list]
     if request.method=="POST":
         if Block.objects.is_blocked(wants_to_unblock, will_be_unblock):
             Block.objects.remove_block(wants_to_unblock,will_be_unblock)
@@ -615,7 +1167,9 @@ def user_same_program(request):
     # @param requested - keeps track of users who sent friend request to user
     pending = dict()
     requested = dict()
- 
+    users = user_list = None
+    needs_edit = False
+    
     sent =  FriendshipRequest.objects.select_related("from_user", "to_user").filter(from_user=request.user).all()
     requests = Friend.objects.requests(user=request.user)
     #append id of users who send friend request to list
@@ -630,8 +1184,11 @@ def user_same_program(request):
     uni = user.university
     pro = user.program
 
-    user_list = Profile.objects.same_program(user=user, program=pro, university=uni)
-   
+    if uni and program:
+        user_list = Profile.objects.same_program(user=user, program=pro, university=uni)
+    else:
+        needs_edit = True
+        
     if user_list != None:
         page = request.GET.get('page', 1)
         paginator = Paginator(user_list, 10)
@@ -641,8 +1198,6 @@ def user_same_program(request):
             users = paginator.page(1)
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
-    elif user_list==None:
-        users=None
         
     total_friends = request.session.get('total_friends')
     total_requests = request.session.get('total_requests')
@@ -657,6 +1212,7 @@ def user_same_program(request):
         'total_pending':total_pending,
         'pending':pending,
         'requested':requested,
+        'needs_edit':needs_edit,
         'menu_link_active':'-active',
     } 
     
@@ -823,8 +1379,6 @@ def get_user(request,username):
         
         friends = Friend.objects.friends(user)[:6]
         num_friends = len(friends)
-        
-        print(num_friends)
 
         post_list = user.post_set.order_by('last_edited')
         page = request.GET.get('page_posts', 1)
@@ -866,25 +1420,20 @@ def get_user(request,username):
 @login_required   
 def get_user_friends(request):
     
-    is_blocked = is_friend = is_blocked = youre_blocked = False
+    is_friend = requested = pending = addfriend = False
     
     hid = request.GET.get('id', None)
     id = hashids_user.decode(hid)[0]
     
     user = get_object_or_404(Profile, id=id)
     
-    if  Friend.objects.are_friends(request.user, user):
+    if Friend.objects.are_friends(request.user, user):
         is_friend=True
     
-    elif Block.objects.is_blocked(request.user, user):
-        you_blocked=True
-        is_blocked=True
+    elif Block.objects.is_blocked(request.user, user) or Block.objects.is_blocked(user, request.user) or user.public==False:
+        return redirect('main.get_user',username=user.username)
         
-    elif Block.objects.is_blocked(user, request.user):
-        youre_blocked=True
-        #return to page not found
-        
-    if (is_friend or user.public==True) and not (is_blocked and youre_blocked):
+    if is_friend or user.public==True :
         
         friend_list = Friend.objects.friends(user)
         num_friends = len(friend_list)
@@ -898,24 +1447,35 @@ def get_user_friends(request):
         except EmptyPage:
             friends = paginator.page(paginator.num_pages)
         
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            requested=True   
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            pending=True
+        else:
+            addfriend=True  
+            
         context = {
             'friends_active':'-active',
             'user':user,
             'is_friend':is_friend,
             'friends':friends,
+            'requested':requested,
+            'addfriend':addfriend,
+            'pending':pending,
             'num_friends':num_friends,
         }
 
         return render(request,  'main/userhome/view_friends.html', context)
     
-    elif user.public==False:
+    else:
         return redirect('main.get_user',username=user.username)
         
 
 @login_required
 def get_user_posts(request):
     
-    is_blocked = is_friend = False
+    is_friend = requested = pending = addfriend = False
+    
     hid = request.GET.get('id', None)
     id = hashids_user.decode(hid)[0]
     
@@ -923,16 +1483,12 @@ def get_user_posts(request):
     
     if  Friend.objects.are_friends(request.user, user):
         is_friend=True
+        
+    elif Block.objects.is_blocked(user, request.user) or Block.objects.is_blocked(request.user, user) or user.public==False:
+        return redirect('main.get_user',username=user.username)
     
-    elif Block.objects.is_blocked(request.user, user):
-        you_blocked=True
-        is_blocked=True
         
-    elif Block.objects.is_blocked(user, request.user):
-        youre_blocked=True
-        #return to page not found
-        
-    if (is_friend or user.public==True) and not is_blocked:
+    if is_friend or user.public==True:
         
         post_list = user.post_set.order_by('last_edited')
         num_posts = post_list.count()
@@ -946,12 +1502,22 @@ def get_user_posts(request):
         except EmptyPage:
             friends = paginator.page(paginator.num_pages)
         
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            requested=True   
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            pending=True
+        else:
+            addfriend=True  
+            
         context = {
             'posts_active':'-active',
             'user':user,
             'is_friend':is_friend,
             'posts':posts,
-            'num_posts':num_posts
+            'num_posts':num_posts,
+            'requested':requested,
+            'addfriend':addfriend,
+            'pending':pending,
         }
 
         return render(request,  'main/userhome/view_posts.html', context)
@@ -962,7 +1528,8 @@ def get_user_posts(request):
 @login_required
 def get_user_blogs(request):
     
-    is_blocked = is_friend = False
+    is_friend = requested = pending = addfriend = False
+    
     hid = request.GET.get('id', None)
     id = hashids_user.decode(hid)[0]
     
@@ -971,15 +1538,10 @@ def get_user_blogs(request):
     if  Friend.objects.are_friends(request.user, user):
         is_friend=True
     
-    elif Block.objects.is_blocked(request.user, user):
-        you_blocked=True
-        is_blocked=True
+    elif Block.objects.is_blocked(user, request.user) or Block.objects.is_blocked(request.user, user) or user.public==False:
+        return redirect('main.get_user',username=user.username)
         
-    elif Block.objects.is_blocked(user, request.user):
-        youre_blocked=True
-        #return to page not found
-        
-    if (is_friend or user.public==True) and not (is_blocked and youre_blocked):
+    if is_friend or user.public==True:
         
         blog_list = user.blog_set.order_by('last_edited')
         num_blogs = blog_list.count()
@@ -993,12 +1555,22 @@ def get_user_blogs(request):
         except EmptyPage:
             blogs = paginator.page(paginator.num_pages)
         
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            requested=True   
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            pending=True
+        else:
+            addfriend=True
+            
         context = {
             'blogs_active':'-active',
             'user':user,
             'is_friend':is_friend,
             'blogs':blogs,
-            'num_blogs':num_blogs
+            'num_blogs':num_blogs,
+            'requested':requested,
+            'addfriend':addfriend,
+            'pending':pending,
         }
 
         return render(request,  'main/userhome/view_blogs.html', context)
@@ -1010,7 +1582,8 @@ def get_user_blogs(request):
 @login_required
 def get_user_courses(request):
     
-    is_blocked = is_friend = False
+    is_friend = requested = pending = addfriend = False
+    
     hid = request.GET.get('id', None)
     id = hashids_user.decode(hid)[0]
     
@@ -1019,15 +1592,10 @@ def get_user_courses(request):
     if  Friend.objects.are_friends(request.user, user):
         is_friend=True
     
-    elif Block.objects.is_blocked(request.user, user):
-        you_blocked=True
-        is_blocked=True
+    elif Block.objects.is_blocked(user, request.user) or Block.objects.is_blocked(request.user, user) or user.public==False:
+        return redirect('main.get_user',username=user.username)
         
-    elif Block.objects.is_blocked(user, request.user):
-        youre_blocked=True
-        #return to page not found
-        
-    if (is_friend or user.public==True) and not is_blocked:
+    if is_friend or user.public==True:
         
         course_list = user.courses.order_by('course_year')
         num_courses = course_list.count()
@@ -1040,16 +1608,54 @@ def get_user_courses(request):
             courses = paginator.page(1)
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
-        
+            
+        if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
+            requested=True   
+        elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
+            pending=True
+        else:
+            addfriend=True
+              
         context = {
             'courses_active':'-active',
             'user':user,
             'is_friend':is_friend,
             'courses':courses,
-            'num_courses':num_courses
+            'num_courses':num_courses,
+            'requested':requested,
+            'addfriend':addfriend,
+            'pending':pending,
         }
 
-        return render(request,  'main/userhome/view_courses.html', context)
+        return render(request, 'main/userhome/view_courses.html', context)
     
     elif user.public==False:
         return redirect('main.get_user',username=user.username)
+    
+
+@login_required
+def report_object(request,reporter_id):
+    
+    obj_type = request.GET.get('t',None)
+    obj_id = request.GET.get('hid', None)
+    user_id = hashids_user.decode(hid)[0]
+    if Profile.objects.filter(id=user_id).exists():
+        reporter = Profile.objects.get(id=user_id)
+        
+        if request.method == 'POST':
+            if obj_type == 'u':
+                reprt = 
+            if obj_type == 'p':
+                pass
+            if obj_type == 'cmnt':
+                pass
+            if obj_type == 'bz':
+                pass
+            if obj_type == 'bzrply':
+                pass
+            if obj_type == 'blg':
+                pass
+            if obj_type == 'blgrply':
+                pass
+            if obj_type == 'cr':
+                pass

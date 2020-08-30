@@ -1,0 +1,43 @@
+{% extends 'main/settings/privacy_security.html' %}
+{% block securitycontent %}
+<div class="mb-3 pb-3  border-bottom account-privacy-info">
+    <div class="setting-menu-sub">
+        <h5>Pause All Post's Notifications</h5>
+    </div>
+    <div class="privacy-type">
+        <div class="mb-2 description-ctr">
+            <p class="mb-2 small text-muted">
+                You can pause receiving all notifications on your post's comments and likes here.
+            </p>
+        </div>
+        <div id="ns-form-ctr">
+            {% include 'main/settings/notifications/notifications_post_all.html' %}
+        </div>
+    </div>
+</div>
+<div class="mb-3 pb-3  border-bottom account-privacy-info">
+    <div class="setting-menu-sub">
+        <h6>Pause Comments Notifications</h6>
+    </div>
+    <div class="mb-2 description-ctr">
+        <p class="mb-2 small text-muted">
+            When someone comments on your post, likes your comment or replies to your comment you will receive a notification.
+        </p>
+    </div>
+    <div class="privacy-type">
+        <div id="ns-form-ctr">
+            {% include 'main/settings/notifications/notifications_post_comments.html' %}
+        </div>
+    </div>
+</div>
+<div class="mb-3 pb-3 account-privacy-info">
+    <div class="setting-menu-sub">
+        <h6>Pause Likes Notifications</h6>
+    </div>
+    <div class="privacy-type">
+        <div id="ns-form-ctr">
+            {% include 'main/settings/notifications/notifications_post_likes.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

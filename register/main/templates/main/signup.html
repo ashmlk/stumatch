@@ -67,6 +67,10 @@
     .btn-primary:hover {
         opacity: 0.85;
     }
+
+    .error input, .error select {
+    border: 2px red solid;
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -81,7 +85,7 @@
 <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
 <script src="{% static 'initial/initial.js' %}"></script>
 <script>
-
+  /*
   $(document).ready(function () {
 
     var options = {
@@ -122,5 +126,6 @@
         })
 
   })
+  */
 </script>
 </html>

@@ -1,14 +1,116 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from main.models import Profile
+from main.models import Profile, ReportBase
 from django.db import models
 from django.core.validators import RegexValidator
 from django.forms.widgets import ClearableFileInput
+from django.forms import Select
+from django.contrib.auth.hashers import check_password
+from datetime import datetime, timezone
+from django.utils import timezone
 
 username_regex = RegexValidator(r'^(?!.*\.{2})[0-9a-zA-Z-_]*$', 'Only alphanumeric, underscore, dash or nonconsecutive periods are allowed.')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 
+UN = ['Alberta University of the Arts', 'Athabasca University', 'MacEwan University', 'Mount Royal University', 'University of Alberta','University of Calgary','University of Lethbridge',
+                       'Capilano University','Emily Carr University of Art and Design','Kwantlen Polytechnic University','Royal Roads University','Simon Fraser University','Thompson Rivers University',
+                       'University of British Columbia','University of Victoria','University of the Fraser Valley','University of Northern British Columbia','Vancouver Island University',
+                       'Brandon University','University College of the North','University of Manitoba','University of Winnipeg','Mount Allison University','St. Thomas University',
+                       'University of New Brunswick','Université de Moncton','Memorial University of Newfoundland','Acadia University','Cape Breton University','Dalhousie University','Mount Saint Vincent University',
+                       'Nova Scotia College of Art and Design University','Saint Francis Xavier University',"Saint Mary's University", 'Université Sainte-Anne',"University of King's College",'Algoma University',
+                       'Brock University','Carleton University','Lakehead University','Laurentian University','McMaster University','Nipissing University','Ontario College of Art and Design University',"Queen's University at Kingston",
+                       'Royal Military College of Canada','Ryerson University','Trent University',"Université de l'Ontario français",'University of Guelph','Ontario Tech University','University of Ottawa','University of Toronto',
+                       'University of Waterloo', 'University of Western Ontario','University of Windsor','Wilfrid Laurier University','York University','University of Prince Edward Island',"Bishop's University",'Concordia University',
+                       'École de technologie supérieure',"École nationale d'administration publique",'Institut national de la recherche scientifique','McGill University','Université de Montréal','Université de Sherbrooke',
+                       'Université du Québec en Abitibi-Témiscamingue','Université du Québec en Outaouais','Université du Québec à Chicoutimi','Université du Québec à Montréal','Université du Québec à Rimouski',
+                       'Université du Québec à Trois-Rivières','Université Laval','University of Regina',
+                       'University of Saskatchewan','Yukon University','Fairleigh Dickinson University','New York Institute of Technology','Quest University','Niagara University',
+                       'Trinity Western University','University Canada West','Booth University College','Canadian Mennonite University','Kingswood University','Crandall University',"St. Stephen's University",
+                       'University of Fredericton','Atlantic School of Theology','Tyndale University','Redeemer University College',"The King's University"]
+
+UNIVERSITY_CHOICES = (
+		('University',
+   			(
+				   		("","University"),
+						("Acadia University","Acadia University"),
+						("Alberta University of the Arts","Alberta University of the Arts"),
+						("Algoma University","Algoma University"),
+						("Athabasca University","Athabasca University"),
+						("Atlantic School of Theology","Atlantic School of Theology"),
+						("Bishop's University","Bishop's University"),
+						("Booth University College","Booth University College"),
+						("Brandon University","Brandon University"),
+						("Brock University","Brock University"),
+						("Canadian Mennonite University","Canadian Mennonite University"),
+						("Cape Breton University","Cape Breton University"),
+						("Capilano University","Capilano University"),
+						("Carleton University","Carleton University"),
+						("Concordia University","Concordia University"),
+						("Crandall University","Crandall University"),
+						("Dalhousie University","Dalhousie University"),
+						("Emily Carr University of Art and Design","Emily Carr University of Art and Design"),
+						("Fairleigh Dickinson University","Fairleigh Dickinson University"),
+						("Institut national de la recherche scientifique","Institut national de la recherche scientifique"),
+						("Kingswood University","Kingswood University"),
+						("Kwantlen Polytechnic University","Kwantlen Polytechnic University"),
+						("Lakehead University","Lakehead University"),
+						("Laurentian University","Laurentian University"),
+						("MacEwan University","MacEwan University"),
+						("McGill University","McGill University"),
+						("McMaster University","McMaster University"),
+						("Memorial University of Newfoundland","Memorial University of Newfoundland"),("Mount Allison University","Mount Allison University"),
+						("Mount Royal University","Mount Royal University"),("Mount Saint Vincent University","Mount Saint Vincent University"),
+						("New York Institute of Technology","New York Institute of Technology"),("Niagara University","Niagara University"),("Nipissing University","Nipissing University"),
+						("Nova Scotia College of Art and Design University","Nova Scotia College of Art and Design University"),
+						("Ontario College of Art and Design University","Ontario College of Art and Design University"),("Ontario Tech University","Ontario Tech University"),
+						("Queen's University at Kingston","Queen's University at Kingston"),("Quest University","Quest University"),
+						("Redeemer University College","Redeemer University College"),("Royal Military College of Canada" 
+						,"Royal Military College of Canada"),
+						("Royal Roads University","Royal Roads University"),
+						("Ryerson University","Ryerson University"),( 
+						"Saint Francis Xavier University","Saint Francis Xavier University"),
+						("Saint Mary's University","Saint Mary's University"),("Simon Fraser University","Simon Fraser University"),
+						("St. Stephen's University","St. Stephen's University"),
+						("St. Thomas University","St. Thomas University"),("The King's University","The King's University"),
+						("Thompson Rivers University","Thompson Rivers University"),("Trent University","Trent University"),
+						("Trinity Western University","Trinity Western University"),
+						("Tyndale University","Tyndale University") 
+						,("University Canada West","University Canada West"),
+						("University College of the North","University College of the North"),("University of Alberta","University of Alberta"),
+						("University of British Columbia","University of British Columbia"),
+						("University of Calgary","University of Calgary"),
+						("University of Fredericton","University of Fredericton"),("University of Guelph","University of Guelph"),("University of King's College","University of King's College"),
+						("University of Lethbridge","University of Lethbridge"),("University of Manitoba","University of Manitoba"),
+						("University of New Brunswick","University of New Brunswick"),("University of Northern British Columbia","University of Northern British Columbia"),
+						("University of Ottawa","University of Ottawa"),("University of Prince Edward Island","University of Prince Edward Island"),("University of Regina","University of Regina"),
+						("University of Saskatchewan","University of Saskatchewan"),("University of Toronto","University of Toronto"),
+						("University of Victoria","University of Victoria"),
+						("University of Waterloo","University of Waterloo"),("University of Western Ontario","University of Western Ontario"),("University of Windsor","Universityof Windsor"),("University of Winnipeg","University of Winnipeg"),
+						("University of the Fraser Valley","University of the Fraser Valley"),
+						("Université Laval","Université Laval"),("Université Sainte-Anne","Université Sainte-Anne"),("Université de Moncton","Université de Moncton"),("Université de Montréal","Université de Montréal"),
+						("Université de Sherbrooke","Université de Sherbrooke"),
+						("Université de l'Ontario français","Université de l'Ontario français"),
+						("Université du Québec en Abitibi-Témiscamingue","Université du Québec en Abitibi-Témiscamingue"),("Université du Québec en Outaouais","Université du Québec en Outaouais"),
+						("Université du Québec à Chicoutimi","Université du Québec à Chicoutimi"),
+						("Université du Québec à Montréal","Université du Québec à Montréal"),("Université du Québec à Rimouski","Université du Québec à Rimouski"),
+						("Université du Québec à Trois-Rivières","Université du Québec à Trois-Rivières"),("Vancouver Island University","Vancouver Island University"),
+						("Wilfrid Laurier University","Wilfrid Laurier University"),("York University","York University"),("Yukon University","Yukon University"),
+						("École de technologie supérieure","École de technologie supérieure"),
+						("École nationale d'administration publique","École nationale d'administration publique"),
+			)
+		),
+)
+
+class MySelect(Select):
+    def create_option(self, *args,**kwargs):
+        option = super().create_option(*args,**kwargs)
+        if not option.get('value'):
+            option['attrs']['disabled'] = 'disabled'
+
+        return option
+
 class SignUpForm(UserCreationForm):
+    
 	username = forms.CharField(
 		label='',
 		max_length=30,
@@ -63,18 +165,16 @@ class SignUpForm(UserCreationForm):
 		)
 	)
 
-	university = forms.CharField(
+	university = forms.ChoiceField(
 		label='',
-		max_length=50,
-		min_length=2,
-		required=False,
-		validators=[alphanumeric],
-		widget=forms.TextInput(
-			attrs={
-				"placeholder": "University",
-				"class": "form-control"
-			}
-		)
+		required=True,
+  		choices = UNIVERSITY_CHOICES,
+
+  		widget=MySelect(
+        attrs={
+			"class":"form-control"
+		}
+        ), 
 	)
 
 	password1 = forms.CharField(
@@ -102,6 +202,8 @@ class SignUpForm(UserCreationForm):
 			}
 		)
 	)
+ 
+	error_css_class = "error"
  
 
 	class Meta:
@@ -157,18 +259,17 @@ class EditProfileForm(UserChangeForm):
 		)
 	)
 
-	university = forms.CharField(
-		max_length=50,
-		min_length=2,
-		required=False,
-		validators=[alphanumeric],
-		widget=forms.TextInput(
-			attrs={
-				"placeholder": "University",
-				"class": "form-control",
-    			"disabled":"disabled"
-			}
-		)
+	university = forms.ChoiceField(
+		label='University',
+		required=True,
+  		choices = UNIVERSITY_CHOICES,
+
+  		widget=MySelect(
+        attrs={
+			"class":"form-control",
+			"disabled":"disabled"
+		}
+        ), 
 	)
 
 	email = forms.EmailField(
@@ -208,6 +309,8 @@ class EditProfileForm(UserChangeForm):
   
 	password = None
 
+	error_css_class = "error"
+ 
 	class Meta:
 		model = Profile
 		fields=('username','first_name','last_name','university','program','email','bio',)
@@ -225,3 +328,37 @@ class PasswordResetForm(PasswordChangeForm):
 	class Meta:
 		model = Profile
 		fields = ('old_password','new_password1','new_password2')
+  
+  
+class ConfirmPasswordForm(forms.ModelForm):
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(
+			attrs={
+				"class": "form-control",
+			}
+		)
+        )
+
+    class Meta:
+        model = Profile
+        fields = ('confirm_password', )
+
+    def clean(self):
+        cleaned_data = super(ConfirmPasswordForm, self).clean()
+        confirm_password = cleaned_data.get('confirm_password')
+        if not check_password(confirm_password, self.instance.password):
+            self.add_error('confirm_password', 'Password does not match.')
+
+    def save(self, commit=True):
+        user = super(ConfirmPasswordForm, self).save(commit)
+        user.last_login = timezone.now()
+        if commit:
+            user.save()
+        return user
+    
+class ReportForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportBase
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}

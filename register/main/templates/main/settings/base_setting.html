@@ -143,7 +143,7 @@
       list-style-type: none;
     }
   </style>
-  <title>StuMatch</title>
+  <title>Settings - Corscope</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -158,13 +158,43 @@
   <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
   <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'initial/initial.js' %}"></script>
 </head>
 <body class="pb-5" style="background-color: white !important;">
   <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
   <div class="wrapper">
-    <div class="container pt-5 u_stctr">   
+    <div class="container min-vh-100 pt-5 u_stctr">
         <div class="mt-5 row">
-            <div class="col-sm-4 border-right">
+          <div class="p-2 mb-3 d-sm-none"style="width:100%;">
+            <div class="dropdown" >
+              <a class="w-100 btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Settings
+              </a>
+            
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'main:settings-edit' %}">Account</a>
+                <a class="dropdown-item" href="{% url 'main:notifications-settings-all' %}">Notifications</a>
+                <a class="dropdown-item" href="{% url 'main:privacy-security' %}">Privacy and Security</a>
+                <a class="dropdown-item" href="{% url 'main:settings-blocked' %}">Blocking</a>
+                <a class="dropdown-item" href="#">About</a>
+              </div>
+            </div>
+          </div>
+        
+          
+            <div class="d-none d-sm-block col-sm-4 border-right">
                 <div class="link-setting all-link">
                     <div class="title-setting-all mb-2">
                         <h5 class="pl-4 ml-3 mb-3">
@@ -178,9 +208,9 @@
                                     Account
                                 </a>
                             </li>
-                            <li class="my-2">
-                                <a class="text-dark" href="#">
-                                    Notification
+                            <li class="{{ notifcation_active }} my-y">
+                                <a class="text-dark" href="{% url 'main:notifications-settings-all' %}">
+                                    Notifications
                                 </a>
                             </li>
                             <li class="{{ privacy_active }} my-4">
@@ -202,7 +232,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-8 pl-4">
+            <div class="col-sm-8 col-12 pl-4">
                 {% block content %}{% endblock %}
             </div>
         </div>
@@ -213,18 +243,9 @@
       <div class="modal-content"></div>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
-  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-  <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-  <script src="{% static 'initial/initial.js' %}"></script>
+  <div id="footer-main-div">
+    {% include 'footer_main.html' %}
+  </div>
   <script>
     const OG_IMG_SRC = $('.edit-pro-all .img-create-post').attr('src');
     const OG_REMOVE_BTN =  $("#remrevctr button");
@@ -375,6 +396,40 @@
                       
                     if(data.update_ranking){
                       $('#ranking-form-ctr').html(data.ranking_form)
+                    }
+                      
+                  },
+            });
+        })
+
+        $(document).on('change','.search-securtiy-form input[type="radio"]', function (){
+          var form = $(this).closest('form')
+          $.ajax({
+                  url: form.attr("data-url"),
+                  type: 'POST',
+                  dataType:'json',
+                  data: $(this).closest('form').serialize(),
+                  success: function(data){
+                      
+                    if(data.update_search_settings){
+                      $('#st-form-ctr').html(data.search_settings_form)
+                    }
+                      
+                  },
+            });
+        })
+
+        $(document).on('change','.notifications-settings-form input[type="radio"]', function (){
+          var form = $(this).closest('form')
+          $.ajax({
+                  url: form.attr("data-url"),
+                  type: 'POST',
+                  dataType:'json',
+                  data: $(this).closest('form').serialize(),
+                  success: function(data){
+                      
+                    if(data.update_notifications_settings){
+                      $('#ns-form-ctr').html(data.notifications_form)
                     }
                       
                   },

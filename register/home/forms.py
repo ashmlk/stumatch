@@ -7,6 +7,8 @@ from taggit.forms import TagField
 from taggit.forms import TagWidget
 from dal import autocomplete
 from taggit.models import Tag
+from main.forms import MySelect
+from main.forms import UNIVERSITY_CHOICES
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
@@ -126,7 +128,7 @@ class CourseForm(forms.ModelForm):
 		min_length=2,
 		required=True,
   		validators=[alphabetical],
-        help_text='Please ommit any title(Dr., Professor, Mr., Mrs.,...)',
+        help_text='Please omit any title(Dr., Professor, Mr., Mrs.,...)',
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Instructor Lastname",
@@ -135,18 +137,15 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
-    course_university = forms.CharField(
+    course_university = forms.ChoiceField(
 		label='',
-		max_length=50,
-		min_length=2,
 		required=True,
-		validators=[alphanumeric],
-		widget=forms.TextInput(
-			attrs={
-				"placeholder": "Enter University",
-				"class": "form-control"
-			}
-		)
+  		choices = UNIVERSITY_CHOICES,
+  		widget=MySelect(
+        attrs={
+			"class":"form-control"
+		}
+        ), 
 	)
     
     course_year = forms.TypedChoiceField(
@@ -160,6 +159,8 @@ class CourseForm(forms.ModelForm):
 			}
 		)
     )
+    
+    error_css_class = "error"
     
     class Meta:
         model = Course
@@ -290,6 +291,8 @@ class CourseListForm(forms.ModelForm):
 		)
     )
     
+    error_css_class = "error"
+    
     class Meta:
         model = CourseList
         fields=('title','year',)
@@ -324,20 +327,18 @@ class CourseListObjectsForm(forms.ModelForm):
 		)
 	)
     
-    course_university = forms.CharField(
+    course_university = forms.ChoiceField(
 		label='',
-		max_length=50,
-		min_length=2,
 		required=True,
-		validators=[alphanumeric_s],
-		widget=forms.TextInput(
-			attrs={
-				"placeholder": "University",
-				"class": "form-control"
-			}
-		)
+  		choices = UNIVERSITY_CHOICES,
+  		widget=MySelect(
+        attrs={
+			"class":"form-control"
+		}
+        ), 
 	)
     
+    error_css_class = "error"
     
     class Meta:
         model = CourseListObjects

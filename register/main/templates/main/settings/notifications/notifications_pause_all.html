@@ -1,0 +1,39 @@
+<form method="POST" data-url="{% url 'main:notifications-settings-all' %}" class="mt-3 notifications-settings-form">
+    {% csrf_token %}
+    {% if request.user.get_notify %}
+    <div class="mb-2 offview checkbox-privacy">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="onoffinput-check" id="oninput-check" value="notifyon" checked>
+            <label class="ml-2 form-check-label" for="oninput-check">
+              On
+            </label>
+          </div>
+    </div>
+    <div class="onview checkbox-privacy">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="onoffinput-check" id="offinput-check1" value="notifyoff">
+            <label class="ml-2 form-check-label" for="offinput-check1">
+              Off
+            </label>
+          </div>
+    </div>
+    {% else %}
+    <div class="mb-2 offview checkbox-privacy">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="onoffinput-check" id="oninput-check" value="notifyon">
+            <label class="ml-2 form-check-label" for="oninput-check">
+              On
+            </label>
+          </div>
+    </div>
+    <div class="onview checkbox-privacy">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="onoffinput-check" id="offinput-check1" value="notifyoff" checked>
+            <label class="ml-2 form-check-label" for="offinput-check1">
+              Off
+            </label>
+          </div>
+    </div>
+    {% endif %}
+    <input type="hidden" name="hid" value="{{ user.get_hashid }}"/>
+</form>

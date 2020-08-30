@@ -1,5 +1,37 @@
 
 $(document).ready(function () {
+
+
+  function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+    });
+
     var search_url = "/search?q="
     $(document).on('keyup','#searchbar_n', function () {
       if($(this).val()){
@@ -24,7 +56,7 @@ $(document).ready(function () {
               $('._tprsltctr').find('li').remove()
               $('._tprslt').text("Top Searches")
               for(i in data.search_top) {
-                $('._tprsltctr').append('<a style="text-decoration:none;" class="text-dark" href="'+search_url+data.search_user[i]+'&o=top"><li class="rounded list-group-item searchable-selectable">'+data.search_top[i]+'</li>')
+                $('._tprsltctr').append('<a style="text-decoration:none;" class="text-dark" href="'+search_url+data.search_top[i]+'&o=top"><li class="rounded list-group-item searchable-selectable">'+data.search_top[i]+'</li>')
               }
             }
             if(data.search_user.length <= 0 ) {
@@ -46,25 +78,29 @@ $(document).ready(function () {
         $('.search-query-result').hide()
       }
     });
+
     $(document).on('click', function () {
       $('.search-query-result').hide();
     });
+
     $(document).on('click','._rmvsrtus', function (e){
+      var csrftoken = getCookie('csrftoken');
       e.preventDefault();
       e.stopImmediatePropagation();
       var btn = $(this)
       var t = $(this).closest('button').attr('data-reference')
       if(t){
-        var u = "{% url 'home:remove-search-query' %}?t=" + t;
+        var u = "/search/results/user/remove?t=" + t;
       } else {
-        var u = "{% url 'home:remove-search-query' %}";
+        var u = "/search/results/user/remove";
       }
+      
       $.ajax({
           type: "POST",
           url: u,
           dataType: 'json',
           data: {
-            'csrfmiddlewaretoken':'{{ csrf_token }}'
+            csrfmiddlewaretoken: getCookie('csrftoken')
           },
           success: function (data){
             if(data.indv_search_remove){
@@ -77,6 +113,7 @@ $(document).ready(function () {
               console.log(rs.responeText);
           },
       });
+
     });
 
   })

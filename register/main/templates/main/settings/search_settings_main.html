@@ -1,0 +1,61 @@
+{% extends 'main/settings/privacy_security.html' %}
+{% block securitycontent %}
+<div class="mb-3 pb-3 border-bottom  account-privacy-info">
+    <div class="setting-menu-sub">
+        <h5>Search Settings</h5>
+    </div>
+    <div class="privacy-type">
+        <div class="mb-2 description-ctr">
+            <p class="mb-2 small text-muted">
+                You can set your settings to save your searches or disable this feature. If you turn wish to turn off this
+                feature all existing previous searches will be permenantly deleted.
+            </p>
+        </div>
+        <div id="st-form-ctr">
+            {% include 'main/settings/search_settings_input.html' %}
+        </div>
+    </div>
+</div>
+<div class="mb-4 account-privacy-info">
+    <div class="setting-menu-sub">
+        <h5>Search History</h5>
+    </div>
+    <div class="privacy-type">
+        <div class="mb-4 description-ctr">
+            <p class="mb-2 small text-muted">
+                You can clear your recent searches. This action is permanent and cannot be reversed.
+            </p>
+        </div>
+        <div id="st-history-ctr">
+            <div class="seasult bg-white">
+                <ul class="bg-white list-group list-group-flush">
+                    <span class="text-muted">Recent Searches
+                        <span><button class="float-right btn btn-sm text-primary _rmvsrtus" type="button">Clear
+                                All</button></span></span>
+                    <div class="usrchctr">
+                        <div class="_rcntrsltctr">
+                            {% for search in searches %}
+                            <div class="border-bottom py-1">
+                                <a style="text-decoration:none;" class="text-dark"
+                                    href="'+search_url+data.search_user[i]+'&o=top">
+                                    <li class="rounded list-group-item searchable-selectable">
+                                        {{ search.search_text }}<span class="float-right button-group">
+                                            <button type="button" data-reference="{{ search.search_text }}"
+                                                class="btn btn-sm _rmvsrtus"><span
+                                                    style="margin-top:10px;font-size:20px;"
+                                                    class="material-icons">close</span></button>
+                                        </span><br>
+                                        <span class="text-muted small">{{ search.time_stamp }}</span></li>
+                                </a>
+                            </div>
+                            {% empty %}
+                            <p class="mt-1 text-muted text-center small">No search history</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

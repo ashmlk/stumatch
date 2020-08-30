@@ -5,7 +5,7 @@
 <div id="lister-page" class="search-ctr-marked" data-target="_posre">
   <div id="post-list">
     <div>
-      {% include 'home/posts/home_post.html' %}
+      {% include 'home/posts/home_post.html' with search_result=True  q=q %}
     </div>
 </div>
 </div>

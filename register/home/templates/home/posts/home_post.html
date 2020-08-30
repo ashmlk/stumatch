@@ -166,13 +166,17 @@
   </div>
 
   {% if is_upage %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
-  {% endif %}
+    {% if posts.has_next %}
+    <a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
+    {% endif %}
+  {% elif search_result %}
+    {% if posts.has_next %}
+    <a class="infinite-more-link" href="?q={{ q }}&o=post&page={{ posts.next_page_number }}"></a>
+    {% endif %}
   {% else %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
-  {% endif %}
+    {% if posts.has_next %}
+    <a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
+    {% endif %}
   {% endif %}
 
   <div class="mt-2 loading" style="display: none;">

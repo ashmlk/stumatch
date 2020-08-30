@@ -19,7 +19,7 @@
             </div> 
             <div class="col-sm mb-2">
                 <div class="pt-2" style="min-height: 100px !important;">
-                    <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="#">
+                    <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                         <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
                     </a>
                     <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
@@ -50,7 +50,7 @@
 </div>
 
 {% if courses.has_next %}
-<a class="infinite-more-link" href="?page={{ courses.next_page_number }}"></a>
+<a class="infinite-more-link" href="?q={{ q }}&o=course&page={{ courses.next_page_number }}"></a>
 {% endif %}
 
 <div class="mt-2 loading" style="display: none;">
