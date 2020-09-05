@@ -33,7 +33,7 @@
                             </svg>Delete</button>
                         {% endif %}
                         {% if reply.reply_author != request.user %}
-                        <button class="small dropdown-item no-border" href="#"><svg width="1em" height="1em"
+                        <button class="small dropdown-item no-border show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=bzrply&hid={{ reply.get_hashid }}"><svg width="1em" height="1em"
                                 viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"

@@ -148,3 +148,50 @@
     opacity: 0.8;
     cursor: pointer  !important;
 }
+
+.btn-circle.btn-md { 
+    width: 40px !important; 
+    height: 40px !important; 
+    padding: 5px 7px !important; 
+    border-radius: 24px !important; 
+    font-size: 9px !important; 
+    text-align: center !important; 
+} 
+.align-dropdown-center .dropdown-menu {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  top: 100% !important;
+}
+.search-query-result {
+    position: absolute;
+    display: none;
+    margin-top: 0.44rem !important;
+    margin-left: 0.3rem !important;
+    min-width: 19.5rem !important;
+    background-color: white !important;
+}
+
+input[type=search]::-ms-clear {  display: none; width : 0; height: 0; }
+input[type=search]::-ms-reveal {  display: none; width : 0; height: 0; }
+
+/* clears the 'X' from Chrome */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }
+
+input:focus + .dropdown {
+    display: block;
+}
+
+.live_notify_badge {
+  float:right;
+  margin-bottom:-3px;
+  margin-top: -5px !important;
+  margin-left: 10px !important;
+  font-size: 0.6rem;
+  background-color: rgba(247, 56, 56, 0.904);
+  border-radius: 10px;
+  padding: 0px 5px 0px 5px;
+  color: white;
+}

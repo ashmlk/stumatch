@@ -417,18 +417,17 @@ class ReportBase(models.Model):
         SPAM = 'spam', 'It appears to be spam'
         SENSITIVE = 'sensitive', 'It displays sensitive content'
         HARMFUL = 'harmful', 'I find it abusive or harmful'
-        SELF_HARM = 'self_harm', 'It display and portrays expression of self-harm or suicide'
+        SELF_HARM = 'self_harm', 'It displays and portrays expression of self-harm or suicide'
         HATE = 'hate', 'It appears to be inflammatory speech towards a demographic'
         MISLEADING = 'misleading', 'It appears to share misleading content'
         THREAT = 'threat', 'It is threatening and expressing violent harm'
-        NONE = 'null', 'None'
     
     reporter = models.ForeignKey(Profile,on_delete=models.CASCADE)
     date_reported =  models.DateTimeField(auto_now_add=True)
     reason = models.CharField(
         max_length=250,
         choices=Reason.choices,
-        default=Reason.NONE
+        default=Reason.NOT_INTERESTED
         )
     
     

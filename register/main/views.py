@@ -6,14 +6,14 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm
+from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm, ReportUserForm, ReportPostForm, ReportCommentForm, ReportBuzzForm, ReportBuzzReplyForm, ReportBlogForm, ReportBlogReplyForm, ReportCourseReviewForm
 from django.views.generic.edit import UpdateView
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from hashids import Hashids
 from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost, Profile
-from home.models import Post, Buzz, Blog
+from home.models import Post, Buzz, Blog, Review, Comment, BlogReply, BuzzReply
 from django.http import JsonResponse
 from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from main.decorators import confirm_password
+from notifications.signals import notify
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -41,6 +42,18 @@ class ConfirmPasswordView(UpdateView):
 def policy_html(request):
     
     return render(request, 'web_docs/policy/index.html')
+
+def cookies_html(request):
+    
+    return render(request, 'web_docs/cookies/index.html')
+
+def terms_html(request):
+    
+    return render(request, 'web_docs/terms/index.html')
+
+def about_html(request):
+    
+    return render(request, 'web_docs/about/index.html')
 
 @login_required
 def get_notifications(request):
@@ -104,20 +117,23 @@ def signup(request):
 
 def user_login(request):
     message = ''
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            if user.is_active:
-                login(request, user)
-                return redirect('home:home')
-            else:
-                HttpResponse('Account is disabled')
-        if user is None:
-            message = 'Sorry the username or password you entered is incorrect please try again'
-    else:
-        message = ''
+    if request.user.is_authenticated:
+        return redirect('home:home')
+    else:  
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('home:home')
+                else:
+                    HttpResponse('Account is disabled')
+            if user is None:
+                message = 'Sorry the username or password you entered is incorrect please try again'
+        else:
+            message = ''
     return render(request, 'main/user_login.html', {'message': message})
 
 @login_required
@@ -145,7 +161,6 @@ def edit_profile(request):
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            #return redirect('main:home')
             return redirect(reverse('main:settings-edit')) 
     else:
         form = EditProfileForm(instance=request.user)
@@ -952,11 +967,19 @@ def accept_reject_friend_request(request,hid, s):
                 message = "CON_FRRE" + "has accepted your friend request"
                 notify.send(sender=user, recipient=other_user, verb=message, target=fr)
         elif action == 1:   
-            fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
-            fr.cancel()
+            if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
+                fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+                fr.cancel()
+        elif action == 2:
+            if Block.objects.is_blocked(user, other_user):
+                Block.objects.remove_block(user,other_user)
         elif action == 3:
-            fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
-            fr.cancel()
+            if FriendshipRequest.objects.filter(from_user=user,to_user=other_user).exists():
+                fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+                fr.cancel()
+            if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
+                fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+                fr.cancel()
             is_friend=False
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'user':other_user }, request=request)
         return JsonResponse(data)
@@ -1019,6 +1042,7 @@ def block_user(request, hid):
 @login_required
 def unblock_user(request, hid):
     
+    data = dict()
     id = hashids_user.decode(hid)[0]
     wants_to_unblock = request.user     #request.user submits request to unblock user
     will_be_unblock = Profile.objects.get(id=id) #user to be unblocked by request.user (SIGNED IN USER)
@@ -1029,6 +1053,7 @@ def unblock_user(request, hid):
         if Block.objects.is_blocked(wants_to_unblock, will_be_unblock):
             Block.objects.remove_block(wants_to_unblock,will_be_unblock)
             return redirect('main:get_user',username=will_be_unblock.username)
+                
         
 
 @login_required
@@ -1075,6 +1100,7 @@ def friends_main(request):
         'total_friends':total_friends,
         'total_requests':total_requests,
         'total_pending':total_pending,
+        'total_blocked':total_blocked,
         'is_friend':True,
         'friend_active':'active'
     }
@@ -1636,26 +1662,120 @@ def get_user_courses(request):
 @login_required
 def report_object(request,reporter_id):
     
+    data = dict()
+    
     obj_type = request.GET.get('t',None)
     obj_id = request.GET.get('hid', None)
-    user_id = hashids_user.decode(hid)[0]
+    user_id = hashids_user.decode(reporter_id)[0]
     if Profile.objects.filter(id=user_id).exists():
         reporter = Profile.objects.get(id=user_id)
         
         if request.method == 'POST':
             if obj_type == 'u':
-                reprt = 
-            if obj_type == 'p':
-                pass
-            if obj_type == 'cmnt':
-                pass
-            if obj_type == 'bz':
-                pass
-            if obj_type == 'bzrply':
-                pass
-            if obj_type == 'blg':
-                pass
-            if obj_type == 'blgrply':
-                pass
-            if obj_type == 'cr':
-                pass
+                form = ReportUserForm(request.POST)
+                if form.is_valid():
+                    if Profile.objects.filter(id=hashids_user.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  Profile.objects.get(id=hashids_user.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'p':
+                form = ReportPostForm(request.POST)
+                if form.is_valid():
+                    if Post.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  Post.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'cmnt':
+                form = ReportCommentForm(request.POST)
+                if form.is_valid():
+                    if Comment.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  Comment.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'bz':
+                form = ReportBuzzForm(request.POST)
+                if form.is_valid():
+                    if Buzz.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  Buzz.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'bzrply':
+                form = ReportBuzzReplyForm(request.POST)
+                if form.is_valid():
+                    if BuzzReply.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  BuzzReply.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'blg':
+                form = ReportBlogForm(request.POST)
+                if form.is_valid():
+                    if Blog.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj = Blog.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'blgrply':
+                form = ReportBlogReplyForm(request.POST)
+                if form.is_valid():
+                    if BlogReply.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  BlogReply.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            elif obj_type == 'cr':
+                form = ReportCourseReviewForm(request.POST)
+                if form.is_valid():
+                    if Review.objects.filter(id=hashids.decode(obj_id)[0]).exists():
+                        report = form.save(False)
+                        report.reporter = reporter
+                        report.reported_obj =  Review.objects.get(id=hashids.decode(obj_id)[0])
+                        report.save()
+            
+            data['user_valid'] = True           
+        
+        else:
+            
+            msg_dict = {
+                'u':'To help us understand the problem what is the issue with this profile?',
+                'p':'To help us understand the problem, what is the issue with this post?',
+                'cmnt':'To help us understand the problem, what is the issue with this comment?',
+                'bz':'To help us understand the problem, what is the issue with this buzz?',
+                'bzrply':'To help us understand the problem, what is the issue with this reply?',
+                'blg':'To help us understand the problem, what is the issue with this blog?',
+                'blgrply':'To help us understand the problem, what is the issue with this reply?',
+                'cr':'What is the issue with this review?'
+            }
+            
+            form_dict = {
+                'u':ReportUserForm,'p':ReportPostForm,'cmnt':ReportCommentForm,'bz':ReportBuzzForm,'bzrply':ReportBuzzReplyForm,'blg':ReportBlogForm,'blgrply':ReportBlogReplyForm,'cr':ReportCourseReviewForm   
+            }
+                
+            context = {
+                'form':form_dict[obj_type],
+                'message': msg_dict[obj_type],
+                'obj_type':obj_type,
+                'obj_id':obj_id,
+                'user_valid':True
+            }
+            
+            data['html_form'] =  render_to_string('report/report_form.html',context,request=request)  
+    else:
+        
+        context = {
+            'error_message':'Sorry there seems to be an issue with your request',
+            'obj_type':obj_type,
+            'obj_id':obj_id,
+            'user_valid':False
+            }
+        
+        data['user_valid'] = False
+        data['html_form'] =  render_to_string('report/report_form.html',context,request=request) 
+    
+    return JsonResponse(data)
+    
+    

@@ -2,15 +2,7 @@
 <footer class="page-footer font-small pt-2">
     <div class="mx-1 row">
       <div>       
-        <a class="text-muted small" href="#">
-          Help
-          </a>
-      </div> 
-      <div class="mx-1">
-        <span class="text-muted">|</span>  
-      </div> 
-      <div>       
-        <a class="text-muted small" href="#">
+        <a class="text-muted small" href="{% url 'main:site-about' %}">
           About
           </a>
       </div>
@@ -18,7 +10,7 @@
         <span class="text-muted">|</span>  
       </div> 
       <div>       
-        <a class="text-muted small" href="#">
+        <a class="text-muted small" href="{% url 'main:site-terms' %}">
           Terms
           </a> 
       </div>
@@ -34,10 +26,20 @@
         <span class="text-muted">|</span>  
       </div>
       <div>       
-        <a class="text-muted small" href="#">
+        <a class="text-muted small" href="{% url 'main:cookies-policy' %}">
           Cookies
           </a>
-      </div>                                                                                                                                                 
+      </div>
+      {% if request.user.is_authenticated %}
+      <div class="mx-1">
+        <span class="text-muted">|</span>  
+      </div>
+      <div>       
+        <a class="text-muted small" href="#">
+          Feedback
+          </a>
+      </div>
+      {% endif %}                                                                                                                                             
     </div>
     <div class="footer-copyright small mx-1 text-muted">Corscope © 2020. All rights reserved
       </div>

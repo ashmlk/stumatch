@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="POST" data-url="{% url 'main:block-user' hid=will_be_blocked.get_hashid %}" class="block-user-form">
+<form method="POST" action="{% url 'main:block-user' hid=will_be_blocked.get_hashid %}">
 	{% csrf_token %}
 		<div class="modal-header border-0 pl-0 pr-0 mb-0">
 			<h5 class="modal-title col-12 text-center" >Block {{ will_be_blocked.first_name }}

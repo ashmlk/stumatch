@@ -488,3 +488,61 @@ $(document).ready(function () {
 		});
 	});
 })
+$(document).ready(function () {
+	$(document).on('click', '.post-comment-infinite-link', function (e){
+	  var btn = $(this);
+	  e.preventDefault();
+	  e.stopImmediatePropagation();
+	  $.ajax({
+		url:  $(btn).attr('data-url'),
+		type: "GET",
+		dataType: 'json',
+		success: function (data){
+		  $(btn).closest('.modal-infinite').append(data.list);
+		  $(btn).remove();
+		},
+		error: function(rs, e){
+		  console.log(rs.responeText);
+		},
+	  })
+	})
+  })
+
+  $(document).ready(function (e) {
+	var blogrdltbtn;
+	$(document).on("click",".blogrdlt", function (e) {
+	  e.preventDefault();
+	  e.stopImmediatePropagation();
+	  blogrdltbtn = $(this);
+	  $.ajax({
+		url: blogrdltbtn.attr("data-url"),
+		type: 'get',
+		dataType:'json',
+		beforeSend: function(){
+		  $('#modal-post-delete').modal('show');
+		},
+		success: function(data){
+		  $('#modal-post-delete .modal-content').html(data.html_form);
+		}
+	  });
+	});
+	$('#modal-post-delete').on("submit",".blog-reply-delete-form",function (e){
+	  e.preventDefault();
+	  e.stopImmediatePropagation();
+	  var form = $(this).serialize();
+	  $.ajax({
+		  url: $(this).attr('data-url'),
+		  type: $(this).attr('method'),
+		  data: form,
+		  dataType: 'json',
+		  success: function(data){
+			if(data.form_is_valid){
+			$('#modal-post-delete').modal('hide');
+			$('body').removeClass('modal-open');
+			$('.modal-backdrop').remove();  
+			$(blogrdltbtn).closest('.blog-reply-card-ctr').remove();
+			} 
+		  }
+	  })
+	});
+  });

@@ -12,8 +12,9 @@ function fill_notification_badge(data) {
     var badges = document.getElementsByClassName(notify_badge_class);
     if (badges) {
         for(var i = 0; i < badges.length; i++){
-            if(data.unread_count != 0){
+            if(data.unread_count > 0){
                 badges[i].innerHTML = data.unread_count;
+                $(badges[i]).removeClass('no-display')
             }
         }
     }

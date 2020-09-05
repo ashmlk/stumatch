@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from main.models import Profile, ReportBase
+from main.models import Profile, ReportUser, ReportPost, ReportComment, ReportBuzz, ReportBuzzReply, ReportBlog, ReportBlogReply, ReportCourseReview
 from django.db import models
 from django.core.validators import RegexValidator
 from django.forms.widgets import ClearableFileInput
@@ -11,22 +11,6 @@ from django.utils import timezone
 
 username_regex = RegexValidator(r'^(?!.*\.{2})[0-9a-zA-Z-_]*$', 'Only alphanumeric, underscore, dash or nonconsecutive periods are allowed.')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
-
-UN = ['Alberta University of the Arts', 'Athabasca University', 'MacEwan University', 'Mount Royal University', 'University of Alberta','University of Calgary','University of Lethbridge',
-                       'Capilano University','Emily Carr University of Art and Design','Kwantlen Polytechnic University','Royal Roads University','Simon Fraser University','Thompson Rivers University',
-                       'University of British Columbia','University of Victoria','University of the Fraser Valley','University of Northern British Columbia','Vancouver Island University',
-                       'Brandon University','University College of the North','University of Manitoba','University of Winnipeg','Mount Allison University','St. Thomas University',
-                       'University of New Brunswick','Université de Moncton','Memorial University of Newfoundland','Acadia University','Cape Breton University','Dalhousie University','Mount Saint Vincent University',
-                       'Nova Scotia College of Art and Design University','Saint Francis Xavier University',"Saint Mary's University", 'Université Sainte-Anne',"University of King's College",'Algoma University',
-                       'Brock University','Carleton University','Lakehead University','Laurentian University','McMaster University','Nipissing University','Ontario College of Art and Design University',"Queen's University at Kingston",
-                       'Royal Military College of Canada','Ryerson University','Trent University',"Université de l'Ontario français",'University of Guelph','Ontario Tech University','University of Ottawa','University of Toronto',
-                       'University of Waterloo', 'University of Western Ontario','University of Windsor','Wilfrid Laurier University','York University','University of Prince Edward Island',"Bishop's University",'Concordia University',
-                       'École de technologie supérieure',"École nationale d'administration publique",'Institut national de la recherche scientifique','McGill University','Université de Montréal','Université de Sherbrooke',
-                       'Université du Québec en Abitibi-Témiscamingue','Université du Québec en Outaouais','Université du Québec à Chicoutimi','Université du Québec à Montréal','Université du Québec à Rimouski',
-                       'Université du Québec à Trois-Rivières','Université Laval','University of Regina',
-                       'University of Saskatchewan','Yukon University','Fairleigh Dickinson University','New York Institute of Technology','Quest University','Niagara University',
-                       'Trinity Western University','University Canada West','Booth University College','Canadian Mennonite University','Kingswood University','Crandall University',"St. Stephen's University",
-                       'University of Fredericton','Atlantic School of Theology','Tyndale University','Redeemer University College',"The King's University"]
 
 UNIVERSITY_CHOICES = (
 		('University',
@@ -356,9 +340,61 @@ class ConfirmPasswordForm(forms.ModelForm):
             user.save()
         return user
     
-class ReportForm(forms.ModelForm):
+class ReportUserForm(forms.ModelForm):
     
     class Meta:
-        model = ReportBase
+        model = ReportUser
         fields = ('reason',)
         widgets = {'reason':forms.RadioSelect}
+        
+class ReportPostForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportPost
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}
+
+class ReportCommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportComment
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}
+
+class ReportBuzzForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportBuzz
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}
+        
+class ReportBuzzReplyForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportBuzzReply
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}        
+        
+class ReportBlogForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportBlog
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}   
+
+class ReportBlogReplyForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportBlogReply
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}
+        
+class ReportCourseReviewForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReportCourseReview
+        fields = ('reason',)
+        widgets = {'reason':forms.RadioSelect}        
+
+        
+        

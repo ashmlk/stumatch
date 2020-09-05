@@ -3,10 +3,10 @@
 {% load ibuilder %}
 {% load static %}
 {% block profilecontent %}
-<div class="card-columns mt-1">
+<div class="infinite-container card-columns mt-1">
     {% for course in courses %}
     {% bg_rand as bgrnd %}
-    <div class="card mb-2 bg-white">
+    <div class="infinite-item card mb-2 bg-white">
         <div class="d-flex align-items-center course-title-box pro-link-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
             <div class="mt-2 ml-2"> 
                 <h3 class="font-weight-bold">{{ course.course_code }}</h3>
@@ -40,6 +40,19 @@
     </div>
 </div>
 {% endif %}
+
+{% if courses.has_next %}
+<a class="infinite-more-link" href="?id={{ user.get_hashid}}&page={{ courses.next_page_number }}"></a>
+{% endif %}
+
+<div class="mt-2 loading" style="display: none;">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+
 <style>
 @media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}
 </style>

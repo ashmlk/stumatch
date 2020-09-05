@@ -28,6 +28,7 @@
                     <p class="card-text text-muted">You have blocked this user, unblock to view their profile.</p>
                     <div class="unblock-ctr">
                         <form method="POST" class="w-100" action="{% url 'main:unblock-user' hid=user.get_hashid %}">
+                            {% csrf_token %}
                             <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">
                                 Unblock {{ user.get_full_name }}
                             </button>

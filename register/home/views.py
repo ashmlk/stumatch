@@ -177,6 +177,8 @@ def top_posts(request):
 @login_required
 def uni_posts(request):
     
+    posts = None
+    
     u = request.user.university 
     t = u.lower().replace(' ','_')+"_post"
 
@@ -184,8 +186,16 @@ def uni_posts(request):
     
     blockers_id = request.session.get('blockers')
     
-    if posts_lists:
+    if posts_list:
         posts_list = posts_list.exclude(author__id__in=blockers_id)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(posts_list, 10)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
     
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
@@ -193,14 +203,7 @@ def uni_posts(request):
     words = top_words['phrases']
     words = words + top_words['common_words']
     
-    page = request.GET.get('page', 1)
-    paginator = Paginator(posts_list, 10)
-    try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
+    
     
     context = { 
                 'posts':posts,
@@ -209,6 +212,7 @@ def uni_posts(request):
                 'words':words,
                 'is_home':True
             }
+    
     return render(request, 'home/homepage/home.html', context)
 
 @cache_page(60*60*24*1)

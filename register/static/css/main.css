@@ -485,3 +485,32 @@ ol.carousel-indicators {
   .u_pctr .post-title-view strong {
       font-size: 1.1rem;
   }
+  .neocircle {
+    border-radius: 150px;
+    background: linear-gradient(225deg, #ffffff, #e3e3e3) !important;
+    box-shadow:  -5px 5px 10px #cacaca, 
+                  5px -5px 10px #ffffff !important;
+                margin: 9px 9px 9px 9px !important;
+  }
+  
+.neoblock {
+  border-radius: 41px;
+  background: #f7f7f7;
+  box-shadow:  5px 5px 10px #bcbcbc, 
+              -5px -5px 10px #ffffff;
+              padding: 10px 10px 10px 10px;
+              width: 15rem;
+}
+.neosquare {
+    border-radius: 20px;
+background: #ebf8ff;
+box-shadow:  -9px 9px 18px #949ca1, 
+ 9px -9px 18px #ffffff;
+}
+.c_dis {
+    font-size: 0.94rem;
+}
+
+.c_dis span.text-dark {
+    font-weight:600;
+}

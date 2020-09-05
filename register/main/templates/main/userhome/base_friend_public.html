@@ -130,7 +130,7 @@
                                                     <path fill-rule="evenodd"
                                                         d="M3.5 8a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.5-.5z" />
                                                 </svg>Block</button>
-                                            <button class="small dropdown-item " data-type="reply" data-url="#"><svg
+                                            <button class="small dropdown-item show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=u&hid={{ user.get_hashid }}"><svg
                                                     width="1em" height="1em" viewBox="0 0 16 16" class="bi mr-1 bi-flag"
                                                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd"
@@ -155,6 +155,11 @@
             <div class="modal-content"></div>
         </div>
     </div>
+    <div class="modal fade" id="modal-report">
+        <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+          <div class="modal-content"></div>
+        </div>
+      </div>
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
     <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'initial/initial.js' %}"></script>

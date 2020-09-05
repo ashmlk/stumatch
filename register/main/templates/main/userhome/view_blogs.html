@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-center">
     <div class="row col-sm-8">
         {% if blogs %}
-        {% include 'home/blog/blog_list.html' with blogs=blogs %}
+        {% include 'home/blog/blog_list.html' with blogs=blogs id_required=True user=user %}
         {% else %}
         <div style="margin-left: 12rem;">
             <h5 class="h5 my-3 text-muted">No blogs to show</h5>

@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-center">
     {% if posts %}
     <div class="row col-sm-8">
-        {% include 'home/posts/home_post.html' with posts=posts %}
+        {% include 'home/posts/home_post.html' with posts=posts id_required=True user=user %}
     </div>
     {% else %}
         <div style="margin-left: 12rem;">

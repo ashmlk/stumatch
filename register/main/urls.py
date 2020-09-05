@@ -7,10 +7,14 @@ from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
 app_name = 'main'
 
 urlpatterns=[
-    path('policy/',views.policy_html,name='web-policy'),
+    path('policies/data/',views.policy_html,name='web-policy'),
+    path('policies/cookies/',views.cookies_html,name='cookies-policy'),
+    path('terms/',views.terms_html,name='site-terms'),
+    path('about/',views.about_html,name='site-about'),
     path('signup/',views.signup,name='signup'),
     path('',views.user_login, name='user_login'),
     path('signout', views.user_logout, name='user_logout'),
+    path('report/submit/<str:reporter_id>', views.report_object,name='report-object'),
     path('settings/edit/', views.edit_profile, name='settings-edit'),
     path('update/profile/image/<str:hid>/', views.update_image, name='update-image'),
     path('remove/profile/image/<str:hid>/', views.remove_image, name='remove-image'),

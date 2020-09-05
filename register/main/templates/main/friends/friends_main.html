@@ -3,7 +3,7 @@
 <html>
 <head>
     <div id="#headerPlaceholder"></div>
-    <title>StuMatch</title>
+    <title>Friends - Corscope</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,19 +18,28 @@
     <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+    <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
 </head>
 <body class="pb-5">
-    {% block javascript %}
-    {% endblock javascript %}
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper">
-        <div class="container pt-4">
+        <div class="container-fluid pt-4">
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                     <div class="mt-5 pt-2">
                         <div class="friends-all-list">
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-3">
                                     <div class="he-s-r border-bottom">
                                         <h6 class="text-dark display-4 font-weight-bolder" style="font-size: 1.6rem;">
                                             Friends
@@ -60,11 +69,10 @@
                                         </div>
                                         <div class="mnpgl px-2 border-0 rounded py-2">
                                             <a class="d-flex justify-content-between align-items-center"
-                                                href="#">Blocked Users
-                                                <span class="badge badge-pill badge-light">0</span>
+                                                href="{% url 'main:settings-blocked' %}">Blocked Users
+                                                <span class="badge badge-pill badge-light">{{ total_blocked }}</span>
                                             </a>
                                         </div>
-
                                     </div>
                                     <hr />
                                     <div class="mt-3">
@@ -81,7 +89,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     {% block content %}
                                     {% endblock %}
                                 </div>
@@ -89,7 +97,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3 order-sm-2 order-sm-2">
+                <div class="col-sm-4 d-none d-sm-block">
                     <div class="pt-2 mt-5">
                         {% block item %}
                         {% endblock %}
@@ -100,73 +108,9 @@
         </div>
     </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-    <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/profiles/main.js' %}"></script>
     <script>
-        $(document).ready(function (e) {
-            e.preventDefault();
-            var infinite = new Waypoint.Infinite({
-                element: $('.infinite-container')[0],
-                onBeforePageLoad: function () {
-                    $('.loading').show();
-                },
-                onAfterPageLoad: function ($items) {
-                    $('.loading').hide();
-                }
-            });
-        })
-        $(document).ready(function () {
-            var btn;
-            $(document).on("click", '.accept-reject-btn', function (e) {
-                btn = $(this)
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr("data-url"),
-                    dataType: 'json',
-                    data: $(this).closest('form').serialize(),
-                    success: function (data) {
-                        $(btn).closest(".friend-status-ctr").html(data.html_form);
-                    },
-                    error: function (rs, e) {
-                        console.log(rs.responeText);
-                    },
-                });
-            });
-        })
-
-        $(document).ready(function () {
-            var btn;
-            $(document).on("click", '.btn-all-status', function (e) {
-                btn = $(this)
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr("data-url"),
-                    dataType: 'json',
-                    data: $(this).closest('form').serialize(),
-                    success: function (data) {
-                        $(btn).closest(".friend-status-ctr").html(data.html_form);
-                    },
-                    error: function (rs, e) {
-                        console.log(rs.responeText);
-                    },
-                });
-            });
-
-            ('mngpl').on('click', function () {
-                window.location = $(this).find('a').attr('href');
-            })
-        })
     </script>
 </body>
 

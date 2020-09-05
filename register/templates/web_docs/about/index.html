@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{%  load static %}
+{% block title %}About - Corscope{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="about-container">
+         <div class="mb-3 card border-light" style="background-color:  rgba(90, 180, 248, 0.329);">
+            <div class="card-body">
+                <h5 class="card-title font-weight-bolder">Our Platform</h5>
+                <div class="card-text" style="font-size: large; font-weight: bolder;">
+                    <span class="h3 text-muted">
+                        We strive to bring students together and help them excel in their personal and work life.
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 3rem !important;">
+            <div class="row">
+                <div class="col-3">
+                   <div class="img-fluid"> 
+                       <img class="pl-2 img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 7.9rem;">
+                   </div>
+                </div>
+                <div class="col-9">
+                    <div class="p-4" style="background-color: rgba(241, 241, 241, 0.664);">
+                        <span class="h6 text-dark">
+                            Our mission is to build a safe platform for students, and help them connect freely with others, and engage in interesting topics and expand their networks.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-top" style="margin-top: 3rem !important;">
+            <div class="py-3">
+                <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}">
+            </div>
+            <div class="my-2">
+                <div class="p-2 font-weight-bold">
+                    <span style="font-weight: 600; font-size: 2.3rem;">
+                        Connect we other students like yourself. Build long-term networks. Create your future.
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="explanation-all border-top text">
+            <div class="py-4">
+                <div class="p-2 text-dark">
+                    <span style="font-size: 1.85rem;">
+                        This platform is built specifically for students to connect with others during their school and help them find connections that can improve their skills, network, and friends. 
+                        We try our best to offer the safest platform that students can use while feeling protected and secure. Our mission is only to help students connect in their new chapter of life and succeed in their academic careers. 
+                        Our focus is solely on our users, and we try our best to make the platform easy to use and safe. 
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

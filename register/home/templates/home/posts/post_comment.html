@@ -80,7 +80,8 @@
                     </svg>Delete</button>
                   {% endif %}
                   {% if comment.name != request.user %}
-                  <button class="small dropdown-item " data-type="comment" data-url="#"><svg width="1em" height="1em"
+                  <button class="small dropdown-item show-report-form" data-type="comment"
+                      data-url="{% url 'main:report-object' request.user.get_hashid %}?t=cmnt&hid={{ comment.get_hashid }}"><svg width="1em" height="1em"
                       viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg">
                       <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
