@@ -6,7 +6,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm, ReportUserForm, ReportPostForm, ReportCommentForm, ReportBuzzForm, ReportBuzzReplyForm, ReportBlogForm, ReportBlogReplyForm, ReportCourseReviewForm
+from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm, ReportUserForm, ReportPostForm, ReportCommentForm, ReportBuzzForm, ReportBuzzReplyForm, ReportBlogForm, ReportBlogReplyForm, ReportCourseReviewForm, ContactForm
 from django.views.generic.edit import UpdateView
 from django.template.loader import render_to_string
 from django.contrib import messages
@@ -23,6 +23,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from main.decorators import confirm_password
 from notifications.signals import notify
+from django.core.mail import send_mail
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -54,6 +55,22 @@ def terms_html(request):
 def about_html(request):
     
     return render(request, 'web_docs/about/index.html')
+
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            sender_name = form.cleaned_data['name']
+            sender_email = form.cleaned_data['email']
+            message = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message'])
+            send_mail('New Enquiry', message, sender_email, ['contact@corscope.com'])
+            messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
+            form = ContactForm
+            return redirect('main:contact-us')
+    else:
+        form = ContactForm
+
+    return render(request, 'web_docs/contact/contact_us.html', {'form': form})
 
 @login_required
 def get_notifications(request):

@@ -514,3 +514,7 @@ box-shadow:  -9px 9px 18px #949ca1,
 .c_dis span.text-dark {
     font-weight:600;
 }
+
+.asteriskField {
+  display: none;
+}

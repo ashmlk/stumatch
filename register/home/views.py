@@ -337,9 +337,10 @@ def post_detail(request, guid_url):
             comment.reply = comment_qs
             comment.save()
             if comment.name != post.author:
-                message = "CON_POST" + " commented on your post." # message to send to post author when user comments on their post
-                description = "Comment: " + comment.body
-                notify.send(sender=request.user, recipient=post.author, verb=message, description=description, target=post, action_object=comment)
+                if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_comments:
+                    message = "CON_POST" + " commented on your post." # message to send to post author when user comments on their post
+                    description = "Comment: " + comment.body
+                    notify.send(sender=request.user, recipient=post.author, verb=message, description=description, target=post, action_object=comment)
         else:
             data['is_valid'] = False
         if is_reply:
@@ -871,7 +872,7 @@ def university_detail(request):
         return render(request,'home/courses/university_detail.html',{'is_empty':True})
 
 """ Method to show users that user may interact with based specifically on users courses and university + instructors
-    Method to be executed and result to cached - recieve query set from cache - method constructed on daily basis """    
+    Method to be executed and result to cached - receive query set from cache - method constructed on daily basis """    
          
 @login_required
 def find_students(request):  
@@ -881,7 +882,7 @@ def find_students(request):
     needs_uni_edit = needs_puni_edit = False
     
     sl = request.GET.get('sl', None)
-    print(sl)
+
     if sl == 'crs':
         course_codes = request.user.courses.order_by('course_code','course_university','course_instructor','course_year').distinct('course_code','course_university','course_instructor','course_year').values_list('course_code')
         crs_active='-active'
@@ -1368,12 +1369,12 @@ def buzz_like(request,guid_url,status=None):
         if status=="like":
             buzz.likes.add(user)
             if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_likes:
-                message = "CON_BUZZ" + "Somebody...liked your buzz." 
+                message = "CON_BUZZ" + "Somebody liked your buzz!" 
                 notify.send(sender=user, recipient=buzz.author, verb=message, target=buzz)
         elif status=="dislike":
             buzz.dislikes.add(user)
             if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_likes:
-                message = "CON_BUZZ" + "Somebody...disliked your buzz." 
+                message = "CON_BUZZ" + "Somebody...disliked your buzz :(" 
                 notify.send(sender=user, recipient=buzz.author, verb=message, target=buzz)
         elif status=="rmvlike":
             buzz.likes.remove(user)           

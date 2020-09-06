@@ -11,6 +11,7 @@ urlpatterns=[
     path('policies/cookies/',views.cookies_html,name='cookies-policy'),
     path('terms/',views.terms_html,name='site-terms'),
     path('about/',views.about_html,name='site-about'),
+    path('contact/',views.contact_us,name='contact-us'),
     path('signup/',views.signup,name='signup'),
     path('',views.user_login, name='user_login'),
     path('signout', views.user_logout, name='user_logout'),
