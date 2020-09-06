@@ -2,15 +2,16 @@ from register.settings.common import *
 import os
 import django_heroku
 
+
 DEBUG = False
 
-SECRET_KEY = os.environ['SECRET_KEY']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','corscope.com']
 
-# SECURITY WARNING: update this when you have the production host
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+SECRET_KEY = os.environ.get('SECRET_KEY')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 django_heroku.settings(locals())
