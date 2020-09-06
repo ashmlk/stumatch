@@ -1,0 +1,21 @@
+{% load ibuilder %}
+<form   data-url="{% url 'home:comment-like' guid_url comment.get_hashid %}" class="post-comment-like-form"  method="POST">
+{% csrf_token %}
+{% if request.user in comment.likes.all %}
+<button  class="bg-transparent btn btn-sm small p-0 small text-muted comment-like-btn button-hide-outline" type="submit" 
+    data-id="{{ comment.id }}" style="margin-right: -1px;margin-top: -3px;">
+    <span id="#clikeBtn" class="u"  style="font-size: 0.78rem;color:  rgb(43, 98, 153);">
+        Like <span class="mx-1 comment-like-count"> {{ comment.likes_count|num_format  }}</span>
+    </span>
+    <input type="hidden" class="comment-input-like-count" value=" {{ comment.likes_count }} "/>
+</button> 
+{% else %}
+<button class="bg-transparent btn btn-sm p-0  small text-muted comment-like-btn  button-hide-outline" type="submit" 
+    data-id="{{ comment.id }}"  style="margin-right: -1px; margin-top: -3px;">
+    <span id="#clikeBtn" class="u" style="font-size: 0.78rem;">
+        Like <span class="comment-like-count"> {{ comment.likes_count|num_format  }}</span>
+    </span>
+    <input type="hidden" class="comment-input-like-count" value="{{ comment.likes_count }} " />
+</button>
+{% endif %}
+</form>

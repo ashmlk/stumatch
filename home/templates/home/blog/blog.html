@@ -1,0 +1,64 @@
+{% extends "home/homepage/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% block title %}
+<title>Blog - Corscope</title>
+{% endblock %}
+{% block contentleft %}
+  <div class="rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
+    data-url="{% url 'home:blog-create' %}">
+    <div class="col-1">
+      <svg width="22" height="22" style="margin-top: -2px;" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z" />
+        <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z" />
+      </svg>
+    </div>
+    <div class="col-10 d-none d-lg-block">
+      <span  style="margin-top: 3px !important;" class="ml-2">Create Blog</span>
+    </div>
+  </div>
+{% endblock %}
+{% block content %}
+{% if is_tag %}
+<div class="rounded-0 ml-1 card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h4 class="card-title">#{{ tag.name }}</h4>
+      </div>
+      <div class="text-muted">
+        <span>{{ num_obj|num_format }} {{ s }}</span>
+      </div>
+    </div>
+    <div class="mt-1 related">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
+          <div style="margin-top: 0.2rem;">
+            <h6 class="text-muted small card-subtitle">Related:
+              <span class="related-tags">
+                {% for tag in related_tags %}
+                <span class="mr-1">
+                  <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a>
+                  </span>
+                {% endfor %} 
+              </span>
+             </h6>
+          </div>
+        </div>
+        <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
+          {% include 'main/tags/fav_blog.html' with tag=tag %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div id="blog-list">
+  <div>
+    {% include 'home/blog/blog_list.html' with blogs=blogs %}
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,225 @@
+{% extends 'home/courses/base.html' %}
+{% load static %}
+{% block title %}
+<title>{{ course.course_code }} - Corscope </title>
+{% endblock %}
+{% block contentright %}
+{% load ibuilder %}
+{% bg_rand as bgrnd %}
+<div class="d-none d-md-block">
+    <div class="row">
+        <div class="col-md-12">
+            <div>
+                <div class="mb-1 menu-go-back">
+                    <div class="pb-1 l d-flex align-item-center ">
+                        <button class="no-border no-outline btn mnbtn menu-link-active btn-sm text-dark"
+                            style="border-radius: 20px !important;" data-url="{% url 'home:course-menu' %}">
+                            <div class="clicker float-left">
+                                <svg width="16" height="16" viewBox="0 0 16 16" class="bi bi-chevron-left"
+                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                                </svg>
+                            </div>
+                            <span class="mx-2" style="padding-top: 4px !important; font-size: 1.1rem;">Menu</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div class="bg-white rounded shadow-sm border">
+        <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
+            <div class="d-flex justify-content-between pt-4 p-1">
+                <div>
+                    <h5 class="mt-1 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
+                        {{ course.course_code }}
+                    </h5>
+                </div>
+                <div class="mr-3" style="margin-top: -15px !important;">
+                    <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image"
+                        style="height:75px;width: 75px;">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm mb-2">
+            <div class="pt-2" style="min-height: 100px !important;">
+                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="#">
+                    <span class="text-dark">University:</span><span
+                        class="ml-1">{{ course.course_university|capfirst }}</span>
+                </a>
+                <a class="c_dis mb-1 course-goto btn btn-outline-primary "
+                    href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                    <span class="text-dark">Instructor:</span><span
+                        class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                </a>
+                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
+                    <span>Difficulty With this Professor:</span><span
+                        class="ml-1">{{ course.average_complexity_ins }}</span>
+                </div>
+                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
+                    <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                </div>
+                <hr>
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
+                </div>
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span>Total Students With Professor {{ course.course_instructor|capfirst }}:</span><span
+                        class="ml-1">{{ course.get_user_count_ins }}</span>
+                </div>
+                {% if taken %}
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span class="small text-muted">You have taken this course.</span>
+                </div>
+                {% else %}
+                <div class="c_dis mb-1" style="display: inline-block;">
+                    <span class="small text-muted">You have <span class="text-danger">not </span> taken this
+                        course.</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="border-top votes-container ml-1">
+                {% include 'home/courses/course_vote.html' with course=course %}
+            </div>
+        </div>
+    </div>
+    <div>
+        {% if not taken %}
+        <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show"
+            style="text-decoration: none;" type="button">Write a review</button>
+        {% else %}
+        <button class="col-sm-12 my-1 btncrsatadd border-0 btn btn-block small btn-primary"
+            style="text-decoration: none;" type="button" style="text-decoration: none;"
+            data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">Add
+            Course</button>
+        {% endif %}
+    </div>
+    <div>
+        <a class="col-sm-12 my-1 acaffd border-0 btn btn-block small btn-primary" style="text-decoration: none;"
+            type="button" style="text-decoration: none;"
+            href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All
+            instructors</a>
+        <input id="autocia" type="hidden" value="{{ course.course_instructor }}" />
+        <input id="autocya" type="hidden" value="{{ course.course_year }}" />
+        <input id="autocca" type="hidden" value="{{ course.course_code }}" />
+    </div>
+    <div>
+        <form method="POST" class="course-save-form">
+            {% csrf_token %}
+            <button class="col-sm-12 my-1 border-0 btn btn-block small btn-primary save-course" type="submit"
+                data-url="{% url 'home:course-save' course.id %}">Save</button>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="modal-save-course">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-0  p-1">
+                <h5 class="modal-title col-12 text-center font-weight-bolder">Save Course</h5>
+            </div>
+            <div class="moda-body text-center border-0 p-2">
+                <span class="mt-2 col-8 text-center text-message text-danger"></span>
+            </div>
+            <div class="modal-footer border-0 p-1">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    style="border-radius: 20px; width: 100%;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="p-0 mb-4">
+    <div class="review-textbox pb-1 pt-1 pl-3 pr-3 my-2" style="display: none;">
+        <form class=course-review-form
+            data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+            method="POST">
+            {% csrf_token %}
+            <div class="d-flex  flex-column">
+                <div class="row border rounded">
+                    <div class="col-xs m-1">
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
+                            src="https://mdbootstrap.com/img/Photos/Avatars/avatar-4.jpg" alt="Profile image">
+                    </div>
+                    <div class="pb-2 col-sm-11" style="margin-left: -0.9rem;">
+                        {{ form }}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end my-1">
+                    <div>
+                        <button class="border-0 no-border btn btn-md small btn-primary"
+                            data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+                            style="margin-right: -14px !important;text-decoration: none;" type="submit">Add
+                            Review</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="reviews" class="p-0 mt-1">
+        <ul class="d-flex justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
+            <li class="nav-item ">
+                <a class="nav-link d-flex align-items-center {{ review_s }}"
+                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
+                    <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ review_a }}"
+                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">Reviews
+                    All
+                    <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="c-review-list ">
+                {% if link_get %}
+                {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=1 %}
+                {% else %}
+                {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=0 %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-review-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<style>
+    .btn-primary,
+    textarea {
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+    }
+
+    label[for="id_review_interest"] {
+        text-align: right;
+        margin-top: 0.23rem;
+        clear: both;
+        float: left;
+        margin-right: 0.288rem;
+        font-size: 0.88rem !important;
+        margin-left: -1.95rem !important;
+    }
+
+    #id_review_interest {
+        width: 35% !important;
+        margin-left: -1.95rem;
+        font-size: 0.8rem !important;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('#id_review_interest').addClass('form-control-sm w-50')
+    })
+</script>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends "main/userhome/base_request_private.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block content %}
+<div class="d-flex align-items-center" style="margin-top: 17rem !important;">
+    <div class="mx-auto col-sm-10">
+        <div class="d-flex my-auto justify-content-center mt-4 p-2">
+                <div>
+                    <h6 class="my-3 text-muted">{{ message }} Go to <a class="card-link" href="{% url 'home:home' %}">home</a>.</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

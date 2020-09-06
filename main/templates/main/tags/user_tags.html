@@ -1,0 +1,80 @@
+{% extends "home/homepage/base.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block content %}
+<div class="p-1 mb-2 title-all">
+    <div class="rounded-0 ml-1 card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h4 class="card-title mt-2 ">Tags</h4>
+            </div>
+            <div class="text-muted">
+              <span>{{ num_obj|num_format }} {{ s }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+<div class="mb-2 p-1 ml-1 ">
+    <div class="d-flex justify-content-start" id="_pol3">
+      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ post_active }}">
+        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=post" style="text-decoration: none;">
+          <div>
+            <span class="h6"><span >Posts</span></span>
+          </div>
+        </a>
+      </div>
+      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ buzz_active }}"
+        data-url="{% url 'main:usertags' username=request.user.get_username %}?o=buzz" >
+        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=buzz" style="text-decoration: none;">
+          <div>
+            <span class="h6">
+              <span >Buzzes</span></span>
+          </div>
+        </a>
+      </div>
+      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ blog_active }}"
+        data-url="{% url 'main:usertags' username=request.user.get_username %}?o=blog" >
+        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=blog" style="text-decoration: none;">
+          <div>
+            <span class="h6"><span >Blogs</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="pt-1 content" >
+    <div >
+        {% for tag in tags %}
+        <div class="rounded-0 mt-1 border-bottom ml-1">
+            <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div >
+                <h4 class="card-title">
+                    {% if i_post %}
+                    <a href="{% url 'home:tag-post' tag.slug %}"  class="text-dark" style="text-decoration: none;">
+                    {% elif is_buzz %}
+                    <a href="{% url 'home:tag-buzz' tag.slug %}"  class="text-dark" style="text-decoration: none;">
+                    {% elif is_blog %}
+                    <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">
+                    {% endif %}
+                    #{{ tag.name }}</a></h4>
+                </div>
+                <div>
+                <div class="flw-tag-ctr" style="margin-top: -4px !important;" >
+                    {% include 'main/tags/fav_post.html'  with is_fav=True tag=tag %}
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="d-flex justify-content-center">
+            <h5 class="h5 font-weight-lighter my-3 text-muted">No tags to show.</h5>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'home/search/search.html' %}
+{% load static %}
+{% load ibuilder %}
+{% block content %}
+<div id="lister-page" data-target="_tsre">
+    {% if empty %}
+    <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No results found, please try again</h5>
+    </div>
+    {% else %}
+    {% if users %}
+    <div class="card shadow p-2 mb-2">
+        <div class="m-0 mb-2 pb-1 p-0">
+            <div class="m-0">
+                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">People</h6>
+            </div>
+        </div>
+        <div id="user-list">
+            <div>
+                {% include 'home/search/search_people_list.html' %}
+            </div>
+        </div>
+        <form method="GET" action="{% url 'home:search-all' %}">
+            <input type="hidden" name="q" value="{{ q }}" />
+            <input type="hidden" name="o" value="users" />
+            <div class="ro2 w-100 col-12">
+                <button type="submit" class="w-100 btn " style="background-color: rgb(226,230,234);">See More</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if courses %}
+    <div class="card shadow p-2 mb-2">
+        <div class="m-0 mb-2 pb-1 p-0">
+            <div class="m-0">
+                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">Courses</h6>
+            </div>
+        </div>
+        <div class="course-list">
+            <div class="mb-2 mx-1 row d-flex align-items-center" id="course-list">
+                {% for course in courses %}
+                <div class="col-sm-auto card m-1 flex-fill">
+                    <div class="p-1">
+                        <a href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std" style="text-decoration: none;" class="text-muted font-weight-bolder">{{ course.course_university }}</a>
+                    </div>
+                    {% bg_rand as bgrnd %}
+                    <div class="mnpglk d-flex align-items-center"
+                        style="min-height:3.4rem; background-color: {{ bgrnd }};"
+                        data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                        <div class="d-flex justify-content-between p-1">
+                            <div>
+                                <h5 class="text-white">
+                                    {{ course.course_code }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 mb-2 p-1">
+                        <a class="card-link"
+                            href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                            <span class="text-dark">Instructor:</span><span
+                                class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <form method="GET" action="{% url 'home:search-all' %}">
+            <input type="hidden" name="q" value="{{ q }}" />
+            <input type="hidden" name="o" value="course" />
+            <div class="col-12">
+                <button type="submit" class="w-100 btn btn-light-active">See More</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if posts %}
+    <div class="card shadow p-2 mb-2">
+        <div class="m-0 mb-2 pb-1 p-0">
+            <div class="m-0">
+                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">Posts</h6>
+            </div>
+        </div>
+        <div id="post-list">
+            <div>
+                {% include 'home/posts/home_post.html' %}
+            </div>
+        </div>
+        <form method="GET" action="{% url 'home:search-all' %}">
+            <input type="hidden" name="q" value="{{ q }}" />
+            <input type="hidden" name="o" value="post" />
+            <div class="col-12">
+                <button type="submit" class="w-100 btn btn-light-active">See More</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if buzzes %}
+    <div class="card shadow p-2 mb-2">
+        <div class="m-0 mb-2 pb-1 p-0">
+            <div class="m-0">
+                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">Buzzes</h6>
+            </div>
+        </div>
+        <div id="buzz-list">
+            <div>
+                {% include 'home/buzz/buzz_list.html' %}
+            </div>
+        </div>
+        <form method="GET" action="{% url 'home:search-all' %}">
+            <input type="hidden" name="q" value="{{ q }}" />
+            <input type="hidden" name="o" value="buzz" />
+            <div class="row w-100 col-12">
+                <button type="submit" class="w-100 btn " style="background-color: rgb(226,230,234);">See More</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if blogs %}
+    <div class="card shadow p-2 mb-2">
+        <div class="m-0 mb-2 pb-1 p-0">
+            <div class="m-0">
+                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">Blogs</h6>
+            </div>
+        </div>
+        <div id="blogs-list">
+            <div>
+                {% include 'home/blog/blog_list.html' with blogs=blogs %}
+            </div>
+        </div>
+        <form method="GET" action="{% url 'home:search-all' %}">
+            <input type="hidden" name="q" value="{{ q }}" />
+            <input type="hidden" name="o" value="blog" />
+            <div class="ro2 w-100 col-12">
+                <button type="submit" class="w-100 btn " style="background-color: rgb(226,230,234);">See More</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+{% block item %}
+<div class="le_m_bx">
+    <div class="card border-0" style="background-color: rgba(210, 230, 248, 0.356); border-radius: 20px;">
+        <div class="content-holder">
+            <div class="pl-3 pr-3 pt-3 border-bottom">
+                <div>
+                    <h5 class="font-weight-bolder card-title">Related Searches</h5>
+                </div>
+            </div>
+            {% for term in  related_terms %}
+            <div data-target="_st_{{ term.search_text }}" class="search-btn pl-3 pr-3 pb-1 pt-2 border-bottom">
+                <form id="_st_{{ term.search_text }}" method="GET" action="{% url 'home:search-all' %}">
+                    <input type="hidden" name="q" value="{{ term.search_text }}" />
+                    <input type="hidden" name="o" value="top" />
+                    <span class="text-dark">{{ term.search_text }}</span>
+                </form>
+            </div>
+            {% endfor %}
+            <div class="pl-3 pr-3 pb-1 pt-1 m-1"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

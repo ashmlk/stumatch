@@ -1,0 +1,17 @@
+{% load crispy_forms_tags %}
+<form method="POST" data-url="{% url 'main:remove-image' hid=user.get_hashid %}" class="remove-user-image-form">
+	{% csrf_token %}
+		<div class="modal-header border-0 pl-0 pr-0 mb-0">
+			<h5 class="modal-title col-12 text-center" >Remove Image
+				<button type="button" class="close"   style="margin-left: 10x; margin-right: -10px;"  data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</h5>
+		</div>
+		<div class="modal-body text-center p-0">
+			<p class="mx-1">Are you sure you want to remove your profile photo?</p>
+		</div>
+		<div class="modal-footer border-0">
+			<button type="submit" class="mx-1 btn btn-danger text-center" style="border-radius: 20px;">Remove</button>
+		</div>
+</form>

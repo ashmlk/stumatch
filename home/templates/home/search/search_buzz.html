@@ -1,0 +1,10 @@
+{% extends 'home/search/search.html' %}
+{% load static %}
+{% load ibuilder %}
+{% block content %}
+<div id="lister-pager" class="search-ctr-marked" data-target="_bzsre">
+    <div id="buzz-list">
+        {% include 'home/buzz/buzz_list.html' %}
+    </div>
+</div>
+{% endblock %}

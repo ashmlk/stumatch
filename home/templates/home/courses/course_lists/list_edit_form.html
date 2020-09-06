@@ -1,0 +1,29 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<form method="POST" {% if action_url %} data-url="{{ action_url }}" {% else %} data-url="{% url 'home:course-list-edit' hid=list.get_hashid %}"  {% endif %} class="{{ form_class }}course-list-edit-form {{ fc }}">
+	{% csrf_token %}
+		<div class="modal-header text-center">
+			<h5 class="modal-title col-12 text-center">{% if form_class %}Edit Item{% else %}Edit List{% endif %}
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</h5>
+		</div>
+	<div class="modal-body">
+		{{ form|crispy }}
+	</div>
+	<div class="modal-footer col-12">
+		<button type="submit" class="btn btn-primary no-border"  style="border-radius: 20px; ">Save</button>
+	</div>
+</form>
+
+
+
+
+
+
+			
+
+
+
+

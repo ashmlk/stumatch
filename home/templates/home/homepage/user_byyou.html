@@ -1,0 +1,48 @@
+{% extends "home/homepage/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block title %}
+<title>By You - Corscope</title>
+{% endblock %}
+{% block content %}
+<ul class="nav ubu nav-pills nav-fill mb-3 border-bottom border-primary" id="pills-tab" role="tablist" style="border-width: 2px !important;">
+    <li class="nav-item">
+        <a class="nav-link {{ post_active }}" href="{% url 'home:users-posts' %}">Posts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ buzz_active }}" href="{% url 'home:users-buzzes' %}">Buzzes</a>
+    </li>
+    <li class="nav-item {{ blog_active }}" style="margin-right: -0.01rem;">
+        <a class="nav-link" href="{% url 'home:users-blogs' %}">Blog</a>
+    </li>
+</ul>
+  <div>
+    {% if post_active %}
+    <div  id="post-list">
+        <div id="_np2u"></div>
+        {% include 'home/posts/home_post.html' with posts=posts %}
+    </div>
+    {% elif buzz_active %}
+    <div id="buzz-list">
+        <div id="_nb21" class="buzz-ctr"></div>
+        {% include 'home/buzz/buzz_list.html' with buzzes=buzzes %}
+    </div>
+    {% elif blog_active %}
+    <div id="blog-list">
+        {% include 'home/blog/blog_list.html' with blogs=blogs %}
+    </div>
+    {% endif %}
+  </div>
+<script src="{% static 'js/post/post.js' %}"></script>
+{% endblock %}
+{% block contentleft %}
+<div class="row h5 rounded font-weight-bold mnpgl p-3" data-toggle="modal" data-target="#exampleModal">
+    <div class="col-2">
+      <i class="btn-light btn-b-circle material-icons" style="font-size: 28px; ">add</i>
+    </div>
+    <div class="col-10 d-none d-lg-block mt-2">
+      <span class="ml-2">Create</span>
+    </div>
+</div>
+{% endblock %}

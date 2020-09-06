@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <div id="#headerPlaceholder"></div>
+  {% block title %}
+  {% endblock %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+  <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_io/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+</head>
+<body class="pb-5" style="background-color: white !important;">
+  <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
+  <div class="wrapper">
+    <div class="container-fluid pt-4">
+      <div class="row">
+        <div class="col-md-3 col-sm-auto"></div>
+        <div class="col-md-5 col-sm-10">
+          <div class="mt-5" style="top: 44px !important;">
+            <div class="pt-2">
+              {% block content %}
+              {% endblock %}
+            </div>
+            <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-2 d-none d-md-block" style="margin-left: 3rem !important;">
+          <div class="pt-2 mt-5">
+            {% block item %}
+            {% endblock %}
+          </div>
+          <div class="d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post-update">
+    <div class="modal-dialog modal-dialog-centered ">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-comment-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz-delete">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-buzz">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-report">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="createModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title col-12 text-center" id="createModal">Create</h5>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div class="row mb-2 justify-content-center">
+              <button class="col-10 ml-1 btn btn-primary border-0 create-post-btn"
+                data-url="{% url 'home:post-create' %}">
+                Create a Post
+              </button>
+            </div>
+            <div class="row mb-2 justify-content-center">
+              <button class="col-10 btn btn-primary border-0 create-buzz-btn " data-tooltip="tooltip"
+                data-placement="bottom" title="Buzz and comment anonymously!"
+                data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
+            </div>
+            <div class="row justify-content-center">
+              <button class="col-10 btn btn-primary border-0 " data-url="{% url 'home:blog-create' %}">Create a
+                Blog</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer col-12">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"
+            style="border-radius: 20px;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+  <script src="{% static 'initial/initial.js' %}"></script>
+  <script src="{% static 'js/buzz/buzzall.js' %}"></script>
+  <script src="{% static 'js/post/postall.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'js/buzz/buzz.js' %}"></script>
+  <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
+    <!--
+    <script src="{% static 'js/post/like-api.js' %}"></script>
+    <script src="{% static 'js/post/post-comments.js' %}"></script>
+    <script src="{% static 'js/post/post_list.js' %}"></script>
+    <script src="{% static 'js/post/comment.js' %}"></script>
+    <script src="{% static 'js/post/comment-delete.js' %}"></script>
+    <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-like.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-wot.js' %}"></script>
+    <script src="{% static 'js/buzz/comment-b-like.js' %}"></script>
+    <script src="{% static 'js/buzz/comment-delete.js' %}"></script>
+    <script src="{% static 'js/buzz/buzz-delete.js' %}"></script>
+    <script src="{% static 'js/post/comment.js' %}"></script>
+    <script src="{% static 'js/post/like-comment-api.js' %}"></script>
+  -->
+  <script>
+    $(document).ready(function () {
+      $('.carousel').each(function() {
+        var c = this;
+        $(c).find(".carousel-item").removeClass('active');
+        $(c).find(".carousel-item").filter(':first').addClass("active");
+      });
+    })
+  </script>
+</body>
+</html>

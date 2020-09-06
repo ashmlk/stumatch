@@ -1,0 +1,71 @@
+{% extends 'home/courses/base.html' %} 
+{% load static %}
+{% block title %}
+    <title>Saved Courses - Corscope</title>
+{% endblock %}
+{% block content %}
+{% load ibuilder %}
+{% if courses %}
+<div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
+    <div class="d-flex justify-content-between mb-0">
+        <div class="m-0">
+            <h6 class="display-4" style="font-size: 2.2rem;">Saved Courses</h4>
+        </div>
+        <div>
+            <img  src="{% static 'default/courses/sv_nts.png' %}" alt="Course Image" style="margin-top:-15px;height:100px;width: 100px;">
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="card-columns mt-1" style="margin-left: -0.85rem;margin-right: -0.85rem;">
+    {% for course in courses %}
+    {% bg_rand as bgrnd %}
+    <div class="card mb-2 bg-white">
+        <div class="d-flex justify-content-between course-title-box course-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
+            <div class="ml-2"> 
+                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-sm" >
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                    <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                </div>       
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                </div>
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
+                    <span class="text-dark">Total Enrollments: </span><span class="mr-1">{{ course.get_user_count_ins }}</span>
+                </div>
+                <div class="my-1  p-1 border border rounded shadow-sm">
+                    <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                </div>
+                <div class="my-1 border rounded p-1 shadow-sm" style="display: inline-block;">
+                    <span class="text-dark">Average Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
+                </div>
+                <div class="d-flex justify-content-between ">
+                    <div class="votes-container ">
+                        {% include 'home/courses/course_vote.html' with course=course %}
+                    </div>
+                    <div>
+                        <button data-url="{% url 'home:course-save-remove' hid=course.get_hashid %}" type="button" class="btn btn-sm small no-border text-muted scrmvbtn">Remove</button>
+                    </div>
+                </div>    
+            </div>     
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if not courses %}
+<div class="card" style="margin-left: -0.85rem !important;">
+    <div class="card-body">
+        <div class="d-flex justify-content-center">
+            <h4 class="text-muted">You haven't saved any course.</h4>
+        </div>
+    </div>
+</div>
+{% endif %}
+<style>
+@media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}
+</style>
+{% endblock %}

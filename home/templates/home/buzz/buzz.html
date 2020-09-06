@@ -1,0 +1,143 @@
+{% extends 'home/homepage/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block title %}
+<title>Buzz - Corscope</title>
+{% endblock %}
+{% block item %}
+{% if tags or words %}
+<div class="le_m_bx">
+  <div class="card border-0" style="background-color: rgba(210, 230, 248, 0.356); border-radius: 20px;">
+    <div class="content-holder">
+      <div class="pl-3 pr-3 pt-3 border-bottom">
+        <div>
+          <h5 class="font-weight-bolder card-title">Trending</h5>
+        </div>
+      </div>
+      <div id="menureform">
+        {% for tag in tags %}
+        <div class="shdv" data-url="{% url 'home:tag-buzz' tag.slug %}"
+          class="trending-box-r mnpglk pl-3 pr-3 pb-1 pt-2 border-bottom">
+          <a href="{% url 'home:tag-buzz' tag.slug %}" class="card-link text-dark"><strong>#{{tag.name}}</strong></a>
+          <br>
+          <span class="card-subtitle small">{{ tag.num_times|num_format }} Buzzes</span>
+        </div>
+        {% endfor %}
+        {% for word in words %}
+        <div class="shdv mnpgl search-btn" data-target="sd3f0v">
+          <form id="sd3f0v" action="{% url 'home:top-word-post' %}" method="GET"
+            class="strending-box-r pl-3 pr-3 pb-1 pt-2 border-bottom">
+            <input name="w" value="{{ word }}" type="hidden" />
+            <div>
+              <span class="text-muted mx-2 my-0 small">Trending in buzzes</span>
+            </div>
+            <button class="btn btn-md no-border no-outline" type="submit">
+              <strong>{{ word|capfirst }}</strong>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="pl-3 pr-3 pb-1 pt-1 m-1"></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block content %}
+{% load ibuilder %}
+<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+{% if is_tag %}
+<div class="rounded-0 ml-1 card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h4 class="card-title">#{{ tag.name }}</h4>
+      </div>
+      <div class="text-muted">
+        <span>{{ num_obj|num_format }} {{ s }}</span>
+      </div>
+    </div>
+    <div class="mt-1 related">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
+          <div style="margin-top: 0.2rem;">
+            <h6 class="text-muted small card-subtitle">Related:
+              <span class="related-tags">
+                {% for tag in related_tags %}
+                <span class="mr-1">
+                  <a href="{% url 'home:tag-blog' tag.slug %}" class="text-dark"
+                    style="text-decoration: none;">#{{ tag.name }}</a>
+                </span>
+                {% endfor %}
+              </span>
+            </h6>
+          </div>
+        </div> 
+        <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
+          {% include 'main/tags/fav_buzz.html' with tag=tag %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="mb-2">
+  <div class="card rounded-0">
+    <div class="p-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <input type="text" readonly="readonly"
+          class="bg-transparent border-0 form-control bg-transparent create-buzz-btn input-no-border"
+          placeholder="Share anonymously..." data-url="{% url 'home:buzz-create' %}"/>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-primary border-0 create-buzz-btn" data-tooltip="tooltip" data-placement="bottom"
+            title="Buzz and comment anonymously!" data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-3 mb-2 p-1">
+  <div class="d-flex justify-content-start" id="_pol3">
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{home_active}}">
+      <a  href="{% url 'home:buzz' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6"><span >Feed</span></span>
+        </div>
+      </a>
+    </div>
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ top_active }}"
+      data-url="{% url 'home:top-buzzes' %}" >
+      <a  href="{% url 'home:top-buzzes' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6">
+            <span >Top</span></span>
+        </div>
+      </a>
+    </div>
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ hot_active }}"
+      data-url="{% url 'home:hot-buzzes' %}" >
+      <a  href="{% url 'home:hot-buzzes' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6"><span > Hot</span></span>
+        </div>
+      </a>
+    </div>
+    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-buzzes' %}">
+      <a  href="{% url 'home:uni-buzzes' %}" style="text-decoration: none;">
+        <div>
+          <span class="h6"><span >University</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div id="buzz-list">
+  {% include 'home/buzz/buzz_list.html' %}
+</div>
+{% endblock content %}

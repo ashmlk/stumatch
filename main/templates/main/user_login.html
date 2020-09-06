@@ -1,0 +1,64 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name=”robots” content="index, follow">
+    <meta name=”googlebot” content="index, follow">
+    <meta name="description" content="Corscope is a platform that students can connect with each other, manage their courses, and find others in their classes and expand their network."/>
+    <title>Corscope - Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+<body class="main-bg-color">
+    <div class="container">
+      <div class="row" style="height: 100vh;">
+        <div class="Absolute-Center is-responsive  col-lg-5 my-auto mx-auto" style="padding-bottom: 10vh;">
+          <div class="align-items-center is-responsive my-4 mx-auto ">
+            <div class="d-flex my-auto align-items-center">
+              <div class="logo-name">
+                <img class="img-fluid" src="static/logo/m/logo-main-name.png" height="80%" width="80%"/>
+              </div>
+              <div>
+              </div> 
+            </div>
+            <h5 class="text-center mt-3 mx-0">Find your friends and connect</h5>
+          </div>
+          <div class="card card-signin my-auto">
+            <div class="card-body">
+              <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
+                {% csrf_token %}
+                <div class="form-label-group">
+                  <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>
+                  <br/>
+                </div>
+                <div class="form-label-group">
+                 <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
+                </div>
+                <button type="submit" class="btn mt-3 w-100 btn-md border rounded"><span style="font-weight: 500;">Log in</span></button>
+                <a class="btn mt-3 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
+                  <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span></a>
+                <hr class="my-4">
+                <p>Don't have account? <a href="{% url 'main:signup' %}" id="signup">Sign Up</a></p>
+                <a href="{% url 'password_reset' %}" id="signup">Forgot Password</a>
+                <p style="color: red;">{{ message }}</p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer-main-div">
+      {% include 'footer_main.html' %}
+    </div>
+</body>
+<style>
+  .google-icon {
+    margin-left: 10px;
+    width: 22px;
+    height: 22x;
+  }
+</style>
+</html>

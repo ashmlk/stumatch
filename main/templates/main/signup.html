@@ -1,0 +1,131 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Corscope - Sign up</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="d-flex justify-content-center">
+        <div class="align-items-center is-responsive my-4 mx-auto ">
+          <div class="d-flex my-auto align-items-center">
+            <div class="logo-name">
+              <a href="{% url 'main:user_login' %}">
+                <img class="img-fluid" src="{% static 'logo/m/logo-main-name.png' %}" height="80%" width="80%">
+              </a>
+            </div>
+            <div>
+            </div>
+          </div>
+          <h5 class="text-center mt-3 mx-0">Create an account to find your friends and connect!</h5>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center col-12">
+        <div>
+          {% if registered %}
+          <h1 class="display-5 font-weight-lighter">Registeration Completed</h1>
+          {% else %}
+          <form enctype="multipart/form-data" method="POST" action="{% url 'main:signup' %}">
+            {% csrf_token %}
+            <div class="form-fields">
+              {{ form.as_p}}
+            </div>
+            <div class="mt-2">
+              <div class="mb-3 text-muted small">
+                <span>
+                  By clicking Sign Up, you agree to our <a class="text-primary" href="#">Terms</a> and <a class="text-primary" href="#">Data Policy</a>.
+                </span>
+              </div>
+              <div>
+                <button type="submit" class="float-right btn btn-primary"  style="border-radius: 20px; ">Sign Up</button>
+              </div>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="footer-main-div">
+    {% include 'footer_main.html' %}
+  </div>
+</body>
+<style>
+  .btn-primary, .btn-primary:active, .btn-primary:visited {
+    background-color: rgb(126, 192, 243)!important;
+    border: none !important;
+    }
+
+    .btn-primary:hover {
+        opacity: 0.85;
+    }
+
+    .error input, .error select {
+    border: 2px red solid;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+<script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+<script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+<script src="{% static 'initial/initial.js' %}"></script>
+<script>
+  /*
+  $(document).ready(function () {
+
+    var options = {
+          url: "{% static 'jsons/world_universities_and_domains.json' %}",
+          getValue: "name",
+          requestDelay: 200,
+          template: {
+          type: "description",
+          fields: {
+              description: "country"
+              },
+          },
+          list: {
+              maxNumberOfElements: 7,
+              showAnimation: {
+              type: "fade", //normal|slide|fade
+              time: 300,
+              callback: function() {}
+              },
+              hideAnimation: {
+              type: "fade", //normal|slide|fade
+              time: 300,
+              callback: function() {}
+              },
+              match: {
+                  enabled: true
+              }
+          },
+            theme: "square"
+          };
+
+        $("#id_university").easyAutocomplete(options);
+        
+        $('.easy-autocomplete').ready( function () {
+          $('div.easy-autocomplete').removeAttr('style')
+          $('div').removeClass('easy-autocomplete');
+          $('.easy-autocomplete-container').addClass('d-flex justify-content-center')
+        })
+
+  })
+  */
+</script>
+</html>

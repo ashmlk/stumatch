@@ -1,0 +1,16 @@
+<from class="buzz-d-c" data-url="{% url 'home:buzz-detail' guid_url %}" method="POST">
+    {% csrf_token %}
+    <div class="modal-header text-center">
+        <h5 class="modal-title col-12 text-center">Add a comment
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </h5>
+    </div>
+    <div class="modal-body" style="overflow-y: auto; margin:0;">
+        {{ form|crispy }}
+    </div>
+    <div class="modal-footer float-right">
+		<button type="submit" class="mt-2 mb-2 btn border-0 btn-primary"  style="border-radius: 20px;">Comment</button>
+	</div>
+</from>

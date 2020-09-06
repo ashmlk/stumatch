@@ -1,0 +1,17 @@
+{% load crispy_forms_tags %}
+<form method="POST" data-url="{% url 'home:course-remove' hid=course.get_hashid %}" class="remove-form">
+	{% csrf_token %}
+		<div class="modal-header border-0 pl-0 pr-0 mb-0">
+			<h5 class="modal-title col-12 text-center" ><span style="margin-right: -15px !important;">Remove Course</span>
+				<button type="button" class="close" style="margin-left: 10x; margin-right: -15px;"  data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</h5>
+		</div>
+		<div class="modal-body">
+			<p class="lead text-center">Are you sure you want to remove this course from your courses?</p>
+		</div>
+		<div class="modal-footer border-0">
+			<button type="submit" class="mx-1 btn btn-danger" style="border-radius: 20px;">Remove</button>
+		</div>
+</form>
