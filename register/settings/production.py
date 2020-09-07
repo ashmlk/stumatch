@@ -45,16 +45,11 @@ ALLOWED_HOSTS = ['.herokuapp.com','wwww.corscope.com','.corscope.com']
 #EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 #EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-redis_url = urlparse(os.getenv('REDISTOGO_URL', 'redis://localhost:6959'))
 
 CACHES = {
     'default': {
         'BACKEND': "redis_cache.RedisCache",
-        'LOCATION': os.environ.get('REDIS_URL', 'redis://localhost:6379')
-        'OPTIONS': {
-            'DB': 0,
-            'PASSWORD': redis_url.password,
-        }
+        'LOCATION': os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379'),
     }
 }
 
