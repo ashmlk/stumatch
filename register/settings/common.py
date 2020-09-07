@@ -12,14 +12,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [ #checked
     os.path.join(BASE_DIR, 'static')
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'live-static', 'static-root')
 
 # Static files (CSS, JavaScript, Images)
 MEDIA_URL = '/media/'
 MEDIA_DIRS = [ 
              os.path.join(BASE_DIR,'media')
 ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'live-static', 'media-root')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
