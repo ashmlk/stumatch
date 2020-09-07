@@ -5,9 +5,9 @@ import django_heroku
 import dj_database_url
 
 
-DEBUG = False
-
 django_heroku.settings(locals())
+
+DEBUG = False
 
 LOGGING = {
     'version': 1,
