@@ -4,15 +4,22 @@ from celery.schedules import crontab
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
-#STATIC_DIR = os.path.join(BASE_DIR,'static/')
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [ #checked
+    os.path.join(BASE_DIR, 'static')
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Static files (CSS, JavaScript, Images)
+MEDIA_URL = '/media/'
 MEDIA_DIRS = [ 
              os.path.join(BASE_DIR,'media')
 ]
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -264,11 +271,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 3
 
-# Static files (CSS, JavaScript, Images)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')
 LOGOUT_REDIRECT_URL = reverse_lazy('main:user_login')
