@@ -2,6 +2,7 @@ from register.settings.common import *
 import os
 from urllib.parse import urlparse
 import django_heroku
+import dj_database_url
 
 
 DEBUG = False
@@ -31,5 +32,8 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 }
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 django_heroku.settings(locals(),logging=False)
