@@ -2,7 +2,6 @@ from register.settings.common import *
 import os
 import django_heroku
 
-
 DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','corscope.heroku.com']

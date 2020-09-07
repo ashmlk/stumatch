@@ -5,7 +5,6 @@ from collections import Counter
 from itertools import chain
 import nltk
 from nltk.collocations import *
-from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
 import datetime
@@ -13,7 +12,7 @@ from math import log, sqrt
 import json 
 from difflib import SequenceMatcher
 
-stop_words = stopwords.words('english')
+stop_words = nltk.download('stopwords')
 bigram_measures = nltk.collocations.BigramAssocMeasures()
 trigram_measures = nltk.collocations.TrigramAssocMeasures()
 porter = PorterStemmer()
