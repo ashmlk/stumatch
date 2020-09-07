@@ -20,7 +20,7 @@ STATICFILES_DIRS = [
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'e2a&eyvw$gfs=8o)xzru2f@@7iiy-3+da18o#immnl7ln@3xm-'
 
-ALLOWED_HOSTS = [*]
+ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'main.Profile'
 
