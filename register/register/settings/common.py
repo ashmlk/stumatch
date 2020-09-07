@@ -4,24 +4,28 @@ from celery.schedules import crontab
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
-#STATIC_DIR = os.path.join(BASE_DIR,'static/')
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [ #checked
+    os.path.join(BASE_DIR, 'static')
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'live-static', 'static-root')
+
+# Static files (CSS, JavaScript, Images)
+MEDIA_URL = '/media/'
 MEDIA_DIRS = [ 
              os.path.join(BASE_DIR,'media')
 ]
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'live-static', 'media-root')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'e2a&eyvw$gfs=8o)xzru2f@@7iiy-3+da18o#immnl7ln@3xm-'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -99,9 +103,9 @@ CKEDITOR_CONFIGS = {
 
 #CELERY CONFIG
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_URL = os.getenv('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_BROKER_TRANSPORT = 'redis'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = os.getenv('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -215,8 +219,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -269,10 +271,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 3
 
-# Static files (CSS, JavaScript, Images)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
+
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')
 LOGOUT_REDIRECT_URL = reverse_lazy('main:user_login')
