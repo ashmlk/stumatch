@@ -40,7 +40,7 @@ LOGGING = {
     }
 }
 
-ALLOWED_HOSTS = ['corscope.heroku.com','wwww.corscope.com','corscope.com']
+ALLOWED_HOSTS = ['corscope.herokuapp.com','wwww.corscope.com','corscope.com']
 
 #EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 #EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
@@ -58,8 +58,6 @@ CACHES = {
     }
 }
 
-CELERY_BROKER_URL=os.environ.get('REDISTOGO_URL')
-CELERY_RESULT_BACKEND=os.environ.get('REDISTOGO_URL')
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "max_connections": 2,
 }
@@ -70,7 +68,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 django_heroku.settings(locals(),logging=False)
