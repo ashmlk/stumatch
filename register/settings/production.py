@@ -3,6 +3,8 @@ import os
 from urllib.parse import urlparse
 import django_heroku
 
+django_heroku.settings(locals())
+
 DEBUG = False
 
 ALLOWED_HOSTS = ['corscope.heroku.com','wwww.corscope.com','corscope.com']
@@ -31,4 +33,3 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-django_heroku.settings(locals())
