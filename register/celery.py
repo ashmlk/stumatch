@@ -9,6 +9,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'register.settings.production')
 app = Celery('register')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks(settings.production.INSTALLED_APPS)
+app.autodiscover_tasks(settings.INSTALLED_APPS)
 
 
