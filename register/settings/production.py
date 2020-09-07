@@ -1,6 +1,6 @@
 from register.settings.common import *
 import os
-import urlparse
+from urllib.parse import urlparse
 import django_heroku
 
 DEBUG = False
