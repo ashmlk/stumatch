@@ -7,6 +7,8 @@ import dj_database_url
 
 DEBUG = False
 
+django_heroku.settings(locals())
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -69,4 +71,3 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 
-django_heroku.settings(locals())
