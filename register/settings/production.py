@@ -3,7 +3,6 @@ import os
 from urllib.parse import urlparse
 import django_heroku
 
-django_heroku.settings(locals())
 
 DEBUG = False
 
@@ -33,3 +32,4 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+django_heroku.settings(locals(),staticfiles=False,logging=False)
