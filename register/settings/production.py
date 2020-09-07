@@ -49,8 +49,8 @@ redis_url = urlparse(os.getenv('REDISTOGO_URL', 'redis://localhost:6959'))
 
 CACHES = {
     'default': {
-        'BACKEND': "django_redis.cache.RedisCache",
-        'LOCATION': '%s:%s' % (redis_url.hostname, redis_url.port),
+        'BACKEND': "redis_cache.RedisCache",
+        'LOCATION': os.environ.get('REDIS_URL', 'redis://localhost:6379')
         'OPTIONS': {
             'DB': 0,
             'PASSWORD': redis_url.password,
