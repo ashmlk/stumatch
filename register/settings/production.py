@@ -32,4 +32,4 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-django_heroku.settings(locals(),staticfiles=False,logging=False)
+django_heroku.settings(locals(),logging=False)
