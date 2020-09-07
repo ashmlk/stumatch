@@ -267,8 +267,6 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 3
 
-WHITENOISE_USE_FINDERS=True
-
 # Static files (CSS, JavaScript, Images)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
