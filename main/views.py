@@ -24,6 +24,7 @@ from django.core.exceptions import ValidationError
 from main.decorators import confirm_password
 from notifications.signals import notify
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import user_passes_test
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -132,25 +133,23 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'main/signup.html', {'form': form})
 
+@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
     message = ''
-    if request.user.is_authenticated:
-        return redirect('home:home')
-    else:  
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('home:home')
-                else:
-                    HttpResponse('Account is disabled')
-            if user is None:
-                message = 'Sorry the username or password you entered is incorrect please try again'
-        else:
-            message = ''
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return redirect('home:home')
+            else:
+                HttpResponse('Account is disabled')
+        if user is None:
+            message = 'Sorry the username or password you entered is incorrect please try again'
+    else:
+        message = ''
     return render(request, 'main/user_login.html', {'message': message})
 
 @login_required
