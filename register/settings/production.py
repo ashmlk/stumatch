@@ -49,13 +49,20 @@ ALLOWED_HOSTS = ['.herokuapp.com','wwww.corscope.com','.corscope.com']
 CACHES = {
     'default': {
         'BACKEND': "redis_cache.RedisCache",
-        'LOCATION': os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379'),
+        'LOCATION': os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379'), 
+        "OPTIONS": {
+            'DB': 0,
+            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+        }
     }
 }
+SITE_ID = 4
 
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "max_connections": 2,
 }
+
+SECURE_SSL_REDIRECT = True
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 

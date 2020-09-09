@@ -25,8 +25,8 @@ import friendship
 import notifications.urls
 import admin_honeypot
 
-urlpatterns = [
-    #Has to be included for Forgot Password funcitonality on main page
+urlpatterns = [ 
+    #Has to be included for Forgot Password functionality on main page
     path('', include('django.contrib.auth.urls')), 
     url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/', admin.site.urls),    
