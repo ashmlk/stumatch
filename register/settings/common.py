@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'admin_honeypot',
-    'whitenoise.runserver_nostatic'
+    'whitenoise.runserver_nostatic',
+    'storages'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
