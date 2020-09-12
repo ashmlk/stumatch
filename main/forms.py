@@ -146,8 +146,8 @@ class SignUpForm(UserCreationForm):
  
 	email = forms.EmailField(
 		label='',
-		max_length=100,
-		required=False,
+		max_length=200,
+		required=True,
 		widget=forms.EmailInput(
 			attrs={
 				"placeholder": "Email",
