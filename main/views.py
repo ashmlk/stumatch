@@ -25,6 +25,8 @@ from main.decorators import confirm_password
 from notifications.signals import notify
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import user_passes_test
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -63,8 +65,19 @@ def contact_us(request):
         if form.is_valid():
             sender_name = form.cleaned_data['name']
             sender_email = form.cleaned_data['email']
-            message = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message'])
-            send_mail('New Enquiry', message, sender_email, ['contact@corscope.com'])
+            message_text = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message']) #message to be sent to contact@domain.com 
+            message = Mail(
+                from_email=sender_email,
+                to_emails='contact@corscope.com',
+                subject='User Contact Submitted',
+                plain_text_content = message_text
+                )
+            try:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+            except Exception as e:
+                print(e.message)
+                
             messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
             form = ContactForm
             return redirect('main:contact-us')
@@ -128,6 +141,17 @@ def signup(request):
             user = form.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
+            message = Mail(
+                from_email='Corscope Team <no-reply@corscope.com>',
+                to_emails=user.email,
+                subject='Welcome to Corscope',
+                html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
+                )
+            try:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+            except Exception as e:
+                print(e.message)
             return redirect('main:user_login')
     else:
         form = SignUpForm()
