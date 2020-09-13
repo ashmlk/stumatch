@@ -200,7 +200,8 @@ def edit_profile(request):
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect(reverse('main:settings-edit')) 
+            print("ok")
+            return redirect('main:settings-edit') 
     else:
         form = EditProfileForm(instance=request.user)
         if request.user.image.url != '/media/defaults/user/default_u_i.png':
@@ -212,7 +213,6 @@ def edit_profile(request):
             'image_not_default':image_not_default,
             'account_active':'setting-link-active'
             }
-        print(request.user.image.url)
         return render(request, 'main/settings/edit_profile.html', context)
 
 @login_required

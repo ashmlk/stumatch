@@ -10,7 +10,7 @@
                 <div>
                     <div class="ppro-img">
                         <img class="img-create-post rounded-circle" style="height: 8rem;width: 8rem;"
-                            src="https://mdbootstrap.com/img/Photos/Avatars/avatar-5.jpg" />
+                            src="{{user.image.url}}" />
                     </div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                             Friends
                         </span>
                     </div>
-                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:courses' %}">
+                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:course-list' %}">
                         <span class="pro-link-goto-text">
                             Courses
                         </span>
@@ -190,7 +190,7 @@
                                 {% endfor %}
                             </div>
                             <div class="mt-2 add-course-btn">
-                                <div class="w-100 pro-link-goto" data-url="{% url 'home:courses' %}">
+                                <div class="w-100 pro-link-goto" data-url="{% url 'home:course-list' %}">
                                     <button type="submit" class="btn col-12"
                                         style="background-color: rgb(226,230,234);">View All</button>
                                 </div>
