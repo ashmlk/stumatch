@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
 <nav class="navbar navbar-expand-md main-top-nav pl-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
-  <a class="navbar-brand ml-1 mr-3" href="#">
+  <a class="navbar-brand ml-1 mr-3" href="{% url 'main:user_login' %}">
     <div class="d-none d-lg-block">
       <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
       <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}"
