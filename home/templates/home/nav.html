@@ -220,6 +220,36 @@
           </div>
         </div>
       </li>
+
+      <li class="d-sm-block  nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:settings-edit' %}">
+        <div class="d-flex align-items-center">
+          <div>
+            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+              href="{% url 'main:settings-edit' %}">
+              <i class="fas fa-2x mt-1 fa-cog" style="margin-top:1.3rem;margin-left: 0.2rem;"></i> <span class="nav-name-icons ml-3 d-md-none"></span></a>
+          </div>
+          <div class="ml-2 nav-name-icons ml-3 d-md-none">
+            <span>Settings</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="d-sm-block nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:user_logout' %}">
+        <div class="d-flex align-items-center">
+          <div>
+            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+              href="{% url 'main:user_logout' %}">
+              <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
+          </div>
+          <div class="nav-name-icons ml-3 d-md-none">
+            <span>Logout</span>
+          </div>
+        </div>
+      </li>
+      
+
       <li class="d-none d-md-block mt-1 nav-item border-left dropdown">
         <a class="nav-link btn-md border btn-circle rounded-circle text-dark ml-3" id="navbarDropdown"
           data-tooltip="tooltip" data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Menu"
