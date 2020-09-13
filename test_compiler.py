@@ -281,7 +281,7 @@ def test_email():
     from django.template.loader import render_to_string
     message = Mail(
         from_email='Corscope Team <no-reply@corscope.com>',
-        to_emails='arshiama@hotmail.com',
+        to_emails='contact@corscope.com',
         subject='Welcome to Corscope',
         html_content = render_to_string('new_user_email.html', {'first_name': 'Arshia'})
     )
