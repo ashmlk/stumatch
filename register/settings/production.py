@@ -3,7 +3,10 @@ import os
 from urllib.parse import urlparse
 import django_heroku
 import dj_database_url
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
+sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
 
 DEBUG = False
 

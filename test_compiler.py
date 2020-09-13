@@ -273,6 +273,7 @@ def generate_comment_like_notifications():
         notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
     return 'success'
 
+from register.settings.production import sg
 
 def test_email():
     import os
@@ -282,13 +283,15 @@ def test_email():
     email = 'arshiama@hotmail.com'
     message = Mail(
                 from_email='Corscope Team <no-reply@corscope.com>',
-                to_emails=str(email),
+                to_emails=email,
                 subject='Welcome to Corscope',
-                html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
-                )
+                html_content = render_to_string('new_user_email.html', {'first_name':'Arshia'})
+            )
     try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
     except Exception as e:
-        print("error")
+        print(e)
         

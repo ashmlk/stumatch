@@ -27,6 +27,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import user_passes_test
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from register.settings.production import sg
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -73,7 +74,6 @@ def contact_us(request):
                 plain_text_content = message_text
                 )
             try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
                 response = sg.send(message)
             except Exception as e:
                 print("error")
@@ -143,12 +143,11 @@ def signup(request):
             user = authenticate(username=user.username, password=raw_password)
             message = Mail(
                 from_email='Corscope Team <no-reply@corscope.com>',
-                to_emails=[user.email],
+                to_emails=user.email,
                 subject='Welcome to Corscope',
                 html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
                 )
             try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
                 response = sg.send(message)
             except Exception as e:
                 print("error")
