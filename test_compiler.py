@@ -279,18 +279,16 @@ def test_email():
     from sendgrid import SendGridAPIClient
     from sendgrid.helpers.mail import Mail
     from django.template.loader import render_to_string
+    email = 'arshiama@hotmail.com'
     message = Mail(
-        from_email='Corscope Team <no-reply@corscope.com>',
-        to_emails='contact@corscope.com',
-        subject='Welcome to Corscope',
-        html_content = render_to_string('new_user_email.html', {'first_name': 'Arshia'})
-    )
+                from_email='Corscope Team <no-reply@corscope.com>',
+                to_emails=str(email),
+                subject='Welcome to Corscope',
+                html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
+                )
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
     except Exception as e:
-        print(e.message)
+        print("error")
         

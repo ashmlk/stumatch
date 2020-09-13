@@ -143,7 +143,7 @@ def signup(request):
             user = authenticate(username=user.username, password=raw_password)
             message = Mail(
                 from_email='Corscope Team <no-reply@corscope.com>',
-                to_emails=user.email,
+                to_emails=[user.email],
                 subject='Welcome to Corscope',
                 html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
                 )

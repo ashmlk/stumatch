@@ -839,11 +839,11 @@ class Course(models.Model):
         return r_dic[int(avg.get('as_float__avg'))]
     
     def user_complexity(self):
-        r_dic = {1:"easy",2:"medium",3:"hard",4:"a failure"}
+        r_dic = {0:"none",1:"easy",2:"medium",3:"hard",4:"a failure"}
         return r_dic[int(self.course_difficulty)]
     
     def user_complexity_btn(self):
-        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
+        r_dic = {0:"None",1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
         return r_dic[int(self.course_difficulty)]
     
     def is_liked(self,user):
