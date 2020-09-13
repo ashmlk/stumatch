@@ -76,7 +76,7 @@ def contact_us(request):
                 sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
                 response = sg.send(message)
             except Exception as e:
-                print(e.message)
+                print("error")
                 
             messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
             form = ContactForm
