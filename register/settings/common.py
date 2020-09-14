@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'admin_honeypot',
     'whitenoise.runserver_nostatic',
-    'storages'
+    'storages',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -209,6 +209,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'register.wsgi.application'
 
+SOCIALACCOUNT_ADAPTER = "register.adapter.SocialAccountAdapter"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

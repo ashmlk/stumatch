@@ -22,42 +22,8 @@
             <div class="mt-2 p-2 u-bio">
                 <p class="text-center text-muted">{{ user.bio }}</p>
             </div>
-        </div>
-        <div class="sticky-top my-2 p-2 mb-3 bg-white profile-header-main-links d-flex justify-content-between"
-            style="top:54px !important;">
-            <div class="options-user-r">
-                <div class="d-flex justify-content-start">
-                    <div class="rounded-0 p-2 pro-link-goto{{ pro_active }}"
-                        data-url="{% url 'main:get_user' user.username %}">
-                        <span class="pro-link-goto-text">
-                            Profile
-                        </span>
-                    </div>
-                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'main:friends-main' %}">
-                        <span class="pro-link-goto-text">
-                            Friends
-                        </span>
-                    </div>
-                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:course-list' %}">
-                        <span class="pro-link-goto-text">
-                            Courses
-                        </span>
-                    </div>
-                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'home:users-posts' %}">
-                        <span class="pro-link-goto-text">
-                            By You
-                        </span>
-                    </div>
-                    <div class="rounded-0 p-2 pro-link-goto" data-url="{% url 'main:bookmarks' %}">
-                        <span class="pro-link-goto-text">
-                            Bookmarks
-                        </span>
-                    </div>
-
-                </div>
-            </div>
             <div class="pt-2 editable-al-view">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-center">
                     <div class="btn btn-sm d-flex align-items-center mr-1 pro-menu-link"
                         data-url="{% url 'main:settings-edit' %}">
                         <div>
@@ -76,9 +42,42 @@
                 </div>
             </div>
         </div>
+        <div class="sticky-top my-2 p-2 mb-3 bg-white profile-header-main-links d-flex justify-content-between"
+            style="top:54px !important; overflow-y: auto !important;">
+            <div class="options-user-r">
+                <div class="d-flex justify-content-start">
+                    <div class="col-2 rounded-0 p-2 pro-link-goto{{ pro_active }}"
+                        data-url="{% url 'main:get_user' user.username %}">
+                        <span class="text-center pro-link-goto-text">
+                            Profile
+                        </span>
+                    </div>
+                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'main:friends-main' %}">
+                        <span class="pro-link-goto-text">
+                            Friends
+                        </span>
+                    </div>
+                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'home:course-list' %}">
+                        <span class="pro-link-goto-text">
+                            Courses
+                        </span>
+                    </div>
+                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'home:users-posts' %}">
+                        <span class="text-center pro-link-goto-text">
+                            By You
+                        </span>
+                    </div>
+                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'main:bookmarks' %}">
+                        <span class="text-center  pro-link-goto-text">
+                            Bookmarks
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="my-2  content-boxes info-user-all">
             <div class="row p-2">
-                <div class="col-sm-6">
+                <div class="col-sm-6 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between">

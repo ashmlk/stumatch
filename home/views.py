@@ -541,6 +541,8 @@ def course_add(request):
                 return redirect('home:course-list')
     else:
         form = CourseForm
+        if request.user.university:
+            form.fields['course_university'].initial = {request.user.university:request.user.university}
     context = {
         'form':form,
     }

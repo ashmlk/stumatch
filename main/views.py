@@ -192,7 +192,55 @@ def change_password(request):
         'form': form,
         'privacy_active':'setting-link-active',
     })
+
+'''
+@login_required
+def user_completesignup(request):
     
+    if request.method == 'POST':
+        form = CompleteProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home:home')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = CompleteProfileForm(instance=request.user)
+    return render(request, 'complete_profile_form.html', {'form':form})
+'''
+
+def handle_404(request, exception):
+        response = render_to_response(
+        '400.html',
+        context_instance=RequestContext(request)
+        )
+        response.status_code = 404
+        return response
+
+def handle_403(request, exception):
+        response = render_to_response(
+        '403.html',
+        context_instance=RequestContext(request)
+        )
+        response.status_code = 403
+        return response
+
+def handle_400(request, exception):
+        response = render_to_response(
+        '400.html',
+        context_instance=RequestContext(request)
+        )
+        response.status_code = 400
+        return response
+
+def handle_500(request):
+        response = render_to_response(
+        '500.html',
+        context_instance=RequestContext(request)
+        )
+        response.status_code = 500
+        return response
+ 
 @login_required
 def edit_profile(request):
     

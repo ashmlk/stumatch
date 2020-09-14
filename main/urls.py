@@ -13,6 +13,7 @@ urlpatterns=[
     path('about/',views.about_html,name='site-about'),
     path('contact/',views.contact_us,name='contact-us'),
     path('signup/',views.signup,name='signup'),
+    #path('signup/complete',views.user_completesignup,name='user_completesignup'),
     path('',views.user_login, name='user_login'),
     path('signout', views.user_logout, name='user_logout'),
     path('report/submit/<str:reporter_id>', views.report_object,name='report-object'),

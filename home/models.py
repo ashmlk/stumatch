@@ -814,11 +814,11 @@ class Course(models.Model):
         return '{}{}'.format('{:f}'.format(t).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
     
     def complexity_btn(self):
-        r_dic = {"Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
+        r_dic = {None:"None","Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
         return (r_dic[self.average_complexity()])
     
     def complexity_btn_ins(self):
-        r_dic = {"Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
+        r_dic = {None:"None","Easy":"success","Medium":"warning","Hard":"danger","Most Failed":"dark"}
         return (r_dic[self.average_complexity_ins()])
     
     def sem(self):      
@@ -830,13 +830,17 @@ class Course(models.Model):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
         avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).exclude(course_difficulty=0).\
             annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
-        return r_dic[int(avg.get('as_float__avg'))]
+        if avg.get('as_float__avg'):
+            return r_dic[int(avg.get('as_float__avg'))]
+        return None
     
     def average_complexity_ins(self):
         r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
         avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
             course_instructor__iexact=self.course_instructor).exclude(course_difficulty=0).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
-        return r_dic[int(avg.get('as_float__avg'))]
+        if avg.get('as_float__avg'):
+            return r_dic[int(avg.get('as_float__avg'))]
+        return None
     
     def user_complexity(self):
         r_dic = {0:"none",1:"easy",2:"medium",3:"hard",4:"a failure"}
