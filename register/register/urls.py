@@ -23,11 +23,21 @@ from django.conf import settings
 from django.conf.urls.static import static
 import friendship
 import notifications.urls
+import admin_honeypot
+from django.conf.urls import (
+handler400, handler403, handler404, handler500
+)
 
-urlpatterns = [
-    #Has to be included for Forgot Password funcitonality on main page
+handler404 = 'main.views.handle_404'
+handler500 = 'main.views.handle_500'
+handler403 = 'main.views.handle_403'
+handler400 = 'main.views.handle_400'
+
+urlpatterns = [ 
+    #Has to be included for Forgot Password functionality on main page
     path('', include('django.contrib.auth.urls')), 
-    path('admin/', admin.site.urls),    
+    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path('ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/', admin.site.urls),    
     url(r'^taggit/', include('taggit_selectize.urls')),
     path('ckeditor/',include('ckeditor_uploader.urls')),
     path('',views.user_login,name='user_login'),

@@ -4,4 +4,5 @@
 __pycache__/
 register/settings/development.py
 db.sqlite3
-denvx/
+sendgrid.env
+test_compiler.py

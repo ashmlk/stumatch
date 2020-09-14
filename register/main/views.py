@@ -24,6 +24,11 @@ from django.core.exceptions import ValidationError
 from main.decorators import confirm_password
 from notifications.signals import notify
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import user_passes_test
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from register.settings.production import sg
+from django.template import RequestContext
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -62,8 +67,18 @@ def contact_us(request):
         if form.is_valid():
             sender_name = form.cleaned_data['name']
             sender_email = form.cleaned_data['email']
-            message = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message'])
-            send_mail('New Enquiry', message, sender_email, ['contact@corscope.com'])
+            message_text = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message']) #message to be sent to contact@domain.com 
+            message = Mail(
+                from_email=sender_email,
+                to_emails='contact@corscope.com',
+                subject='User Contact Submitted',
+                plain_text_content = message_text
+                )
+            try:
+                response = sg.send(message)
+            except Exception as e:
+                print("error")
+                
             messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
             form = ContactForm
             return redirect('main:contact-us')
@@ -127,30 +142,38 @@ def signup(request):
             user = form.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
+            message = Mail(
+                from_email='Corscope Team <no-reply@corscope.com>',
+                to_emails=user.email,
+                subject='Welcome to Corscope',
+                html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
+                )
+            try:
+                response = sg.send(message)
+            except Exception as e:
+                print("error")
             return redirect('main:user_login')
     else:
         form = SignUpForm()
     return render(request, 'main/signup.html', {'form': form})
 
+@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
     message = ''
-    if request.user.is_authenticated:
-        return redirect('home:home')
-    else:  
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('home:home')
-                else:
-                    HttpResponse('Account is disabled')
-            if user is None:
-                message = 'Sorry the username or password you entered is incorrect please try again'
-        else:
-            message = ''
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return redirect('home:home')
+            else:
+                HttpResponse('Account is disabled')
+        if user is None:
+            message = 'Sorry the username or password you entered is incorrect please try again'
+    else:
+        message = ''
     return render(request, 'main/user_login.html', {'message': message})
 
 @login_required
@@ -170,7 +193,47 @@ def change_password(request):
         'form': form,
         'privacy_active':'setting-link-active',
     })
+
+'''
+@login_required
+def user_completesignup(request):
     
+    if request.method == 'POST':
+        form = CompleteProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home:home')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = CompleteProfileForm(instance=request.user)
+    return render(request, 'complete_profile_form.html', {'form':form})
+'''
+
+def handle_404(request, exception):
+        context = {}
+        response = render(request, "404.html", context=context)
+        response.status_code = 404
+        return response
+
+def handle_403(request, exception):
+        context = {}
+        response = render(request, "403.html", context=context)
+        response.status_code = 403
+        return response
+
+def handle_400(request, exception):
+        context = {}
+        response = render(request, "400.html", context=context)
+        response.status_code = 400
+        return response
+
+def handle_500(request):
+        context = {}
+        response = render(request, "500.html", context=context)
+        response.status_code = 500
+        return response
+ 
 @login_required
 def edit_profile(request):
     
@@ -178,7 +241,8 @@ def edit_profile(request):
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect(reverse('main:settings-edit')) 
+            print("ok")
+            return redirect('main:settings-edit') 
     else:
         form = EditProfileForm(instance=request.user)
         if request.user.image.url != '/media/defaults/user/default_u_i.png':
@@ -190,7 +254,6 @@ def edit_profile(request):
             'image_not_default':image_not_default,
             'account_active':'setting-link-active'
             }
-        print(request.user.image.url)
         return render(request, 'main/settings/edit_profile.html', context)
 
 @login_required

@@ -7,7 +7,7 @@
   <div class="d-flex justify-content-center pro-img-ctr">
     <div class="ml-2 mt-1 mb-3 change-image-rmv">
       {% if image_not_default %}
-      <form type="POST"  class="submit-img-pro-form" enctype="multipart/form-data">
+      <form method="POST"  class="submit-img-pro-form" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="image" accept="image/*" id="id_image">
         <div class="mt-2 d-flex justify-content-center">
@@ -51,12 +51,11 @@
       {% endif %}
     </div>
   </div>
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" action="{% url 'main:settings-edit' %}" enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form.hidden_fields %}
     {{ field }}
     {% endfor %}
-
     {% for field in form.visible_fields %}
     <div class="my-2 row align-items-center d-flex">
       <div class="col-sm-2">
@@ -66,11 +65,6 @@
       </div>
       <div class="field-main-pro col-sm-9 w-100">
         {{ field }}
-      </div>
-      <div class="col-sm-1">
-        <button type="button" data-contenteditable="{{ field.name }}" class="field-change-btn small btn no-border no-outline text-center mr-3 edit-profile-clickable text-primary">
-          Edit
-        </button>
       </div>
     </div>  
     {% endfor %}

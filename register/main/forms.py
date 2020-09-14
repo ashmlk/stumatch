@@ -146,8 +146,8 @@ class SignUpForm(UserCreationForm):
  
 	email = forms.EmailField(
 		label='',
-		max_length=100,
-		required=False,
+		max_length=200,
+		required=True,
 		widget=forms.EmailInput(
 			attrs={
 				"placeholder": "Email",
@@ -217,7 +217,7 @@ class EditProfileForm(UserChangeForm):
 			attrs={
 				"placeholder": "Username",
 				"class": "form-control",
-				"disabled":"disabled",
+				
 			}
 		)
 	)
@@ -231,7 +231,7 @@ class EditProfileForm(UserChangeForm):
 			attrs={
 				"placeholder": "First name",
 				"class": "form-control",
-    			"disabled":"disabled"
+    			
 			}
 		)
 	)
@@ -245,7 +245,7 @@ class EditProfileForm(UserChangeForm):
 			attrs={
 				"placeholder": "Last name",
 				"class": "form-control",
-    			"disabled":"disabled"
+    			
 			}
 		)
 	)
@@ -258,7 +258,7 @@ class EditProfileForm(UserChangeForm):
   		widget=MySelect(
         attrs={
 			"class":"form-control",
-			"disabled":"disabled"
+			
 		}
         ), 
 	)
@@ -271,7 +271,7 @@ class EditProfileForm(UserChangeForm):
 			attrs={
 				"placeholder": "Email",
 				"class": "form-control",
-    			"disabled":"disabled"
+    		
 			}
 		)
 	)
@@ -283,7 +283,7 @@ class EditProfileForm(UserChangeForm):
 				"placeholder":"Enter something about yourself",
 				"class": "form-control",
 				"rows":"4",
-    			"disabled":"disabled"
+    		
 			}
 		)
 	)
@@ -293,7 +293,6 @@ class EditProfileForm(UserChangeForm):
 			attrs={
 				"placeholder":"What are you studying?",
 				"class": "form-control",
-				"disabled":"disabled"
 			}
 		)
 	)

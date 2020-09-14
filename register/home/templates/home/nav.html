@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
 <nav class="navbar navbar-expand-md main-top-nav pl-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
-  <a class="navbar-brand ml-1 mr-3" href="#">
+  <a class="navbar-brand ml-1 mr-3" href="{% url 'main:user_login' %}">
     <div class="d-none d-lg-block">
       <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
       <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}"
@@ -40,7 +40,7 @@
                 d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
             </svg>
           </div>
-          <div class="col-10   ">
+          <div class="col-10">
             <span class="ml-2">Courses</span>
           </div>
         </div>
@@ -220,6 +220,36 @@
           </div>
         </div>
       </li>
+
+      <li class="d-sm-none nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:settings-edit' %}">
+        <div class="d-flex align-items-center">
+          <div>
+            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+              href="{% url 'main:settings-edit' %}">
+              <i class="fas fa-2x mt-1 fa-cog" style="margin-top:1.3rem;margin-left: 0.2rem;"></i> <span class="nav-name-icons ml-3 d-md-none"></span></a>
+          </div>
+          <div class="ml-2 nav-name-icons ml-3 d-md-none">
+            <span>Settings</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="d-sm-none nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:user_logout' %}">
+        <div class="d-flex align-items-center">
+          <div>
+            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+              href="{% url 'main:user_logout' %}">
+              <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
+          </div>
+          <div class="nav-name-icons ml-3 d-md-none">
+            <span>Logout</span>
+          </div>
+        </div>
+      </li>
+      
+
       <li class="d-none d-md-block mt-1 nav-item border-left dropdown">
         <a class="nav-link btn-md border btn-circle rounded-circle text-dark ml-3" id="navbarDropdown"
           data-tooltip="tooltip" data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Menu"

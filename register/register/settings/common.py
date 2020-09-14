@@ -32,8 +32,9 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'main.Profile'
 
 # Email confirmation
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 # Application definition
 
 INSTALLED_APPS = [
@@ -61,8 +62,10 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google', 
-    'whitenoise.runserver_nostatic'
+    'allauth.socialaccount.providers.google',
+    'admin_honeypot',
+    'whitenoise.runserver_nostatic',
+    'storages',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -182,6 +185,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middleware.WwwRedirectMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
@@ -205,6 +209,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'register.wsgi.application'
 
+SOCIALACCOUNT_ADAPTER = "register.adapter.SocialAccountAdapter"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -271,6 +276,11 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 3
 
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'app183550357@heroku.com'
+EMAIL_HOST_PASSWORD = 'pxnz2ghd3106'
 
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')

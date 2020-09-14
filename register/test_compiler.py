@@ -273,4 +273,25 @@ def generate_comment_like_notifications():
         notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
     return 'success'
 
+from register.settings.production import sg
 
+def test_email():
+    import os
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+    from django.template.loader import render_to_string
+    email = 'arshiama@hotmail.com'
+    message = Mail(
+                from_email='Corscope Team <no-reply@corscope.com>',
+                to_emails=email,
+                subject='Welcome to Corscope',
+                html_content = render_to_string('new_user_email.html', {'first_name':'Arshia'})
+            )
+    try:
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e)
+        
