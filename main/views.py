@@ -211,34 +211,26 @@ def user_completesignup(request):
 '''
 
 def handle_404(request, exception):
-        response = render_to_response(
-        '400.html',
-        context_instance=RequestContext(request)
-        )
+        context = {}
+        response = render(request, "404.html", context=context)
         response.status_code = 404
         return response
 
 def handle_403(request, exception):
-        response = render_to_response(
-        '403.html',
-        context_instance=RequestContext(request)
-        )
+        context = {}
+        response = render(request, "403.html", context=context)
         response.status_code = 403
         return response
 
 def handle_400(request, exception):
-        response = render_to_response(
-        '400.html',
-        context_instance=RequestContext(request)
-        )
+        context = {}
+        response = render(request, "400.html", context=context)
         response.status_code = 400
         return response
 
 def handle_500(request):
-        response = render_to_response(
-        '500.html',
-        context_instance=RequestContext(request)
-        )
+        context = {}
+        response = render(request, "500.html", context=context)
         response.status_code = 500
         return response
  
