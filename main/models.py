@@ -267,7 +267,7 @@ class ProfileManager(UserManager):
         
     def get_students(self, user, code, instructor, university):
         
-        usernames = [user.username]
+        usernames = []
         blocked =  Block.objects.blocking(user)
         if blocked:
             for b in blocked:
