@@ -28,7 +28,6 @@ from django.contrib.auth.decorators import user_passes_test
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from register.settings.production import sg
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
