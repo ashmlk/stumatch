@@ -165,6 +165,65 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
+        
+class CourseEditForm(forms.ModelForm):
+    course_code = forms.CharField(
+		label='',
+		max_length=20,
+		min_length=5,
+		required=True,
+  		validators=[alphanumeric_v2],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Course Code",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    course_instructor = forms.CharField(
+		label='', 
+		max_length=50,
+		min_length=2,
+		required=True,
+  		validators=[alphabetical],
+        help_text='Please omit any title(Dr., Professor, Mr., Mrs.,...)',
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Instructor Lastname",
+				"class": "form-control"
+			}
+		)
+	)
+    
+    course_university = forms.ChoiceField(
+		label='',
+		required=True,
+  		choices = UNIVERSITY_CHOICES,
+  		widget=MySelect(
+        attrs={
+			"class":"form-control"
+		}
+        ), 
+	)
+    
+    course_year = forms.TypedChoiceField(
+        coerce=int,
+        choices=year_choices,
+        initial=current_year,
+        widget=forms.TextInput(
+		    attrs={
+				"placeholder": "When did you take this course?",
+				"class": "form-control"
+			}
+		)
+    )
+    
+    error_css_class = "error"
+    
+    class Meta:
+        model = Course
+        fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
 
 class BuzzForm(forms.ModelForm):
     nickname = forms.CharField(
