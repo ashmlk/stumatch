@@ -61,21 +61,24 @@ def about_html(request):
     
     return render(request, 'web_docs/about/index.html')
 
+from django.core.mail import send_mail
+
 def contact_us(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
             sender_name = form.cleaned_data['name']
             sender_email = form.cleaned_data['email']
-            message_text = "{0} has sent you a new contact message:\n\n{1}".format(sender_name, form.cleaned_data['message']) #message to be sent to contact@domain.com 
+            message_text = "Name: {0}\nEmail: {1}\n\n Sent you a new contact message:\n\n{2}".format(sender_name, sender_email, form.cleaned_data['message']) #message to be sent to contact@domain.com 
             message = Mail(
-                from_email=sender_email,
+                from_email='Corscope Contact <no-reply@corscope.com>',
                 to_emails='contact@corscope.com',
                 subject='User Contact Submitted',
                 plain_text_content = message_text
                 )
             try:
                 response = sg.send(message)
+                print('sent')
             except Exception as e:
                 print("error")
                 

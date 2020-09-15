@@ -15,7 +15,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.forms import modelformset_factory 
 from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply, CourseList, CourseListObjects
 from main.models import Profile, SearchLog
-from .forms import PostForm, CommentForm, CourseForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm, CourseListForm, CourseListObjectsForm
+from .forms import PostForm, CommentForm, CourseForm, CourseEditForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm, CourseListForm, CourseListObjectsForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .post_guid import uuid2slug, slug2uuid
 from django.urls import reverse
@@ -506,7 +506,7 @@ def courses_instructor(request,par1,par2):
 @login_required
 def course_add(request):
     if request.method == "POST":
-        form = CourseForm(request.POST or none)
+        form = CourseForm(request.POST or None)
         if form.is_valid():
             course = form.save(False)
             code = course.course_code.upper().replace(' ', '')
@@ -540,12 +540,41 @@ def course_add(request):
                     request.user.courses.add(course)
                 return redirect('home:course-list')
     else:     
-        form = CourseForm
-                 
+        form = CourseForm()
+        if not request.user.university == None:
+            form.fields['course_university'].initial = request.user.university    
     context = {
         'form':form,
     }
     return render(request,'home/courses/course_add.html', context)
+
+@login_required
+def course_edit(request, hid):
+    id =  hashids.decode(hid)[0]
+    course_init = get_object_or_404(Course, id=id)
+    if request.method == "POST":
+        form = CourseEditForm(request.POST, instance=course_init)
+        if form.is_valid():
+            course = form.save(False)   
+            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor__iexact=course.course_instructor,course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            if course_exists:
+                c = Course.objects.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
+                request.user.courses.add(c)
+                request.user.courses.remove(course_init)
+                print("added")
+            else:
+                course.save()
+                request.user.courses.remove(course_init)
+                request.user.courses.add(course)
+                print("added")
+                return redirect('home:course-list')
+    else:     
+        form = CourseEditForm(instance=course_init)    
+    context = {
+        'form':form,
+        'course':course_init
+    }
+    return render(request,'home/courses/course_edit.html', context)   
 
 @login_required
 def course_auto_add(request, course_code,course_instructor_slug, course_university_slug):

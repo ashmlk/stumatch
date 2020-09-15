@@ -31,10 +31,6 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'main.Profile'
 
-# Email confirmation
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 # Application definition
 
 INSTALLED_APPS = [
@@ -276,11 +272,13 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 3
 
+SENDGRID_API_KEY = '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'
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'app183550357@heroku.com'
 EMAIL_HOST_PASSWORD = 'pxnz2ghd3106'
+DEFAULT_FROM_EMAIL = 'Corscope Team <no-reply@corscope.com>'
 
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')
