@@ -3,6 +3,12 @@ from django.urls import path,include
 from main import views
 from django.contrib.auth import views as auth_views
 from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
+from django.conf.urls import handler400, handler403, handler404, handler500
+
+handler404 = 'main.views.handle_404'
+handler500 = 'main.views.handle_500'
+handler403 = 'main.views.handle_403'
+handler400 = 'main.views.handle_400'
 # SET THE NAMESPACE!
 app_name = 'main'
 

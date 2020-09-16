@@ -61,7 +61,29 @@ def about_html(request):
     
     return render(request, 'web_docs/about/index.html')
 
-from django.core.mail import send_mail
+def handle_404(request, exception):
+        context = {}
+        response = render(request, "404.html", context=context)
+        response.status_code = 404
+        return response
+
+def handle_403(request, exception):
+        context = {}
+        response = render(request, "403.html", context=context)
+        response.status_code = 403
+        return response
+
+def handle_400(request, exception):
+        context = {}
+        response = render(request, "400.html", context=context)
+        response.status_code = 400
+        return response
+
+def handle_500(request):
+        context = {}
+        response = render(request, "500.html", context=context)
+        response.status_code = 500
+        return response
 
 def contact_us(request):
     if request.method == 'POST':
@@ -197,46 +219,6 @@ def change_password(request):
         'privacy_active':'setting-link-active',
     })
 
-'''
-@login_required
-def user_completesignup(request):
-    
-    if request.method == 'POST':
-        form = CompleteProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('home:home')
-        else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = CompleteProfileForm(instance=request.user)
-    return render(request, 'complete_profile_form.html', {'form':form})
-'''
-
-def handle_404(request, exception):
-        context = {}
-        response = render(request, "404.html", context=context)
-        response.status_code = 404
-        return response
-
-def handle_403(request, exception):
-        context = {}
-        response = render(request, "403.html", context=context)
-        response.status_code = 403
-        return response
-
-def handle_400(request, exception):
-        context = {}
-        response = render(request, "400.html", context=context)
-        response.status_code = 400
-        return response
-
-def handle_500(request):
-        context = {}
-        response = render(request, "500.html", context=context)
-        response.status_code = 500
-        return response
- 
 @login_required
 def edit_profile(request):
     

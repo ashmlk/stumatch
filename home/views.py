@@ -548,6 +548,17 @@ def course_add(request):
     }
     return render(request,'home/courses/course_add.html', context)
 
+"""
+@login_required
+def course_add_form_get_obj(request):
+    
+    data = dict()
+    uni = request.GET.get('u', request.user.university)
+    obj = request.GET.get('o', None)
+    obj_text = request.GET.get('q',None)
+    if o == 'instructor'
+"""
+
 @login_required
 def course_edit(request, hid):
     id =  hashids.decode(hid)[0]
