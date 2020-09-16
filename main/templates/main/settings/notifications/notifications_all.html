@@ -15,7 +15,7 @@
         </div>
     </div>
 </div>
-<div class="p-2 pt-3 menu-link mb-1 account-privacy-info" data-url="{% url 'main:notifications-settings-post' %}">
+<a class="p-2 pt-3 text-dark mb-1 account-privacy-info" href="{% url 'main:notifications-settings-post' %}">
     <div class="d-flex justify-content-between">
         <div class="setting-menu-sub">
             <h6>Posts</h6>
@@ -26,8 +26,8 @@
           </svg>
         </div>
     </div>
-</div>
-<div class="p-2 pt-3 menu-link password-container" data-url="{% url 'main:notifications-settings-buzz' %}">
+</a>
+<a class="p-2 pt-3 text-dark password-container" href="{% url 'main:notifications-settings-buzz' %}">
     <div class="d-flex justify-content-between">
         <div class="setting-menu-sub">
             <h6>Buzzes</h6>
@@ -38,8 +38,8 @@
           </svg>
         </div>
     </div>
-</div>
-<div class="p-2 pt-3 menu-link password-container" data-url="{% url 'main:notifications-settings-blog' %}">
+</a>
+<a class="p-2 pt-3 text-dark password-container" href="{% url 'main:notifications-settings-blog' %}">
     <div class="d-flex justify-content-between">
         <div class="setting-menu-sub">
             <h6>Blogs</h6>
@@ -50,8 +50,8 @@
           </svg>
         </div>
     </div>
-</div>
-<div class="p-2 pt-3 menu-link password-container" data-url="{% url 'main:notifications-settings-friends' %}">
+</a>
+<a class="p-2 pt-3 text-dark password-container" href="{% url 'main:notifications-settings-friends' %}">
     <div class="d-flex justify-content-between">
         <div class="setting-menu-sub">
             <h6>Friend Requests</h6>
@@ -62,5 +62,5 @@
           </svg>
         </div>
     </div>
-</div>
+</a>
 {% endblock %}
