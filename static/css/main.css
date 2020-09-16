@@ -518,3 +518,139 @@ box-shadow:  -9px 9px 18px #949ca1,
 .asteriskField {
   display: none;
 }
+
+.mnpglk-active svg {
+  color: rgb(126, 192, 243) !important;
+}
+.mnpglk-active span {
+  color: rgb(126, 192, 243) !important;
+}
+.side-tab-link-holder svg {
+  color: rgb(71, 71, 71);
+  margin-top: -2px;
+}
+.menu-bottom-fix {
+  min-width: 3rem !important;
+}
+.main-border-l{
+  border-left: solid 3px rgba(136, 136, 136, 0.144);
+}
+.side-tab-link-holder .mnpglk:hover{
+  border-left: solid 3px rgb(126, 192, 243) !important;
+
+}
+.side-tab-link-holder .mnpglk:hover .col-1{
+  margin-left: -3px !important;
+}
+
+.side-tab-link-holder .mnpglk-active {
+  border-left: solid 3px rgb(126, 192, 243) !important; 
+}
+
+.side-tab-link-holder .mnpglk-active .col-1{
+  margin-left: -3px !important;
+}
+
+.info-all .user-num {
+  color:rgb(1,119,200);
+  font-weight: 400 !important;
+}
+.info-all .badge {
+  font-size: 0.7rem !important;
+}
+.t {
+  letter-spacing: 1px !important;
+}
+#_pol3 .h6 {
+  color: rgb(80, 80, 80) !important;
+}
+#_pol3 .menu-link  {
+    border-radius: 8px;
+  }
+.profile-header-main-links .pro-link-goto {
+    margin-right: 1.2rem !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    padding-top: 10px !important;
+    border-radius: 4px !important;
+}
+
+.profile-header-main-links .pro-link-goto .pro-link-goto-text{
+    margin-bottom: -4px !important;
+}
+.profile-header-main-links .pro-link-goto:hover{
+    background-color:rgb(207, 205, 205);
+    cursor: pointer;
+}
+.profile-header-main-links .pro-link-goto-active {
+    border-bottom:solid 3px rgb(126, 192, 243);
+    margin-right: 1.2rem !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    padding-top: 10px !important;
+    border-radius: none !important;
+}
+.profile-header-main-links .pro-link-goto-active:hover{
+    cursor: pointer;
+}
+.profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
+    color: rgb(126, 192, 243);
+    padding-top: 3px !important;
+    margin-bottom: -4px !important;
+    
+}
+.profile-header-main-links .pro-menu-link{
+    background-color: rgb(226,230,234);
+}
+.profile-header-main-links .pro-menu-link:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+.pro-menu-link a{
+    color: rgb(17, 17, 17);
+    text-decoration: none !important;
+}
+.pro-menu-link a:hover {
+    color: rgb(17, 17, 17);
+}  
+.u_pui {
+    font-size: 0.9rem ;
+}
+.friends-list .card-friend-name-holder {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+}
+.u_pctr .card-header strong {
+    font-size: 1.1rem;
+}
+.u_pctr .post-title-view strong {
+    font-size: 1.1rem;
+}
+.title-setting-all h5 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.title-setting-all {
+  margin-right: -35px !important;
+}
+
+.edit-profile-clickable:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+.edit-pro-all #id_image {
+ margin-left: -9999px !important;
+}
+.setting-link-active a{
+  color: rgb(126, 192, 243) !important;
+}
+.edit-pro-all .edit-field-label {
+  font-weight: 600;
+  color: rgba(226, 226, 226, 0.849);
+}
+.messages .text-error {
+  color: red;
+}
+.link-to-action .no-style {
+  list-style-type: none;
+}

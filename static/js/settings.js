@@ -1,6 +1,8 @@
 const OG_IMG_SRC = $('.edit-pro-all .img-create-post').attr('src');
 const OG_REMOVE_BTN =  $("#remrevctr button");
 
+const USER_ID = $('#uidnameinput').val();
+
   $(document).ready(function () {
 
       $('#chppbtn').on('click', function () {
@@ -10,7 +12,7 @@ const OG_REMOVE_BTN =  $("#remrevctr button");
       var reader = new FileReader();
       reader.onload = function (e) {
           $('.edit-pro-all .img-create-post').attr('src', e.target.result);
-          var btn = "<button type='button' data-url='{% url 'main:update-image' hid=request.user.get_hashid %}' id='submit-img' class='btn no-border no-outline mr-3 edit-profile-clickable text-primary'>Update</button>";
+          var btn = "<button type='button' data-url='/update/profile/image/"+ USER_ID+"/' id='submit-img' class='btn no-border no-outline mr-3 edit-profile-clickable text-primary'>Update</button>";
           var revert_btn = "<button type='button' id='revert-og-img' class='btn no-border no-outline mr-3 edit-profile-clickable text-danger'>Revert</button>";
           $('.edit-pro-all #updtimgbtn').append(btn);
           $('.edit-pro-all #remrevctr').html(revert_btn);
