@@ -1064,6 +1064,17 @@ def accept_reject_friend_request(request,hid, s):
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
                 fr.cancel()
             is_friend=False
+            
+        friends_list = Friend.objects.friends(request.user)
+        pending_requests = Friend.objects.sent_requests(user=request.user)
+        requests = Friend.objects.requests(user=request.user)
+        total_friends = len(friends_list)
+        total_requests = len(requests)
+        total_pending = len(Friend.objects.sent_requests(user=request.user))
+        request.session['total_friends'] = total_friends
+        request.session['total_requests'] = total_requests
+        request.session['total_pending'] = total_pending
+        
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'user':other_user }, request=request)
         return JsonResponse(data)
 
@@ -1092,6 +1103,14 @@ def add_remove_friend(request, hid, s):
                 fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
                 message = "CON_FRRE" + "has sent you a friend request"
                 notify.send(sender=user, recipient=other_user, verb=message, target=fr)
+                
+        friends_list = Friend.objects.friends(request.user)
+        requests = Friend.objects.requests(user=request.user)
+        total_friends = len(friends_list)
+        total_requests = len(requests)
+        request.session['total_friends'] = total_friends
+        request.session['total_requests'] = total_requests
+        
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'pending':pending,'user':other_user} ,request=request)
         return JsonResponse(data)
     

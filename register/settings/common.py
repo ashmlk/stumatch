@@ -205,7 +205,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'register.wsgi.application'
 
-SOCIALACCOUNT_ADAPTER = "register.adapter.SocialAccountAdapter"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

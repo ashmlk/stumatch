@@ -611,8 +611,7 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
         }
         data['html_form'] = render_to_string('home/courses/course_auto_add.html',context,request=request)
     return JsonResponse(data)
-        
-        
+
 @login_required     
 def course_remove(request, hid):
     data= dict()
@@ -683,7 +682,7 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         reviews_list = course.get_reviews_all()
     else:
         reviews_list = course.get_reviews()
-    
+
     if o == 'all':
         review_a='active'
         review_s=''
