@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import check_password
 from datetime import datetime, timezone
 from django.utils import timezone
 
-username_regex =  RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
+username_regex =  RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9._ ]+$', 'You may only use alphanumeric characters and/or dots and hyphen (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 
 UNIVERSITY_CHOICES = (
