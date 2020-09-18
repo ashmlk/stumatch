@@ -122,6 +122,20 @@ class CourseForm(forms.ModelForm):
 		)
 	)
     
+    course_instructor_fn = forms.CharField(
+		label='', 
+		max_length=50,
+		min_length=2,
+		required=True,
+  		validators=[alphabetical],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Instructor Firstname",
+				"class": "form-control"
+			}
+		)
+	)
+    
     course_instructor = forms.CharField(
 		label='', 
 		max_length=50,
@@ -164,7 +178,12 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
+        
+    def __init__(self, *args, **kwargs):
+        super(CourseForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
         
 class CourseEditForm(forms.ModelForm):
     course_code = forms.CharField(
@@ -181,6 +200,20 @@ class CourseEditForm(forms.ModelForm):
 		)
 	)
     
+    course_instructor_fn = forms.CharField(
+		label='', 
+		max_length=50,
+		min_length=2,
+		required=True,
+  		validators=[alphabetical],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Instructor Firstname",
+				"class": "form-control"
+			}
+		)
+	)
+    
     course_instructor = forms.CharField(
 		label='', 
 		max_length=50,
@@ -195,6 +228,7 @@ class CourseEditForm(forms.ModelForm):
 			}
 		)
 	)
+    
     
     course_university = forms.ChoiceField(
 		label='',
@@ -223,7 +257,7 @@ class CourseEditForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor','course_year','course_semester','course_difficulty',)
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
 
 class BuzzForm(forms.ModelForm):
     nickname = forms.CharField(

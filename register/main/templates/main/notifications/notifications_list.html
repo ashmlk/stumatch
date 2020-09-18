@@ -70,12 +70,12 @@
                                 {% endif %}
                             {% endif %}
                             {% if 'CON_CRRW' in notice.verb %}
-                            <span>{{ notice.verb|slice:"8:" }}</span>
-                            <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
-                            <span>with professor</span>
-                            <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">{{ notice.target.course_instructor|capfirst }}</a>
-                            {% else %}
-                            <span>{{ notice.verb|slice:"8:" }}</span>
+                                <span>{{ notice.verb|slice:"8:" }}</span>
+                                <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
+                                <span>with professor</span>
+                                <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">{{ notice.target.course_instructor|capfirst }}</a>
+                                {% else %}
+                                <span>{{ notice.verb|slice:"8:" }}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -132,9 +132,16 @@
                                 {{ notice.timestamp|date:"Y/m/d H:i" }}
                             </span>
                         {% elif 'CON_FRRE' in notice.verb %}
-                        <span>
-                            {{ notice.timestamp|date:"Y/m/d H:i" }}
-                        </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                            </span>
+                            {% if 'sent' in notice.verb %}
+                                <div class="float-right">
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/accept_reject_request.html' with user=notice.actor %}
+                                    </div>
+                                </div>
+                            {% endif %}                      
                         {% elif 'CON_CRRW' in notice.verb %}
                         <span>
                             {{ notice.timestamp|date:"Y/m/d H:i" }}
@@ -258,9 +265,16 @@
                                 {{ notice.timestamp|date:"Y/m/d H:i" }}
                             </span>
                         {% elif 'CON_FRRE' in notice.verb %}
-                        <span>
-                            {{ notice.timestamp|date:"Y/m/d H:i" }}
-                        </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                            </span>
+                            {% if 'sent' in notice.verb %}
+                                <div class="float-right">
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/accept_reject_request.html' with user=notice.actor %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         {% elif 'CON_CRRW' in notice.verb %}
                         <span>
                             {{ notice.timestamp|date:"Y/m/d H:i" }}

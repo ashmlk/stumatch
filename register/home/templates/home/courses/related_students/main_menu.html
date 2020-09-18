@@ -6,10 +6,10 @@
     <title>My Lists - Corscope</title>
 {% endblock %}
 {% block content %}
-<div class="ml-5 mt-2 p-2 mx-2">
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
-            <div class="card m-1 content">
+<div class="mt-2 mb-2">
+    <div class="row" style="margin-left: 0.6rem;">
+        <div class="col-md-6">
+            <div class="card">
                 <a class="menu-link{{ prgm_active }}" href="{% url 'home:find-students' %}?sl=prgm">
                     <div class="m-1 p-2">
                         Students In Your Program
@@ -17,8 +17,8 @@
                 </a>
             </div>
         </div>
-        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
-            <div class="card m-1 content">
+        <div class="col-md-6">
+            <div class="card">
                  <a class="menu-link{{ crs_active }}" href="{% url 'home:find-students' %}?sl=crs">
                     <div class="m-1 p-2">
                         Students In Your Courses

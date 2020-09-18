@@ -24,9 +24,7 @@ from django.conf.urls.static import static
 import friendship
 import notifications.urls
 import admin_honeypot
-from django.conf.urls import (
-handler400, handler403, handler404, handler500
-)
+from django.conf.urls import handler400, handler403, handler404, handler500
 
 handler404 = 'main.views.handle_404'
 handler500 = 'main.views.handle_500'

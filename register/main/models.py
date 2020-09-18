@@ -265,7 +265,7 @@ class ProfileManager(UserManager):
         
         return qs
         
-    def get_students(self, user, code, instructor, university):
+    def get_students(self, user, code, instructor, instructor_fn, university):
         
         usernames = []
         blocked =  Block.objects.blocking(user)
@@ -275,7 +275,7 @@ class ProfileManager(UserManager):
         
         qs = (
             self.get_queryset()
-            .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor)
+            .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor, courses__course_instructor_fn__iexact=instructor_fn)
             .exclude(username__in=usernames)
             .order_by('username')
         )

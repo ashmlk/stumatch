@@ -11,6 +11,7 @@ from django.contrib.postgres.search import SearchVector
 from django.utils import timezone
 import datetime
 from notifications.signals import notify
+from django.template.defaultfilters import slugify
 
 def create_users(n):
     fake=Faker()
@@ -215,6 +216,8 @@ def create_courses():
     
     instructors = ['Jamson','Leonard','Adams','Smith','Taylor','Hemsworth','Evans','Nelson','Browns','Richardson','Andrews','Malik','Polsky','Reynolds Adamson','Trinter']
     
+    names = ["Tom", "Bob", "James", "Alex", "Chris", "Jessica", "Amy", "Nicola"]
+    
     for c in codes:
         
         for _ in range(3):
@@ -223,8 +226,9 @@ def create_courses():
             d = random.choice(dif)
             s = random.choice(semester)
             y = random.choice(years)
+            n = random.choice(names)
             
-            course = Course.objects.create(course_code=c,course_instructor=i,course_university=u,course_difficulty=d,course_year=y,course_semester=s)
+            course = Course.objects.create(course_code=c,course_instructor=i,course_instructor_fn=n,course_university=u,course_difficulty=d,course_year=y,course_semester=s)
             
             course.save()
             
@@ -235,7 +239,7 @@ def add_courses():
     cc = Course.objects.all().count()
     
     for p in Profile.objects.all():
-        random_id = random.sample(range(19,173),20) 
+        random_id = random.sample(range(180,320),20) 
         for i in random_id:
             c = Course.objects.get(id=i)
             p.courses.add(c)
@@ -295,3 +299,9 @@ def test_email():
     except Exception as e:
         print(e)
         
+def correct_courses():
+    
+    for c in Course.objects.all():
+        c.course_instructor_slug = '-'.join((slugify(c.course_instructor_fn.strip().lower()), slugify(c.course_instructor.strip().lower())))
+        c.save()
+    return "success"

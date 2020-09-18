@@ -61,7 +61,29 @@ def about_html(request):
     
     return render(request, 'web_docs/about/index.html')
 
-from django.core.mail import send_mail
+def handle_404(request, exception):
+        context = {}
+        response = render(request, "404.html", context=context)
+        response.status_code = 404
+        return response
+
+def handle_403(request, exception):
+        context = {}
+        response = render(request, "403.html", context=context)
+        response.status_code = 403
+        return response
+
+def handle_400(request, exception):
+        context = {}
+        response = render(request, "400.html", context=context)
+        response.status_code = 400
+        return response
+
+def handle_500(request):
+        context = {}
+        response = render(request, "500.html", context=context)
+        response.status_code = 500
+        return response
 
 def contact_us(request):
     if request.method == 'POST':
@@ -78,10 +100,8 @@ def contact_us(request):
                 )
             try:
                 response = sg.send(message)
-                print('sent')
             except Exception as e:
-                print("error")
-                
+                print(e)   
             messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
             form = ContactForm
             return redirect('main:contact-us')
@@ -154,7 +174,8 @@ def signup(request):
             try:
                 response = sg.send(message)
             except Exception as e:
-                print("error")
+                print(e)
+                
             return redirect('main:user_login')
     else:
         form = SignUpForm()
@@ -197,46 +218,6 @@ def change_password(request):
         'privacy_active':'setting-link-active',
     })
 
-'''
-@login_required
-def user_completesignup(request):
-    
-    if request.method == 'POST':
-        form = CompleteProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('home:home')
-        else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = CompleteProfileForm(instance=request.user)
-    return render(request, 'complete_profile_form.html', {'form':form})
-'''
-
-def handle_404(request, exception):
-        context = {}
-        response = render(request, "404.html", context=context)
-        response.status_code = 404
-        return response
-
-def handle_403(request, exception):
-        context = {}
-        response = render(request, "403.html", context=context)
-        response.status_code = 403
-        return response
-
-def handle_400(request, exception):
-        context = {}
-        response = render(request, "400.html", context=context)
-        response.status_code = 400
-        return response
-
-def handle_500(request):
-        context = {}
-        response = render(request, "500.html", context=context)
-        response.status_code = 500
-        return response
- 
 @login_required
 def edit_profile(request):
     
@@ -1064,6 +1045,17 @@ def accept_reject_friend_request(request,hid, s):
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
                 fr.cancel()
             is_friend=False
+            
+        friends_list = Friend.objects.friends(request.user)
+        pending_requests = Friend.objects.sent_requests(user=request.user)
+        requests = Friend.objects.requests(user=request.user)
+        total_friends = len(friends_list)
+        total_requests = len(requests)
+        total_pending = len(Friend.objects.sent_requests(user=request.user))
+        request.session['total_friends'] = total_friends
+        request.session['total_requests'] = total_requests
+        request.session['total_pending'] = total_pending
+        
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'user':other_user }, request=request)
         return JsonResponse(data)
 
@@ -1092,6 +1084,14 @@ def add_remove_friend(request, hid, s):
                 fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
                 message = "CON_FRRE" + "has sent you a friend request"
                 notify.send(sender=user, recipient=other_user, verb=message, target=fr)
+                
+        friends_list = Friend.objects.friends(request.user)
+        requests = Friend.objects.requests(user=request.user)
+        total_friends = len(friends_list)
+        total_requests = len(requests)
+        request.session['total_friends'] = total_friends
+        request.session['total_requests'] = total_requests
+        
         data['html_form'] = render_to_string('main/friends/friend_status.html',{'is_friend':is_friend,'pending':pending,'user':other_user} ,request=request)
         return JsonResponse(data)
     

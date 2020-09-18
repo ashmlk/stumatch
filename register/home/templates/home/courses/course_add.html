@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block title %}
-    <title>Add Course - Corscope</title>
+<title>Add Course - Corscope</title>
 {% endblock %}
 {% block content %}
 <div>
@@ -18,23 +18,98 @@
                 <div>
                     <p class="card-text">{{ message }}</p>
                 </div>
-            </div>                
+            </div>
         </div>
     </div>
     {% endif %}
     <div class="py-2">
         <form method="POST" action="{% url 'home:courses-add' %}">
             {% csrf_token %}
-            {{ form|crispy }}
+            {% for field in form.hidden_fields %}
+            {{ field }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+            <div class="my-2 row align-items-center d-flex">
+            <div class="col-12 w-100">
+                <span class="text-muted">
+                {{ field.label }}
+                </span>
+            </div>
+            <div class="col-sm-12 w-100">
+                {{ field }}
+                {% if field.name|stringformat:"s" == "course_code" or field.name|stringformat:"s" == "course_instructor" %}
+                <div class="mb-1 p-1 border rounded search-query-result bg-white"></div>
+                {% endif %}
+                <span class="small text-muted">{{ field.help_text }}</span>
+            </div>
+            </div>  
+            {% endfor %}
             <input type="hidden" id="get_files_link" data-json="">
             <div class="d-flex justify-content-end">
                 <div>
-                    <button type="submit" class="btn border-light btn-primary"  style="border-radius: 20px;">Add Course</button>
+                    <button type="submit" class="btn border-light btn-primary" style="border-radius: 20px;">Add
+                        Course</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 <script src="{% static 'js/courses/course-add.js' %}"></script>
-{% endblock %}
+<script>
+    $(document).ready(function () {
 
+        $(document).on('keyup','#id_course_code', function () {
+            // set the obj_text to val
+            var obj_text = $(this).val();
+            // check to see if course instructor has been provided by user
+            if ($('#id_course_instructor').val().length > 0) {
+                // course instructor field has been set
+                var get_url = "/courses/add/get_obj?q=" + obj_text + "&o=" + $('#id_course_instructor').val() + "&ot=instructor"
+            } else {
+                // value of course instructor is unknown so we are now just searching for similar course code
+                var get_url = "/courses/add/get_obj?q=" + obj_text + "&oj=code"
+            }
+
+            $.ajax({
+                type: "GET",
+                url: get_url,
+                dataType: 'json',
+                success: function (data) {
+                    
+                },
+                error: function (rs, e) {
+                    console.log(rs.responeText);
+                },
+            })
+
+        });
+
+        $(document).on('keyup','#id_course_instructor', function () {
+            // set the obj_text to val
+            var obj_text = $(this).val();
+            /* 
+            * first check what values are types by the user
+            */
+            if ($('#id_course_code').val().length > 0 ) {
+                // course code field has been set
+                var get_url = "/courses/add/get_obj?q=" + obj_text + "&o=" + $('#id_course_code').val() + "&ot=code";
+            } else {
+                // value of course instructor is unknown so we are now just searching for similar course code
+                var get_url = "/courses/add/get_obj?q=" + obj_text + "&oj=instructor";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: get_url,
+                dataType: 'json',
+                success: function (data) {
+                },
+                error: function (rs, e) {
+                    console.log(rs.responeText);
+                },
+            })
+
+        });
+    })
+</script>
+{% endblock %}
