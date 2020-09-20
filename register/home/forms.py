@@ -113,7 +113,7 @@ class CourseForm(forms.ModelForm):
 		max_length=20,
 		min_length=5,
 		required=True,
-  		validators=[alphanumeric_v2],
+  		validators=[alphanumeric_s],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Course Code",
@@ -414,7 +414,7 @@ class CourseListObjectsForm(forms.ModelForm):
   		validators=[alphabetical],
 		widget=forms.TextInput(
 			attrs={
-				"placeholder": "Instructor Lastname",
+				"placeholder": "Instructor Fullname",
 				"class": "form-control"
 			}
 		)

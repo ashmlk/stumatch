@@ -34,8 +34,8 @@ $(document).ready(function (e) {
 					$('body').removeClass('modal-open');
 					$('.modal-backdrop').remove();  
                     $('#_rc_'+veid).remove();
-					$("#review-all-tab").find("span").text(data.reviews_all_count)
-					$("#review-spec-tab").find("span").text(data.reviews_count)
+					$("#crsrwalcts").html(data.reviews_all_count)
+					$("#crsspecrw").html(data.reviews_count)
                 }
                 else{
                     $('#modal-review-delete .modal-content').html(data.html_form);

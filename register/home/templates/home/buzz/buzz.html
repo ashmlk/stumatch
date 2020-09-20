@@ -3,7 +3,7 @@
 {% load static %}
 {% load ibuilder %}
 {% block title %}
-<title>Buzz - Corscope</title>
+<title>Buzz - JoinCampus</title>
 {% endblock %}
 {% block item %}
 {% if tags or words %}
@@ -130,7 +130,7 @@
     <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-buzzes' %}">
       <a  href="{% url 'home:uni-buzzes' %}" style="text-decoration: none;">
         <div>
-          <span class="h6"><span >University</span></span>
+          <span class="h6"><span >{{ request.user.university }}</span></span>
         </div>
       </a>
     </div>

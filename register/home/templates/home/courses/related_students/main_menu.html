@@ -3,14 +3,15 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-    <title>My Lists - Corscope</title>
+    <title>My Lists - JoinCampus</title>
 {% endblock %}
 {% block content %}
+<style>.menu-link{border-radius: 8px;}</style>
 <div class="mt-2 mb-2">
     <div class="row" style="margin-left: 0.6rem;">
         <div class="col-md-6">
-            <div class="card">
-                <a class="menu-link{{ prgm_active }}" href="{% url 'home:find-students' %}?sl=prgm">
+            <div class="card border-0">
+                <a class="text-center menu-link{{ prgm_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=prgm">
                     <div class="m-1 p-2">
                         Students In Your Program
                     </div>
@@ -18,8 +19,8 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                 <a class="menu-link{{ crs_active }}" href="{% url 'home:find-students' %}?sl=crs">
+            <div class="card border-0">
+                 <a class="text-center menu-link{{ crs_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=crs">
                     <div class="m-1 p-2">
                         Students In Your Courses
                     </div>

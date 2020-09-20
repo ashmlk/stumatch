@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block title %}
-<title>{{ course.course_code }} - Corscope </title>
+<title>{{ course.course_code }} - JoinCampus </title>
 {% endblock %}
 {% block contentright %}
 {% load ibuilder %}
@@ -166,10 +166,9 @@
                 </div>
                 <div class="d-flex justify-content-end my-1">
                     <div>
-                        <button class="border-0 no-border btn btn-md small btn-primary"
+                        <button class="border-0 no-border btn btn-sm small btn-primary"
                             data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-                            style="border-radius:20px;text-decoration: none;" type="submit">Add
-                            Review</button>
+                            style="border-radius:20px;text-decoration: none;" type="submit">Add Review</button>
                     </div>
                 </div>
             </div>
@@ -180,14 +179,14 @@
             <li class="nav-item ">
                 <a class="nav-link d-flex align-items-center {{ review_s }}"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
-                    <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
+                    <span class="ml-2  badge badge-primary badge-pill" id="crsspecrw">{{ reviews_count }}</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center {{ review_a }}"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">Reviews
                     All
-                    <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
+                    <span class="ml-2 badge badge-primary badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
                 </a>
             </li>
         </ul>

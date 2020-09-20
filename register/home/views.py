@@ -257,7 +257,6 @@ def post_create(request):
             post.author = request.user
             post.save()
             form.save_m2m()
-            print(request.FILES)
             if request.FILES is not None:
                 images = [request.FILES.get('images[%d]' % i) for i in range(0, len(request.FILES))]  
                 for i in images:
@@ -412,7 +411,7 @@ def comment_like(request,guid_url,hid):
         else:
             comment.likes.add(user)
             if user != comment.name:
-                if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_comments:
+                if comment.post.author.get_notify and comment.post.author.get_post_notify_all and comment.post.author.get_post_notify_comments:
                     message = "CON_POST" + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
                     description = comment.body
                 notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
@@ -563,22 +562,26 @@ def course_add_form_get_obj(request):
     course_code_list = instructor_list = []
     
     uni = request.GET.get('u', request.user.university)
-    obj = request.GET.get('o', None)
-    obj0 = request.GET.get('oj', None)
-    obj1 = request.GET.get('ot', None)
+    obj = request.GET.get('o', None) #value that is initially typed in in course or instructor field
+    obj0 = request.GET.get('oj', None) #value that we want without previous data - one field is blank
+    obj1 = request.GET.get('ot', None) #value that we want - if set to course we are looking for course
     obj_text = request.GET.get('q', None)
     
     if obj != None and obj1 == 'instructor': #have the code and want the instructor
-        instructor_list = Course.objects.values('course_instructor').annotate(trigram=TrigramSimilarity('course_instructor', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.03, course_code__unaccent=obj).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        instructor_list = Course.objects.values_list('course_instructor', flat=True).annotate(trigram=TrigramSimilarity('course_instructor', obj_text), trigram_course=TrigramSimilarity('course_code', obj )).filter(course_university__unaccent=uni, trigram__gte=0.03, trigram_course__gte=0.05).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        print('case1')
     if obj != None and obj1 == 'code': #have the instructor and want the code, obj has to be set to value of course instructor field
-        course_code_list = Course.objects.values('course_code').annotate(trigram=TrigramSimilarity('course_code', obj_text), trigram_ins=TrigramSimilarity('course_instructor', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.04,  trigram_ins__gte=0.03).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        print('case2')
+        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text), trigram_ins=TrigramSimilarity('course_instructor', obj )).filter(course_university__unaccent=uni, trigram__gte=0.03,  trigram_ins__gte=0.05).order_by('course_code','-trigram').distinct('course_code')[:7]
     elif obj0 == 'instructor': # if obj0 is instructor no value is provided and user wants list of of instructors
-        instructor_list = Course.objects.values('course_instructor').annotate(trigram=TrigramSimilarity('course_instructor', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.03).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        print('case3')
+        instructor_list = Course.objects.values_list('course_instructor', flat=True).annotate(trigram=TrigramSimilarity('course_instructor', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.03).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
     elif obj0 == 'code': # if obj0 is code then user is requesting list of course codes
-        course_code_list = Course.objects.values('course_code').annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.04).order_by('course_code','-trigram').distinct('course_code')[:7]
-     
-    course_code_list = [c.course_code for c in course_code_list]
-    instructor_list = [i.course_instructor for i in instructor_list]
+        print('case4')
+        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.04).order_by('course_code','-trigram').distinct('course_code')[:7]
+    
+    course_code_list = list(course_code_list)
+    instructor_list = list(instructor_list)
     
     print(course_code_list)
     print(instructor_list) 
@@ -604,12 +607,10 @@ def course_edit(request, hid):
                     course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
                 request.user.courses.add(c)
                 request.user.courses.remove(course_init)
-                print("added")
             else:
                 course.save()
                 request.user.courses.remove(course_init)
                 request.user.courses.add(course)
-                print("added")
                 return redirect('home:course-list')
     else:     
         form = CourseEditForm(instance=course_init)    
@@ -856,10 +857,18 @@ def review_like(request, hid, hidc, status):
         elif status == "ulike":
             review.dislikes.remove(user)
             review.likes.add(user)
+            if review.author != user:    
+                message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
             
         elif status == "udislike":
             review.likes.remove(user)
             review.dislikes.add(user)
+            if review.author != user: 
+                message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
             
     data['review'] = render_to_string('home/courses/review_like.html',{'review':review, 'course':course},request=request)
     return JsonResponse(data)
@@ -900,22 +909,17 @@ def university_detail(request):
     if data == None:
         data = []
           
-    user_list = Profile.objects.filter(university__iexact=uni).exclude(id__in=blockers_id).order_by('last_name')
+    user_list = Profile.objects.filter(Q(university__iexact=uni)|Q(courses__course_university__iexact=uni)).exclude(id__in=blockers_id).order_by('username','last_name').distinct('username')
     cr = Course.objects.filter(course_university__iexact=uni).\
         order_by('course_code','course_instructor','course_instructor_fn').distinct('course_code','course_instructor','course_instructor_fn')
         
-    repeated = [u.id for u in user_list] 
-    user_list_courses = Profile.objects.filter(courses__course_university__iexact=uni).exclude(id__in=(blockers_id+repeated)).order_by('username').distinct('username')
-
-    user_list = list(chain(user_list, user_list_courses))
-
     num_courses = cr.count()
     num_enrolled = len(user_list)
     
     if obj == 'std':
         if len(user_list) < 1:
             u_empty='No students found'
-        
+          
         page = request.GET.get('page', 1)
         paginator = Paginator(user_list , 7)
         try:
@@ -932,9 +936,9 @@ def university_detail(request):
             'u_empty':u_empty,
             'data':data,
             'num_enrolled':num_enrolled,
-            'num_courses':num_courses
+            'num_courses':num_courses,
             } 
-        return render(request,'home/courses/university_detail.html',context)
+        return render(request,'home/courses/university_detail_students.html',context)
     
     elif obj == 'crs':
         course_list = Course.objects.filter(course_university__iexact=uni).order_by('course_code','course_instructor','course_instructor_fn', 'course_university').distinct('course_code','course_instructor','course_instructor_fn','course_university')
@@ -948,7 +952,7 @@ def university_detail(request):
         except PageNotAnInteger:
             courses = paginator.page(1)
         except EmptyPage:
-         courses = paginator.page(paginator.num_pages)
+            courses = paginator.page(paginator.num_pages)
          
         context = {
             'uni':uni,
@@ -959,7 +963,7 @@ def university_detail(request):
             'num_enrolled':num_enrolled,
             'num_courses':num_courses
             } 
-        return render(request,'home/courses/university_detail.html',context)
+        return render(request,'home/courses/university_detail_courses.html',context)
     
     elif obj == 'ins':
         qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_instructor_fn','course_university').distinct('course_instructor','course_instructor_fn','course_university')
@@ -988,7 +992,7 @@ def university_detail(request):
             'num_enrolled':num_enrolled,
             'num_courses':num_courses
             }
-        return render(request,'home/courses/university_detail.html',context)
+        return render(request,'home/courses/university_detail_instructors.html',context)
     
     else:
         return render(request,'home/courses/university_detail.html',{'is_empty':True})
@@ -1156,8 +1160,6 @@ def course_list_delete(request, hid):
             if a == 'h':
                 data['new_url'] = reverse('home:course-list-manager')
                 data['redirect'] = True
-                print(data['new_url'])
-                
     else:
         a = request.GET.get('a', None)
         context = {'list':li, 'a':a }
@@ -1197,10 +1199,8 @@ def course_list_obj_add_course(request, hid):
     data = dict()
     
     if request.method == 'POST':
-        print("cool")
         form = CourseListObjectsForm(request.POST)
         if form.is_valid(): 
-            print("hi")
             cr = form.save(False)
             cr.parent_list = li
             cr.author = request.user

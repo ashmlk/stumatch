@@ -136,6 +136,7 @@ $(document).ready(function () {
 })
 
 $(document).ready(function () {
+	/*
 	var infinite = new Waypoint.Infinite({
 			element: $('.infinite-container')[0],
 			onBeforePageLoad: function () {
@@ -145,6 +146,7 @@ $(document).ready(function () {
 			$('.loading').hide();
 			}
 		});
+	*/
 		$(document).ajaxSend(function (event, jqxhr, settings) {
 			jqxhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
 		});
