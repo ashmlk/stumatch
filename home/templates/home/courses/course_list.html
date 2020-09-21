@@ -3,7 +3,7 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-    <title>Your Courses - Corscope</title>
+    <title>Your Courses - JoinCampus</title>
 {% endblock %}
 {% block content %}
 <div class="infinite-container mb-4">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="row mt-1 mx-1">
                     <div class="c_dis border rounded p-1 mr-2 mb-1 course-goto btn-outline-primary text-center" data-url="{%url 'home:course-instructor' par1 par2 %}">
-                        <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                        <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                     </div>
                     <div class="c_dis border rounded p-1 mr-2 mb-1 course-goto btn-outline-primary text-center" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                         <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
@@ -82,7 +82,7 @@
                     </div>
                     <div class="mb-0">
                         <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
-                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">here</a>.</span>
+                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
                     </div>
                 </div>
             </div>   

@@ -73,7 +73,8 @@
                                 <span>{{ notice.verb|slice:"8:" }}</span>
                                 <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
                                 <span>with professor</span>
-                                <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">{{ notice.target.course_instructor|capfirst }}</a>
+                                <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
+                                    {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}</a>
                                 {% else %}
                                 <span>{{ notice.verb|slice:"8:" }}</span>
                             {% endif %}
@@ -94,7 +95,7 @@
                                 ·
                             </span>
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             <p class="mt-1 text-muted">
                                 {{ notice.description }}
@@ -113,7 +114,7 @@
                                 ·
                             </span>
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             <p class="mt-1 text-muted">
                                 {% if notice.description %}
@@ -129,11 +130,11 @@
                             </span>
                             {% endif %}
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                         {% elif 'CON_FRRE' in notice.verb %}
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             {% if 'sent' in notice.verb %}
                                 <div class="float-right">
@@ -144,7 +145,7 @@
                             {% endif %}                      
                         {% elif 'CON_CRRW' in notice.verb %}
                         <span>
-                            {{ notice.timestamp|date:"Y/m/d H:i" }}
+                            {{ notice.timestamp|date:"Y/m/d " }}
                         </span>
                         <p class="mt-1 text-muted">
                             <strong class="text-dark">Review: </strong>{{ notice.description }}
@@ -206,7 +207,8 @@
                             <span>{{ notice.verb|slice:"8:" }}</span>
                             <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
                             <span>with professor</span>
-                            <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">{{ notice.target.course_instructor|capfirst }}</a>
+                            <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
+                                {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}</a>
                             {% else %}
                             <span>{{ notice.verb|slice:"8:" }}</span>
                             {% endif %}
@@ -227,7 +229,7 @@
                                 ·
                             </span>
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d" }}
                             </span>
                             <p class="mt-1 text-muted">
                                 {{ notice.description }}
@@ -246,7 +248,7 @@
                                 ·
                             </span>
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d" }}
                             </span>
                             <p class="mt-1 text-muted">
                                 {% if notice.description %}
@@ -262,11 +264,11 @@
                             </span>
                             {% endif %}
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                         {% elif 'CON_FRRE' in notice.verb %}
                             <span>
-                                {{ notice.timestamp|date:"Y/m/d H:i" }}
+                                {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             {% if 'sent' in notice.verb %}
                                 <div class="float-right">
@@ -277,7 +279,7 @@
                             {% endif %}
                         {% elif 'CON_CRRW' in notice.verb %}
                         <span>
-                            {{ notice.timestamp|date:"Y/m/d H:i" }}
+                            {{ notice.timestamp|date:"Y/m/d " }}
                         </span>
                         <p class="mt-1 text-muted">
                             <strong class="text-dark">Review: </strong>{{ notice.description }}

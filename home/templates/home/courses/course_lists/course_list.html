@@ -3,7 +3,7 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-<title>{{ list.title|capfirst }} - Corscope</title>
+<title>{{ list.title|capfirst }} - JoinCampus</title>
 {% endblock %}
 {% block content %}
 <div class="px-2 content">
@@ -69,7 +69,7 @@
         <div class="row d-flex p-1 justify-content-between">
             <div class="item-add-btn">
                 <button type="button" class="btn no-border btn-sm btn-primary list-addcrs-btn"
-                    data-url="{% url 'home:course-list-addcrs' hid=list.get_hashid %}">
+                    data-url="{% url 'home:course-list-addcrs' hid=list.get_hashid %}" style="border-radius: 20px;">
                     Add Course
                 </button>
             </div>
@@ -211,8 +211,8 @@
                     </div>
                 </div>
                 {% empty %}
-                <div class="text-center">
-                    No courses added
+                <div class="mx-2 text-center">
+                    No course added
                 </div>
                 {% endfor %}
             </div>

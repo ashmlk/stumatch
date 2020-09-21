@@ -1,6 +1,6 @@
 {% load static %}
 {% load ibuilder %}
-{% if all == 1 and reviews %}
+{% if all == 1 %}
 <div class="dropdown">
     <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
@@ -14,7 +14,7 @@
     </div>
 </div>
 <div id="new-review-a"></div>
-{% elif all != 1 and reviews %}
+{% elif all != 1 %}
 <div class="dropdown">
     <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">

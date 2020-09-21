@@ -30,6 +30,7 @@ urlpatterns = [
     path('courses/', views.course_menu, name='course-menu'),
     path('courses/lists/', views.course_list, name='course-list'),
     path('courses/add/', views.course_add, name='courses-add'),
+    path('courses/add/get_obj', views.course_add_form_get_obj, name='courses-add-get-obj'),
     path('courses/edit/<str:hid>', views.course_edit, name='courses-edit'),
     path('course/auto/add/<slug:course_university_slug>/<slug:course_instructor_slug>/<str:course_code>/', views.course_auto_add, name='course-auto-add'),
     path('courses/saved/', views.saved_courses, name='courses-saved'),

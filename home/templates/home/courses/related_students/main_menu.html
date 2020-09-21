@@ -3,23 +3,24 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-    <title>My Lists - Corscope</title>
+    <title>My Lists - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<div class="ml-5 mt-2 p-2 mx-2">
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
-            <div class="card m-1 content">
-                <a class="menu-link{{ prgm_active }}" href="{% url 'home:find-students' %}?sl=prgm">
+<style>.menu-link{border-radius: 8px;}</style>
+<div class="mt-2 mb-2">
+    <div class="row" style="margin-left: 0.6rem;">
+        <div class="col-md-6">
+            <div class="card border-0">
+                <a class="text-center menu-link{{ prgm_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=prgm">
                     <div class="m-1 p-2">
                         Students In Your Program
                     </div>
                 </a>
             </div>
         </div>
-        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
-            <div class="card m-1 content">
-                 <a class="menu-link{{ crs_active }}" href="{% url 'home:find-students' %}?sl=crs">
+        <div class="col-md-6">
+            <div class="card border-0">
+                 <a class="text-center menu-link{{ crs_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=crs">
                     <div class="m-1 p-2">
                         Students In Your Courses
                     </div>

@@ -34,6 +34,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from notifications.signals import notify
 import json
 from home.algo import get_uni_info 
+from itertools import chain
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -87,21 +88,21 @@ def home(request):
 def users_posts(request):
     
     posts = request.user.post_set.order_by('-last_edited')
-    context = { 'posts':posts, 'post_active':'active' }
+    context = { 'posts':posts, 'post_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def users_buzzes(request):
     
     buzzes = request.user.buzz_set.order_by('-date_posted')
-    context = {'buzzes':buzzes, 'buzz_active':'active' }
+    context = {'buzzes':buzzes, 'buzz_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def users_blogs(request):
     
     blogs = request.user.blog_set.order_by('-last_edited')
-    context = {'blogs':blogs, 'blog_active':'active' }
+    context = {'blogs':blogs, 'blog_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
@@ -256,7 +257,6 @@ def post_create(request):
             post.author = request.user
             post.save()
             form.save_m2m()
-            print(request.FILES)
             if request.FILES is not None:
                 images = [request.FILES.get('images[%d]' % i) for i in range(0, len(request.FILES))]  
                 for i in images:
@@ -411,7 +411,7 @@ def comment_like(request,guid_url,hid):
         else:
             comment.likes.add(user)
             if user != comment.name:
-                if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_comments:
+                if comment.post.author.get_notify and comment.post.author.get_post_notify_all and comment.post.author.get_post_notify_comments:
                     message = "CON_POST" + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
                     description = comment.body
                 notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
@@ -498,7 +498,7 @@ def courses_instructor(request,par1,par2):
     courses = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
     context = {
          'courses':courses,
-         'instructor':courses.first().course_instructor,
+         'instructor':courses.first().course_instructor_fn.capitalize() + " " + courses.first().course_instructor.capitalize(),
          'university':courses.first().course_university,
          }
     return render(request,'home/courses/instructor_course_list.html',context)
@@ -511,10 +511,13 @@ def course_add(request):
             course = form.save(False)
             code = course.course_code.upper().replace(' ', '')
             uni = course.course_university.strip().lower()
+            ins_fn = course.course_instructor_fn.strip().lower()
             ins = course.course_instructor.strip().lower()
-            has_coursed = request.user.courses.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester).exists()
+            has_course = request.user.courses.filter(course_code=code,course_instructor_fn__iexact=ins_fn, course_instructor__iexact=ins,course_year=course.course_year,\
+                course_university__iexact=uni,course_semester=course.course_semester).exists()
             max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester).count()
-            course_exists = Course.objects.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            course_exists = Course.objects.filter(course_code=code,course_instructor_fn__iexact=ins_fn, course_instructor__iexact=ins,course_year=course.course_year,\
+                course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
             if max_reached > 7:
                 form = CourseForm
                 message = "You have reached maximum number of courses per semester for the " + course.sem + " semester in "+ course.course_year 
@@ -523,7 +526,7 @@ def course_add(request):
                     'message': message,
                 }
                 return render(request,'home/courses/course_add.html', context)  
-            elif has_coursed:
+            elif has_course:
                 form = CourseForm
                 message = "It's seems you have already added this course. Please try again."
                 context = {
@@ -533,7 +536,9 @@ def course_add(request):
                 return render(request,'home/courses/course_add.html', context)
             else:
                 if course_exists:
-                    c = Course.objects.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
+                    c = Course.objects.filter(course_code=code,course_instructor_fn__iexact=ins_fn,course_instructor__iexact=ins,\
+                            course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,\
+                            course_difficulty=course.course_difficulty).first()
                     request.user.courses.add(c)
                 else:
                     course.save()
@@ -548,16 +553,51 @@ def course_add(request):
     }
     return render(request,'home/courses/course_add.html', context)
 
-"""
+
 @login_required
 def course_add_form_get_obj(request):
     
     data = dict()
+    
+    course_code_list = instructor_list = []
+    
     uni = request.GET.get('u', request.user.university)
-    obj = request.GET.get('o', None)
-    obj_text = request.GET.get('q',None)
-    if o == 'instructor'
-"""
+    obj = request.GET.get('o', None) #value that is initially typed in in course or instructor field
+    obj0 = request.GET.get('oj', None) #value that we want without previous data - one field is blank
+    obj1 = request.GET.get('ot', None) #value that we want - if set to course we are looking for course
+    obj_text = request.GET.get('q', None)
+    
+    if obj != None and obj1 == 'instructor': #have the code and want the instructor
+        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
+        .annotate(trigram=TrigramSimilarity('course_instructor', obj_text),  trigram_fn=TrigramSimilarity('course_course_instructor_fn', obj ), trigram_course=TrigramSimilarity('course_code', obj ))\
+        .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.15) | Q(trigram_fn__gte=0.5), Q(trigram_course__gte=0.3))\
+        .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        
+    if obj != None and obj1 == 'code': #have the instructor and want the code, obj has to be set to value of course instructor field
+        course_code_list = Course.objects.values_list('course_code', flat=True)\
+            .annotate(trigram=TrigramSimilarity('course_code', obj_text), trigram_ins=TrigramSimilarity('course_instructor', obj ))\
+            .filter(course_university__unaccent=uni, trigram__gte=0.15,  trigram_ins__gte=0.3)\
+            .order_by('course_code','-trigram').distinct('course_code')[:7]
+            
+    elif obj0 == 'instructor': # if obj0 is instructor no value is provided and user wants list of of instructors
+        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
+            .annotate(trigram=TrigramSimilarity('course_instructor', obj_text), trigram_fn=TrigramSimilarity('course_instructor_fn', obj_text))\
+            .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.1) | Q(trigram_fn__gte=0.5))\
+            .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+            
+    elif obj0 == 'code': # if obj0 is code then user is requesting list of course codes
+        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.1).\
+            order_by('course_code','-trigram').distinct('course_code')[:7]
+    
+    course_code_list = list(course_code_list)
+    instructor_list = list(instructor_list)
+    
+    data = {
+        'ins': instructor_list,
+        'code':course_code_list
+    }
+    
+    return JsonResponse(data)
 
 @login_required
 def course_edit(request, hid):
@@ -567,17 +607,16 @@ def course_edit(request, hid):
         form = CourseEditForm(request.POST, instance=course_init)
         if form.is_valid():
             course = form.save(False)   
-            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor__iexact=course.course_instructor,course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn, course_instructor__iexact=course.course_instructor,course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
             if course_exists:
-                c = Course.objects.filter(course_code=code,course_instructor__iexact=ins,course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
+                c = Course.objects.filter(course_code=code,course_instructor_fn__iexact=course.course_instructor_fn,course_instructor__iexact=course.course_instructor,\
+                    course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
                 request.user.courses.add(c)
                 request.user.courses.remove(course_init)
-                print("added")
             else:
                 course.save()
                 request.user.courses.remove(course_init)
                 request.user.courses.add(course)
-                print("added")
                 return redirect('home:course-list')
     else:     
         form = CourseEditForm(instance=course_init)    
@@ -596,14 +635,18 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
         if form.is_valid():
             course = form.save(False)
             max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester).count()
-            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
-                                                    course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
+            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn,\
+                                                    course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
+                                                        course_university__iexact=course.course_university,course_semester=course.course_semester,\
+                                                            course_difficulty=course.course_difficulty).exists()
             if max_reached > 7:
                     data['message'] =  "You have already reached maximum number of courses per semester for the " + course.sem + " semester in "+ course.course_year  
             else:
                 if course_exists:
-                    c = Course.objects.filter(course_code=course.course_code,course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
-                                                course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
+                    c = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn,\
+                                                course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
+                                                    course_university__iexact=course.course_university,course_semester=course.course_semester,\
+                                                        course_difficulty=course.course_difficulty).first()
                     request.user.courses.add(c)
                 else:
                     course.save()
@@ -612,9 +655,17 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
             data['form_is_valid'] = True
     else:
         empty = ''
-        form = CourseForm(initial={'course_code':course.course_code, 'course_instructor': course.course_instructor, 'course_university':course.course_university,'course_year': empty })
+        form = CourseForm(initial={
+            'course_code':course.course_code,
+            'course_instructor_fn':course.course_instructor_fn, 
+            'course_instructor': course.course_instructor, 
+            'course_university':course.course_university,
+            'course_year': empty 
+            })
+        
         form.fields['course_code'].widget.attrs['readonly']  = True
         form.fields['course_instructor'].widget.attrs['readonly']  = True
+        form.fields['course_instructor_fn'].widget.attrs['readonly']  = True
         form.fields['course_university'].widget.attrs['readonly']  = True
         context = {
             'form':form,
@@ -671,7 +722,7 @@ def course_vote(request, hid, code, status=None):
 def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
     course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code)\
-        .order_by('course_university','course_instructor','course_code','course_year').distinct('course_university','course_instructor','course_code').first()
+        .order_by('course_university','course_instructor_slug','course_code','course_year').distinct('course_university','course_instructor_slug','course_code').first()
     taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code,course_instructor_slug=course_instructor_slug).exists()
     
     if request.method == 'POST':
@@ -745,7 +796,7 @@ def course_share(request,hid):
     course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
         title = "Started taking a new course!"
-        content = "Hey! I am taking " + course.course_code + " with professor " + course.course_instructor + "!"
+        content = "Hey! I am taking " + course.course_code + " with professor " + course.course_instructor_fn + " " + course.course_instructor_fn + "!"
         author = request.user
         post = Post(title=title,content=content,author=author)
         post.save()
@@ -812,10 +863,18 @@ def review_like(request, hid, hidc, status):
         elif status == "ulike":
             review.dislikes.remove(user)
             review.likes.add(user)
+            if review.author != user:    
+                message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
             
         elif status == "udislike":
             review.likes.remove(user)
             review.dislikes.add(user)
+            if review.author != user: 
+                message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
             
     data['review'] = render_to_string('home/courses/review_like.html',{'review':review, 'course':course},request=request)
     return JsonResponse(data)
@@ -846,23 +905,27 @@ def review_delete(request, hidc, hid):
 def university_detail(request):
     
     blockers_id = request.session.get('blockers')
-    
+    user_list = []
     uni = request.GET.get('u',request.user.university)
     obj = request.GET.get('obj','std')
     u_empty = ''
     
-    data = get_uni_info(uni)
+    data = get_uni_info(uni) 
+      
+    if data == None:
+        data = []
+          
+    user_list = Profile.objects.filter(Q(university__iexact=uni)|Q(courses__course_university__iexact=uni)).exclude(id__in=blockers_id).order_by('username','last_name').distinct('username')
+    cr = Course.objects.filter(course_university__iexact=uni).\
+        order_by('course_code','course_instructor','course_instructor_fn').distinct('course_code','course_instructor','course_instructor_fn')
         
-    user_list = Profile.objects.filter(university__iexact=uni).exclude(id__in=blockers_id).order_by('last_name')
-    
-    cr = Course.objects.filter(course_university__iexact=uni).annotate(uc=Count('profiles', distinct=True))
-    
-    num_enrolled = user_list.count() + cr[0].uc
+    num_courses = cr.count()
+    num_enrolled = len(user_list)
     
     if obj == 'std':
-        if user_list.count() < 1:
+        if len(user_list) < 1:
             u_empty='No students found'
-        
+          
         page = request.GET.get('page', 1)
         paginator = Paginator(user_list , 7)
         try:
@@ -871,11 +934,20 @@ def university_detail(request):
             users = paginator.page(1)
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
-         
-        return render(request,'home/courses/university_detail.html',{'uni':uni,'users':users,'sa':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+            
+        context = {
+            'uni':uni,
+            'users':users,
+            'sa':'-active',
+            'u_empty':u_empty,
+            'data':data,
+            'num_enrolled':num_enrolled,
+            'num_courses':num_courses,
+            } 
+        return render(request,'home/courses/university_detail_students.html',context)
     
     elif obj == 'crs':
-        course_list = Course.objects.filter(course_university__iexact=uni).order_by('course_code','course_instructor','course_university').distinct('course_code','course_instructor','course_university')
+        course_list = Course.objects.filter(course_university__iexact=uni).order_by('course_code','course_instructor','course_instructor_fn', 'course_university').distinct('course_code','course_instructor','course_instructor_fn','course_university')
         if course_list.count() < 1:
             u_empty='No courses found'
             
@@ -886,14 +958,25 @@ def university_detail(request):
         except PageNotAnInteger:
             courses = paginator.page(1)
         except EmptyPage:
-         courses = paginator.page(paginator.num_pages)
+            courses = paginator.page(paginator.num_pages)
          
-        return render(request,'home/courses/university_detail.html',{'uni':uni,'courses':courses, 'ca':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+        context = {
+            'uni':uni,
+            'courses':courses,
+            'ca':'-active',
+            'u_empty':u_empty,
+            'data':data,
+            'num_enrolled':num_enrolled,
+            'num_courses':num_courses
+            } 
+        return render(request,'home/courses/university_detail_courses.html',context)
     
     elif obj == 'ins':
-        qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_university').distinct('course_instructor','course_university')
+        qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_instructor_fn','course_university').distinct('course_instructor','course_instructor_fn','course_university')
+
         instructor_list = Course.objects.filter(course_university__iexact=uni).annotate(user_count=Count('profiles')).\
-            order_by('-user_count').filter(id__in=qs).values_list('course_university','course_instructor','user_count','course_university_slug','course_instructor_slug')
+            order_by('-user_count').filter(id__in=qs).values_list('course_university','course_instructor','course_instructor_fn','user_count','course_university_slug','course_instructor_slug')
+            
         if instructor_list.count() < 1:
             u_empty='No instructors found'
             
@@ -905,8 +988,17 @@ def university_detail(request):
             instructors = paginator.page(1)
         except EmptyPage:
             instructors = paginator.page(paginator.num_pages)
-         
-        return render(request,'home/courses/university_detail.html',{'uni':uni,'instructors':instructors,'ia':'-active','u_empty':u_empty,'data':data,'num_enrolled':num_enrolled})
+        
+        context = {
+            'uni':uni,
+            'instructors':instructors,
+            'ia':'-active',
+            'u_empty':u_empty,
+            'data':data,
+            'num_enrolled':num_enrolled,
+            'num_courses':num_courses
+            }
+        return render(request,'home/courses/university_detail_instructors.html',context)
     
     else:
         return render(request,'home/courses/university_detail.html',{'is_empty':True})
@@ -924,7 +1016,8 @@ def find_students(request):
     sl = request.GET.get('sl', None)
 
     if sl == 'crs':
-        course_codes = request.user.courses.order_by('course_code','course_university','course_instructor','course_year').distinct('course_code','course_university','course_instructor','course_year').values_list('course_code')
+        course_codes = request.user.courses.order_by('course_code','course_university','course_instructor','course_instructor_fn','course_year')\
+            .distinct('course_code','course_university','course_instructor','course_instructor_fn','course_year').values_list('course_code')
         crs_active='-active'
         if request.user.university != '':
             student_list = Course.objects.same_courses(user=request.user,course_list=course_codes,university=request.user.university)
@@ -964,12 +1057,16 @@ def get_course_mutual_students(request):
     blockers_id = request.session.get('blockers')
     
     hid = request.GET.get('id',None)
+    obj = request.GET.get('o','all')
     id = hashids.decode(hid)[0]
     
     course = get_object_or_404(Course, id=id)
     
-    student_list = Profile.objects.get_students(user=request.user, code=course.course_code, instructor=course.course_instructor, university=course.course_university)
-    
+    if obj == 'ins':
+        student_list = Profile.objects.get_students(user=request.user, code=course.course_code, instructor=course.course_instructor, instructor_fn=course.course_instructor_fn, university=course.course_university)
+    elif obj == 'all':
+        student_list = Profile.objects.filter(courses__course_code=course.course_code,courses__course_university=course.course_university).order_by('last_name','first_name','university').distinct('last_name','first_name','university')
+
     page = request.GET.get('page', 1)
     paginator = Paginator(student_list, 7)
     try:
@@ -981,7 +1078,8 @@ def get_course_mutual_students(request):
         
     context = {
         'students':students,
-        'course':course
+        'course':course,
+        'o':obj
     }
     
     return render(request,'home/courses/student_list.html',context)
@@ -1073,8 +1171,6 @@ def course_list_delete(request, hid):
             if a == 'h':
                 data['new_url'] = reverse('home:course-list-manager')
                 data['redirect'] = True
-                print(data['new_url'])
-                
     else:
         a = request.GET.get('a', None)
         context = {'list':li, 'a':a }
@@ -1114,10 +1210,8 @@ def course_list_obj_add_course(request, hid):
     data = dict()
     
     if request.method == 'POST':
-        print("cool")
         form = CourseListObjectsForm(request.POST)
         if form.is_valid(): 
-            print("hi")
             cr = form.save(False)
             cr.parent_list = li
             cr.author = request.user

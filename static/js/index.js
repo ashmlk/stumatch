@@ -91,17 +91,7 @@ $(document).ready(function () {
       parent.append(divs.splice(Math.floor(Math.random() * divs.length), 1)[0]);
   }
 });
-$(document).ready(function () {
-  var infinite = new Waypoint.Infinite({
-      element: $('.infinite-container')[0],
-      onBeforePageLoad: function () {
-          $('.loading').show();
-      },
-      onAfterPageLoad: function ($items) {
-          $('.loading').hide();
-      }
-  });
-})
+
 
 $(document).ready(function () {
   var btn;

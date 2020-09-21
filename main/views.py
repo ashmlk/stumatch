@@ -93,17 +93,15 @@ def contact_us(request):
             sender_email = form.cleaned_data['email']
             message_text = "Name: {0}\nEmail: {1}\n\n Sent you a new contact message:\n\n{2}".format(sender_name, sender_email, form.cleaned_data['message']) #message to be sent to contact@domain.com 
             message = Mail(
-                from_email='Corscope Contact <no-reply@corscope.com>',
-                to_emails='contact@corscope.com',
+                from_email='JoinCampus NoReply <no-reply@joincampus.ca>',
+                to_emails='contact@joincampus.ca',
                 subject='User Contact Submitted',
                 plain_text_content = message_text
                 )
             try:
                 response = sg.send(message)
-                print('sent')
             except Exception as e:
-                print("error")
-                
+                print(e)   
             messages.success(request, 'Successfully submitted your form. Thanks for getting in touch with us!')
             form = ContactForm
             return redirect('main:contact-us')
@@ -168,15 +166,16 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             message = Mail(
-                from_email='Corscope Team <no-reply@corscope.com>',
+                from_email='JoinCampus Team <no-reply@joincampus.ca>',
                 to_emails=user.email,
-                subject='Welcome to Corscope',
+                subject='Welcome to JoinCampus',
                 html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
                 )
             try:
                 response = sg.send(message)
             except Exception as e:
-                print("error")
+                print(e)
+                
             return redirect('main:user_login')
     else:
         form = SignUpForm()
@@ -214,10 +213,11 @@ def change_password(request):
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'main/settings/change_password.html', {
+    context = {
         'form': form,
         'privacy_active':'setting-link-active',
-    })
+    }
+    return render(request, 'main/settings/change_password.html', context)
 
 @login_required
 def edit_profile(request):
@@ -226,20 +226,21 @@ def edit_profile(request):
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            print("ok")
-            return redirect('main:settings-edit') 
+            return redirect('main:settings-edit')
     else:
         form = EditProfileForm(instance=request.user)
-        if request.user.image.url != '/media/defaults/user/default_u_i.png':
-            image_not_default = True
-        else:
-            image_not_default = False
-        context = {
-            'form':form,
-            'image_not_default':image_not_default,
-            'account_active':'setting-link-active'
-            }
-        return render(request, 'main/settings/edit_profile.html', context)
+        
+    if request.user.image.url != '/media/defaults/user/default_u_i.png':
+        image_not_default = True
+    else:
+        image_not_default = False
+        
+    context = {
+        'form':form,
+        'image_not_default':image_not_default,
+        'account_active':'setting-link-active'
+        }
+    return render(request, 'main/settings/edit_profile.html', context)
 
 @login_required
 def update_image(request, hid):
@@ -249,10 +250,9 @@ def update_image(request, hid):
     user = Profile.objects.get(id=id)
     if request.method == "POST":
         image_not_default = True
-        if request.user == user:
+        if request.user == user:  
             user = request.user
             if request.user.is_authenticated:
-                print(request.FILES)
                 image = request.FILES['image']
                 user.image = image
                 user.save()
@@ -260,7 +260,9 @@ def update_image(request, hid):
             image_not_default = False  
         context = {
             'image_not_default':image_not_default
-        } 
+        }
+        img_url = user.image.url
+        data['img_url'] = img_url
         data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)
         return JsonResponse(data)
 
@@ -274,10 +276,14 @@ def remove_image(request, hid):
         if request.user == user:
             if user.image != '/media/defaults/user/default_u_i.png':
                 user.set_image_to_default()
-                image_not_default = False 
+                user.save()
+                image_not_default = False   
+                img_url = user.image.url
         context = {
-            'image_not_default':image_not_default
-        }        
+            'image_not_default':image_not_default,
+            
+        }    
+        data['img_url'] = img_url    
         data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)   
     else:
         if request.user == user:
@@ -1711,7 +1717,7 @@ def get_user_courses(request):
         num_courses = course_list.count()
         
         page = request.GET.get('page', 1)
-        paginator = Paginator(course_list, 12)
+        paginator = Paginator(course_list, 7)
         try:
             courses = paginator.page(page)
         except PageNotAnInteger:

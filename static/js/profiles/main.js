@@ -1,16 +1,3 @@
-$(document).ready(function (e) {
-    e.preventDefault();
-    var infinite = new Waypoint.Infinite({
-        element: $('.infinite-container')[0],
-        onBeforePageLoad: function () {
-            $('.loading').show();
-        },
-        onAfterPageLoad: function ($items) {
-            $('.loading').hide();
-        }
-    });
-})
-
 $(document).ready(function () {
     var btn;
     $(document).on("click", '.accept-reject-btn', function (e) {

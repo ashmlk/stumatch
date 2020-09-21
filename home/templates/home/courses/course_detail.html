@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block title %}
-<title>{{ course.course_code }} - Corscope </title>
+<title>{{ course.course_code }} - JoinCampus </title>
 {% endblock %}
 {% block contentright %}
 {% load ibuilder %}
@@ -47,14 +47,14 @@
         </div>
         <div class="col-sm mb-2">
             <div class="pt-2" style="min-height: 100px !important;">
-                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="#">
+                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                     <span class="text-dark">University:</span><span
                         class="ml-1">{{ course.course_university|capfirst }}</span>
                 </a>
                 <a class="c_dis mb-1 course-goto btn btn-outline-primary "
                     href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
                     <span class="text-dark">Instructor:</span><span
-                        class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                        class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </a>
                 {% ifnotequal course.complexity_btn_ins|stringformat:"s" None %}
                 <div class="c_dis mb-1 course-goto btn btn-outline-secondary">
@@ -166,10 +166,9 @@
                 </div>
                 <div class="d-flex justify-content-end my-1">
                     <div>
-                        <button class="border-0 no-border btn btn-md small btn-primary"
+                        <button class="border-0 no-border btn btn-sm small btn-primary"
                             data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-                            style="border-radius:20px;text-decoration: none;" type="submit">Add
-                            Review</button>
+                            style="border-radius:20px;text-decoration: none;" type="submit">Add Review</button>
                     </div>
                 </div>
             </div>
@@ -180,14 +179,14 @@
             <li class="nav-item ">
                 <a class="nav-link d-flex align-items-center {{ review_s }}"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
-                    <span class="ml-2  badge badge-primary badge-pill">{{ reviews_count }}</span>
+                    <span class="ml-2  badge badge-primary badge-pill" id="crsspecrw">{{ reviews_count }}</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center {{ review_a }}"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">Reviews
                     All
-                    <span class="ml-2 badge badge-primary badge-pill">{{ reviews_all_count }}</span>
+                    <span class="ml-2 badge badge-primary badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
                 </a>
             </li>
         </ul>
@@ -213,34 +212,9 @@
     </div>
 </div>
 <style>
-    .btn-primary,
-    textarea {
-        border: 0 !important;
-        outline: none !important;
-        box-shadow: none !important;
-        -moz-box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-    }
-
-    label[for="id_review_interest"] {
-        text-align: right;
-        margin-top: 0.23rem;
-        clear: both;
-        float: left;
-        margin-right: 0.288rem;
-        font-size: 0.88rem !important;
-        margin-left: -1.95rem !important;
-    }
-
-    #id_review_interest {
-        width: 35% !important;
-        margin-left: -1.95rem;
-        font-size: 0.8rem !important;
-    }
+.btn-primary,textarea{border:0!important;outline:0!important;box-shadow:none!important;-moz-box-shadow:none!important;-webkit-box-shadow:none!important}label[for=id_review_interest]{text-align:right;margin-top:.23rem;clear:both;float:left;margin-right:.288rem;font-size:.88rem!important;margin-left:-1.95rem!important}#id_review_interest{width:35%!important;margin-left:-1.95rem;font-size:.8rem!important}
 </style>
 <script>
-    $(document).ready(function () {
-        $('#id_review_interest').addClass('form-control-sm w-50')
-    })
+$(document).ready(function () {$('#id_review_interest').addClass('form-control-sm w-50')})
 </script>
 {% endblock content %}

@@ -3,20 +3,28 @@
 {% load static %}
 {% load ibuilder %}
 {% block title %}
-<title>By You - Corscope</title>
+<title>By You - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<ul class="nav ubu nav-pills nav-fill mb-3 border-bottom border-primary" id="pills-tab" role="tablist" style="border-width: 2px !important;">
-    <li class="nav-item">
-        <a class="nav-link {{ post_active }}" href="{% url 'home:users-posts' %}">Posts</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ buzz_active }}" href="{% url 'home:users-buzzes' %}">Buzzes</a>
-    </li>
-    <li class="nav-item {{ blog_active }}" style="margin-right: -0.01rem;">
-        <a class="nav-link" href="{% url 'home:users-blogs' %}">Blog</a>
-    </li>
-</ul>
+<div class="mt-3 mb-2 p-1 ml-1 ">
+  <div class="d-flex " id="_pol3">
+    <div class="btn flex-fill mr-1 menu-link menu-link{{ post_active }}">
+      <a  href="{% url 'home:users-posts' %}" style="text-decoration: none;">
+          <span class="h6 text-center">Post</span>
+      </a>
+    </div>
+    <div class="btn flex-fill mr-1 menu-link menu-link{{ buzz_active}}">
+      <a  href="{% url 'home:users-buzzes' %}" style="text-decoration: none;">
+          <span class="h6 text-center">Buzz</span>
+      </a>
+    </div>
+    <div class="btn flex-fill mr-1 menu-link menu-link{{ blog_active }}">
+      <a  href="{% url 'home:users-blogs' %}" style="text-decoration: none;">
+          <span class="h6 text-center">Blog</span>
+      </a>
+    </div>
+  </div>
+</div>
   <div>
     {% if post_active %}
     <div  id="post-list">
@@ -35,14 +43,4 @@
     {% endif %}
   </div>
 <script src="{% static 'js/post/post.js' %}"></script>
-{% endblock %}
-{% block contentleft %}
-<div class="row h5 rounded font-weight-bold mnpgl p-3" data-toggle="modal" data-target="#exampleModal">
-    <div class="col-2">
-      <i class="btn-light btn-b-circle material-icons" style="font-size: 28px; ">add</i>
-    </div>
-    <div class="col-10 d-none d-lg-block mt-2">
-      <span class="ml-2">Create</span>
-    </div>
-</div>
 {% endblock %}

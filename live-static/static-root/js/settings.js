@@ -3,19 +3,22 @@ const OG_REMOVE_BTN =  $("#remrevctr button");
 
 const USER_ID = $('#uidnameinput').val();
 
-  $(document).ready(function () {
+$(document).ready(function () {
 
-      $('#chppbtn').on('click', function () {
+      var update_btn = null;
+      $(document).on('click','#chppbtn', function () {
         $('.edit-pro-all #id_image').click();
+        update_btn = $(this)
       })
 
       var reader = new FileReader();
       reader.onload = function (e) {
+          e.preventDefault();
           $('.edit-pro-all .img-create-post').attr('src', e.target.result);
-          var btn = "<button type='button' data-url='/update/profile/image/"+ USER_ID+"/' id='submit-img' class='btn no-border no-outline mr-3 edit-profile-clickable text-primary'>Update</button>";
-          var revert_btn = "<button type='button' id='revert-og-img' class='btn no-border no-outline mr-3 edit-profile-clickable text-danger'>Revert</button>";
-          $('.edit-pro-all #updtimgbtn').append(btn);
-          $('.edit-pro-all #remrevctr').html(revert_btn);
+          $(update_btn).attr('id','submit-img');
+          $(update_btn).attr('data-url',"/update/profile/image/"+ USER_ID+"/")
+          $(update_btn).html('Save')
+
       }
 
       function readURL(input) {
@@ -24,15 +27,10 @@ const USER_ID = $('#uidnameinput').val();
               }
       }
 
-      $(".edit-pro-all #id_image").change(function(){
+      $(document).on('change',".edit-pro-all #id_image",function(){
           readURL(this);
       });
 
-      $('.edit-pro-all #remrevctr').on('click', function () {
-        $('.edit-pro-all .img-create-post').attr('src', OG_IMG_SRC);
-        $('.edit-pro-all #remrevctr').html(OG_REMOVE_BTN);
-        $('.edit-pro-all #updtimgbtn').empty();
-      })
 
       $(document).on('click','#submit-img', function (e){
           var form = new FormData(this.closest('form'));
@@ -46,6 +44,7 @@ const USER_ID = $('#uidnameinput').val();
             dataType: 'json',
             success: function (data){
                 $('.edit-pro-all .pro-img-ctr').html(data.image_updated);
+                $('#nv_imgtabgetlsk').attr('src', data.img_url);  
             },
             error: function(rs, e){
                 console.log(rs.responeText);
@@ -54,7 +53,7 @@ const USER_ID = $('#uidnameinput').val();
       })
 
       $(document).on("click","#rmvproimg", function (e) {
-          e.stopImmediatePropagation();
+          e.preventDefault();
           var btn = $(this);
           $.ajax({
               url: btn.attr("data-url"),
@@ -69,10 +68,9 @@ const USER_ID = $('#uidnameinput').val();
               }
           });
       });
-
+      
       $('#modal-profile').on("submit",".remove-user-image-form",function (e){
           e.preventDefault();
-          e.stopImmediatePropagation();
           var form = new FormData(this);
           $.ajax({
               url: $(this).attr('data-url'),
@@ -83,10 +81,12 @@ const USER_ID = $('#uidnameinput').val();
               contentType: false,
               dataType: 'json',
               success: function(data){
-                  $('.edit-pro-all .pro-img-ctr').html(data.image_updated);
                   $('#modal-profile').modal('hide');
                   $('body').removeClass('modal-open');
-                  $('.modal-backdrop').remove();                    
+                  $('.modal-backdrop').remove();
+                  $('.edit-pro-all .pro-img-ctr').html(data.image_updated);    
+                  $('.edit-pro-all .img-create-post').attr('src', data.img_url);       
+                  $('#nv_imgtabgetlsk').attr('src', data.img_url);            
               }
           })
       });

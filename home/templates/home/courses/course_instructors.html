@@ -1,7 +1,7 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
 {% block title %}
-    <title>{{ code }} - {{ university|capfirst }} - Corscope</title>
+    <title>{{ code }} - {{ university|capfirst }} - JoinCampus</title>
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
@@ -22,9 +22,11 @@
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="card mb-2 bg-white">
-        <div class="d-flex justify-content-between course-title-box"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
+        <div class="d-flex justify-content-between course-title-box" data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="min-height: 5rem; background-color: {{ bgrnd }};">
             <div class="ml-2"> 
-                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}"><h3 class="font-weight-bold">{{ course.course_instructor|capfirst }}</h3></a>
+                <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}">
+                    <h3 class="font-weight-bold">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</h3>
+                </a>
             </div>
           </div>
         <div class="row p-0">
@@ -78,8 +80,4 @@
     </div>
     {% endfor %}
 </div>
-<!--
-<script src="{% static 'js/courses/course-instructor.js' %}"></script>
-<script src="{% static 'js/courses/save-course.js' %}"></script>
--->
 {% endblock %}
