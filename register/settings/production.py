@@ -58,7 +58,7 @@ CACHES = {
         }
     }
 }
-SITE_ID = 4
+SITE_ID = 6
 
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "max_connections": 2,
