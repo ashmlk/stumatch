@@ -5,16 +5,6 @@
 <title>Add Course - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<style>
-.search-query-result {
-    position: absolute;
-    display: none;
-    margin-top: 0.44rem !important;
-    margin-left: 0.3rem !important;
-    min-width: 19.5rem !important;
-    background-color: white !important;
-}
-</style>
 <div>
     <div class="d-flex justify-content-start border-bottom">
         <div class="m-0">
@@ -49,9 +39,9 @@
             <div class="col-sm-12 w-100">
                 {{ field }}
                 {% if field.name|stringformat:"s" == "course_code" %}
-                <div class="mb-1 p-1 border rounded search-query-result bg-white" id="crs-cc-dp"></div>
+                <div class="mb-1 p-1 border rounded query-result bg-white" id="crs-cc-dp"><ul class="list-group list-group-flush"></ul></div>
                 {% elif field.name|stringformat:"s" == "course_instructor" %}
-                <div class="mb-1 p-1 border rounded search-query-result bg-white" id="crs-ins-dp"></div>
+                <div class="mb-1 p-1 border rounded query-result bg-white" id="crs-ins-dp"><ul class="list-group list-group-flush"></ul></div>
                 {% endif %}
                 <span class="small text-muted">{{ field.help_text }}</span>
                 <span class="text-danger">{{ field.errors }}</span>
@@ -69,71 +59,4 @@
     </div>
 </div>
 <script src="{% static 'js/courses/course-add.js' %}"></script>
-<script>
-    $(document).ready(function () {
-
-        var selectedUni = $( "#id_course_university option:selected" ).text();
-
-        $(document).on('change','#id_course_university',function(){
-            selectedUni = $( "#id_course_university option:selected" ).text();
-        })
-        
-
-        $(document).on('keyup','#id_course_code', function () {
-            // set the obj_text to val
-            var obj_text = $(this).val();
-            // check to see if course instructor has been provided by user
-            if ($('#id_course_instructor').val().length > 0) {
-                // course instructor field has been set
-                var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&o=" + $('#id_course_instructor').val() + "&ot=code"
-            } else {
-                // value of course instructor is unknown so we are now just searching for similar course code
-                var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&oj=code"
-            }
-            if(obj_text != ''){
-                $.ajax({
-                    type: "GET",
-                    url: get_url,
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#crs-cc-dp').show();
-                    },
-                    error: function (rs, e) {
-                        console.log(rs.responeText);
-                    },
-                })
-            }
-        });
-
-        $(document).on('keyup','#id_course_instructor', function () {
-            // set the obj_text to val
-            var obj_text = $(this).val();
-            /* 
-            * first check what values are types by the user
-            */
-            if ($('#id_course_code').val().length > 0 ) {
-                // course code field has been set
-                var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&o=" + $('#id_course_code').val() + "&ot=instructor";
-            } else {
-                // value of course instructor is unknown so we are now just searching for similar course code
-                var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&oj=instructor";
-            }
-            if(obj_text != ''){
-                $.ajax({
-                    type: "GET",
-                    url: get_url,
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#crs-ins-dp').show();
-                    },
-                    error: function (rs, e) {
-                        console.log(rs.responeText);
-                    },
-                })
-            }
-           
-
-        });
-    })
-</script>
 {% endblock %}

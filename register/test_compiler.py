@@ -280,18 +280,16 @@ def generate_comment_like_notifications():
 from register.settings.production import sg
 
 def test_email():
-    import os
     from sendgrid import SendGridAPIClient
     from sendgrid.helpers.mail import Mail
-    from django.template.loader import render_to_string
-    email = 'arshiama@hotmail.com'
+
     message = Mail(
-                from_email='Corscope Team <no-reply@corscope.com>',
-                to_emails=email,
-                subject='Welcome to Corscope',
-                html_content = render_to_string('new_user_email.html', {'first_name':'Arshia'})
-            )
+        from_email='contact@joincampus.ca',
+        to_emails='contact@joincampus.ca',
+        subject='Sending with Twilio SendGrid is Fun',
+        html_content='<strong>and easy to do anywhere, even with Python</strong>')
     try:
+        sg = SendGridAPIClient('secret_key')
         response = sg.send(message)
         print(response.status_code)
         print(response.body)

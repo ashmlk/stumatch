@@ -88,21 +88,21 @@ def home(request):
 def users_posts(request):
     
     posts = request.user.post_set.order_by('-last_edited')
-    context = { 'posts':posts, 'post_active':'active' }
+    context = { 'posts':posts, 'post_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def users_buzzes(request):
     
     buzzes = request.user.buzz_set.order_by('-date_posted')
-    context = {'buzzes':buzzes, 'buzz_active':'active' }
+    context = {'buzzes':buzzes, 'buzz_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def users_blogs(request):
     
     blogs = request.user.blog_set.order_by('-last_edited')
-    context = {'blogs':blogs, 'blog_active':'active' }
+    context = {'blogs':blogs, 'blog_active':'-active' }
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
@@ -568,23 +568,29 @@ def course_add_form_get_obj(request):
     obj_text = request.GET.get('q', None)
     
     if obj != None and obj1 == 'instructor': #have the code and want the instructor
-        instructor_list = Course.objects.values_list('course_instructor', flat=True).annotate(trigram=TrigramSimilarity('course_instructor', obj_text), trigram_course=TrigramSimilarity('course_code', obj )).filter(course_university__unaccent=uni, trigram__gte=0.03, trigram_course__gte=0.05).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
-        print('case1')
+        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
+        .annotate(trigram=TrigramSimilarity('course_instructor', obj_text),  trigram_fn=TrigramSimilarity('course_course_instructor_fn', obj ), trigram_course=TrigramSimilarity('course_code', obj ))\
+        .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.15) | Q(trigram_fn__gte=0.5), Q(trigram_course__gte=0.3))\
+        .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        
     if obj != None and obj1 == 'code': #have the instructor and want the code, obj has to be set to value of course instructor field
-        print('case2')
-        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text), trigram_ins=TrigramSimilarity('course_instructor', obj )).filter(course_university__unaccent=uni, trigram__gte=0.03,  trigram_ins__gte=0.05).order_by('course_code','-trigram').distinct('course_code')[:7]
+        course_code_list = Course.objects.values_list('course_code', flat=True)\
+            .annotate(trigram=TrigramSimilarity('course_code', obj_text), trigram_ins=TrigramSimilarity('course_instructor', obj ))\
+            .filter(course_university__unaccent=uni, trigram__gte=0.15,  trigram_ins__gte=0.3)\
+            .order_by('course_code','-trigram').distinct('course_code')[:7]
+            
     elif obj0 == 'instructor': # if obj0 is instructor no value is provided and user wants list of of instructors
-        print('case3')
-        instructor_list = Course.objects.values_list('course_instructor', flat=True).annotate(trigram=TrigramSimilarity('course_instructor', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.03).order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
+            .annotate(trigram=TrigramSimilarity('course_instructor', obj_text), trigram_fn=TrigramSimilarity('course_instructor_fn', obj_text))\
+            .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.1) | Q(trigram_fn__gte=0.5))\
+            .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+            
     elif obj0 == 'code': # if obj0 is code then user is requesting list of course codes
-        print('case4')
-        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.04).order_by('course_code','-trigram').distinct('course_code')[:7]
+        course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.1).\
+            order_by('course_code','-trigram').distinct('course_code')[:7]
     
     course_code_list = list(course_code_list)
     instructor_list = list(instructor_list)
-    
-    print(course_code_list)
-    print(instructor_list) 
     
     data = {
         'ins': instructor_list,
@@ -1051,12 +1057,16 @@ def get_course_mutual_students(request):
     blockers_id = request.session.get('blockers')
     
     hid = request.GET.get('id',None)
+    obj = request.GET.get('o','all')
     id = hashids.decode(hid)[0]
     
     course = get_object_or_404(Course, id=id)
     
-    student_list = Profile.objects.get_students(user=request.user, code=course.course_code, instructor=course.course_instructor, instructor_fn=course.course_instructor_fn, university=course.course_university)
-    
+    if obj == 'ins':
+        student_list = Profile.objects.get_students(user=request.user, code=course.course_code, instructor=course.course_instructor, instructor_fn=course.course_instructor_fn, university=course.course_university)
+    elif obj == 'all':
+        student_list = Profile.objects.filter(courses__course_code=course.course_code,courses__course_university=course.course_university).order_by('last_name','first_name','university').distinct('last_name','first_name','university')
+
     page = request.GET.get('page', 1)
     paginator = Paginator(student_list, 7)
     try:
@@ -1068,7 +1078,8 @@ def get_course_mutual_students(request):
         
     context = {
         'students':students,
-        'course':course
+        'course':course,
+        'o':obj
     }
     
     return render(request,'home/courses/student_list.html',context)

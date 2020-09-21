@@ -40,6 +40,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
   <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'js/index.js' %}"></script>
 </head>
 <body class="pb-5" style="background-color: white !important;">
 {% if request.user.is_authenticated %}
@@ -60,19 +61,4 @@
     {% include 'footer_main.html' %}
   </div>
 </body>
-<style>
-  .items-detailed {
-      margin-bottom: 3.4rem;
-  }
-  .items-detailed .font-weight-bolder {
-      border-left: 4px solid rgb(248, 135, 94);
-      padding-left: 10px;
-  }
-  .items-detailed .box-al{
-      padding-left: 14px;
-  }
-  .items-detailed .detailed-list{
-      padding-left: 10px;
-  }
-</style>
 </html>

@@ -277,7 +277,7 @@ class ProfileManager(UserManager):
             self.get_queryset()
             .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor, courses__course_instructor_fn__iexact=instructor_fn)
             .exclude(username__in=usernames)
-            .order_by('username')
+            .order_by('last_name','first_name','university').distinct('last_name','first_name','university')
         )
         
         return qs

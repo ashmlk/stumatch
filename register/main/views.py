@@ -93,8 +93,8 @@ def contact_us(request):
             sender_email = form.cleaned_data['email']
             message_text = "Name: {0}\nEmail: {1}\n\n Sent you a new contact message:\n\n{2}".format(sender_name, sender_email, form.cleaned_data['message']) #message to be sent to contact@domain.com 
             message = Mail(
-                from_email='Corscope Contact <no-reply@corscope.com>',
-                to_emails='contact@corscope.com',
+                from_email='JoinCampus NoReply <no-reply@joincampus.ca>',
+                to_emails='contact@joincampus.ca',
                 subject='User Contact Submitted',
                 plain_text_content = message_text
                 )
@@ -166,9 +166,9 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             message = Mail(
-                from_email='Corscope Team <no-reply@corscope.com>',
+                from_email='JoinCampus Team <no-reply@joincampus.ca>',
                 to_emails=user.email,
-                subject='Welcome to Corscope',
+                subject='Welcome to JoinCampus',
                 html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
                 )
             try:

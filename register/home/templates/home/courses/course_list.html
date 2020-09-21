@@ -82,7 +82,7 @@
                     </div>
                     <div class="mb-0">
                         <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
-                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">here</a>.</span>
+                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
                     </div>
                 </div>
             </div>   

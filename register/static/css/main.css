@@ -655,3 +655,32 @@ box-shadow:  -9px 9px 18px #949ca1,
 .link-to-action .no-style {
   list-style-type: none;
 }
+.query-result {
+  position: absolute;
+  margin-top: 0.44rem !important;
+  margin-left: 0.3rem !important;
+  min-width: 19.5rem !important;
+  background-color: white !important;
+  z-index: 1;
+  display: none;
+}
+.itm-slct {
+  cursor: pointer;
+}
+.itm-slct:hover {
+  opacity: 0.8;
+}
+
+.items-detailed {
+  margin-bottom: 3.4rem;
+}
+.items-detailed .font-weight-bolder {
+  border-left: 4px solid rgb(248, 135, 94);
+  padding-left: 10px;
+}
+.items-detailed .box-al{
+  padding-left: 14px;
+}
+.items-detailed .detailed-list{
+  padding-left: 10px;
+}
