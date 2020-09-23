@@ -189,5 +189,48 @@ $(document).ready(function (e) {
       }
     })
   });
+
+  $(document).on('click','.add-uni-btn', function () {
+    var addunibtn = $(this)
+    $.ajax({
+      url: addunibtn.attr("data-url"),
+      type: 'get',
+      dataType:'json',
+      beforeSend: function(){
+        $('#modal-report').modal('show');
+      },
+      success: function(data){
+        $('#modal-report .modal-content').html(data.html_form);
+      }
+    });
+  })
+
+  $('#modal-report').on("submit",".add-uni-form",function (e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var form = $(this).serialize();
+    $.ajax({
+      url: $(this).attr('data-url'),
+      type: $(this).attr('method'),
+      data: form,
+      dataType: 'json',
+      success: function(data){
+        if(data.form_valid){
+          $('#modal-report').modal('hide');
+          $('body').removeClass('modal-open');
+          $('.modal-backdrop').remove();  
+          window.location.href = $(this).attr('data-success-url')
+        } else {
+            $('.modal-body').html('<p class="text-center">There was an error with your request</p>');
+            $('.modal-footer').html('<button type="button" class="mx-1 btn btn-secondary no-border no-outline text-center" data-dismiss="modal" style="border-radius: 20px;">Close</button>')
+            setTimeout(function() {
+            $('#modal-report').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();  
+            }, 1720);
+          }
+      },
+  });
+})
   
 });

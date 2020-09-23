@@ -91,6 +91,13 @@
         </div>
       </a>
     </div>
+    {% if request.session.no_university %}
+    <button class="btn d-flex align-items-center mr-1 add-uni-btn" data-url="{% url 'main:update-university' %}?success_url=home">
+        <div>
+          <span class="h6"><span>Add University</span></span>
+        </div>
+    </button>
+    {% else %}
     <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-posts' %}">
       <a  href="{% url 'home:uni-posts' %}" style="text-decoration: none;">
         <div>
@@ -98,6 +105,7 @@
         </div>
       </a>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endif %}

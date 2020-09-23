@@ -55,7 +55,7 @@ def create_blogs(n):
     for i in range(n):
        id = random.choice(idl)
        title = fake.sentence(nb_words=3)
-       pr = fake.paragraph(nb_sentences=30) 
+       pr = fake.paragraph(nb_sentences=60) 
        pr = pr.replace("']","")
        pr = pr.replace("['","")
        pr = pr.replace("', '","")

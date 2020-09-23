@@ -49,6 +49,9 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 @login_required
 def home(request):
     
+    if len(request.user.university) < 1:
+        request.session['no_university'] = True 
+ 
     friends = Friend.objects.friends(request.user)
     
     """ get a list of users that user has blocked and save it to request.session """

@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+<form method="POST" data-url="{%url 'main:update-university' %}" {% if su == 'buzz' %} data-success-url="{% url 'home:buzz' %}" {% else %} data-success-url="{% url 'home:home' %}" {% endif %} class="add-uni-form">
+    {% csrf_token %}
+    <div class="modal-header border-0 pl-0 pr-0 mb-0">
+        <h5 class="modal-title col-12 text-center">Add University
+            <button type="button" class="close" style="margin-left: 10x; margin-right: -10px;" data-dismiss="modal"
+                aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button></h5>
+    </div>
+    <div class="modal-body">
+        <div class="form-box">
+            <div class="title-all">
+                <div class="form-ctr">
+                    {{ form | crispy }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer border-0">
+        <button type="submit" class="mx-1 btn btn-primary no-border no-outline text-center" data-success-url="{% url 'home:home' %}" style="border-radius: 20px;">Save</button>
+    </div>
+</form>
