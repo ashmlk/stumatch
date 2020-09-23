@@ -269,6 +269,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_SIGNUP_FORM_CLASS = 'main.forms.SetUniversityForm'
+
 SITE_ID = 3
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')

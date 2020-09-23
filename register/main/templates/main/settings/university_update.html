@@ -1,5 +1,6 @@
 {% load crispy_forms_tags %}
-<form method="POST" data-url="{%url 'main:update-university' %}" {% if su == 'buzz' %} data-success-url="{% url 'home:buzz' %}" {% else %} data-success-url="{% url 'home:home' %}" {% endif %} class="add-uni-form">
+<form method="POST" data-url="{%url 'main:update-university' %}" 
+    {% if su == 'buzz' %} data-success-url="{% url 'home:buzz' %}" {% elif su == 'home' %} data-success-url="{% url 'home:home' %}" {% elif su == 'find-program' %} data-success-url="{% url 'main:find-program' %}" {% else %} data-success-url="{{ su }}" {% endif %} class="add-uni-form">
     {% csrf_token %}
     <div class="modal-header border-0 pl-0 pr-0 mb-0">
         <h5 class="modal-title col-12 text-center">Add University

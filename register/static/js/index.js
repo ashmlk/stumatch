@@ -209,6 +209,7 @@ $(document).ready(function (e) {
     e.preventDefault();
     e.stopImmediatePropagation();
     var form = $(this).serialize();
+    var success_url = $(this).attr('data-success-url');
     $.ajax({
       url: $(this).attr('data-url'),
       type: $(this).attr('method'),
@@ -219,7 +220,8 @@ $(document).ready(function (e) {
           $('#modal-report').modal('hide');
           $('body').removeClass('modal-open');
           $('.modal-backdrop').remove();  
-          window.location.href = $(this).attr('data-success-url')
+          alert(success_url)
+          location.href = success_url;
         } else {
             $('.modal-body').html('<p class="text-center">There was an error with your request</p>');
             $('.modal-footer').html('<button type="button" class="mx-1 btn btn-secondary no-border no-outline text-center" data-dismiss="modal" style="border-radius: 20px;">Close</button>')

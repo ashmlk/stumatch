@@ -256,7 +256,7 @@ def add_university(request):
     if request.method == 'POST':
         form  = SetUniversityForm(request.POST, instance=request.user)
         if form.is_valid():
-            #form.save()
+            form.save()
             if len(request.user.university) > 1:
                 request.session['no_university'] = False
             data['form_valid'] = True
