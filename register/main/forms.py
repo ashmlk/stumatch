@@ -311,7 +311,41 @@ class EditProfileForm(UserChangeForm):
 			if commit:
 				user.save()
 			return user
-        
+
+class SetUniversityForm(forms.ModelForm):
+    
+    program = forms.CharField(
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				"placeholder":"What are you studying?",
+				"class": "form-control",
+			}
+		)
+	)
+    
+    university = forms.ChoiceField(
+		label='',
+		required=True,
+  		choices = UNIVERSITY_CHOICES,
+
+  		widget=MySelect(
+        attrs={
+			"class":"form-control",
+			
+		}
+        ), 
+	)
+    
+    class Meta:
+        model = Profile
+        fields = ('university','program')
+    
+    def signup(self, request, user):
+        user.university = self.cleaned_data['university']
+        user.program = self.cleaned_data['program']
+        user.save()
+      
 
 class PasswordResetForm(PasswordChangeForm):
 

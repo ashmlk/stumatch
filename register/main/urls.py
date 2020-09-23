@@ -24,6 +24,7 @@ urlpatterns=[
     path('signout', views.user_logout, name='user_logout'),
     path('report/submit/<str:reporter_id>', views.report_object,name='report-object'),
     path('settings/edit/account/', views.edit_profile, name='settings-edit'),
+    path('update/add/university/', views.add_university, name='update-university'),
     path('update/profile/image/<str:hid>/', views.update_image, name='update-image'),
     path('remove/profile/image/<str:hid>/', views.remove_image, name='remove-image'),
     path('settings/privacy/', views.privacy_security, name='privacy-security'),

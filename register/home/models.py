@@ -253,14 +253,13 @@ class BlogManager(models.Manager):
             for b in blocked:
                 bl.append(str(b))
                 
-        time_threshold = timezone.now() - datetime.timedelta(days=1)
+        time_threshold = timezone.now() - datetime.timedelta(days=7)
 
-        
         qs = (
             self.get_queryset()
             .annotate(like_count=Count('likes'))
-            .filter( (~Q(author__username__in=bl)) & (  Q(author__username__in=friends) | Q(author__university__iexact=user.university) | (Q(like_count__gte=350) & Q(last_edited__gte=time_threshold)) ) )
-            .order_by('last_edited', 'like_count')
+            .filter( (~Q(author__username__in=bl)) & ((Q(author__username__in=friends) | Q(author__university__iexact=user.university)) & (Q(last_edited__gte=time_threshold)) ) )
+            .order_by('-last_edited', 'like_count')
         )
         
         return qs 
