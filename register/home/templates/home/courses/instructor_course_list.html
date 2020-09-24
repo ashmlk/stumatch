@@ -12,6 +12,11 @@
     <div class="mr-2">
         <h4 class="font-weight-bolder">Professor {{ instructor|capfirst }}</h4>
         <a href="{% url 'home:university-detail' %}?u={{ university }}&obj=std"><h6 class="text-muted">{{ university|capfirst }}</h6></a> 
+        {% if instructor_rating >= 0 %}
+        <div class="mt-2">
+            <span class="h6">Instructor Rating: {{ instructor_rating }}</span>
+        </div>
+        {% endif %}
     </div>
     <div>
         <img class="mb-1" src="{% static 'default/courses/instructors-char-1.png' %}" alt="Course Image" style="margin-top:-10px;height:120px;width: 100px;">
@@ -31,17 +36,17 @@
                 <div class="d-flex flex-column p-1">         
                     <div class="d-flex justify-content-right">
                         <div class="border p-1 border-rounded shadow-sm t-stu">
-                            <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
+                            <span class="text-dark">Total enrollments in this course: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
                         </div>
                         <div style="margin-left: 3px;margin-right: 2px;">
                         </div>
                         <div class="t-stu p-1 border border-rounded shadow-sm">
-                            <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                            <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
                         </div>
                     </div>
                     <div class="t-stu mt-1">
                         <div class="border border-rounded p-1 shadow-sm" style="display: inline-block;">
-                            <span class="text-dark">Average Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
+                            <span class="text-dark">Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
                         </div>
                     </div>
                 </div>

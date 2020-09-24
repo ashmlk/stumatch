@@ -498,11 +498,18 @@ def course_list(request):
 
 @login_required
 def courses_instructor(request,par1,par2):
+    instructor_rating = -1
     courses = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
+    try:
+        instructor_rating = Course.objects.instructor_average_voting(ins=courses.first().course_instructor, ins_fn=courses.first().course_instructor_fn, university=courses.first().course_university)
+    except:
+        message = "Issue with getting instructor rating for: " + courses.first().course_instructor_fn.capitalize() + " " + courses.first().course_instructor.capitalize() + " at " + courses.first().course_university
+        print(message)
     context = {
          'courses':courses,
          'instructor':courses.first().course_instructor_fn.capitalize() + " " + courses.first().course_instructor.capitalize(),
          'university':courses.first().course_university,
+         'instructor_rating':instructor_rating
          }
     return render(request,'home/courses/instructor_course_list.html',context)
 
@@ -607,20 +614,12 @@ def course_edit(request, hid):
     id =  hashids.decode(hid)[0]
     course_init = get_object_or_404(Course, id=id)
     if request.method == "POST":
-        form = CourseEditForm(request.POST, instance=course_init)
+        form = CourseEditForm(request.POST)
         if form.is_valid():
-            course = form.save(False)   
-            course_exists = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn, course_instructor__iexact=course.course_instructor,course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester,course_difficulty=course.course_difficulty).exists()
-            if course_exists:
-                c = Course.objects.filter(course_code=code,course_instructor_fn__iexact=course.course_instructor_fn,course_instructor__iexact=course.course_instructor,\
-                    course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester,course_difficulty=course.course_difficulty).first()
-                request.user.courses.add(c)
-                request.user.courses.remove(course_init)
-            else:
-                course.save()
-                request.user.courses.remove(course_init)
-                request.user.courses.add(course)
-                return redirect('home:course-list')
+            course = form.save()   
+            request.user.courses.remove(course_init)
+            request.user.courses.add(course)
+            return redirect('home:course-list')
     else:     
         form = CourseEditForm(instance=course_init)    
     context = {
@@ -641,7 +640,7 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
             course_exists = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn,\
                                                     course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
                                                         course_university__iexact=course.course_university,course_semester=course.course_semester,\
-                                                            course_difficulty=course.course_difficulty).exists()
+                                                            course_difficulty=course.course_difficulty, course_prof_difficulty=course.course_prof_difficulty).exists()
             if max_reached > 7:
                     data['message'] =  "You have already reached maximum number of courses per semester for the " + course.sem + " semester in "+ course.course_year  
             else:
@@ -649,7 +648,7 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
                     c = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn,\
                                                 course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
                                                     course_university__iexact=course.course_university,course_semester=course.course_semester,\
-                                                        course_difficulty=course.course_difficulty).first()
+                                                        course_difficulty=course.course_difficulty, course_prof_difficulty=course.course_prof_difficulty).first()
                     request.user.courses.add(c)
                 else:
                     course.save()

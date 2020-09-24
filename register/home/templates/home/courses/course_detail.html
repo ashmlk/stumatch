@@ -56,27 +56,27 @@
                     <span class="text-dark">Instructor:</span><span
                         class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </a>
-                {% ifnotequal course.complexity_btn_ins|stringformat:"s" None %}
-                <div class="c_dis mb-1 course-goto btn btn-outline-secondary">
+                {% if course.complexity_btn_ins == "None" %}
+                <div class="c_dis mb-1 btn btn-outline-secondary">
                     <span>Difficulty With this Professor:</span><span
-                        class="ml-1">No ratings yet :(</span>
+                        class="ml-1">No ratings yet</span>
                 </div>
                 {% else %}
-                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
+                <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
                     <span>Difficulty With this Professor:</span><span
                         class="ml-1">{{ course.average_complexity_ins }}</span>
                 </div>
-                {% endifnotequal %}
-                {% ifnotequal course.complexity_btn|stringformat:"s" None %}
-                <div class="c_dis mb-1 course-goto btn btn-outline-secondary">
+                {% endif %}
+                {% if course.complexity_btn == "None" %}
+                <div class="c_dis mb-1 btn btn-outline-secondary">
                     <span>Course Overall Difficulty:</span><span
-                        class="ml-1">No ratings yet :(</span>
+                        class="ml-1">No ratings yet</span>
                 </div>
                 {% else %}
-                <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
+                <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
                     <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
                 </div>
-                {% endifnotequal %}
+                {% endif %}
                 <hr>
                 <div class="c_dis mb-1" style="display: inline-block;">
                     <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
@@ -104,28 +104,26 @@
     </div>
     <div>
         {% if taken %}
-        <button class="v_rebtn col-sm-12 my-1 border-0 btn btn-block small btn-primary" data-text="Show"
+        <button class="v_rebtn col-sm-12 my-1 border-0 btn  small btn-primary" data-text="Show"
             style="text-decoration: none;" type="button">Write a review</button>
         {% else %}
-        <button class="col-sm-12 my-1 btncrsatadd border-0 btn btn-block small btn-primary"
-            style="text-decoration: none;" type="button" style="text-decoration: none;"
+        <button class="col-sm-12 my-1 btncrsatadd border-0 btn  small btn-primary"
+             type="button" style="text-decoration: none;"
             data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">Add
             Course</button>
         {% endif %}
     </div>
     <div>
-        <a class="col-sm-12 my-1 acaffd border-0 btn btn-block small btn-primary" style="text-decoration: none;"
-            type="button" style="text-decoration: none;"
+        <!-- removed acaffd class -->
+        <a class="col-sm-12 mb-1 border-0 btn  small btn-primary" style="text-decoration: none;"
+            type="button" 
             href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All
             instructors</a>
-        <input id="autocia" type="hidden" value="{{ course.course_instructor }}" />
-        <input id="autocya" type="hidden" value="{{ course.course_year }}" />
-        <input id="autocca" type="hidden" value="{{ course.course_code }}" />
     </div>
     <div>
         <form method="POST" class="course-save-form">
             {% csrf_token %}
-            <button class="col-sm-12 my-1 border-0 btn btn-block small btn-primary save-course" type="submit"
+            <button class="col-sm-12 border-0 mb-1 btn small btn-primary save-course" type="submit"
                 data-url="{% url 'home:course-save' course.id %}">Save</button>
         </form>
     </div>
@@ -146,6 +144,9 @@
         </div>
     </div>
 </div>
+<input id="autocia" type="hidden" value="{{ course.course_instructor }}" />
+<input id="autocya" type="hidden" value="{{ course.course_year }}" />
+<input id="autocca" type="hidden" value="{{ course.course_code }}" />
 {% endblock %}
 {% block content %}
 <div class="p-0 mb-4">
@@ -184,8 +185,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center {{ review_a }}"
-                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">Reviews
-                    All
+                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
+                    All Reviews for {{ course.course_code }}
                     <span class="ml-2 badge badge-primary badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
                 </a>
             </li>

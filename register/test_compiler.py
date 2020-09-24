@@ -303,3 +303,32 @@ def correct_courses():
         c.course_instructor_slug = '-'.join((slugify(c.course_instructor_fn.strip().lower()), slugify(c.course_instructor.strip().lower())))
         c.save()
     return "success"
+
+def fix_courses():
+    
+    for c in Course.objects.all():
+        
+        print(c.course_difficulty)
+        if c.course_difficulty == 1:
+            c.course_difficulty = 4 
+        elif c.course_difficulty == 2:
+            c.course_difficulty = 3
+        elif c.course_difficulty == 3:
+            c.course_difficulty = 2
+        elif c.course_difficulty == 1:
+            c.course_difficulty = 4
+        
+        
+        if c.course_prof_difficulty == 1:
+            c.course_prof_difficulty = 4
+        elif c.course_prof_difficulty == 2:
+            c.course_prof_difficulty = 3
+        elif c.course_prof_difficulty == 3:
+            c.course_prof_difficulty = 2
+        elif c.course_prof_difficulty == 1:
+            c.course_prof_difficulty = 4
+            
+        c.save()
+    
+    return "success"
+        

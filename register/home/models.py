@@ -466,6 +466,18 @@ class CourseManager(models.Manager):
         
         return users
     
+    def instructor_average_voting(self, ins, ins_fn, university):
+        
+        avg = self.get_queryset()\
+                .filter(course_instructor_fn__iexact=ins_fn, course_instructor=ins,course_university__unaccent=university)\
+                .exclude(course_prof_difficulty=0)\
+                .annotate(as_float=Cast('course_prof_difficulty',FloatField())).aggregate(Avg('as_float'))
+            
+        if avg.get('as_float__avg'):
+            return round(avg.get('as_float__avg'), 2)
+        else:
+            return 0
+        
 class Post(models.Model):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
@@ -723,17 +735,28 @@ class Review(models.Model):
 class Course(models.Model):
     
     class Semester(models.TextChoices):
+        
+        SPRING_SUMMER = '5', 'Spring/Summer'
         SPRING = '1', 'Spring'
         SUMMER = '2', 'Summer'
         FALL = '3', 'Fall'
         WINTER = '4', 'Winter'
         NONE = '0', 'None'
+        
     class Difficulty(models.TextChoices):
         NONE = '0', 'TBD'
-        EASY = '1', 'Easy'
-        MEDIUM = '2', 'Medium'
-        HARD = '3', 'Hard'
-        FAILED = '4', 'Failed'
+        EASY = '4', 'Easy'
+        MEDIUM = '3', 'Medium'
+        HARD = '2', 'Hard'
+        FAILED = '1', 'Failed'
+    
+    class ProfDifficulty(models.TextChoices):
+        NONE = '0', 'TBD'
+        EASY = '4', 'Easy'
+        MEDIUM = '3', 'Medium'
+        HARD = '2', 'Hard'
+        FAILED = '1', 'Failed'
+        
     course_code = models.CharField(max_length=20)
     course_university = models.CharField(max_length=100)
     course_university_slug = models.SlugField(max_length = 250, null = True, blank = True)
@@ -753,6 +776,12 @@ class Course(models.Model):
         max_length=2,
         choices=Difficulty.choices,
         default=Difficulty.NONE,
+        blank=True
+        )
+    course_prof_difficulty = models.CharField(
+        max_length=2,
+        choices=ProfDifficulty.choices,
+        default=ProfDifficulty.NONE,
         blank=True
         )
     sv = pg_search.SearchVectorField(null=True)
@@ -777,14 +806,13 @@ class Course(models.Model):
         return hashids.encode(self.id)
     
     def get_user_count(self):
-        courses = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).annotate(user_count=Count('profiles'))
-        return courses[0].user_count
+        count = Profile.objects.filter(courses__course_code=self.course_code,courses__course_university__iexact=self.course_university).distinct('username').count()
+        return count
     
     def get_user_count_ins(self):
-        courses = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
-            course_instructor__iexact=self.course_instructor,course_instructor_fn__iexact=self.course_instructor_fn)\
-            .annotate(user_count=Count('profiles'))
-        return courses[0].user_count
+        count = Profile.objects.filter(courses__course_instructor_fn__iexact=self.course_instructor_fn,courses__course_instructor__iexact=self.course_instructor,\
+            courses__course_code=self.course_code,courses__course_university__iexact=self.course_university).distinct('username').count()
+        return count
     
     def average_voting(self):
         total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
@@ -828,7 +856,7 @@ class Course(models.Model):
         return r_dic[d]
         
     def average_complexity(self):
-        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
+        r_dic = {4:"Easy",3:"Medium",2:"Hard",1:"Most Failed"}
         avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university).exclude(course_difficulty=0).\
             annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
         if avg.get('as_float__avg'):
@@ -836,19 +864,22 @@ class Course(models.Model):
         return None
     
     def average_complexity_ins(self):
-        r_dic = {1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
-        avg = Course.objects.filter(course_code=self.course_code,course_university__iexact=self.course_university,\
-            course_instructor__iexact=self.course_instructor, course_instructor_fn__iexact=self.course_instructor_fn).exclude(course_difficulty=0).annotate(as_float=Cast('course_difficulty',FloatField())).aggregate(Avg('as_float'))
+        r_dic = {4:"Easy",3:"Medium",2:"Hard",1:"Most Failed"}
+        avg = Course.objects\
+            .filter(course_code=self.course_code,course_university__iexact=self.course_university,course_instructor__iexact=self.course_instructor, course_instructor_fn__iexact=self.course_instructor_fn)\
+                .exclude(course_prof_difficulty=0)\
+                    .annotate(as_float=Cast('course_prof_difficulty',FloatField())).aggregate(Avg('as_float'))        
         if avg.get('as_float__avg'):
             return r_dic[int(avg.get('as_float__avg'))]
         return None
     
+    
     def user_complexity(self):
-        r_dic = {0:"none",1:"easy",2:"medium",3:"hard",4:"a failure"}
+        r_dic = {0:"none",4:"easy",3:"medium",2:"hard",1:"a failure"}
         return r_dic[int(self.course_difficulty)]
     
     def user_complexity_btn(self):
-        r_dic = {0:"None",1:"Easy",2:"Medium",3:"Hard",4:"Most Failed"}
+        r_dic = {0:"None",4:"Easy",3:"Medium",2:"Hard",1:"Most Failed"}
         return r_dic[int(self.course_difficulty)]
     
     def is_liked(self,user):

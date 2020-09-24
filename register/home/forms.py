@@ -178,7 +178,11 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
+        labels = {
+            "course_prof_difficulty": "Difficulty with this professor?",
+            "course_difficulty": 'Course overall difficulty?'          
+        }
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
         
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
@@ -257,7 +261,12 @@ class CourseEditForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
+        labels = {
+            "course_prof_difficulty": "Difficulty with this professor?",
+            "course_difficulty": 'Course overall difficulty?'
+            
+        }
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
 
 class BuzzForm(forms.ModelForm):
     nickname = forms.CharField(

@@ -105,7 +105,7 @@ class SignUpForm(UserCreationForm):
 	username = forms.CharField(
 		label='',
 		max_length=30,
-		min_length=4,
+		min_length=1,
 		required=True,
   		validators=[username_regex],
 		widget=forms.TextInput(
@@ -119,7 +119,7 @@ class SignUpForm(UserCreationForm):
 	first_name = forms.CharField(
 		label='',
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
@@ -133,7 +133,7 @@ class SignUpForm(UserCreationForm):
 	last_name = forms.CharField(
 		label='',
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
@@ -210,7 +210,7 @@ class EditProfileForm(UserChangeForm):
     
 	username = forms.CharField(
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=False,
 		validators=[username_regex],
 		widget=forms.TextInput(
@@ -224,7 +224,7 @@ class EditProfileForm(UserChangeForm):
 
 	first_name = forms.CharField(
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=False,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
@@ -238,7 +238,7 @@ class EditProfileForm(UserChangeForm):
 
 	last_name = forms.CharField(
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=False,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
@@ -328,7 +328,6 @@ class SetUniversityForm(forms.ModelForm):
 		label='',
 		required=True,
   		choices = UNIVERSITY_CHOICES,
-
   		widget=MySelect(
         attrs={
 			"class":"form-control",

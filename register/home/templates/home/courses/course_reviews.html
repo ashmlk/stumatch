@@ -43,7 +43,7 @@
                         <div class="card">
                             {% if all == 1 %}
                             <div class="border-bottom ">
-                                <span class="small m-1 text-muted">Professor {{ rw_crs_prof|capfirst }},
+                                <span class="small m-1 font-weight-bolder">Professor {{ review.course.course_instructor_fn|capfirst }} {{ review.course.course_instructor|capfirst }},
                                     {{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
                             </div>
                             {% else %}
