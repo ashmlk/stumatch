@@ -21,13 +21,13 @@
         <div class="row border bg-white rounded-0">
             <div class="col-sm-12 p-0">
                 <div class="d-flex justify-content-between ml-1 mr-1 border-bottom">
-                    <div class="d-flex">
-                        <div class="ml-1">
+                    <div class="">
+                        <div class="ml-1" style="margin-bottom: -0.6rem;">
                             <a class="text-dark" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"><h5 class="pt-1 font-weight-bold">{{ course.course_code }}</h5></a>
                         </div>
-                        <div class="dropdown">
-                            <button class="btn btn-sm no-border" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-caret-down"></i>
+                        <div class="dropdown" style="margin-left: -0.15rem;">
+                            <button class="btn btn-sm no-border text-muted" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Edit
                             </button>
                             <div class="dropdown-menu mt-1" aria-labelledby="d_l">
                                 <a class="small dropdown-item"
@@ -56,7 +56,7 @@
                                 <a class="btn btn-sm no-border dropdown-item" style="text-decoration: none;"  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
                                     <i class="mr-1 fas fa-chalkboard-teacher"></i>All instructors</a>
                             </div>
-                        </div>
+                        </div> 
                     </div>
                     <div>
                         <button class="btn btn-cplx {{ course.user_complexity_btn|cut:' ' }}" data-toggle="tooltip" data-placement="bottom" title="You said the course difficulty is {{ course.user_complexity }}"></button>
@@ -82,7 +82,7 @@
                     </div>
                     <div class="mb-0">
                         <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
-                        <span>people have</span>{% endif %} enrolled in this course. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
+                        <span>people have</span>{% endif %} enrolled in {{ course.course_code }}. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
                     </div>
                 </div>
             </div>   

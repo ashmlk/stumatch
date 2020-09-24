@@ -93,7 +93,7 @@ class ReviewForm(forms.ModelForm):
                 'style':'resize:none; outline:none;',
                 'class':'form-control',
                 'placeholder':'Write a review and let others know about your experience!',
-                'rows': 4 ,
+                'rows': 2 ,
                 'cols': 80}))
     def __init__(self, *args, **kwargs):
         super(ReviewForm, self).__init__(*args, **kwargs)
@@ -103,7 +103,7 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         labels = {
-            "review_interest": "Rating",
+            "review_interest": "Rate",
         }
         fields = ('body','review_interest')
     
@@ -178,7 +178,11 @@ class CourseForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
+        labels = {
+            "course_prof_difficulty": "Difficulty with this professor?",
+            "course_difficulty": 'Course overall difficulty?'          
+        }
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
         
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
@@ -257,7 +261,12 @@ class CourseEditForm(forms.ModelForm):
     
     class Meta:
         model = Course
-        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty',)
+        labels = {
+            "course_prof_difficulty": "Difficulty with this professor?",
+            "course_difficulty": 'Course overall difficulty?'
+            
+        }
+        fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
 
 class BuzzForm(forms.ModelForm):
     nickname = forms.CharField(

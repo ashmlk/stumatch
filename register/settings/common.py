@@ -269,9 +269,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_SIGNUP_FORM_CLASS = 'main.forms.SetUniversityForm'
+
 SITE_ID = 3
 
-SENDGRID_API_KEY = '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'
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

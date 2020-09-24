@@ -37,12 +37,24 @@
                             <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
                         </div>
                         <div class="t-stu p-1 border border-rounded shadow-sm">
-                            <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                            <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">
+                                {% if course.complexity_btn == "None" %}
+                                    No reports yet
+                                {% else %}
+                                    {{ course.average_complexity }}
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                     <div class="t-stu mt-1">
                         <div class="border border-rounded p-1 shadow-sm" style="display: inline-block;">
-                            <span class="text-dark">Average Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
+                            <span class="text-dark">Average Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">
+                                {% if course.complexity_btn_ins == "None" %}
+                                    No reports yet
+                                {% else %}
+                                    {{ course.average_complexity_ins }}
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -7,10 +7,10 @@
         Sort By
     </button>
     <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
-        <button class="small dropdown-item srbtn active odnw" type="button">Newest</button>
-        <button class="small dropdown-item srbtn odins">Instructor</button>
-        <button class="small dropdown-item srbtn odyr" type="button">Course Year</button>
-        <button class="small dropdown-item srbtn odiyr" type="button">Instructor and Year</button>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins">Instructor</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Course Year</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins_cy">Year and Instructor</a>
     </div>
 </div>
 <div id="new-review-a"></div>
@@ -20,9 +20,9 @@
         aria-haspopup="true" aria-expanded="false">
         Sort By
     </button>
-    <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
-        <button class="small dropdown-item srbtn active odnws" type="button">Newest</button>
-        <button class="small dropdown-item srbtn odyrs" type="button">Course Year</button>
+    <div class="dropdown-menu mt-1" aria-labelledby="d_li">
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=cy">Course Year</a>
     </div>
 </div>
 <div id="new-review-s"></div>
@@ -43,7 +43,7 @@
                         <div class="card">
                             {% if all == 1 %}
                             <div class="border-bottom ">
-                                <span class="small m-1 text-muted">Professor {{ rw_crs_prof|capfirst }},
+                                <span class="small m-1 font-weight-bolder">Professor {{ review.course.course_instructor_fn|capfirst }} {{ review.course.course_instructor|capfirst }},
                                     {{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
                             </div>
                             {% else %}

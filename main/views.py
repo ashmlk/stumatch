@@ -6,7 +6,13 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, EditProfileForm, PasswordResetForm, ConfirmPasswordForm, ReportUserForm, ReportPostForm, ReportCommentForm, ReportBuzzForm, ReportBuzzReplyForm, ReportBlogForm, ReportBlogReplyForm, ReportCourseReviewForm, ContactForm
+from .forms import (
+    SignUpForm, EditProfileForm, PasswordResetForm, 
+    ConfirmPasswordForm, ReportUserForm, ReportPostForm, 
+    ReportCommentForm, ReportBuzzForm, ReportBuzzReplyForm, 
+    ReportBlogForm, ReportBlogReplyForm, ReportCourseReviewForm, 
+    ContactForm, SetUniversityForm
+    )
 from django.views.generic.edit import UpdateView
 from django.template.loader import render_to_string
 from django.contrib import messages
@@ -241,6 +247,29 @@ def edit_profile(request):
         'account_active':'setting-link-active'
         }
     return render(request, 'main/settings/edit_profile.html', context)
+
+@login_required
+def add_university(request):
+    
+    data = dict()
+    success_url = request.GET.get('success_url','home')
+    if request.method == 'POST':
+        form  = SetUniversityForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            if len(request.user.university) > 1:
+                request.session['no_university'] = False
+            data['form_valid'] = True
+        else:
+            data['form_valid'] = False
+    else:
+        form = SetUniversityForm(instance=request.user)
+    context = {
+        'form':form,
+        'su':success_url
+    }
+    data['html_form'] = render_to_string('main/settings/university_update.html',context,request=request)   
+    return JsonResponse(data)
 
 @login_required
 def update_image(request, hid):
