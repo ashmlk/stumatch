@@ -1349,7 +1349,7 @@ def user_same_program(request):
     uni = user.university
     pro = user.program
 
-    if uni and program:
+    if uni and pro:
         user_list = Profile.objects.same_program(user=user, program=pro, university=uni)
     else:
         needs_edit = True
