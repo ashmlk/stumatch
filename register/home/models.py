@@ -815,10 +815,11 @@ class Course(models.Model):
         return count
     
     def average_voting(self):
-        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
-            course__course_instructor=self.course_instructor,course__course_instructor_fn__iexact=self.course_instructor_fn).count()
-        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
-            course__course_instructor__iexact=self.course_instructor,course__course_instructor_fn__iexact=self.course_instructor_fn).count()
+        
+        # removed course instructor filtration from average voting. Apply distinct user filter?
+        # distinct filter user -> users vote will count only for one course object!
+        total_likes = Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university).count()
+        total_dislikes = Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university).count()
         t = total_likes - total_dislikes
         if t==0:
             return "Rate"
@@ -883,20 +884,38 @@ class Course(models.Model):
         return r_dic[int(self.course_difficulty)]
     
     def is_liked(self,user):
-        return Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
-            course__course_instructor_fn__iexact=self.course_instructor_fn, course__course_instructor__iexact=self.course_instructor,profile_id=user.id).exists()
+        return Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,profile_id=user.id).exists()
     
     def not_liked(self,user):
-        return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,\
-            course__course_instructor_fn__iexact=self.course_instructor_fn, course__course_instructor__iexact=self.course_instructor,profile_id=user.id).exists()
+        return Course.course_dislikes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,profile_id=user.id).exists()
     
-    def get_reviews(self):
-        return Review.objects.filter(course_reviews__course_code=self.course_code,\
-            course_reviews__course_instructor__iexact=self.course_instructor,course_reviews__course_university__iexact=self.course_university).distinct()
+    def get_reviews(self, order=None):
+        
+        order_by = { None:'-created_on','cy':'-course_reviews__course_code', 'latest':'-created_on'}
+        
+        try:
+            return Review.objects.filter(course_reviews__course_code=self.course_code,\
+                course_reviews__course_instructor__iexact=self.course_instructor,course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,course_reviews__course_university__iexact=self.course_university)\
+                    .order_by(order_by[order])
+        except:
+            return Review.objects.filter(course_reviews__course_code=self.course_code,\
+                course_reviews__course_instructor__iexact=self.course_instructor,course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,course_reviews__course_university__iexact=self.course_university)\
+                    .order_by('-created_on')
     
-    def get_reviews_all(self):
-       return Review.objects.filter(course_reviews__course_code=self.course_code,\
-           course_reviews__course_university__iexact=self.course_university).distinct()
+    def get_reviews_all(self, order=None):
+        
+        order_by = { None:'-created_on','cy':'-course_reviews__course_code', 'latest':'-created_on','ins':'course_reviews__course_instructor'}
+        
+        try:
+            if order != 'ins_cy':
+                return Review.objects.filter(course_reviews__course_code=self.course_code,\
+                    course_reviews__course_university__iexact=self.course_university).order_by(order_by[order])
+            elif order == 'ins_cy':
+                return Review.objects.filter(course_reviews__course_code=self.course_code,\
+                    course_reviews__course_university__iexact=self.course_university).order_by('course_reviews__course_instructor','-course_reviews__course_year')
+        except:
+                return Review.objects.filter(course_reviews__course_code=self.course_code,\
+                    course_reviews__course_university__iexact=self.course_university).order_by('-created_on')
     
     def reviews_count(self):
        return Course.course_reviews.through.objects.filter(course__course_code=self.course_code,\

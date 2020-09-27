@@ -93,7 +93,7 @@ class ReviewForm(forms.ModelForm):
                 'style':'resize:none; outline:none;',
                 'class':'form-control',
                 'placeholder':'Write a review and let others know about your experience!',
-                'rows': 4 ,
+                'rows': 2 ,
                 'cols': 80}))
     def __init__(self, *args, **kwargs):
         super(ReviewForm, self).__init__(*args, **kwargs)
@@ -103,7 +103,7 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         labels = {
-            "review_interest": "Rating",
+            "review_interest": "Rate",
         }
         fields = ('body','review_interest')
     
@@ -176,6 +176,21 @@ class CourseForm(forms.ModelForm):
     
     error_css_class = "error"
     
+    def __init__(self, *args, **kwargs):
+        super(CourseForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+        
+        if self.fields['course_difficulty'].choices[0][0] == '':
+            worker_choices = self.fields['course_difficulty'].choices
+            del worker_choices[0]
+            self.fields['course_difficulty'].choices = worker_choices
+            
+        if self.fields['course_prof_difficulty'].choices[0][0] == '':
+            worker_choices = self.fields['course_prof_difficulty'].choices
+            del worker_choices[0]
+            self.fields['course_prof_difficulty'].choices = worker_choices
+    
     class Meta:
         model = Course
         labels = {
@@ -184,10 +199,7 @@ class CourseForm(forms.ModelForm):
         }
         fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
         
-    def __init__(self, *args, **kwargs):
-        super(CourseForm, self).__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control'
+    
         
 class CourseEditForm(forms.ModelForm):
     course_code = forms.CharField(
@@ -259,6 +271,22 @@ class CourseEditForm(forms.ModelForm):
     
     error_css_class = "error"
     
+    def __init__(self, *args, **kwargs):
+        super(CourseEditForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+        
+        if self.fields['course_difficulty'].choices[0][0] == '':
+            worker_choices = self.fields['course_difficulty'].choices
+            del worker_choices[0]
+            self.fields['course_difficulty'].choices = worker_choices
+            
+        if self.fields['course_prof_difficulty'].choices[0][0] == '':
+            worker_choices = self.fields['course_prof_difficulty'].choices
+            del worker_choices[0]
+            self.fields['course_prof_difficulty'].choices = worker_choices
+        
+    
     class Meta:
         model = Course
         labels = {
@@ -267,7 +295,8 @@ class CourseEditForm(forms.ModelForm):
             
         }
         fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
-
+        
+    
 class BuzzForm(forms.ModelForm):
     nickname = forms.CharField(
         label='',

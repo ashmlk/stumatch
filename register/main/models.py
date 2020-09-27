@@ -56,8 +56,8 @@ class ProfileManager(UserManager):
                 similarity_program = TrigramSimilarity('program', program)
             ).filter(
                 (Q(university__unaccent__icontains=university) & Q(program__unaccent__icontains=program)) |
-                (Q(similarity_university__gte=0.01) & Q(similarity_program__gte=0.01)) |
-                (Q(similarity_program__gte=0.4)) & 
+                (Q(similarity_university__gte=0.8) & Q(similarity_program__gte=0.7)) |
+                (Q(similarity_program__gte=0.85)) & 
                 (Q(public=True))
             ).order_by('-similarity_university','-similarity_program')
         )

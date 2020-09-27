@@ -41,12 +41,24 @@
                         <div style="margin-left: 3px;margin-right: 2px;">
                         </div>
                         <div class="t-stu p-1 border border-rounded shadow-sm">
-                            <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                            <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">
+                                {% if course.complexity_btn == "None" %}
+                                    No reports yet
+                                {% else %}
+                                    {{ course.average_complexity }}
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                     <div class="t-stu mt-1">
                         <div class="border border-rounded p-1 shadow-sm" style="display: inline-block;">
-                            <span class="text-dark">Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">{{ course.average_complexity_ins }}</span>
+                            <span class="text-dark">Difficulty with this instructor: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">
+                                {% if course.complexity_btn_ins == "None" %}
+                                    No reports yet
+                                {% else %}
+                                    {{ course.average_complexity_ins }}
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>

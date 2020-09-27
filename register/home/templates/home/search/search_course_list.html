@@ -25,12 +25,27 @@
                     <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
                         <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
                     </a>
-                    <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn_ins }}">
-                        <span>Difficulty:</span><span class="ml-1">{{ course.average_complexity_ins }}</span>
+                    {% if course.complexity_btn_ins == "None" %}
+                    <div class="c_dis mb-1 btn btn-outline-secondary">
+                        <span>Difficulty With this Professor:</span><span
+                            class="ml-1">No ratings yet</span>
                     </div>
-                    <div class="c_dis mb-1 course-goto btn btn-outline-{{ course.complexity_btn }} ">
-                        <span>Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                    {% else %}
+                    <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                        <span>Difficulty With this Professor:</span><span
+                            class="ml-1">{{ course.average_complexity_ins }}</span>
                     </div>
+                    {% endif %}
+                    {% if course.complexity_btn == "None" %}
+                    <div class="c_dis mb-1 btn btn-outline-secondary">
+                        <span>Course Overall Difficulty:</span><span
+                            class="ml-1">No ratings yet</span>
+                    </div>
+                    {% else %}
+                    <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                        <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                    </div>
+                    {% endif %}
                     <hr>
                     <div class="c_dis mb-1" >
                         <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>

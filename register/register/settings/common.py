@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'admin_honeypot',
     'whitenoise.runserver_nostatic',
     'storages',
+    'sorl.thumbnail'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

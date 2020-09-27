@@ -741,11 +741,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
     else:
         form = ReviewForm
     
-    o = request.GET.get('rw', None)
+    sb = request.GET.get('sb','latest')
+    o = request.GET.get('rw', 'ins')
     if o == 'all':
         reviews_list = course.get_reviews_all()
     else:
-        reviews_list = course.get_reviews()
+        reviews_list = course.get_reviews(order=sb)
 
     if o == 'all':
         review_a='active'

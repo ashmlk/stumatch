@@ -102,7 +102,7 @@
                                 <div class="course-user-detail"
                                     style="margin-bottom:-0.9rem !important;margin-left: -2px !important;">
                                     <a href="{%url 'home:course-instructor'  par1=course.course_university_slug par2=course.course_instructor_slug %}"
-                                        class="h6">Professor {{ course.course_instructor }}</a>
+                                        class="h6">Professor {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</a>
                                 </div>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                     <div class="card-body">
                         <div class="card-friend-name-holder">
                             <a class="card-link text-dark"
-                                href="{{ friend.author.get_absolute_url }}">{{ friend.get_full_name }}</a>
+                                href="{{ friend.get_absolute_url }}">{{ friend.get_full_name }}</a>
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                             <div class="card-body">
                                 <div class="card-friend-name-holder">
                                     <a class="card-link text-dark"
-                                        href="{{ friend.author.get_absolute_url }}">{{ friend.get_full_name }}</a>
+                                        href="{{ friend.get_absolute_url }}">{{ friend.get_full_name }}</a>
                                 </div>
                             </div>
                         </div>
