@@ -454,7 +454,7 @@ ol.carousel-indicators {
       cursor: pointer;
   }
   .profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
-      color: rgb(126, 192, 243);
+      color: rgb(126, 192, 243) !important;
       padding-top: 3px !important;
       margin-bottom: -4px !important;
       

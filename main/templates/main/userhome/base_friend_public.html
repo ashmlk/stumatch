@@ -118,47 +118,28 @@
                         style="top:54px !important;overflow-y: auto !important;">
                         <div class="options-user-r">
                             <div class="d-flex justify-content-start">
-                                <div class="rounded-0 p-2 pro-link-goto{{ pro_active }}"
-                                    data-url="{% url 'main:get_user' user.username %}">
-                                    <button class="bg-transparent no-outline no-border pro-link-goto-text">
-                                        Profile
-                                    </button>
-                                </div>
-                                <form class="rounded-0 p-2 form-link-goto pro-link-goto{{ friends_active }}"
-                                    action="{% url 'main:get_user_friends' %}">
-                                    <input type="hidden" name="id" value="{{ user.get_hashid }}" />
-                                    <button type="submit"
-                                        class="bg-transparent no-outline no-border pro-link-goto-text">
-                                        Friends
-                                    </button>
-                                </form>
-                                <form class="rounded-0 p-2 form-link-goto pro-link-goto{{ courses_active }}"
-                                    action="{% url 'main:get_user_courses' %}">
-                                    <input type="hidden" name="id" value="{{ user.get_hashid }}" />
-                                    <button type="submit"
-                                        class="bg-transparent no-outline no-border pro-link-goto-text">
-                                        Courses
-                                    </button>
-                                </form>
-                                <form class="rounded-0 p-2 form-link-goto pro-link-goto{{ posts_active }}"
-                                    action="{% url 'main:get_user_posts' %}">
-                                    <input type="hidden" name="id" value="{{ user.get_hashid }}" />
-                                    <button type="submit"
-                                        class="bg-transparent no-outline no-border pro-link-goto-text">
-                                        Posts
-                                    </button>
-                                </form>
-                                <form class="rounded-0 p-2 form-link-goto pro-link-goto"
-                                    action="{% url 'main:get_user_blogs' %}">
-                                    <input type="hidden" name="id" value="{{ user.get_hashid }}" />
-                                    <button type="submit"
-                                        class="bg-transparent no-outline no-border pro-link-goto-text">
-                                        Blogs
-                                    </button>
-                                </form>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto{{ pro_active }}"
+                                    href="{% url 'main:get_user' user.username %}">
+                                        <span class="pro-link-goto-text">Profile</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text  pro-link-goto{{ friends_active }}"
+                                    href="{% url 'main:get_user_friends' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Friends</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ courses_active }}"
+                                    href="{% url 'main:get_user_courses' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Courses</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ posts_active }}"
+                                    href="{% url 'main:get_user_posts' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Posts</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ blogs_active }}"
+                                    href="{% url 'main:get_user_blogs' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Blogs</span>
+                                </a>
                             </div>
                         </div>
-                        
                     </div>
                     {% block profilecontent %}{% endblock %}
                 </div>
@@ -175,6 +156,7 @@
           <div class="modal-content"></div>
         </div>
       </div>
+    <style>.options-user-r a{ text-decoration: none !important;}</style>
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
     <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'initial/initial.js' %}"></script>
@@ -185,7 +167,5 @@
     <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
     <script src="{% static 'js/profiles/main.js' %}"></script>
     <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
-
 </body>
-
 </html>

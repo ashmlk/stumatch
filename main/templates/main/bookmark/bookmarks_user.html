@@ -3,7 +3,8 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% load ibuilder %}
-{% block item %}
+{% block title %}
+<title>Bookmarks - JoinCampus</title>
 {% endblock %}
 {% block content %}
 <div class="bookmarks-ctr">
@@ -13,28 +14,38 @@
         </div>
     </div>
     <div class="bbp-items-aal">
-        <ul class="nav nav-fill nav-pills mb-3" id="pills-tab" role="tablist">
+        <ul class="nav nav-fill mb-3">
             <li class="nav-item">
-              <a class="nav-link active" id="pills-post-tab" data-toggle="pill" href="#pills-post" role="tab" aria-controls="pills-post" aria-selected="true">Posts</a>
+              <a class="text-dark nav-link btn rounded p-2 menu-link menu-link{{ post_active }}" href="{% url 'main:bookmarks' %}?o=posts">Posts</a>
+            </li>
+            <li class="mx-1 nav-item">
+              <a class="text-dark nav-link btn rounded p-2 menu-link{{ buzz_active }}" href="{% url 'main:bookmarks' %}?o=buzzes">Buzzes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="pills-buzz-tab" data-toggle="pill" href="#pills-buzz" role="tab" aria-controls="pills-buzz" aria-selected="false">Buzzes</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="pills-blog-tab" data-toggle="pill" href="#pills-blog" role="tab" aria-controls="pills-blog" aria-selected="false">Blogs</a>
+              <a class="text-dark nav-link btn rounded p-2 menu-link{{ blog_active }}" href="{% url 'main:bookmarks' %}?o=blogs" >Blogs</a>
             </li>
           </ul>
-          <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-post" role="tabpanel" aria-labelledby="pills-post-tab">
-                {% include 'main/bookmark/bookmarked_posts.html' with bookmarks=bookmarked_posts %}
-            </div>
-            <div class="tab-pane fade" id="pills-buzz" role="tabpanel" aria-labelledby="pills-buzz-tab">
-                {% include 'main/bookmark/bookmarked_buzzes.html' with bookmarks=bookmarked_buzzes %}
-            </div>
-            <div class="tab-pane fade" id="pills-blog" role="tabpanel" aria-labelledby="pills-blog-tab">
-              {% include 'main/bookmark/bookmarked_blogs.html' with bookmarks=bookmarked_blogs %}
-            </div>
-          </div>
+    </div>
+    <div>
+      {% if post_active %}
+      <div>
+          {% include 'main/bookmark/bookmarked_posts.html' with bookmarks=bookmarked_posts %}
+      </div>
+      {% elif buzz_active %}
+      <div>
+          {% include 'main/bookmark/bookmarked_buzzes.html' with bookmarks=bookmarked_buzzes %}
+      </div>
+      {% elif blog_active %}
+      <div>
+        {% include 'main/bookmark/bookmarked_blogs.html' with bookmarks=bookmarked_blogs %}
+      </div>
+      {% else %}
+      <div class="d-flex justify-content-center">
+        <div>
+          <p class="text-center">There was an error with your request.</p>
+        </div>
+      </div>
+      {% endif %}
     </div>
 </div>
 {% endblock %}

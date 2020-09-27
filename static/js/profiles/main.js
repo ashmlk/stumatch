@@ -43,29 +43,6 @@ $(document).ready(function () {
         window.location = $(this).find('a').attr('href');
     })
 })
-$(document).ready(function () {
-
-  $('.pro-menu-link').on('click', function () {
-      window.location = $(this).attr('data-url');
-  })
-  $('.pro-link-goto').on('click', function () {
-      if(!($(this).hasClass('form-link-goto'))){
-        window.location = $(this).attr('data-url');
-      }
-      else if($(this).hasClass('form-link-goto')){
-          $(this).submit();
-      }
-
-  })
-  $('.pro-link-goto-active').on('click', function () {
-    if(!($(this).hasClass('form-link-goto'))){
-        window.location = $(this).attr('data-url');
-      }
-      else if($(this).hasClass('form-link-goto')){
-          $(this).submit();
-      }
-  })
-})
 
 // blocking user modal and form page
 $(document).ready(function (e) {

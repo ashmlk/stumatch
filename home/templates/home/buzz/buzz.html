@@ -84,7 +84,7 @@
 </div>
 {% else %}
 <div class="mb-2">
-  <div class="card rounded-0">
+  <div class="card">
     <div class="p-2">
       <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -94,7 +94,7 @@
         </div>
         <div>
           <button class="btn btn-sm btn-primary border-0 create-buzz-btn" data-tooltip="tooltip" data-placement="bottom"
-            title="Buzz and comment anonymously!" data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
+            title="Buzz and comment anonymously!" style="border-radius: 20px;" data-url="{% url 'home:buzz-create' %}">Create a Buzz</button>
         </div>
       </div>
     </div>

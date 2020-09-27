@@ -46,32 +46,32 @@
             style="top:54px !important; overflow-y: auto !important;">
             <div class="options-user-r">
                 <div class="d-flex justify-content-start">
-                    <div class="col-2 rounded-0 p-2 pro-link-goto{{ pro_active }}"
-                        data-url="{% url 'main:get_user' user.username %}">
+                    <a class=" rounded-0 p-2 text-dark pro-link-goto{{ pro_active }}"
+                        href="{% url 'main:get_user' user.username %}">
                         <span class="text-center pro-link-goto-text">
                             Profile
                         </span>
-                    </div>
-                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'main:friends-main' %}">
+                    </a>
+                    <a class=" rounded-0 p-2 text-dark pro-link-goto" href="{% url 'main:friends-main' %}">
                         <span class="pro-link-goto-text">
                             Friends
                         </span>
-                    </div>
-                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'home:course-list' %}">
+                    </a>
+                    <a class=" rounded-0 p-2 text-dark pro-link-goto" href="{% url 'home:course-list' %}">
                         <span class="pro-link-goto-text">
                             Courses
                         </span>
-                    </div>
-                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'home:users-posts' %}">
+                    </a>
+                    <a class=" rounded-0 p-2 text-dark pro-link-goto" href="{% url 'home:users-posts' %}">
                         <span class="text-center pro-link-goto-text">
                             By You
                         </span>
-                    </div>
-                    <div class="col-2 rounded-0 p-2 pro-link-goto" data-url="{% url 'main:bookmarks' %}">
-                        <span class="text-center  pro-link-goto-text">
+                    </a>
+                    <a class=" rounded-0 p-2 text-dark pro-link-goto" href="{% url 'main:bookmarks' %}?o=posts">
+                        <span class="text-center pro-link-goto-text">
                             Bookmarks
                         </span>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -289,36 +289,6 @@
     </div>
 </div>
 <style>
-    @media (min-width:34em) {
-        .card-columns {
-            -webkit-column-count: 1;
-            -moz-column-count: 1;
-            column-count: 1
-        }
-    }
-
-    @media (min-width:48em) {
-        .card-columns {
-            -webkit-column-count: 1;
-            -moz-column-count: 1;
-            column-count: 1
-        }
-    }
-
-    @media (min-width:62em) {
-        .card-columns {
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-            column-count: 2
-        }
-    }
-
-    @media (min-width:75em) {
-        .card-columns {
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-            column-count: 2
-        }
-    }
+@media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}.options-user-r a{text-decoration:none!important}
 </style>
 {% endblock %}

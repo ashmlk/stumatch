@@ -990,15 +990,33 @@ def add_bookmark(request, hid, obj_type):
 @login_required
 def bookmarks(request):
     
+    o = request.GET.get('o','posts')
+    post_active = blog_active = buzz_active = ''
+    context = {}
+    
     user = request.user
-    bookmarked_posts = user.bookmarkpost_set.all()
-    bookmarked_blogs = user.bookmarkblog_set.all()
-    bookmarked_buzzes = user.bookmarkbuzz_set.all()
-    context = {
+    if o == 'posts':
+        post_active = '-active'
+        bookmarked_posts = user.bookmarkpost_set.all()
+        context = {
         'bookmarked_posts':bookmarked_posts,
+        'post_active':post_active
+        }
+    elif o == 'blogs':
+        blog_active = '-active'
+        bookmarked_blogs = user.bookmarkblog_set.all()
+        context = {
         'bookmarked_blogs':bookmarked_blogs,
+        'blog_active':blog_active
+        }
+    elif o == 'buzzes':
+        buzz_active = '-active'
+        bookmarked_buzzes = user.bookmarkbuzz_set.all()
+        context = {
         'bookmarked_buzzes':bookmarked_buzzes,
-    }
+        'buzz_active':buzz_active
+        }
+    
     return render(request,'main/bookmark/bookmarks_user.html', context)
 
 @login_required
@@ -1070,6 +1088,7 @@ def accept_reject_friend_request(request,hid, s):
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
                 fr.cancel()
+                # remove notification here
         elif action == 2:
             if Block.objects.is_blocked(user, other_user):
                 Block.objects.remove_block(user,other_user)
@@ -1080,6 +1099,7 @@ def accept_reject_friend_request(request,hid, s):
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
                 fr.cancel()
+                # remove notification here - check for user and other_user
             is_friend=False
             
         friends_list = Friend.objects.friends(request.user)
