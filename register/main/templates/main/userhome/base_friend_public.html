@@ -1,7 +1,7 @@
 {% load static %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html>
-
 <head>
     <div id="#headerPlaceholder"></div>
     <title>{{ user.get_full_name }} - JoinCampus</title>
@@ -51,9 +51,10 @@
                     <div class="img-user name-user mt-4 p-2">
                         <div class="d-flex justify-content-center">
                             <div>
-                                <div class="pro-img">
-                                    <img class="img-create-post rounded-circle" style="height: 8rem;width: 8rem;"
-                                        src="{{ user.image.url }}" />
+                                <div class="pro-img">             
+                                    {% thumbnail user.image "150x150" crop="80% top" as im %}
+                                        <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                    {% endthumbnail %}                               
                                 </div>
                             </div>
                         </div>

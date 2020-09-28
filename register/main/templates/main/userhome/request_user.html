@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% load ibuilder %}
 {% load static %}
+{% load thumbnail %}
 {% block content %}
 <div class="row mt-5">
     <div class="mx-auto col-sm-12">
@@ -9,8 +10,9 @@
             <div class="d-flex justify-content-center">
                 <div>
                     <div class="ppro-img">
-                        <img class="img-create-post rounded-circle" style="height: 8rem;width: 8rem;"
-                            src="{{user.image.url}}" />
+                        {% thumbnail user.image "150x150" crop="80% top" as im %}
+                            <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                        {% endthumbnail %}
                     </div>
                 </div>
             </div>

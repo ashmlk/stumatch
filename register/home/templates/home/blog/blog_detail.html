@@ -2,6 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% load thumbnail %}
 {% load ibuilder %}
 {% block title %}
 <title>{{ blog.title }} - JoinCampus</title>
@@ -39,8 +40,9 @@
     <div class="d-flex justify-content-between">
         <div class="d-flex info" style="margin-bottom: 2rem !important;">
             <div class="img mr-2">
-                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
-                    src="{{ blog.author.image.url }}" alt="Profile image">
+                {% thumbnail blog.author.image "41x41" crop="80% top" as im %}
+                    <img class="rounded-circle" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                {% endthumbnail %}    
             </div>
             <div style="margin-top: -0.147rem !important;">
                 <span class="text-muted">
@@ -114,9 +116,9 @@
         <div class="d-flex justify-content-between">
             <div class="d-flex info" style="margin-bottom: 2rem !important;">
                 <div class="img mr-2">
-                    <img class="img-create-post rounded-circle"
-                        style="margin-top:1px !important;height: 2.7rem !important;width: 2.7rem !important;"
-                        src="{{ blog.author.image.url }}" alt="Profile image">
+                    {% thumbnail blog.author.image "41x41" crop="80% top" as im %}
+                     <img class="rounded-circle" style="margin-top: 1px !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                    {% endthumbnail %}    
                 </div>
                 <div style="margin-top: -0.140rem !important;">
                     <span class="text-muted">
