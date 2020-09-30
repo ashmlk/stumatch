@@ -304,17 +304,12 @@ class EditProfileForm(UserChangeForm):
 	class Meta:
 		model = Profile
 		fields=('username','first_name','last_name','university','program','email','bio',)
-		def save(self, commit = True):
-			user = super(UserChangeForm, self).save(commit=False)
-			user.bio = self.cleaned_data['bio']
 
-			if commit:
-				user.save()
-			return user
 
 class SetUniversityForm(forms.ModelForm):
     
     program = forms.CharField(
+        label = '',
 		required=False,
 		widget=forms.TextInput(
 			attrs={

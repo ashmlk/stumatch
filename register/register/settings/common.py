@@ -132,29 +132,7 @@ CELERY_BEAT_SCHEDULE = {
     'update-trending-tags-post': {
         'task':'home.tasks.trending_tags_post',
         'schedule':3600.0,
-    }, 
-    
-    'update-hot-buzzes': {
-        'task':'home.tasks.get_hot_buzzes',
-        'schedule': 1800.0,
-    },
-    'update-top-buzzes': {
-        'task':'home.tasks.get_top_buzzes',
-        'schedule': 4563.0,
-    },
-    'update-uni-buzzes': {
-        'task':'home.tasks.uni_buzzes',
-        'schedule':5400.0,
-    },
-    'update-trending-words-buzz': {
-        'task':'home.tasks.get_trending_words_buzzes',
-        'schedule':3000.0,
-    },
-    'update-trending-tags-buzz': {
-        'task':'home.tasks.trending_tags_buzz',
-        'schedule':3600.0,
-    },
-    
+    },  
 }
 
 CACHES = {

@@ -853,7 +853,7 @@ class Course(models.Model):
     
     def sem(self):      
         r_dic = {0:"None",1:"Spring",2:"Summer",3:"Fall",4:"Winter"}
-        d = int(self.course_difficulty)
+        d = int(self.course_semester)
         return r_dic[d]
         
     def average_complexity(self):

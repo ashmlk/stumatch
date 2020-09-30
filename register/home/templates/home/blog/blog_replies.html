@@ -49,8 +49,8 @@
                     <div class="btn btn-sm border" style="border-radius: 20px;">
                         <span style="color:  rgb(158, 158, 158);">
                             Replies
-                            <span class="like-count small ml-1">
-                                {{ replies_count|num_format  }}
+                            <span class="blog-reply-count small ml-1">
+                                {{ replies_count|num_format }}
                             </span>
                         </span>
                     </div>
@@ -66,14 +66,14 @@
             </span>
         </div>
         <div class="blog-replies-form-ctr border p-2 rounded">
-            <form method="POST" action="{% url 'home:blog-replies' guid_url=blog.guid_url slug=blog.slug %}"
+            <form method="POST" data-url="{% url 'home:blog-replies' guid_url=blog.guid_url slug=blog.slug %}"
                 class="blog-reply-form">
                 {% csrf_token %}
                 {{ form|crispy }}
                 <div class="mt-1">
                     <div class="d-flex justify-content-end ml-1">
                         <div>
-                            <button type="submit" id="sub-etal" class="btn no-border btn-primary"
+                            <button type="submit"  class="btn no-border btn-primary"
                                 style="border-radius: 20px; width: 100%;">Publish</button>
                         </div>
                     </div>

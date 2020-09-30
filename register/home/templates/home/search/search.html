@@ -135,31 +135,6 @@
                                         </form>
                                     </div>
                                 </div>
-                                <div class="search-btn" data-target="_bzsre">
-                                    <div class="search-frm-box">
-                                        <form id="_bzsre" method="GET" action="{% url 'home:search-all' %}">
-                                            <input type="hidden" name="q" value="{{ q }}" />
-                                            <input type="hidden" name="o" value="buzz" />
-                                            <div class="d-flex align-items-center row h6 rounded font-weight-bold p-3">
-                                                <div class="col-1">
-                                                    <svg width="1em" height="1em" viewBox="0 0 16 16"
-                                                        class="bi bi-eyeglasses" fill="currentColor"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd"
-                                                            d="M4 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm8-1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                        <path fill-rule="evenodd"
-                                                            d="M8 7a1 1 0 0 0-1 1H6a2 2 0 1 1 4 0H9a1 1 0 0 0-1-1zM0 8a.5.5 0 0 1 .5-.5h1v1h-1A.5.5 0 0 1 0 8zm15.5.5h-1v-1h1a.5.5 0 0 1 0 1z" />
-                                                    </svg>
-                                                </div>
-                                                <div class="col-10 d-none d-lg-block">
-                                                    <button class="btn btn-md  no-border no-outline" type="submit">
-                                                        Buzzes
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
                                 <div class="search-btn" data-target="_bosre">
                                     <div class="search-frm-box">
                                         <form id="_bosre" method="GET" action="{% url 'home:search-all' %}">
@@ -250,14 +225,7 @@
                                                 </div>
                                             </div>
                                         </a>
-                                        <a href="{% url 'home:search-all' %}?q={{ q }}&o=buzz" style="text-decoration: none;">
-                                            <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ buzz_active }}"
-                                                data-url="{% url 'home:search-all' %}?q={{ q }}&o=buzz">
-                                                <div>
-                                                    <span class="h6"><span>Buzzes</span></span>
-                                                </div>
-                                            </div>
-                                        </a>
+
                                         <a href="{% url 'home:search-all' %}?q={{ q }}&o=blog" style="text-decoration: none;">
                                             <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ blog_active }}"
                                                 data-url="{% url 'home:search-all' %}?q={{ q }}&o=blog">

@@ -19,28 +19,15 @@
 </div>
 <div class="mb-2 p-1 ml-1 ">
     <div class="d-flex justify-content-start" id="_pol3">
-      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ post_active }}">
+      <div class="btn d-flex flex-fill justify-content-center mr-1 menu-link menu-link{{ post_active }}">
         <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=post" style="text-decoration: none;">
-          <div>
-            <span class="h6"><span >Posts</span></span>
-          </div>
+            <span class="h6">Posts</span>
         </a>
       </div>
-      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ buzz_active }}"
-        data-url="{% url 'main:usertags' username=request.user.get_username %}?o=buzz" >
-        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=buzz" style="text-decoration: none;">
-          <div>
-            <span class="h6">
-              <span >Buzzes</span></span>
-          </div>
-        </a>
-      </div>
-      <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{ blog_active }}"
+      <div class="btn d-flex flex-fill justify-content-center mr-1 menu-link menu-link{{ blog_active }}"
         data-url="{% url 'main:usertags' username=request.user.get_username %}?o=blog" >
-        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=blog" style="text-decoration: none;">
-          <div>
-            <span class="h6"><span >Blogs</span></span>
-          </div>
+        <a class="text-center" href="{% url 'main:usertags' username=request.user.get_username %}?o=blog" style="text-decoration: none;">
+            <span class="h6">Blogs</span>
         </a>
       </div>
     </div>

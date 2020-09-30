@@ -65,7 +65,7 @@
                         </span>
                     </a>
                     <a class=" rounded-0 p-2 text-dark pro-link-goto" href="{% url 'home:users-posts' %}">
-                        <span class="text-center pro-link-goto-text">
+                        <span class="text-center pro-link-goto-text" style="white-space: nowrap;">
                             By You
                         </span>
                     </a>
@@ -138,14 +138,6 @@
                                     </div>
                                     <div>
                                         <span class="navbarMainHeaderuser-num">{{ pnum }}</span>
-                                    </div>
-                                </div>
-                                <div class="my-2 d-flex justify-content-between">
-                                    <div>
-                                        <strong class="font-size-smaller">Buzzes</strong>
-                                    </div>
-                                    <div>
-                                        <span class="navbarMainHeaderuser-num">{{ bznum }}</span>
                                     </div>
                                 </div>
                                 <div class="my-2  d-flex justify-content-between">
@@ -236,7 +228,7 @@
                     </div>
                     {% endif %}
                     {% if friends %}
-                    <div class="pb-2 friend-sbtn"
+                    <div class="pb-2 mt-2 friend-sbtn"
                         style="margin-left: 0.8rem !important; margin-right: 0.8rem !important;">
                         <div class="w-100 pro-link-goto" data-url="{% url 'main:friends-main' %}">
                             <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">View
@@ -244,7 +236,7 @@
                         </div>
                     </div>
                     {% else %}
-                    <div class="pb-2 friend-sbtn"
+                    <div class="pb-2 mt-2 friend-sbtn"
                         style="margin-left: 0.8rem !important; margin-right: 0.8rem !important;">
                         <div class="w-100 pro-link-goto" data-url="">
                             <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">Find
