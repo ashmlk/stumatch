@@ -54,18 +54,15 @@
               <a class="w-100 btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Settings
               </a>
-            
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{% url 'main:settings-edit' %}">Account</a>
                 <a class="dropdown-item" href="{% url 'main:notifications-settings-all' %}">Notifications</a>
                 <a class="dropdown-item" href="{% url 'main:privacy-security' %}">Privacy and Security</a>
                 <a class="dropdown-item" href="{% url 'main:settings-blocked' %}">Blocking</a>
-                <a class="dropdown-item" href="#">About</a>
+                <a class="dropdown-item" href="{% url 'main:site-about' %}">About</a>
               </div>
             </div>
           </div>
-        
-          
             <div class="d-none d-sm-block col-sm-4 border-right">
                 <div class="link-setting all-link">
                     <div class="title-setting-all mb-2">

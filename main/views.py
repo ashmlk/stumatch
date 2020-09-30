@@ -123,6 +123,8 @@ def get_notifications(request):
     notifications_read = request.user.notifications.read()
     read_count = notifications_read.count()
     
+    request.user.notifications.mark_all_as_read() # when user visits page mark all notifications as read
+    
     context = {
         'notifications_read':notifications_read,
         'notifications_unread':notifications_unread,
@@ -531,59 +533,6 @@ def notifications_post_all(request):
     return render(request, 'main/settings/notifications/notifications_post.html', context)
 
 @login_required
-def notifications_buzz_all(request):
-    
-    data = dict()
-    
-    if request.user.is_authenticated:
-        choice = request.POST.get('onoffinput-check', None)
-        if choice == "buzzalloff":
-            if request.user.get_buzz_notify_all == True:
-                request.user.get_buzz_notify_all = False
-                request.user.save()
-            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_all.html',request=request)
-            return JsonResponse(data)
-        if choice == "buzzallon":
-            if request.user.get_buzz_notify_all == False:
-                request.user.get_buzz_notify_all = True
-                request.user.save()
-                data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_all.html',request=request)
-            return JsonResponse(data)    
-        
-        if choice == "buzzcommentson":
-            if request.user.get_buzz_notify_comments == False:
-                request.user.get_buzz_notify_comments = True
-                request.user.save()
-            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_comments.html',request=request)
-            return JsonResponse(data)   
-        
-        if choice == "buzzcommentsoff":
-            if request.user.get_buzz_notify_comments == True:
-                request.user.get_buzz_notify_comments = False
-                request.user.save()
-            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_comments.html',request=request)
-            return JsonResponse(data)   
-        
-        if choice == "buzzlikeson":
-            if request.user.get_buzz_notify_likes == False:
-                request.user.get_buzz_notify_likes = True
-                request.user.save()
-            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_likes.html',request=request)
-            return JsonResponse(data)   
-         
-        if choice == "buzzlikesoff":
-            if request.user.get_buzz_notify_likes == True:
-                request.user.get_buzz_notify_likes = False
-                request.user.save()
-            data['notifications_form'] = render_to_string('main/settings/notifications/notifications_buzz_likes.html',request=request)
-            return JsonResponse(data)
-        
-    context = {
-            'notifcation_active':'setting-link-active',
-        }
-    return render(request, 'main/settings/notifications/notifications_buzz.html', context)
-
-@login_required
 def notifications_blog_all(request):
     
     data = dict()
@@ -769,65 +718,7 @@ def deletion_post(request):
         messages.error(request,error_message)
         return redirect('main:delete-menu')
         
-@login_required
-@confirm_password
-def deletion_buzz(request):
-    
-    if request.user.is_authenticated:
-        obj = request.GET.get('t', None)
-        msg_dict = {
-                    'all':'Are you sure you want to delete all your buzzes permanently?',
-                    'replies':'Are you sure you want to delete all your replies permanently?',
-                    'likes':'Are you sure you want to remove all your likes, dislikes, and wots permanently?'
-        }
-        
-        title_dict = {
-                    'all':'Delete all your buzzes',
-                    'replies':'Delete all your replies',
-                    'likes':'Remove all your likes, dislikes, and wots'
-        }
-        
-        message = msg_dict[obj]
-        title = title_dict[obj]
-        
-        if request.method == 'POST':
-            
-            if obj == 'all':
-                if request.user.buzz_set.exists():
-                    request.user.buzz_set.all().delete()
-                success_message = "Deleted all your buzzes successfully"
-                
-            elif obj == 'replies':
-                if request.user.buzzreply_set.exists():
-                    request.user.buzzreply_set.all().delete()
-                success_message = "Deleted all your replies successfully"
-            
-            elif obj == 'likes':
-                if request.user.likes.exists():
-                    request.user.likes.clear()
-                if request.user.dislikes.exists():
-                    request.user.dislikes.clear()
-                if request.user.wots.exists():
-                    request.user.wots.clear()
-                success_message = "Removed all your likes, dislikes and wots successfully"
-            
-            messages.success(request,success_message)
-            return redirect('main:delete-menu')
-        
-        context = {
-            'message':message,
-            'obj':obj,
-            'title':title,
-            'privacy_active':'setting-link-active',
-        }
-        
-        return render(request, 'main/settings/deletion/buzz.html', context)
-    
-    else:
-        error_message = "There was an issue processing your request"
-        messages.error(request,error_message)
-        return redirect('main:delete-menu')
-    
+  
 @login_required
 @confirm_password
 def deletion_blog(request):
@@ -972,8 +863,6 @@ def add_bookmark(request, hid, obj_type):
             model = BookmarkPost
         elif obj_type=='blog':
             model = BookmarkBlog
-        elif obj_type=='buzz':
-            model = BookmarkBuzz
         user = auth.get_user(request)
         bookmark, created = model.objects.get_or_create(user=user, obj_id=id)
         if not created:
@@ -991,7 +880,7 @@ def add_bookmark(request, hid, obj_type):
 def bookmarks(request):
     
     o = request.GET.get('o','posts')
-    post_active = blog_active = buzz_active = ''
+    post_active = blog_active =  ''
     context = {}
     
     user = request.user
@@ -1008,13 +897,6 @@ def bookmarks(request):
         context = {
         'bookmarked_blogs':bookmarked_blogs,
         'blog_active':blog_active
-        }
-    elif o == 'buzzes':
-        buzz_active = '-active'
-        bookmarked_buzzes = user.bookmarkbuzz_set.all()
-        context = {
-        'bookmarked_buzzes':bookmarked_buzzes,
-        'buzz_active':buzz_active
         }
     
     return render(request,'main/bookmark/bookmarks_user.html', context)
@@ -1034,21 +916,6 @@ def f_post_tag(request, slug):
         data['html_form'] = render_to_string('main/tags/fav_post.html',{'is_fav':is_fav,'tag':tag},request=request)
         return JsonResponse(data)
 
-@login_required
-def f_buzz_tag(request, slug):
-    
-    data = dict()
-    user = request.user
-    tag = get_object_or_404(Tag, slug=slug)
-    if request.method == 'POST':
-        if user.favorite_buzz_tags.filter(slug=slug).exists():
-            user.favorite_buzz_tags.remove(tag)
-            is_fav = False
-        else:
-            user.favorite_buzz_tags.add(tag)
-            is_fav = True
-        data['html_form'] = render_to_string('main/tags/fav_buzz.html',{'is_fav':is_fav,'tag':tag},request=request)
-        return JsonResponse(data)
 
 @login_required
 def f_blog_tag(request, slug):
@@ -1391,13 +1258,11 @@ def user_tags(request,username=None):
     
     o = request.GET.get('o','post')
     
-    num_obj = request.user.favorite_post_tags.count() + request.user.favorite_buzz_tags.count() + request.user.favorite_blog_tags.count()
+    num_obj = request.user.favorite_post_tags.count() + request.user.favorite_blog_tags.count()
     if num_obj < 1:
         s= "Tag"
     if o == 'post':
         tags = request.user.favorite_post_tags.all()
-    elif o == 'buzz':
-        tags = request.user.favorite_buzz_tags.all()
     elif o == 'blog':
         tags = request.user.favorite_blog_tags.all()
 
@@ -1418,7 +1283,6 @@ def get_user(request,username):
       
     if request.user==user:
         pnum = user.post_set.count()
-        bznum = user.buzz_set.count()
         blnum = user.blog_set.count()
         cnum = user.courses.count()
         courses = user.courses.distinct('course_code','course_instructor')[:4]
@@ -1430,7 +1294,6 @@ def get_user(request,username):
             'user':user,
             'pnum':pnum,
             'blnum':blnum,
-            'bznum':bznum,
             'cnum':cnum,
             'courses':courses,
             'pro_active':'-active',
@@ -1834,22 +1697,6 @@ def report_object(request,reporter_id):
                         report.reporter = reporter
                         report.reported_obj =  Comment.objects.get(id=hashids.decode(obj_id)[0])
                         report.save()
-            elif obj_type == 'bz':
-                form = ReportBuzzForm(request.POST)
-                if form.is_valid():
-                    if Buzz.objects.filter(id=hashids.decode(obj_id)[0]).exists():
-                        report = form.save(False)
-                        report.reporter = reporter
-                        report.reported_obj =  Buzz.objects.get(id=hashids.decode(obj_id)[0])
-                        report.save()
-            elif obj_type == 'bzrply':
-                form = ReportBuzzReplyForm(request.POST)
-                if form.is_valid():
-                    if BuzzReply.objects.filter(id=hashids.decode(obj_id)[0]).exists():
-                        report = form.save(False)
-                        report.reporter = reporter
-                        report.reported_obj =  BuzzReply.objects.get(id=hashids.decode(obj_id)[0])
-                        report.save()
             elif obj_type == 'blg':
                 form = ReportBlogForm(request.POST)
                 if form.is_valid():
@@ -1883,15 +1730,13 @@ def report_object(request,reporter_id):
                 'u':'To help us understand the problem what is the issue with this profile?',
                 'p':'To help us understand the problem, what is the issue with this post?',
                 'cmnt':'To help us understand the problem, what is the issue with this comment?',
-                'bz':'To help us understand the problem, what is the issue with this buzz?',
-                'bzrply':'To help us understand the problem, what is the issue with this reply?',
                 'blg':'To help us understand the problem, what is the issue with this blog?',
                 'blgrply':'To help us understand the problem, what is the issue with this reply?',
                 'cr':'What is the issue with this review?'
             }
             
             form_dict = {
-                'u':ReportUserForm,'p':ReportPostForm,'cmnt':ReportCommentForm,'bz':ReportBuzzForm,'bzrply':ReportBuzzReplyForm,'blg':ReportBlogForm,'blgrply':ReportBlogReplyForm,'cr':ReportCourseReviewForm   
+                'u':ReportUserForm,'p':ReportPostForm,'cmnt':ReportCommentForm,'blg':ReportBlogForm,'blgrply':ReportBlogReplyForm,'cr':ReportCourseReviewForm   
             }
                 
             context = {

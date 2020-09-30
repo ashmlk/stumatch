@@ -35,6 +35,7 @@ from notifications.signals import notify
 import json
 from home.algo import get_uni_info 
 from itertools import chain
+from home.templatetags.ibuilder import num_format
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -49,9 +50,12 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 @login_required
 def home(request):
     
+    
     if len(request.user.university) < 1:
         request.session['no_university'] = True 
- 
+    
+    words = []
+    
     friends = Friend.objects.friends(request.user)
     
     """ get a list of users that user has blocked and save it to request.session """
@@ -63,8 +67,8 @@ def home(request):
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
     top_words = cache.get("trending_words_posts")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
+    if top_words:
+        words = top_words['phrases']
     
     """ @param is_home is set to True """
     """ home.html is used in other functions, is_home changes the view """
@@ -95,13 +99,6 @@ def users_posts(request):
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
-def users_buzzes(request):
-    
-    buzzes = request.user.buzz_set.order_by('-date_posted')
-    context = {'buzzes':buzzes, 'buzz_active':'-active' }
-    return render(request, 'home/homepage/user_byyou.html', context)
-
-@login_required
 def users_blogs(request):
     
     blogs = request.user.blog_set.order_by('-last_edited')
@@ -111,19 +108,24 @@ def users_blogs(request):
 @login_required
 def hot_posts(request):
     
+    blockers_id = words = post_list_ids = posts_list = []
+    
     """ @param preserved keeps the order of the hot posts """
     posts_list_ids = cache.get("hot_posts")
-    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
-    
     blockers_id = request.session.get('blockers')
     
-    posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+    if post_list_ids:
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
+        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+    
     
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
     top_words = cache.get("trending_words_posts")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
+    
+    if top_words:
+        words = top_words['phrases']
+        words = words + top_words['common_words']
     
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
@@ -146,19 +148,22 @@ def hot_posts(request):
 @login_required
 def top_posts(request):
     
-    """ @param preserved keeps the order of the top posts """
-    posts_list_ids = cache.get("top_posts")
-    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
+    blockers_id = words = post_list_ids = posts_list = []
     
+    """ @param preserved keeps the order of the hot posts """
+    posts_list_ids = cache.get("hot_posts")
     blockers_id = request.session.get('blockers')
     
-    posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+    if post_list_ids:
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
+        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
     
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
     top_words = cache.get("trending_words_posts")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
+    if top_words:
+        words = top_words['phrases']
+        words = words + top_words['common_words']
     
     page = request.GET.get('page', 1)
     paginator = Paginator(posts_list, 10)
@@ -181,6 +186,7 @@ def top_posts(request):
 @login_required
 def uni_posts(request):
     
+    words = []
     posts = None
     
     u = request.user.university 
@@ -204,10 +210,9 @@ def uni_posts(request):
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
     top_words = cache.get("trending_words_posts")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
-    
-    
+    if top_words:
+        words = top_words['phrases']
+        words = words + top_words['common_words']
     
     context = { 
                 'posts':posts,
@@ -222,6 +227,8 @@ def uni_posts(request):
 @cache_page(60*60*24*1)
 @login_required
 def top_word_posts(request):
+    
+    words = []
     
     if request.method == 'GET':
         word = request.GET.get('w', None)
@@ -238,8 +245,9 @@ def top_word_posts(request):
         """ get hot words and tags related to posts form tags """
         tags = cache.get("tt_post")
         top_words = cache.get("trending_words_posts")
-        words = top_words['phrases']
-        words = words + top_words['common_words']
+        if top_words:
+            words = top_words['phrases']
+            words = words + top_words['common_words']
     
         context = { 
                     'posts':posts,
@@ -327,13 +335,15 @@ def post_detail(request, guid_url):
                 comment_qs = Comment.objects.get(id=reply_id)
                 is_reply = True
                 data['is_reply'] = is_reply
-                description = "Reply: " + comment_qs.body 
-                if comment_qs.name.get_notify and comment_qs.name.get_post_notify_all and comment_qs.name.get_post_notify_comments:
-                    message_comment = "CON_POST" + " replied to your comment on " + post.author.get_full_name() + "'s post." # message comment is sent to the parent comment
-                    notify.send(sender=request.user, recipient=comment_qs.name, verb=message_comment, description=description, target=post, action_object=comment_qs)
-                if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_comments:
-                    message_post = "CON_POST" + " replied to a comment on your post." # message_post is sent to the post author of the reply's parent comment
-                    notify.send(sender=request.user, recipient=post.author, verb=message_post, description=description, target=post, action_object=comment_qs)
+                description = "Reply: " + comment_qs.body
+                if request.user != comment_qs.name:
+                    if comment_qs.name.get_notify and comment_qs.name.get_post_notify_all and comment_qs.name.get_post_notify_comments:
+                        message_comment = "CON_POST" + " replied to your comment on " + post.author.get_full_name() + "'s post." # message comment is sent to the parent comment
+                        notify.send(sender=request.user, recipient=comment_qs.name, verb=message_comment, description=description, target=post, action_object=comment_qs)
+                if comment_qs.name != post.author:
+                    if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_comments:
+                        message_post = "CON_POST" + " replied to a comment on your post." # message_post is sent to the post author of the reply's parent comment
+                        notify.send(sender=request.user, recipient=post.author, verb=message_post, description=description, target=post, action_object=comment_qs)
  
             comment.name = request.user
             comment.post = post
@@ -413,11 +423,20 @@ def comment_like(request,guid_url,hid):
             comment.likes.remove(user)
         else:
             comment.likes.add(user)
-            if user != comment.name:
-                if comment.post.author.get_notify and comment.post.author.get_post_notify_all and comment.post.author.get_post_notify_comments:
-                    message = "CON_POST" + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
-                    description = comment.body
-                notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
+            try:
+                if user != comment.name:
+                    if comment.name.get_notify and comment.name.get_post_notify_all and comment.name.get_post_notify_comments:
+                        message = "CON_POST" + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
+                        description = comment.body
+                        notify.send(sender=user, recipient=comment.name, verb=message, description=description, target=comment.post, action_object=comment)
+                if user != comment.post.author:
+                    if comment.post.author.get_notify and comment.post.author.get_post_notify_all and comment.post.author.get_post_notify_comments:
+                        message = "CON_POST" + " liked a comment on your post"
+                        description = comment.body
+                        notify.send(sender=user, recipient=comment.post.author, verb=message, description=description, target=comment.post, action_object=comment)
+            except:
+                print("error in sending notification to on post-comment-like --- " + str(comment.name.id) + str(comment.post.author))
+                
         data['comment'] = render_to_string('home/posts/comment_like.html',{'comment':comment,'guid_url':guid_url},request=request)
         return JsonResponse(data)
 
@@ -616,9 +635,9 @@ def course_edit(request, hid):
     if request.method == "POST":
         form = CourseEditForm(request.POST)
         if form.is_valid():
-            course = form.save()   
+            course = form.save() 
+            request.user.courses.add(course)  
             request.user.courses.remove(course_init)
-            request.user.courses.add(course)
             return redirect('home:course-list')
     else:     
         form = CourseEditForm(instance=course_init)    
@@ -1334,326 +1353,6 @@ def saved_courses(request):
 
 
 @login_required
-def buzz(request):
-    
-    blockers_id = request.session.get('blockers')
-    
-    buzzes_list = Buzz.objects.select_related('author').filter(~Q(author__id__in=blockers_id) & (Q(expiry__gt=Now()) | Q(expiry__isnull=True))).order_by('-date_posted') #show not expired and buzzes which have expiration date
-    
-    tags = cache.get("tt_buzzes")
-    top_words = cache.get("trending_words_buzzes")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
-    
-    page = request.GET.get('page', 1)
-    paginator = Paginator(buzzes_list, 10)
-    try:
-        buzzes= paginator.page(page)
-    except PageNotAnInteger:
-        buzzes = paginator.page(1)
-    except EmptyPage:
-        buzzes = paginator.page(paginator.num_pages)
-    time_threshold = timezone.now() - timedelta(days=7)
-    
-    context = {
-        'buzzes':buzzes,
-        'words':words,
-        'tags':tags,
-        'home_active':'-active'
-    }
-    
-    return render(request,'home/buzz/buzz.html', context)
-
-@login_required
-def hot_buzzes(request):
-    
-    buzz_list_ids = cache.get("hot_buzzes")
-    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(buzz_list_ids)]) #preserve order of buzzes in order to filter results
-    
-    blockers_id = request.session.get('blockers')
-    
-    buzz_list = Buzz.objects.select_related("author").exclude(author__id__in=blockers_id).filter(id__in=buzz_list_ids).order_by(preserved) #exclude buzzes that their author has blocked request.user (cannot see buzz author)
-    
-    tags = cache.get("tt_buzzes")
-    top_words = cache.get("trending_words_buzzes")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
-    
-    page = request.GET.get('page', 1)
-    paginator = Paginator(buzz_list, 10)
-    try:
-        buzzes = paginator.page(page)
-    except PageNotAnInteger:
-        buzzes = paginator.page(1)
-    except EmptyPage:
-        buzzes = paginator.page(paginator.num_pages)
-        
-    context = { 
-        'buzzes':buzzes,
-        'words':words,
-        'tags':tags,
-        'hot_active':'-active'
-    }
-    return render(request, 'home/buzz/buzz.html', context)
-
-@login_required
-def top_buzzes(request):
-    
-    buzz_list_ids = cache.get("top_buzzes")
-    preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(buzz_list_ids)])
-    
-    blockers_id = request.session.get('blockers')
-    
-    buzz_list = Buzz.objects.select_related("author").exclude(author__id__in=blockers_id).filter(id__in=buzz_list_ids).order_by(preserved)
-    
-    tags = cache.get("tt_buzzes")
-    top_words = cache.get("trending_words_buzzes")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
-    
-    page = request.GET.get('page', 1)
-    paginator = Paginator(buzz_list, 10)
-    try:
-        buzzes = paginator.page(page)
-    except PageNotAnInteger:
-        buzzes = paginator.page(1)
-    except EmptyPage:
-        buzzes = paginator.page(paginator.num_pages)
-        
-    context = { 
-        'buzzes':buzzes,
-        'words':words,
-        'tags':tags,
-        'top_active':'-active'
-    }
-    return render(request, 'home/buzz/buzz.html', context)
-
-@login_required
-def uni_buzzes(request):
-    
-    buzzes = None 
-    
-    u = request.user.university 
-    t = u.lower().replace(' ','_')+"_buzz"
-    
-    buzz_list = cache.get(t)
-    
-    blockers_id = request.session.get('blockers')
-    
-    tags = cache.get("tt_buzzes")
-    top_words = cache.get("trending_words_buzzes")
-    words = top_words['phrases']
-    words = words + top_words['common_words']
-    
-    if buzz_list:
-        buzz_list = buzz_list.exclude(author__id__in=blockers_id)
-       
-        page = request.GET.get('page', 1)
-        paginator = Paginator(buzz_list, 10)
-        try:
-            buzzes = paginator.page(page)
-        except PageNotAnInteger:
-            buzzes = paginator.page(1)
-        except EmptyPage:
-            buzzes = paginator.page(paginator.num_pages)
-        
-    context = { 
-        'buzzes':buzzes,
-        'words':words,
-        'tags':tags,
-        'uni_active':'-active'
-    }
-    return render(request, 'home/buzz/buzz.html', context)
- 
-@login_required
-def buzz_create(request):
-    
-    data = dict()
-    
-    if request.method == 'POST':
-        
-        form = BuzzForm(request.POST)
-        if form.is_valid():  
-            buzz = form.save(False)
-            buzz.author = request.user
-            e = int(request.POST['exd_fb'])
-            if e in [1,3,7]:
-                buzz.expiry = timezone.now() + datetime.timedelta(days=e)
-            buzz.save()
-            form.save_m2m()
-            data['form_is_valid'] = True
-            data['buzz'] = render_to_string('home/buzz/new_buzz.html',{'buzz':buzz },request=request)
-        else:
-            data['form_is_valid'] = False
-    else:
-        form = BuzzForm      
-    context = {
-    'form':form,
-	}
-    
-    data['html_form'] = render_to_string('home/buzz/buzz_create.html',context,request=request)
-    return JsonResponse(data) 
-
-@login_required
-def buzz_like(request,guid_url,status=None):
-   
-    data = dict()
-    buzz = get_object_or_404(Buzz, guid_url=guid_url)
-    user = request.user
-    
-    if request.method == "POST":
-        
-        if status=="like":
-            buzz.likes.add(user)
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_likes:
-                message = "CON_BUZZ" + "Somebody liked your buzz!" 
-                notify.send(sender=user, recipient=buzz.author, verb=message, target=buzz)
-        elif status=="dislike":
-            buzz.dislikes.add(user)
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_likes:
-                message = "CON_BUZZ" + "Somebody...disliked your buzz :(" 
-                notify.send(sender=user, recipient=buzz.author, verb=message, target=buzz)
-        elif status=="rmvlike":
-            buzz.likes.remove(user)           
-        elif status == "rmvdislike":
-            buzz.dislikes.remove(user)           
-        elif status == "ulike":
-            buzz.dislikes.remove(user)
-            buzz.likes.add(user)
-        elif status == "udislike":
-            buzz.likes.remove(user)
-            buzz.dislikes.add(user)
-            
-        data['buzz'] = render_to_string('home/buzz/buzz_like.html',{'buzz':buzz},request=request)
-        return JsonResponse(data)
-
-""" Buzzes have 'wot'  attribute that has more value in there value """  
-@login_required
-def buzz_wot(request,guid_url,status=None): # implement one time use only for users or remove (TBD)
-    
-    data = dict()
-    buzz = get_object_or_404(Buzz, guid_url=guid_url)
-    user = request.user
-    if request.method == "POST":
-        if status=="wot":
-            buzz.wots.add(user)
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_likes:
-                message = "CON_BUZZ" + "You got a lightning on your buzz!" 
-                notify.send(sender=user, recipient=buzz.author, verb=message, target=buzz)
-        elif status=="rmv":
-            buzz.wots.remove(user)
-        data['buzz'] = render_to_string('home/buzz/buzz_wot.html',{'buzz':buzz},request=request)
-        return JsonResponse(data)
-
-@login_required
-def buzz_delete(request, guid_url):
-    
-    data = dict()
-    buzz = get_object_or_404(Buzz, guid_url=guid_url)
-    if request.method == 'POST':
-        if buzz.author == request.user:
-            buzz.delete()
-            data['form_is_valid'] = True
-    else:
-        context = {'buzz':buzz}
-        data['html_form'] = render_to_string('home/buzz/buzz_delete.html',context,request=request)
-    return JsonResponse(data)
-
-# show buzz comments and details
-@login_required
-def buzz_detail(request, guid_url):
-    
-    data = dict()
-    buzz = get_object_or_404(Buzz, guid_url=guid_url)
-    replies_list = buzz.breplies.all()
-    if request.method == 'POST':
-        form = BuzzReplyForm(request.POST or None)
-        if form.is_valid():
-            reply = form.save(False)
-            reply.reply_author = request.user
-            reply.buzz = buzz
-            reply.save()
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_comments:
-                message = "CON_BUZZ" + "Someone replied to your buzz." 
-                notify.send(sender=request.user, recipient=buzz.author, verb=message, target=buzz)
-            r_count = buzz.breplies.count()
-            context = {
-                    'buzz':buzz,
-                    'guid_url':guid_url,
-                    'reply':reply,
-                    }
-            data['reply'] = render_to_string('home/buzz/buzz_new_reply.html',context,request=request)
-            data['r_count'] = r_count
-            return JsonResponse(data)
-    else: 
-        form = BuzzReplyForm()
-    guid_url = buzz.guid_url
-    
-    page = request.GET.get('page', 1)
-    paginator = Paginator(replies_list, 10)
-    try:
-        replies = paginator.page(page)
-    except PageNotAnInteger:
-        replies = paginator.page(1)
-    except EmptyPage:
-        replies = paginator.page(paginator.num_pages)
-        
-    context = {
-            'buzz':buzz,
-            'form':form,
-            'replies':replies,
-            'guid_url':guid_url,
-            }
-        
-    return render(request,'home/buzz/buzz_detail.html',context)
-
-@login_required
-def comment_buzz_like(request,hid,status=None):
-    
-    data = dict()
-    id = hashids.decode(hid)[0]
-    r = get_object_or_404(BuzzReply, id=id)
-    user = request.user
-    if request.method == "POST":
-        if status=="like":
-            r.reply_likes.add(user)
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_comments:
-                message = "CON_BUZZ" + "Someone liked your comment on a buzz." 
-                notify.send(sender=user, recipient=r.buzz.author, verb=message, target=r.buzz)
-        elif status=="dislike":
-            r.reply_dislikes.add(user)
-            if buzz.author.get_notify and buzz.author.get_buzz_notify_all and buzz.author.get_buzz_notify_comments:
-                message = "CON_BUZZ" + "Someone disliked your comment on a buzz." 
-                notify.send(sender=user, recipient=r.buzz.author, verb=message, target=r.buzz)
-        elif status=="rmvlike":
-            r.reply_likes.remove(user)
-        elif status == "rmvdislike":
-            r.reply_dislikes.remove(user)
-        elif status == "ulike":
-            r.reply_dislikes.remove(user)
-            r.reply_likes.add(user)
-        elif status == "udislike":
-            r.reply_likes.remove(user)
-            r.reply_dislikes.add(user)
-        data['r'] = render_to_string('home/buzz/buzz_r_like.html',{'reply':r},request=request)
-        return JsonResponse(data)
-    
-@login_required
-def comment_buzz_delete(request, hid):
-    
-    data = dict()
-    id = hashids.decode(hid)[0]
-    reply = get_object_or_404(BuzzReply, id=id)
-    if request.method == 'POST':
-        if reply.reply_author == request.user:
-            reply.delete()
-            data['form_is_valid'] = True
-    else:
-        context = {'reply':reply}
-        data['html_form'] = render_to_string('home/buzz/comment_delete.html',context,request=request)
-    return JsonResponse(data)
-
-@login_required
 def blog(request):
     
     blogs_list = Blog.objects.get_blogs(user=request.user)
@@ -1775,13 +1474,14 @@ def blog_replies(request,guid_url,slug):
             reply.author = request.user
             reply.blog  = blog
             reply.save()
-            form = BlogReplyForm()
             if user != blog.author:
                 if blog.author.get_notify and blog.author.get_blog_notify_all and blog.author.get_blog_notify_comments:
                     message = "CON_BLOG" + "replied to your blog post." 
                     description = reply.content
                     notify.send(sender=user, recipient=blog.author, description=description, verb=message, target=blog)
             data['form_is_valid'] = True
+            data['new_reply'] = render_to_string('home/blog/blog_reply_new.html',{'reply':reply,'blog':blog},request=request)
+            data['reply_count'] = num_format(blog.blog_replies.count())
             return JsonResponse(data)
     else: 
         form = BlogReplyForm
@@ -1805,7 +1505,7 @@ def blog_reply_like(request,hid):
             reply.reply_likes.remove(user)
         else:
             reply.reply_likes.add(user)
-            if user != blog.author:
+            if user != reply.author:
                 if reply.author.get_notify and reply.author.get_blog_notify_all and reply.author.get_blog_notify_comments:
                     message = "CON_BLOG" + "liked your reply." 
                     description = reply.content
@@ -1825,6 +1525,7 @@ def blog_reply_delete(request,hid, guid_url):
         if request.user == blog.author or request.user == reply.author:
             reply.delete()
             data['form_is_valid'] = True
+            data['reply_count'] = num_format(blog.blog_replies.count())
     else:
         context = {'blog':blog,'reply':reply}
         data['html_form'] = render_to_string('home/blog/blog_reply_delete.html',context,request=request)
@@ -1920,37 +1621,7 @@ def tags_blog(request, slug):
         }
     return render(request, 'home/blog/blog.html', context)
 
-@login_required
-def tags_buzz(request, slug):
-    
-    tag = get_object_or_404(Tag, slug=slug)
-    blockers_id = request.session.get('blockers')
-  
-    buzz_list = Buzz.objects.select_related("author").exclude(author__id__in=blockers_id).filter(tags=tag).order_by('-last_edited')
-    related_tags = Buzz.tags.most_common(extra_filters={'buzz__in': buzz_list })[:5]
-    num_obj = buzz_list.count()
-    if num_obj > 1:
-        s="buzzes" 
-    else:
-        s="buzz"
-    page = request.GET.get('page', 1)
-    paginator = Paginator(buzz_list, 10)
-    try:
-        buzzes = paginator.page(page)
-    except PageNotAnInteger:
-        buzzes = paginator.page(1)
-    except EmptyPage:
-        buzzes = paginator.page(paginator.num_pages)
-    is_tag = True
-    context = {
-        'tag' : tag,
-        'buzzes':buzzes,
-        'is_tag':is_tag,
-        'num_obj':num_obj,
-        's':s,
-        'related_tags':related_tags
-        }
-    return render(request, 'home/buzz/buzz.html', context)
+
 
 @login_required
 def search(request):
@@ -1969,13 +1640,12 @@ def search(request):
             
             posts = Post.objects.search_topresult(search_term)
             blogs = Blog.objects.search_topresult(search_term)
-            buzzes = Buzz.objects.search_topresult(search_term)
             users = Profile.objects.search_topresult(search_term)
             courses = Course.objects.search(search_term)[:3]
             
             related_terms = SearchLog.objects.related_terms(search_term)
             
-            if (posts.exists() or blogs.exists() or buzzes.exists() or users.exists() or courses.exists()):
+            if (posts.exists() or blogs.exists() or users.exists() or courses.exists()):
                 empty = False 
             else:
                 empty = True
@@ -1984,7 +1654,6 @@ def search(request):
                 'posts':posts,
                 'blogs':blogs,
                 'users':users,
-                'buzzes':buzzes,
                 'empty':empty,
                 'related_terms':related_terms,
                 'courses':courses,
@@ -2031,22 +1700,6 @@ def search(request):
             }
             return render(request, 'home/search/search_blog.html', context)
         
-        if o == 'buzz':
-            buzzes_list = Buzz.objects.search(search_term)
-            page = request.GET.get('page', 1)
-            paginator = Paginator(buzzes_list, 10)
-            try:
-                buzzes= paginator.page(page)
-            except PageNotAnInteger:
-                buzzes = paginator.page(1)
-            except EmptyPage:
-                buzzes = paginator.page(paginator.num_pages)
-            context = {
-                'buzzes':buzzes,
-                'q':search_term,
-                'buzz_active':'-active'
-            }
-            return render(request, 'home/search/search_buzz.html', context)
         
         if o == 'users':
             if len(search_term.split()) > 1:

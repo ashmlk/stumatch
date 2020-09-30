@@ -15,11 +15,8 @@
     </div>
     <div class="bbp-items-aal">
         <ul class="nav nav-fill mb-3">
-            <li class="nav-item">
+            <li class="nav-item mr-1">
               <a class="text-dark nav-link btn rounded p-2 menu-link menu-link{{ post_active }}" href="{% url 'main:bookmarks' %}?o=posts">Posts</a>
-            </li>
-            <li class="mx-1 nav-item">
-              <a class="text-dark nav-link btn rounded p-2 menu-link{{ buzz_active }}" href="{% url 'main:bookmarks' %}?o=buzzes">Buzzes</a>
             </li>
             <li class="nav-item">
               <a class="text-dark nav-link btn rounded p-2 menu-link{{ blog_active }}" href="{% url 'main:bookmarks' %}?o=blogs" >Blogs</a>
@@ -30,10 +27,6 @@
       {% if post_active %}
       <div>
           {% include 'main/bookmark/bookmarked_posts.html' with bookmarks=bookmarked_posts %}
-      </div>
-      {% elif buzz_active %}
-      <div>
-          {% include 'main/bookmark/bookmarked_buzzes.html' with bookmarks=bookmarked_buzzes %}
       </div>
       {% elif blog_active %}
       <div>

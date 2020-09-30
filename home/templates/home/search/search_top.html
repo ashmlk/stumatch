@@ -96,27 +96,6 @@
         </form>
     </div>
     {% endif %}
-    {% if buzzes %}
-    <div class="card shadow p-2 mb-2">
-        <div class="m-0 mb-2 pb-1 p-0">
-            <div class="m-0">
-                <h6 class="text-dark font-weight-bolder" style="font-size: 1.5rem;">Buzzes</h6>
-            </div>
-        </div>
-        <div id="buzz-list">
-            <div>
-                {% include 'home/buzz/buzz_list.html' %}
-            </div>
-        </div>
-        <form method="GET" action="{% url 'home:search-all' %}">
-            <input type="hidden" name="q" value="{{ q }}" />
-            <input type="hidden" name="o" value="buzz" />
-            <div class="row w-100 col-12">
-                <button type="submit" class="w-100 btn " style="background-color: rgb(226,230,234);">See More</button>
-            </div>
-        </form>
-    </div>
-    {% endif %}
     {% if blogs %}
     <div class="card shadow p-2 mb-2">
         <div class="m-0 mb-2 pb-1 p-0">

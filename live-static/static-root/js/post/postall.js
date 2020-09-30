@@ -415,7 +415,7 @@ $(document).ready(function (e) {
 		window.location = $(this).attr('data-url');
 		return false;
 	})
-	$('#blog-detail').on("click", ".blog_likeBtn", function (e) {
+	$(document).on("click", ".blog_likeBtn", function (e) {
 		var btn = $(this)
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -432,7 +432,7 @@ $(document).ready(function (e) {
 			},
 		});
 	});
-	$('.blog-reply-card-ctr ').on("click", ".blogreply_likeBtn", function (e) {
+	$(document).on("click", ".blogreply_likeBtn", function (e) {
 	var btn = $(this)
 	e.preventDefault();
 	e.stopImmediatePropagation();
@@ -448,6 +448,26 @@ $(document).ready(function (e) {
 			console.log(rs.responeText);
 			},
 		});
+	});
+
+	$(document).on("submit",'.blog-reply-form', function (e) {		
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var form = $(this).serialize();
+		$.ajax({
+			type: "POST",
+			url: $(this).attr("data-url"),
+			dataType: 'json',
+			data: form,
+			success: function (data){				
+				$(document).find('.blog-replies-list').prepend(data.new_reply);
+				$(document).find('.blog-reply-count').html(data.reply_count);	
+				$(document).find('#id_content').val('');	
+			},
+			error: function(rs, e){
+				console.log(rs.responeText);
+				},
+			});
 	});
 })
 
@@ -541,6 +561,7 @@ $(document).ready(function () {
 			$('body').removeClass('modal-open');
 			$('.modal-backdrop').remove();  
 			$(blogrdltbtn).closest('.blog-reply-card-ctr').remove();
+			$(document).find('.blog-reply-count').html(data.reply_count);
 			} 
 		  }
 	  })

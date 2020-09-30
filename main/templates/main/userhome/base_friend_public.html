@@ -1,7 +1,7 @@
 {% load static %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html>
-
 <head>
     <div id="#headerPlaceholder"></div>
     <title>{{ user.get_full_name }} - JoinCampus</title>
@@ -51,9 +51,10 @@
                     <div class="img-user name-user mt-4 p-2">
                         <div class="d-flex justify-content-center">
                             <div>
-                                <div class="pro-img">
-                                    <img class="img-create-post rounded-circle" style="height: 8rem;width: 8rem;"
-                                        src="{{ user.image.url }}" />
+                                <div class="pro-img">             
+                                    {% thumbnail user.image "150x150" crop="80% top" as im %}
+                                        <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                    {% endthumbnail %}                               
                                 </div>
                             </div>
                         </div>
@@ -160,11 +161,8 @@
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
     <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
     <script src="{% static 'initial/initial.js' %}"></script>
-    <script src="{% static 'js/buzz/buzzall.js' %}"></script>
     <script src="{% static 'js/post/postall.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
-    <script src="{% static 'js/buzz/buzz.js' %}"></script>
-    <script src="{% static 'js/buzz/buzz-d.js' %}"></script>
     <script src="{% static 'js/profiles/main.js' %}"></script>
     <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
 </body>
