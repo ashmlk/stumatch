@@ -684,3 +684,27 @@ box-shadow:  -9px 9px 18px #949ca1,
 .items-detailed .detailed-list{
   padding-left: 10px;
 }
+.blog-form-container .selectize-input input[type="text"] {
+  border:none !important;
+  font-size: 0.8rem !important;
+  margin-left: 5px !important;
+  margin-top: 5px !important;
+  margin-bottom: -1px !important;
+}
+
+.blog-form-container .selectize-input {
+  width: 480px !important;
+  height: 1.84rem!important;
+  padding-top: 2px !important;
+  padding-left: 5px !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow: none !important;
+  -moz-box-shadow:none !important;
+  -webkit-box-shadow:none !important;
+  }
+
+.blog-form-container .selectize-dropdown {
+  margin-left: 0.8rem !important;
+  height: auto !important;
+  } 
