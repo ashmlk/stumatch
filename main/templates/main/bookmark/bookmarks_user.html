@@ -1,0 +1,44 @@
+{% extends "home/homepage/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block title %}
+<title>Bookmarks - JoinCampus</title>
+{% endblock %}
+{% block content %}
+<div class="bookmarks-ctr">
+    <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
+        <div class="m-0">
+            <h6 class="display-4" style="font-size: 2.2rem;">Bookmarks</h4>
+        </div>
+    </div>
+    <div class="bbp-items-aal">
+        <ul class="nav nav-fill mb-3">
+            <li class="nav-item mr-1">
+              <a class="text-dark nav-link btn rounded p-2 menu-link menu-link{{ post_active }}" href="{% url 'main:bookmarks' %}?o=posts">Posts</a>
+            </li>
+            <li class="nav-item">
+              <a class="text-dark nav-link btn rounded p-2 menu-link{{ blog_active }}" href="{% url 'main:bookmarks' %}?o=blogs" >Blogs</a>
+            </li>
+          </ul>
+    </div>
+    <div>
+      {% if post_active %}
+      <div>
+          {% include 'main/bookmark/bookmarked_posts.html' with bookmarks=bookmarked_posts %}
+      </div>
+      {% elif blog_active %}
+      <div>
+        {% include 'main/bookmark/bookmarked_blogs.html' with bookmarks=bookmarked_blogs %}
+      </div>
+      {% else %}
+      <div class="d-flex justify-content-center">
+        <div>
+          <p class="text-center">There was an error with your request.</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+</div>
+{% endblock %}

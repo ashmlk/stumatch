@@ -1,0 +1,263 @@
+{% extends "main/notifications/base.html" %}
+{% load notifications_tags %}
+{% load static %}
+{% block content %}
+{% live_notify_list list_class="notifications-unread-list-ul" %}
+<div class="notifications-list-container p-1">
+    <div class="border-bottom mb-3 d-flex justify-content-between">
+        <div>
+            <div class="mb-2">
+                <h5>Notifications</h5>
+            </div>
+            <div class="notifications-info-all">
+                <div class="notificaitons-count-all">
+                    {% notifications_unread as unread_count %}
+                    {% if unread_count %}
+                    <span class="small text-muted">You have <strong>{{ unread_count }}</strong> unread
+                        notification{% if unread_count > 1 %}s{% endif %}.</span>
+                    {% else %}
+                    <span class="small text-muted">You have <strong>{{ read_count }}</strong>
+                        notification{% if read_count > 1 %}s{% endif %}.</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if notifications_unread %}
+    <div class="mb-2 notifications-unread">
+        <div class="dropdown float-right">
+            <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                <a class="small dropdown-item" href="{% url 'main:delete-notification' %}"><span class="text-danger">Delete All Notifications</span></a>
+            </div>
+        </div>
+        <div class="mb-3">
+            <strong>Unread</strong>
+        </div>
+        <div class="notifications-unread-list">
+            <ul class="list-group flush notifications-unread-list-ul">
+                {% for notice in notifications_unread %}
+                <li class="list-group-item notifications-item">
+                    <div class="dropdown float-right">
+                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        {% if not 'CON_CRRW' in notice.verb %}
+                        <div class="mr-1 actor-image">
+                            <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;"
+                                src="{{ notice.actor.image.url }}" />
+                        </div>
+                        {% endif %}
+                        <div>
+                            {% if not  'CON_CRRW' in notice.verb %} 
+                            <a class="card-link"
+                                href="{{ notice.actor.get_absolute_url }}">{{ notice.actor.get_full_name|capfirst }}</a>
+                            {% endif %}
+                            {% if 'CON_CRRW' in notice.verb %}
+                                <span>{{ notice.verb|slice:"8:" }}</span>
+                                <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
+                                <span>with professor</span>
+                                <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
+                                    {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}</a>
+                                {% else %}
+                                <span>{{ notice.verb|slice:"8:" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-1" style="font-size: 0.9rem;">
+                        {% if 'CON_POST' in notice.verb %}
+                            {% if notice.target %}
+                            <a class="card-link"
+                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            {% endif %}
+                            <a class="text-dark"
+                                href="{% url 'home:post-detail' notice.target.guid_url  %}"><strong>{{ notice.target.title|capfirst }}</strong>
+                            </a>
+                            <span>
+                                ·
+                            </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d " }}
+                            </span>
+                            <p class="mt-1 text-muted">
+                                {{ notice.description }}
+                            </p>
+                        {% elif 'CON_BLOG' in notice.verb %}
+                            {% if notice.target %}
+                            <a class="card-link"
+                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            {% endif %}
+                            <a class="text-dark"
+                                href="{% url 'home:blog-detail' hid=notice.target.guid_url t=notice.target.slug  %}"><strong>{{ notice.target.title|capfirst }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d " }}
+                            </span>
+                            <p class="mt-1 text-muted">
+                                {% if notice.description %}
+                                {{ notice.description }}
+                                {% endif %}
+                            </p>
+                        {% elif 'CON_FRRE' in notice.verb %}
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d " }}
+                            </span>
+                            {% if 'sent' in notice.verb %}
+                                <div class="float-right">
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/accept_reject_request.html' with user=notice.actor %}
+                                    </div>
+                                </div>
+                            {% endif %}                      
+                        {% elif 'CON_CRRW' in notice.verb %}
+                        <span>
+                            {{ notice.timestamp|date:"Y/m/d " }}
+                        </span>
+                        <p class="mt-1 text-muted">
+                            <strong class="text-dark">Review: </strong>{{ notice.description }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    {% if notifications_read %}
+    <div class="notifications-all">   
+        <div class="dropdown float-right">
+            <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                <a class="small dropdown-item" href="{% url 'main:delete-notification' %}"><span class="text-danger">Delete All Notifications</span></a>
+            </div>
+        </div>
+        <div class="mb-3">
+            <strong>Previous</strong>
+        </div>
+        <div class="notifications-unread-list">
+            <ul class="list-group flush notifications-unread-list-ul">
+                {% for notice in notifications_read %}
+                <li class="list-group-item notifications-item">
+                    <div class="dropdown float-right">
+                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        {% if not 'CON_CRRW' in notice.verb %}
+                        <div class="mr-1 actor-image">
+                            <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;"
+                                src="{{ notice.actor.image.url }}" />
+                        </div>
+                        {% endif %}
+                        <div>
+                            {% if not  'CON_CRRW' in notice.verb %} 
+                            <a class="card-link"
+                                href="{{ notice.actor.get_absolute_url }}">{{ notice.actor.get_full_name|capfirst }}</a>
+                            {% endif %}
+                            {% if 'CON_CRRW' in notice.verb %}
+                            <span>{{ notice.verb|slice:"8:" }}</span>
+                            <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
+                            <span>with professor</span>
+                            <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
+                                {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}</a>
+                            {% else %}
+                            <span>{{ notice.verb|slice:"8:" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-1" style="font-size: 0.9rem;">
+                        {% if 'CON_POST' in notice.verb %}
+                            {% if notice.target %}
+                            <a class="card-link"
+                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            {% endif %}
+                            <a class="text-dark"
+                                href="{% url 'home:post-detail' notice.target.guid_url  %}"><strong>{{ notice.target.title|capfirst }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d" }}
+                            </span>
+                            <p class="mt-1 text-muted">
+                                {{ notice.description }}
+                            </p>
+                        {% elif 'CON_BLOG' in notice.verb %}
+                            {% if notice.target %}
+                            <a class="card-link"
+                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            {% endif %}
+                            <a class="text-dark"
+                                href="{% url 'home:blog-detail' hid=notice.target.guid_url t=notice.target.slug  %}"><strong>{{ notice.target.title|capfirst }}</strong></a>
+                            <span>
+                                ·
+                            </span>
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d" }}
+                            </span>
+                            <p class="mt-1 text-muted">
+                                {% if notice.description %}
+                                {{ notice.description }}
+                                {% endif %}
+                            </p>
+                        {% elif 'CON_FRRE' in notice.verb %}
+                            <span>
+                                {{ notice.timestamp|date:"Y/m/d " }}
+                            </span>
+                            {% if 'sent' in notice.verb %}
+                                <div class="float-right">
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/accept_reject_request.html' with user=notice.actor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% elif 'CON_CRRW' in notice.verb %}
+                        <span>
+                            {{ notice.timestamp|date:"Y/m/d " }}
+                        </span>
+                        <p class="mt-1 text-muted">
+                            <strong class="text-dark">Review: </strong>{{ notice.description }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% if not notifications_read %}
+    {% if not notifications_unread %}
+    <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No notifications to show.</h5>
+      </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% load ibuilder %}
+{% load ibuilder %}
+{% for bookmark in bookmarks %}
+  <div class="card blog-info shadow-sm bg-white init-all bookmarked-link" data-url="{% url 'home:blog-detail' hid=bookmark.obj.guid_url t=bookmark.obj.slug %}" >
+    <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h3><a class="text-dark" style="text-decoration: none;" href="{% url 'home:blog-detail' hid=bookmark.obj.guid_url t=bookmark.obj.slug %}">{{ bookmark.obj.title }}</a></h3>
+                    <a href="#" class="card-link small font-weight-bolder">{{ bookmark.obj.author.get_full_name }}</a>
+                </div>
+                <div class="small text-muted">
+                    <span>
+                        {{ bookmark.obj.last_edited|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="mt-4 d-flex like-replies small">
+                <div class="blog-like-section">
+                    <div class="btn btn-sm border"  style="border-radius: 20px;">
+                        <span  style="color:  rgb(158, 158, 158);">
+                            Likes          
+                            <span class="like-count small ml-1">
+                                {{ bookmark.obj.likes.count|num_format  }}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+                <div class="mx-2 blog-responses">
+                    <div class="btn btn-sm border"  style="border-radius: 20px;">
+                        <span  style="color:  rgb(158, 158, 158);">
+                            Replies           
+                            <span class="like-count small ml-1">
+                                {{ bookmark.obj.blog_replies.count|num_format  }}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>    
+    </div>
+</div>
+{% empty %}
+  <div class="d-flex justify-content-center">
+    <h5 class="h5 font-weight-lighter my-3 text-muted">No blogs bookmarked.</h5>
+  </div>
+{% endfor %}
+
+
+
+

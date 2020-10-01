@@ -1,0 +1,57 @@
+{% extends "main/userhome/base_friend_public.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block profilecontent %}
+<div class="infinite-container card-columns mt-1">
+    {% for course in courses %}
+    {% bg_rand as bgrnd %}
+    <div class="infinite-item card mb-2 bg-white">
+        <div class="d-flex align-items-center course-title-box pro-link-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
+            <div class="mt-2 ml-2"> 
+                <h3 class="font-weight-bold">{{ course.course_code }}</h3>
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-sm" >
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                    <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                </div>       
+                <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                </div>
+                <div class="my-1 border p-1 border rounded shadow-sm t-stu">
+                    <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
+                </div>
+                <div class="my-1  p-1 border border rounded shadow-sm">
+                    <span class="text-dark">Average Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                </div>
+            </div>     
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if not courses %}
+<div class="card border-0" style="margin-left: -0.85rem !important;">
+    <div class="card-body">
+        <div class="d-flex justify-content-center">
+            <h4 class="text-muted">No courses to show.</h4>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if courses.has_next %}
+<a class="infinite-more-link" href="?id={{ user.get_hashid}}&page={{ courses.next_page_number }}"></a>
+{% endif %}
+<div class="mt-2 loading" style="display: none;">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<style>
+@media (min-width:34em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:48em){.card-columns{-webkit-column-count:1;-moz-column-count:1;column-count:1}}@media (min-width:62em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}@media (min-width:75em){.card-columns{-webkit-column-count:2;-moz-column-count:2;column-count:2}}
+</style>
+{% endblock %}

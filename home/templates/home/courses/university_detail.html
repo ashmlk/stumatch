@@ -1,0 +1,155 @@
+{% extends "home/courses/base.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block title %}
+<title>{{ uni|capfirst }} - JoinCampus</title>
+{% endblock %}
+{% block content %}
+{% if is_empty %}
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-center">
+            <h4 class="text-muted">Error in processing your request</h4>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="content">
+    <div class="uni-info">
+        <div class="m-0 mb-2 border-bottom pb-1 p-0">
+            <div class="m-0">
+                <h6 class="display-4" style="font-size: 2.2rem;">{{ uni|capfirst }}</h4>
+            </div>
+        </div>
+        <div class="info-minor">
+            <div class="info-group my-2">
+                <div class="d-flex info-title ">
+                    <div class="info-title-svg mr-2 ">
+                        <svg style="margin-top:-4px !important;" width="20" height="20" viewBox="0 0 16 16" class="bi bi-flag" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z"/>
+                          </svg>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-text">
+                        <h6><strong>Country:</strong></h6>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-i">
+                        <h6>{{ data.country }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="info-group my-2">
+                <div class="d-flex info-title ">
+                    <div class="info-title-svg mr-2 ">
+                        <svg style="margin-top: -3px !important" width="20" height="20" viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                              d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
+                            <path fill-rule="evenodd"
+                              d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
+                          </svg>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-text">
+                        <h6><strong>Total Courses:</strong></h6>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-i">
+                        <h6>{{ num_courses }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="info-group my-2">
+                <div class="d-flex info-title ">
+                    <div class="info-title-svg mr-2 ">
+                        <svg style="margin-top: -3px !important" width="20" height="20"
+                            viewBox="0 0 16 16" class="bi bi-person-check"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M11 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM1.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zm9.974.056v-.002.002zM6 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6.854.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                        </svg>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-text">
+                        <h6><strong>Total Students:</strong></h6>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-i">
+                        <h6>{{ num_enrolled }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="info-group my-2">
+                <div class="d-flex info-title ">
+                    <div class="info-title-svg mr-2">
+                        <svg style="margin-left:-2px !important;margin-top: -1px !important;margin-right:2px !important;" width="20" height="20" viewBox="0 0 16 16" class="bi bi-globe2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M1.018 7.5h2.49c.037-1.07.189-2.087.437-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5zM3.05 3.049c.362.184.763.349 1.198.49.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05zM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm-.5 1.077c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.473.257 2.282.287V1.077zm0 4.014c-.91-.03-1.783-.145-2.591-.332a12.344 12.344 0 0 0-.4 2.741H7.5V5.091zm1 2.409V5.091c.91-.03 1.783-.145 2.591-.332.223.827.364 1.754.4 2.741H8.5zm-1 1H4.51c.035.987.176 1.914.399 2.741A13.596 13.596 0 0 1 7.5 10.91V8.5zm1 2.409V8.5h2.99a12.343 12.343 0 0 1-.399 2.741A13.596 13.596 0 0 0 8.5 10.91zm-1 1c-.81.03-1.577.13-2.282.287.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91zm-2.173 2.563a6.695 6.695 0 0 1-.597-.933 8.857 8.857 0 0 1-.481-1.078 8.356 8.356 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.52zM2.38 12.175c.47-.258.995-.482 1.565-.667A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.964 6.964 0 0 0 1.362 3.675zm8.293 2.297a7.01 7.01 0 0 0 2.275-1.521 8.353 8.353 0 0 0-1.197-.49 8.859 8.859 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zm.11-2.276A12.63 12.63 0 0 0 8.5 11.91v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872zm1.272-.688c.57.185 1.095.409 1.565.667A6.964 6.964 0 0 0 14.982 8.5h-2.49a13.355 13.355 0 0 1-.437 3.008zm.437-4.008h2.49a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zm-.74-3.96a8.854 8.854 0 0 0-.482-1.079 6.692 6.692 0 0 0-.597-.933c.857.355 1.63.875 2.275 1.521a8.368 8.368 0 0 1-1.197.49zm-.97.264c-.705.157-1.473.257-2.282.287V1.077c.67.204 1.335.82 1.887 1.855.143.268.276.56.395.872z"/>
+                          </svg>
+                    </div>
+                    <div class="pt-1 mx-1 info-title-text">
+                        <h6><strong>Web:</strong></h6>
+                    </div>
+                    <div class="mx-1 info-title-i" style="padding-top: 1px;">
+                        <div class="weblist">
+                            {% for web in data.web_pages %}
+                            <div class="ewb-u">
+                                <a href="{{ web }}" class="card-link">{{ web }}</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    
+    <div class="link-picker">
+        <div class="links">
+            <div class="mt-1 mb-2">
+                <div class="d-flex justify-content-start" id="_pol3">
+                    <div class="btn d-flex align-items-center mr-1 menu-link menu-link{{sa}}">
+                        <a href="{% url 'home:university-detail' %}?u={{ uni }}&obj=std" style="text-decoration: none;">
+                            <div>
+                                <span class="h6"><span>Students</span></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="btn d-flex align-items-center mr-1 menu-link{{ca}}"
+                        data-url="{% url 'home:university-detail' %}?u={{ uni }}&obj=crs">
+                        <a href="{% url 'home:university-detail' %}?u={{ uni }}&obj=crs" style="text-decoration: none;">
+                            <div>
+                                <span class="h6">
+                                    <span>Courses</span></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="btn d-flex align-items-center mr-1 menu-link{{ia}}"
+                        data-url="{% url 'home:university-detail' %}?u={{ uni }}&obj=ins">
+                        <a href="{% url 'home:university-detail' %}?u={{ uni }}&obj=ins" style="text-decoration: none;">
+                            <div>
+                                <span class="h6"><span>Instructors</span></span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item-list">
+        <div class="list-objects">
+            {% block list %}{% endblock %}
+            
+        </div>
+    </div>
+</div>
+<div class="text-center">
+    {{ u_empty }}
+</div>
+<script>
+    $(document).ready(function (){
+        $('.infinite-more-link').on('click', function (e){
+            e.preventDefault();
+        })
+    })
+</script>
+{% endif %}
+{% endblock %}

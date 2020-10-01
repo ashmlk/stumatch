@@ -1,0 +1,81 @@
+{% extends "home/courses/base.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block title %}
+    <title>Courses - JoinCampus</title>
+{% endblock %}
+{% block contentmenu %}
+<div class="mt-5 p-2 mx-2">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
+            <div class="content">
+                <a  href="{% url 'home:course-list' %}" style="text-decoration: none;">
+                    <div class="link-holder d-flex justify-content-center text-dark d-flex justify-content-center text-dark p-3">
+                        <div class="neoblock">
+                            <div class="d-flex justify-content-center d-flex justify-content-center p-1 my-1 img img-fluid">
+                                <img src="{% static 'default/courses/books.png' %}" style="height:76px;width: 76px;"/>
+                            </div>
+                            <div class="p-2 mx-2">
+                                <h5 class="text-center">Your Courses</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'home:courses-add' %}" style="text-decoration: none;">
+                    <div class="link-holder d-flex justify-content-center text-dark d-flex justify-content-center text-dark p-3">
+                        <div class="neoblock">
+                            <div class="d-flex justify-content-center p-1 my-1 img img-fluid">
+                                <img src="{% static 'default/courses/addc.png' %}" alt="Course Image" style="height:76px;width: 76px;">
+                            </div>
+                            <div class="p-2 mx-2">
+                                <h5 class="text-center">Add Course</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'home:course-list-manager' %}" style="text-decoration: none;">
+                    <div class="link-holder d-flex justify-content-center text-dark d-flex justify-content-center text-dark p-3">
+                        <div class="neoblock">
+                            <div class="d-flex justify-content-center p-1 my-1 img img-fluid">
+                                <img src="{% static 'default/courses/mcrsli.png' %}"  style="height:76px;width: 76px;">
+                            </div>
+                            <div class="p-2 mx-2">
+                                <h5 class="text-center">My Lists</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6" style="margin-left: -1rem !important; margin-right: -1rem !important;">
+            <div class="content">
+                <a href="{% url 'home:courses-saved' %}" style="text-decoration: none;">
+                    <div class="link-holder d-flex justify-content-center text-dark d-flex justify-content-center text-dark p-3">
+                        <div class="neoblock">
+                            <div class="d-flex justify-content-center p-1 my-1 img img-fluid">
+                                <img src="{% static 'default/courses/clk.png' %}" alt="Course Image" style="height:76px;width: 76px;">
+                            </div>
+                            <div class="p-2 mx-2">
+                                <h5 class="text-center">Saved Course</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'home:find-students' %}?sl=prgm" style="text-decoration: none;">
+                    <div class="link-holder d-flex justify-content-center text-dark d-flex justify-content-center text-dark p-3">
+                        <div class="neoblock">
+                            <div class="d-flex justify-content-center p-1 my-1 img img-fluid">
+                                <img src="{% static 'default/courses/studentsgroup.png' %}" style="height:76px;width: 76px;">
+                            </div>
+                            <div class="p-2 mx-2">
+                                <h5 class="text-center">Find Students</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

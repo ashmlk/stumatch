@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Contact - JoinCampus{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="contact-container">
+        <div class="contact-info">
+            <div class="my-3 title-all">
+                <h4 class="text-center">Contact JoinCampus</h4>
+            </div>
+            <div class="mt-4">
+                <div class="info">
+                    <div class=" text-center text-dark">
+                        <p>We're here to help or have any questions you may have!</p>
+                        <span class="text-muted small">You can email us at: <a
+                                href="mailto:contact@joincampus.ca">contact@joincampus.ca</a> </span>
+                        <span class="text-muted small">or fill out the form below:</span>
+                    </div>
+                </div>
+                {% if messages %}
+                <div class="row success-message">
+                    <div class="boc-s">
+                        {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                            <div class="col-12 alert alert-danger alert-dismissible fade show my-1" role="alert">
+                            {% else %}
+                            <div class="col-12 alert alert-{{ message.tags }} alert-dismissible fade show my-1"
+                                role="alert">
+                                {% endif %}
+                                <span class="small">{{ message }}</span>
+                                <button type="button" class="close btn-sm btn" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="row mt-3 border rounded mb-1">
+                    <div class="col-12 p-3 pb-4">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div>
+                                <button class="float-right btn btn-primary no-border no-outline"
+                                    style="border-radius: 20px; border: none;" type="submit">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .asteriskField {
+        display: none;
+    }
+</style>
+{% endblock %}

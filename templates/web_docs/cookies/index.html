@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Cookies - JoinCampus{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="cookies-container w-75">
+        <div class="items mb-3 p-1">
+            <div class="titall">
+                <h4>Cookies</h4>
+                <p class="mt-2">A cookie is a small piece of data stored on your computer while browsing the web.
+                    Cookies are used to
+                    identify you and store and receive information will you visit different websites. Cookies have
+                    various uses, such as authentication, keeping content you already entered in other fields, etc.
+                </p>
+                <p>
+                    When you use JoinCampus we use your cookies. We use cookies only for authentication and safety
+                    purposes only. We do not use your cookies when you visit other webpages.
+                </p>
+                <p>
+                    This page explains how we use your cookies. Our other data collection policy is described in our <a
+                        href="{% url 'main:web-policy' %}">Data Policy</a> section.
+                </p>
+            </div>
+        </div>
+        <div class="items-detailed">
+            <div class="font-weight-bolder mb-1 text-primary">
+                <span class="h5">Why do we use cookies?</span>
+            </div>
+            <div class="itp box-al">
+                <p>
+                    Cookies help use to provide a safe browsing experience for our users and protect their accounts.
+                </p>
+            </div>
+            <div class="detailed-list explanations">
+                <ul>
+                    <li>
+                        <div>
+                            <span class="text-secondary">Authentication:</span>
+                            <span class="text-dark">
+                                We use cookies to determine if a user is logged in so we can make it easier for them to
+                                access different pages across our website.
+                            </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="text-secondary">Security and Integrity:</span>
+                            <span class="text-dark">
+                                Cookies help us to determine whether a user is attempting to access JoinCampus
+                                without authorization. Cookies also allow us to prevent phishing attacks by helping us
+                                identify devices that have opened the number a large number of accounts in a short
+                                period.
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="items-detailed">
+            <div class="font-weight-bolder mb-1 text-primary">
+                <span class="h5">Where do we use cookies?</span>
+            </div>
+            <div class="itp box-al">
+                <p>
+                    We place cookies on your device when you visit our website pages. Please note that our only purpose
+                    of using cookies is to authenticate and offer security to users.
+                </p>
+            </div>
+        </div>
+        <div class="items-detailed">
+            <div class="font-weight-bolder mb-1 text-primary">
+                <span class="h5">Who has access to your cookies?</span>
+            </div>
+            <div class="itp box-al">
+                <p>
+                    We do not allow any third party app to use your cookies on our website.
+                </p>
+                <p>
+                Third parties may use cookies on their sites and apps. To better understand their policies, please
+                review their policy.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

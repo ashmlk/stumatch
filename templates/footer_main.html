@@ -1,0 +1,54 @@
+<footer class="p-2 page-footer" style="font-size: 0.9rem; margin-bottom: -4.5rem !important;">
+    <div class="ml-2 mr-2">
+      <hr class="mt-5">
+      <div class="row">
+        <div class="col">
+          <div class="mb-1 text-center">       
+            <a href="{% url 'main:site-about' %}">
+              About
+              </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-1 text-center">       
+            <a href="{% url 'main:site-terms' %}">
+              Terms
+              </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-1 text-center ">       
+            <a href="{% url 'main:web-policy' %}">
+              Privacy policy
+              </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-1 text-center ">       
+            <a href="{% url 'main:cookies-policy' %}">
+              Cookies
+              </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-1 text-center ">       
+            <a href="{% url 'main:contact-us' %}">
+              Contact Us
+              </a>
+          </div>
+        </div>
+        {% if request.user.is_authenticated %}
+        <div class="col">
+          <div class="mb-1 text-center">       
+            <a href="https://forms.gle/cJQPNCQZRuDSbTTH9" target="_blank">
+              Feedback
+              </a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="footer-copyright text-center py-3 text-muted">
+     JoinCampus © 2020
+      </div>
+  </footer> 

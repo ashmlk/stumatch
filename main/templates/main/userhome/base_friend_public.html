@@ -1,0 +1,169 @@
+{% load static %}
+{% load thumbnail %}
+<!DOCTYPE html>
+<html>
+<head>
+    <div id="#headerPlaceholder"></div>
+    <title>{{ user.get_full_name }} - JoinCampus</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'favicon_folder/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'favicon_folder/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'favicon_folder/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'favicon_folder/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'favicon_folder/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'favicon_folder/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'favicon_folder/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'favicon_folder/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'favicon_folder/android-icon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon_folder/favicon-96x96.png' %}">
+    <link rel="manifest" href="{% static 'favicon_folder/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static 'favicon_folder/ms-icon-144x144.png' %}">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+</head>
+
+<body class="pb-5" style="background-color: white !important;">
+    <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
+    <div class="wrapper">
+        <div class="container pt-4 u_pctr">
+            <div class="row d-flex justify-content-center mt-5">
+                <div class="mx-auto col-sm-12">
+                    <div class="img-user name-user mt-4 p-2">
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                <div class="pro-img">             
+                                    {% thumbnail user.image "150x150" crop="80% top" as im %}
+                                        <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                    {% endthumbnail %}                               
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-name mt-3">
+                            <div class="content-holder">
+                                <h4 class="text-center text-dark">{{ user.get_full_name }}</h4>
+                            </div>
+                        </div>
+                        <div class="mt-2 p-2 u-bio">
+                            <p class="text-center text-muted">{{ user.bio }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="editable-al-view mt-2">
+                            <div class="d-flex justify-content-center">
+                                <div class="btn btn-sm d-flex align-items-center mr-1">
+                                    {% if not requested %}
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/friend_status.html' with user=user %}
+                                    </div>
+                                    {% elif requested %}
+                                    <div class="friend-status-ctr">
+                                        {% include 'main/friends/accept_reject_request.html' with user=user %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="dropup">
+                                        <button class="mt-1 btn btn-sm no-outline no-border"
+                                            style="background-color: rgb(226,230,234) !important;" type="button"
+                                            id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-up" aria-labelledby="d_li">
+                                            {% if user != request.user %}
+                                            <button class="block-user-btn small dropdown-item"
+                                                data-url="{% url 'main:block-user' hid=user.get_hashid %}"><svg
+                                                    width="1em" height="1em" viewBox="0 0 16 16"
+                                                    class="bi mr-1 bi-dash-circle" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                        d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M3.5 8a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.5-.5z" />
+                                                </svg>Block</button>
+                                            <button class="small dropdown-item show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=u&hid={{ user.get_hashid }}"><svg
+                                                    width="1em" height="1em" viewBox="0 0 16 16" class="bi mr-1 bi-flag"
+                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                        d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                                                </svg>Report</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white sticky-top my-2 p-2 mb-3 profile-header-main-links d-flex justify-content-between"
+                        style="top:54px !important;overflow-y: auto !important;">
+                        <div class="options-user-r">
+                            <div class="d-flex justify-content-start">
+                                <a class="rounded-0 p-2 text-dark pro-link-goto{{ pro_active }}"
+                                    href="{% url 'main:get_user' user.username %}">
+                                        <span class="pro-link-goto-text">Profile</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text  pro-link-goto{{ friends_active }}"
+                                    href="{% url 'main:get_user_friends' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Friends</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ courses_active }}"
+                                    href="{% url 'main:get_user_courses' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Courses</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ posts_active }}"
+                                    href="{% url 'main:get_user_posts' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Posts</span>
+                                </a>
+                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ blogs_active }}"
+                                    href="{% url 'main:get_user_blogs' %}?id={{ user.get_hashid }}">
+                                    <span class="pro-link-goto-text">Blogs</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% block profilecontent %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-profile">
+        <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-report">
+        <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+          <div class="modal-content"></div>
+        </div>
+      </div>
+    <style>.options-user-r a{ text-decoration: none !important;}</style>
+    <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+    <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+    <script src="{% static 'initial/initial.js' %}"></script>
+    <script src="{% static 'js/post/postall.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/profiles/main.js' %}"></script>
+    <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+</body>
+</html>

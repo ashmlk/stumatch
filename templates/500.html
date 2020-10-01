@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}500 - JoinCampus{% endblock %}
+{% block content %}
+<h2>500. There is a an issue with your request.</h2>
+<p>Return to <a href="{% url 'home:home' %}">home</a>, or <a href="{% url 'main:contact-us' %}">get in touch</a> with us and help us resolve the issue.</p>
+{% endblock %}

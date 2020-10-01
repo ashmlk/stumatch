@@ -1,0 +1,79 @@
+{% extends 'main/settings/privacy_security.html' %}
+{% block securitycontent %}
+<div class="delete-block p-2">
+    {% if messages %}
+    <div>
+        <div class="boc-s">
+            {% for message in messages %}
+            {% if message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible fade show my-1" role="alert">
+            {% else %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show my-1" role="alert"></div>
+            {% endif %}
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="d-flex justify-content-center">
+        <form method="POST" action="{% url 'main:account-deletion' %}">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Delete your account
+                    </h5>
+                    <div class="explanation">
+                        <div class="title-all mb-2">
+                            <div class="lists-all">
+                                <p>Deleting your account is permanent and cannot be reversed, all your data will be removed from our database and you cannot retrieve them at any other point.</p>
+                                <ul>
+                                    <li>All your posts, their likes ad comments, and your comments and likes on other posts will be deleted.</li>
+                                    <li>All your blog posts will be deleted along with its replies and likes. Your replies on other blogs will also be removed.</li>
+                                    <li>All your courses, and review will be completely removed. You will be removed from list of enrolled students as well.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="warning all">
+                            <div class="alert alert-warning" role="alert">
+                                <p>
+                                    Before deleting your account make sure you understand all the above points. This action is permanent and we will not be able to retrieve any of your data.
+                                </p>
+                                <p>
+                                    We will not hold any of your data after you delete your account in order to respect your privacy. All your data will be immediately remove from out database upon your request.
+                                </p>
+                            </div> 
+                        </div>
+                    </div>
+                          
+                </div>
+                <div class="form-input p-2 px-4">
+                    <div class="exp">
+                        <h6>Confirm your password to remove your account</h6>
+                    </div>
+                    <div>
+                        <form method="POST" action="{% url 'main:account-deletion' %}">
+                            <div class="form-holder">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-2">
+                                            {{ form }}
+                                        </div>
+                                        <div class="button">
+                                            <button type="submit" class="float-right btn btn-danger btn-sm" style="border-radius: 20px;">Delete Account</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

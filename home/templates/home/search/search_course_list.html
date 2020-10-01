@@ -1,0 +1,77 @@
+{% load static %}
+{% load ibuilder %}
+<div class="infinite-container">
+    {% for course in courses %}
+    {% bg_rand as bgrnd %}
+    <div class="infinite-item mb-2">
+        <div class="bg-white rounded shadow-sm border">
+            <div class="mnpglk c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};" data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                <div class="d-flex justify-content-between pt-4 p-1">
+                    <div>
+                        <h5 class="text-white display-4" style="font-weight:500; font-size: 1.6rem;">
+                            {{ course.course_code }}
+                        </h5>
+                    </div>
+                    <div class="mr-3" style="margin-top: -15px !important;">
+                        <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image" style="height:65px;width: 65px;">
+                    </div> 
+                </div>
+            </div> 
+            <div class="col-sm mb-2">
+                <div class="pt-2" style="min-height: 100px !important;">
+                    <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                        <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                    </a>
+                    <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                        <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                    </a>
+                    {% if course.complexity_btn_ins == "None" %}
+                    <div class="c_dis mb-1 btn btn-outline-secondary">
+                        <span>Difficulty With this Professor:</span><span
+                            class="ml-1">No ratings yet</span>
+                    </div>
+                    {% else %}
+                    <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                        <span>Difficulty With this Professor:</span><span
+                            class="ml-1">{{ course.average_complexity_ins }}</span>
+                    </div>
+                    {% endif %}
+                    {% if course.complexity_btn == "None" %}
+                    <div class="c_dis mb-1 btn btn-outline-secondary">
+                        <span>Course Overall Difficulty:</span><span
+                            class="ml-1">No ratings yet</span>
+                    </div>
+                    {% else %}
+                    <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                        <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                    </div>
+                    {% endif %}
+                    <hr>
+                    <div class="c_dis mb-1" >
+                        <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
+                    </div>
+                    <div class="c_dis mb-1">
+                        <span>Total Students With Professor {{ course.course_instructor|capfirst }}:</span><span class="ml-1">{{ course.get_user_count_ins }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No courses found.</h5>
+    </div>
+    {% endfor %}
+</div>
+
+{% if courses.has_next %}
+<a class="infinite-more-link" href="?q={{ q }}&o=course&page={{ courses.next_page_number }}"></a>
+{% endif %}
+
+<div class="mt-2 loading" style="display: none;">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>

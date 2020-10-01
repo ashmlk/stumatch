@@ -1,0 +1,41 @@
+{% extends 'main/settings/privacy_security.html' %}
+{% block securitycontent %}
+<div class="mb-4 account-login-info">
+    <div class="mb-3 setting-menu-sub">
+        <h5>Last Login</h5>
+    </div>
+    <div class="mt-2 login-info">
+        <div class="pt-3 login-info-text">
+            <span>
+                Your last login date is:
+            </span>
+            <strong>
+                {{ last_login }}
+            </strong>
+        </div>
+    </div>
+</div>
+<hr style="margin-left: -24px;margin-right: -9px;">
+<div class="pt-2 mb-4 account-login-info">
+    <div class="mb-3 setting-menu-sub">
+        <h5>Date Joined</h5>
+    </div>
+    <div class="mt-2 login-info">
+        <div class="pt-3 login-info-text">
+            <span>
+                You signed up on:
+            </span>
+            <strong>
+                {{ date_joined }}
+            </strong>
+        </div>
+    </div>
+</div>
+<div class="info-user-help my-3">
+    <div class="user-help-text">
+        <p class="small text-muted">
+            These times are based on your machine's timezone. We record information in UTC format.
+        </p>
+    </div>
+</div>
+{% endblock %}

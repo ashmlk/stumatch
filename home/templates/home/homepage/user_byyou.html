@@ -1,0 +1,41 @@
+{% extends "home/homepage/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load ibuilder %}
+{% block title %}
+<title>By You - JoinCampus</title>
+{% endblock %}
+{% block content %}
+<div class="mt-3 mb-2 p-1 ml-1 ">
+  <div class="d-flex " id="_pol3">
+    <div class="btn flex-fill mr-1 menu-link menu-link{{ post_active }}">
+      <a  href="{% url 'home:users-posts' %}" style="text-decoration: none;">
+          <span class="h6 text-center">Post</span>
+      </a>
+    </div>
+    <div class="btn flex-fill mr-1 menu-link menu-link{{ blog_active }}">
+      <a  href="{% url 'home:users-blogs' %}" style="text-decoration: none;">
+          <span class="h6 text-center">Blog</span>
+      </a>
+    </div>
+  </div>
+</div>
+  <div>
+    {% if post_active %}
+    <div  id="post-list">
+        <div id="_np2u"></div>
+        {% include 'home/posts/home_post.html' with posts=posts %}
+    </div>
+    {% elif buzz_active %}
+    <div id="buzz-list">
+        <div id="_nb21" class="buzz-ctr"></div>
+        {% include 'home/buzz/buzz_list.html' with buzzes=buzzes %}
+    </div>
+    {% elif blog_active %}
+    <div id="blog-list">
+        {% include 'home/blog/blog_list.html' with blogs=blogs %}
+    </div>
+    {% endif %}
+  </div>
+<script src="{% static 'js/post/post.js' %}"></script>
+{% endblock %}

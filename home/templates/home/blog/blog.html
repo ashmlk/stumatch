@@ -1,0 +1,65 @@
+{% extends "home/homepage/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% block title %}
+<title>Blog - JoinCampus</title>
+{% endblock %}
+{% block content %}
+{% if is_tag %}
+<div class="rounded-0 ml-1 card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h4 class="card-title">#{{ tag.name }}</h4>
+      </div>
+      <div class="text-muted">
+        <span>{{ num_obj|num_format }} {{ s }}</span>
+      </div>
+    </div>
+    <div class="mt-1 related">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
+          <div style="margin-top: 0.2rem;">
+            <h6 class="text-muted small card-subtitle">Related:
+              <span class="related-tags">
+                {% for tag in related_tags %}
+                <span class="mr-1">
+                  <a href="{% url 'home:tag-blog' tag.slug %}"  class="text-dark" style="text-decoration: none;">#{{ tag.name }}</a>
+                  </span>
+                {% endfor %} 
+              </span>
+             </h6>
+          </div>
+        </div>
+        <div class="flw-tag-ctr" style="margin-top: -0.6rem;">
+          {% include 'main/tags/fav_blog.html' with tag=tag %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="mb-2">
+  <div class="card">
+    <div class="p-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <input type="text" readonly="readonly"
+          class="bg-transparent border-0 form-control bg-transparent input-no-border"
+          placeholder="Share your story!"/>
+        </div>
+        <div>
+          <a class="btn btn-sm btn-primary border-0" style="border-radius: 20px;" href="{% url 'home:blog-create' %}">Write a Blog</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div id="blog-list">
+  <div>
+    {% include 'home/blog/blog_list.html' with blogs=blogs %}
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% load crispy_forms_tags %}
+<form method="POST" data-url="{% url 'main:report-object' request.user.get_hashid %}?t={{ obj_type }}&hid={{ obj_id }}" class="report-form">
+    {% csrf_token %}
+    <div class="modal-header border-0 pl-0 pr-0 mb-0">
+        <h5 class="modal-title col-12 text-center">Report
+            <button type="button" class="close" style="margin-left: 10x; margin-right: -10px;" data-dismiss="modal"
+                aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button></h5>
+    </div>
+    <div class="modal-body">
+        {% if not user_valid %}
+        <p class="mx-1">{{ error_message }}</p>
+        {% else %}
+        <div class="report-box" id="rptbxfals">
+            <div class="title-all">
+                <div class="h5 font-weight-light border-bottom pb-1">
+                    <span>{{ message }}</span>
+                </div>
+                <div class="form-ctr">
+                    {{ form | crispy }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="modal-footer border-0">
+        <button type="submit" class="mx-1 btn btn-primary no-border no-outline text-center" style="border-radius: 20px;">Report</button>
+    </div>
+</form>
+<style>label[for="id_reason_0"]{font-size: 1.1rem;font-weight: 450;}</style>

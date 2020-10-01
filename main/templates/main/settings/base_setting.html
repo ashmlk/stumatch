@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <div id="#headerPlaceholder"></div>
+  <title>Settings - JoinCampus</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
+  <link rel="apple-touch-icon" sizes="57x57" href="{% static 'favicon_folder/apple-icon-57x57.png' %}">
+  <link rel="apple-touch-icon" sizes="60x60" href="{% static 'favicon_folder/apple-icon-60x60.png' %}">
+  <link rel="apple-touch-icon" sizes="72x72" href="{% static 'favicon_folder/apple-icon-72x72.png' %}">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'favicon_folder/apple-icon-76x76.png' %}">
+  <link rel="apple-touch-icon" sizes="114x114" href="{% static 'favicon_folder/apple-icon-114x114.png' %}">
+  <link rel="apple-touch-icon" sizes="120x120" href="{% static 'favicon_folder/apple-icon-120x120.png' %}">
+  <link rel="apple-touch-icon" sizes="144x144" href="{% static 'favicon_folder/apple-icon-144x144.png' %}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'favicon_folder/apple-icon-152x152.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-icon-180x180.png' %}">
+  <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'favicon_folder/android-icon-192x192.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon_folder/favicon-96x96.png' %}">
+  <link rel="manifest" href="{% static 'favicon_folder/manifest.json' %}">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="{% static 'favicon_folder/ms-icon-144x144.png' %}">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
+  <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'initial/initial.js' %}"></script>
+</head>
+<body class="pb-5" style="background-color: white !important;">
+  <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
+  <div class="wrapper">
+    <div class="container min-vh-100 pt-5 u_stctr">
+        <div class="mt-5 row">
+          <div class="p-2 mb-3 d-sm-none"style="width:100%;">
+            <div class="dropdown" >
+              <a class="w-100 btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Settings
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'main:settings-edit' %}">Account</a>
+                <a class="dropdown-item" href="{% url 'main:notifications-settings-all' %}">Notifications</a>
+                <a class="dropdown-item" href="{% url 'main:privacy-security' %}">Privacy and Security</a>
+                <a class="dropdown-item" href="{% url 'main:settings-blocked' %}">Blocking</a>
+                <a class="dropdown-item" href="{% url 'main:site-about' %}">About</a>
+              </div>
+            </div>
+          </div>
+            <div class="d-none d-sm-block col-sm-4 border-right">
+                <div class="link-setting all-link">
+                    <div class="title-setting-all mb-2">
+                        <h5 class="pl-4 ml-3 mb-3">
+                            Settings
+                        </h5>
+                    </div>
+                    <div class="link-to-action">
+                        <ul class="no-style" style="padding-left: 41px !important;">
+                            <li class="{{ account_active }} my-4">
+                                <a class="text-dark" href="{% url 'main:settings-edit' %}">
+                                    Account
+                                </a>
+                            </li>
+                            <li class="{{ notifcation_active }} my-y">
+                                <a class="text-dark" href="{% url 'main:notifications-settings-all' %}">
+                                    Notifications
+                                </a>
+                            </li>
+                            <li class="{{ privacy_active }} my-4">
+                                <a class="text-dark" href="{% url 'main:privacy-security' %}">
+                                    Privacy and Security
+                                </a>
+                            </li>
+                            <li class="{{ blocked_active }} my-4">
+                                <a class="text-dark" href="{% url 'main:settings-blocked' %}">
+                                    Blocking
+                                </a>
+                            </li>
+                            <li class="my-4">
+                                <a class="text-dark" href="{% url 'main:site-about' %}">
+                                    About
+                                </a>
+                            </li>
+                          </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-12 pl-4">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-profile">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <div id="footer-main-div">
+    {% include 'footer_main.html' %}
+  </div>
+  <script src="{% static 'js/settings.js' %}"></script>
+</body>
+</html>

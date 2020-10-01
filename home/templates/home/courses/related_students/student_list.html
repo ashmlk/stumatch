@@ -1,0 +1,56 @@
+{% extends "home/courses/related_students/main_menu.html" %}
+{% load crispy_forms_tags %}
+{% load ibuilder %}
+{% load static %}
+{% block studentlist %}
+<div class="infinite-container users-list">
+    {% for user in students %}
+    <div class="infinite-item mb-2 card">
+        <div class="my-2">
+            <div class="d-flex justify-content-between m-2">
+                <div class="d-flex">
+                    <div>
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
+                            src="{{ user.image.url }}" >
+                    </div>
+                    <div class="ml-1">
+                        <div>
+                            <span class="mx-0 text-dark font-weight-bolder">{{ user.first_name }}
+                                {{ user.last_name}}</span>
+                        </div>
+                        <div style="margin-top: -0.35rem;">
+                            <a class="small" style="color: rgb(1,119,200)" href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
+                            <span class="mx-0 small text-muted">·</span>
+                            <span class="text-muted small">{{ user.university|capfirst }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-status-ctr">
+                   
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    {% if needs_puni_edit or needs_uni_edit %}
+    {% else %}
+    <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No users found.</h5>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% if students.has_next %}
+<a class="infinite-more-link" href="?sl={{ sl }}&page={{ students.next_page_number }}"></a>
+{% endif %}
+
+<div class="mt-2 loading" style="display: none;">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

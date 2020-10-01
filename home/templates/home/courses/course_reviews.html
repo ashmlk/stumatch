@@ -1,0 +1,152 @@
+{% load static %}
+{% load ibuilder %}
+{% if all == 1 %}
+<div class="dropdown">
+    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Sort By
+    </button>
+    <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins">Instructor</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Course Year</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins_cy">Year and Instructor</a>
+    </div>
+</div>
+<div id="new-review-a"></div>
+{% elif all != 1 %}
+<div class="dropdown">
+    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Sort By
+    </button>
+    <div class="dropdown-menu mt-1" aria-labelledby="d_li">
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=cy">Course Year</a>
+    </div>
+</div>
+<div id="new-review-s"></div>
+{% endif %}
+{% if all == 1 %}
+<div class="infinite-container" id="a">
+    <div id="dvmc">
+        {% else %}
+        <div class="infinite-container" id="s">
+            <div id="dvmcs">
+                {% endif %}
+                {% for review in reviews %}
+                {% with rw_crs_prof=review.get_course_prof rw_sm=review.get_course_sm rw_crs_yr=review.get_course_yr %}
+                {% div_class as veid %}
+                <div class="infinite-item cntr row bg-white mt-1" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}"
+                    data-year="{{ rw_crs_yr }}" data-ins="{{ rw_crs_prof }}">
+                    <div class="col-sm">
+                        <div class="card">
+                            {% if all == 1 %}
+                            <div class="border-bottom ">
+                                <span class="small m-1 font-weight-bolder">Professor {{ review.course.course_instructor_fn|capfirst }} {{ review.course.course_instructor|capfirst }},
+                                    {{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
+                            </div>
+                            {% else %}
+                            <div class="border-bottom ">
+                                <span class="small m-1 text-muted">{{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <div class="c-n-img p-1 mr-0">
+                                        <img class="img-create-post rounded-circle"
+                                            style="height: 2.5rem;width: 2.5rem;" src="{{ review.author.image.url }}"
+                                            alt="Profile image">
+                                    </div>
+                                    <div>
+                                        <div class="d-flex mt-1 flex-column">
+                                            <div class="u_n d-fle">
+                                                <div>
+                                                    <span class="ml-1"
+                                                        style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="u_un c_da text-muted font-size-smaller"
+                                                style="margin-top: -2px;">
+                                                <div class="ml-1" style="font-size: 0.8rem;">
+                                                    <a class="text-muted"
+                                                        href="{{ review.author.get_absolute_url }}">@{{ review.author.get_username }}</a>
+                                                    <span>·</span>
+                                                    <span>{{ review.get_created_on }}</span>
+                                                    <span class="rounded p-1 small"
+                                                        style="background-color: rgb(209, 209, 209);"><strong
+                                                            style="color: black;">{{ review.get_interest }}</strong></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                                            {% if review.author == request.user %}
+                                            <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}"
+                                                data-url="{% url 'home:review-delete' hidc=course.get_hashid hid=review.get_hashid %}">
+                                                <svg class="mr-1" width="1em" height="1em" viewBox="0 0 16 16"
+                                                    class="bi bi-trash" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                                </svg>Delete</button>
+                                            {% endif %}
+                                            {% if review.author != request.user %}
+                                            <button class="small dropdown-item show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=cr&hid={{ review.get_hashid }}"><svg class="bi mr-1 bi-flag" width="1em" height="1em"
+                                                viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
+                                                <path fill-rule="evenodd"
+                                                  d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                                              </svg>Report</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body m-0">
+                                <div class="content display-4" style="font-size: 1.2rem;">
+                                    {{ review.body }}
+                                </div>
+
+                            </div>
+                            <div class="m-1 mt-2 review-likes-container">
+                                {% include 'home/courses/review_like.html' with review=review %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div class="no-review-box">
+                    <div class="d-flex justify-content-center pt-2 my-2 rounded border ">
+                        <div>
+                            <h6>No review to show</h6>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% if reviews.has_next %}
+        {% if link_get %}
+        <a class="infinite-more-link" href="?rw=all&page={{ reviews.next_page_number }}"></a>
+        {% else %}
+        <a class="infinite-more-link" href="?page={{ reviews.next_page_number }}"></a>
+        {% endif %}
+        {% endif %}
+        <div class="mt-2 loading" style="display: none;">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>

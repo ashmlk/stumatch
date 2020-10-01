@@ -1,0 +1,41 @@
+<form method="POST" data-url="{% url 'main:search-settings' %}" class="mt-3 search-securtiy-form">
+    {% csrf_token %}
+    {% if request.user.is_authenticated %}
+      {% if request.user.save_searches %}
+      <div class="mb-2 offview checkbox-privacy">
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="onoffinput-check" id="oninput-check" value="searchon" checked>
+              <label class="ml-2 form-check-label" for="oninput-check">
+                On
+              </label>
+            </div>
+      </div>
+      <div class="onview checkbox-privacy">
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="onoffinput-check" id="offinput-check1" value="searchoff">
+              <label class="ml-2 form-check-label" for="offinput-check1">
+                Off
+              </label>
+            </div>
+      </div>
+      {% elif not request.user.save_searches %}
+      <div class="mb-2 offview checkbox-privacy">
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="onoffinput-check" id="oninput-check" value="searchon">
+              <label class="ml-2 form-check-label" for="oninput-check">
+                On
+              </label>
+            </div>
+      </div>
+      <div class="onview checkbox-privacy">
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="onoffinput-check" id="offinput-check1" value="searchoff" checked>
+              <label class="ml-2 form-check-label" for="offinput-check1">
+                Off
+              </label>
+            </div>
+      </div>
+      {% endif %}
+    {% endif %}
+    <input type="hidden" name="hid" value="{{ user.get_hashid }}"/>
+</form>

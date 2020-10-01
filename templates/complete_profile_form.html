@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Complete Registration - JoinCampus{% endblock %}
+{% block content %}
+<div class="card card-signin my-auto">
+    <div class="card-body">
+        <div class="card-text text-muted">
+            <p>To help us provide you with the best experience please complete the form below:</p>
+        </div>
+      <form method="POST" action="{% url 'main:user_completesignup' %}" class="form-signin">
+        {% csrf_token %}
+        <div>
+            {{ form|crispy }}
+        </div>
+        <hr class="my-1">
+        <div class="button-all">
+            <div class="d-flex justify-content-end">
+                <div>
+                    <a href="{% url 'home:home' %}">Later</a>
+                    <button class="btn btn-sm btn-primary no-border no-outline" type="submit">Complete</button>
+                </div>
+            </div>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

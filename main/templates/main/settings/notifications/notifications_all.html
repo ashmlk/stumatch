@@ -1,0 +1,55 @@
+{% extends 'main/settings/privacy_security.html' %}
+{% block securitycontent %}
+<style>a .d-flex:hover{border-radius: 8px; background-color:rgb(207, 205, 205) !important;}.text-dark{border-radius: 7px;text-decoration: none !important;}</style>
+<div class="mb-3 pb-3  border-bottom account-privacy-info">
+    <div class="setting-menu-sub">
+        <h5>Pause All Notifications</h5>
+    </div>
+    <div class="privacy-type">
+        <div class="mb-2 description-ctr">
+            <p class="mb-2 small text-muted">
+                You can pause receiving all notifications here.
+            </p>
+        </div>
+        <div id="ns-form-ctr">
+            {% include 'main/settings/notifications/notifications_pause_all.html' %}
+        </div>
+    </div>
+</div>
+<a class="text-dark mb-1 account-privacy-info" href="{% url 'main:notifications-settings-post' %}">
+    <div class="d-flex p-2 pt-3  justify-content-between">
+        <div class="setting-menu-sub">
+            <h6>Posts</h6>
+        </div>
+        <div>
+            <svg width="1em" height="1em" style="margin-top:-5px !important;" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+    </div>
+</a>
+<a class="text-dark password-container" href="{% url 'main:notifications-settings-blog' %}">
+    <div class="d-flex p-2 pt-3 justify-content-between">
+        <div class="setting-menu-sub">
+            <h6>Blogs</h6>
+        </div>
+        <div>
+            <svg width="1em" height="1em" style="margin-top:-5px !important;" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+    </div>
+</a>
+<a class="text-dark password-container" href="{% url 'main:notifications-settings-friends' %}">
+    <div class="d-flex p-2 pt-3  justify-content-between">
+        <div class="setting-menu-sub">
+            <h6>Friend Requests</h6>
+        </div>
+        <div>
+            <svg width="1em" height="1em" style="margin-top:-5px !important;" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+    </div>
+</a>
+{% endblock %}

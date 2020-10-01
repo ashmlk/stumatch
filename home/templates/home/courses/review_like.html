@@ -1,0 +1,34 @@
+{% load static %}
+<form class="review-like-form"  method="POST">
+    {% csrf_token %}
+    {% if request.user in review.likes.all %}
+    <button class="p-1 btn border p-0 mr-1  btn-md  review-like-btn button-hide-outline" type="submit" 
+       data-url="{% url 'home:review-like' hid=review.get_hashid hidc=course.get_hashid  status='rmvlike' %}" style="border-color:rgb(43, 98, 153) !important;border-radius: 20px;">
+       <span style="color:  rgb(43, 98, 153);">
+            <span class="small mx-1"  >Helpful</span><span class=" mx-1 small">{{ review.likes.count }}</span>
+        </span>
+    </button>
+    <button class="p-1 btn border p-0 btn-md review-like-btn button-hide-outline" type="submit" 
+        data-id="{{ review.id }}" data-url="{% url 'home:review-like' hid=review.get_hashid  hidc=course.get_hashid  status='udislike' %}" style="border-radius: 20px;">
+        <span class="small mx-1 text-muted" >Unhelpful</span><span class=" mx-1 text-muted small">{{ review.dislikes.count }}</span></button>
+    {% elif request.user in review.dislikes.all %}
+    <button class="p-1 btn border p-0 mr-1 btn-md  review-like-btn  button-hide-outline" type="submit" 
+        data-url="{% url 'home:review-like' hid=review.get_hashid hidc=course.get_hashid  status='ulike' %}"style="border-radius: 20px;">
+        <span class="small mx-1 text-muted" >Helpful</span><span class=" mx-1 text-muted small">{{ review.likes.count }}</span></button>
+
+    <button class="p-1 btn border p-0 btn-md  review-like-btn  button-hide-outline" type="submit" 
+    data-url="{% url 'home:review-like' hid=review.get_hashid hidc=course.get_hashid  status='rmvdislike' %}" style="border-color: rgb(240, 78, 78) !important;border-radius: 20px;">
+        <span style="color:  rgb(240, 78, 78);">
+            <span class="small mx-1" >Unhelpful</span><span class=" mx-1 small">{{ review.dislikes.count }}</span>
+        </span>
+   </button>
+    {% else %}
+    <button class="p-1 btn small border  p-0 mr-1  btn-md  review-like-btn  button-hide-outline" type="submit" 
+         data-url="{% url 'home:review-like' hid=review.get_hashid hidc=course.get_hashid  status='like' %}" style="border-radius: 20px;">
+        <span class="small mx-1 text-muted" >Helpful</span><span class=" mx-1 text-muted small">{{ review.likes.count }}</span></button>
+        <!--style="color:  rgb(185, 186, 187);"-->
+    <button class="p-1 btn small border p-0 btn-md review-like-btn  button-hide-outline" type="submit" 
+        data-url="{% url 'home:review-like' hid=review.get_hashid hidc=course.get_hashid  status='dislike' %}" style="border-radius: 20px;">
+        <span class="small mx-1 text-muted" >Unhelpful</span><span class=" mx-1 text-muted small">{{ review.dislikes.count }}</span></button>
+    {% endif %}
+</form>

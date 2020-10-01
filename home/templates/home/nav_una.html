@@ -1,0 +1,40 @@
+{% load static %}
+<script src="{% static 'js/search.js' %}"></script>
+{% load notifications_tags %}
+<script src="{% static 'js/notify.js' %}" type="text/javascript"></script>
+{% register_notify_callbacks api_name='count' callbacks='fill_notification_list,fill_notification_badge' %}
+<link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
+<nav class="navbar navbar-expand-md main-top-nav pl-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
+  <a class="navbar-brand ml-1 mr-3" href="{% url 'main:user_login' %}">
+    <div class="d-none d-lg-block">
+      <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
+      <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}"
+        style="margin-left:-4px;margin-bottom:-7px;height: 2.7rem;">
+    </div>
+    <div class="d-lg-none">
+      <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
+    </div>
+
+  </a>
+  <button
+    class="mr-4 no-border no-outline my-auto my-md-auto btn-md border btn-circle rounded-circle text-dark ml-3 navbar-toggler"
+    type="button" data-toggle="collapse" data-target="#navbarMainHeader" aria-controls="navbarMainHeader"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <svg width="25" height="25" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd"
+        d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+    </svg>
+  </button>
+  <div class="collapse navbar-collapse mr-4" id="navbarMainHeader">
+    <ul class="float-right navbar-nav bg-white ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'main:user_login' %}" style="background-color: white !important;">Log In</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'main:signup' %}" style="background-color: white !important;">Sign Up</a>
+        </li>
+      </ul>
+  </div>
+</nav>

@@ -1,0 +1,22 @@
+{% load crispy_forms_tags %}
+{% if request.user == reply.author or request.use == blog.author %}
+<form method="POST" data-url="{% url 'home:blog-reply-delete' hid=reply.get_hashid guid_url=blog.guid_url %}" class="blog-reply-delete-form">
+	{% csrf_token %}
+		<div class="modal-header border-0 pl-0 pr-0 mb-0">
+		<h5 class="modal-title col-12 text-center" >Delete Reply
+		<button type="button" class="close"   style="margin-left: 10x; margin-right: -10px;"  data-dismiss="modal" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+		</button></h5>
+		</div>
+		<div class="modal-body text-center p-0">
+		<p class="mx-1">Are you sure you want to permanently delete this reply?</p>
+		</div>
+		<div class="modal-footer border-0">
+		<button type="submit" class="mx-1 btn btn-danger text-center" style="border-radius: 20px;">Delete</button>
+		</div>
+</form>
+{% else %}
+<div class="d-flex justify-content-enter">
+	<h5 class="m-1">There seems to be an error with your request</h5>
+</div>
+{% endif %}
