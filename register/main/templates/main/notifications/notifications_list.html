@@ -46,6 +46,9 @@
                             aria-expanded="false">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
+                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                            <button type="button" class="noti_delete small dropdown-item" data-url="{% url 'main:delete-notification' %}?notice_id={{ notice.id }}"><span class="text-danger">Delete</span></button>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center">
                         {% if not 'CON_CRRW' in notice.verb %}
@@ -161,6 +164,9 @@
                             aria-expanded="false">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
+                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                            <button type="button" class="noti_delete small dropdown-item" data-url="{% url 'main:delete-notification' %}?notice_id={{ notice.id }}"><span class="text-danger">Delete</span></button>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center">
                         {% if not 'CON_CRRW' in notice.verb %}

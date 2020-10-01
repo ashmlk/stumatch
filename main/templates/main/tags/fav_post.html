@@ -1,8 +1,0 @@
-<form class="fav-tag-form" method="POST">
-    {% csrf_token %}
-    {% if is_fav or tag in request.user.fav_post_tags %}
-    <button type="submit" class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-post-tag' tag.slug %}">Following</button>
-    {% else %}
-    <button type="submit" class="f-tag-btn btn btn-sm no-border btn-primary" data-url="{% url 'main:fav-post-tag' tag.slug %}">Follow</button>
-    {% endif %}
-</form>
