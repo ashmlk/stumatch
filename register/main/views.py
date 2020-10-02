@@ -118,17 +118,24 @@ def contact_us(request):
 
 @login_required
 def get_notifications(request):
-    
-    notifications_unread = request.user.notifications.unread()
-    notifications_read = request.user.notifications.read()
-    read_count = notifications_read.count()
-    
+     
+    notifications_list = request.user.notifications.order_by('-timestamp')
+
+    read_count = str(request.user.notifications.read().count()) + " new notifications " if request.user.notifications.read().count() > 1 else 'no new notifications'
     request.user.notifications.mark_all_as_read() # when user visits page mark all notifications as read
     
+    page = request.GET.get('page', 1)
+    paginator = Paginator(notifications_list, 15)
+    try:
+        notifications = paginator.page(page)
+    except PageNotAnInteger:
+        notifications = paginator.page(1)
+    except EmptyPage:
+        notifications = paginator.page(paginator.num_pages)
+    
     context = {
-        'notifications_read':notifications_read,
-        'notifications_unread':notifications_unread,
-        'read_count':read_count
+        'notifications':notifications,
+        'read_count':read_count,
         }
     
     return render(request, 'main/notifications/notifications_list.html', context)
@@ -954,19 +961,33 @@ def accept_reject_friend_request(request,hid, s):
         elif action == 1:   
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+                try:
+                    message = "CON_FRRE" + "has sent you a friend request"
+                    request.user.notifications.get(actor=other_user,recipient=user,verb=message,target=fr).delete()
+                except Exception as e:
+                    print(e.__class__)
                 fr.cancel()
-                # remove notification here
         elif action == 2:
             if Block.objects.is_blocked(user, other_user):
                 Block.objects.remove_block(user,other_user)
         elif action == 3:
             if FriendshipRequest.objects.filter(from_user=user,to_user=other_user).exists():
                 fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+                try:
+                    message = "CON_FRRE" + "has sent you a friend request"
+                    request.user.notifications.get(actor=user,recipient=other_user,verb=message,target=fr).delete()
+                except Exception as e:
+                    print(e.__class__)
                 fr.cancel()
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+                try:
+                    message = "CON_FRRE" + "has sent you a friend request"
+                    request.user.notifications.get(actor=other_user,recipient=user,verb=message,target=fr).delete()
+                except Exception as e:
+                    print(e.__class__)
                 fr.cancel()
-                # remove notification here - check for user and other_user
+                
             is_friend=False
             
         friends_list = Friend.objects.friends(request.user)

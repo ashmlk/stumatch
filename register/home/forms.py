@@ -12,7 +12,7 @@ from main.forms import UNIVERSITY_CHOICES
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
-alphanumeric_s = RegexValidator(r'^[0-9a-zA-Z ]+$', 'Only alphanumeric characters are allowed')
+alphanumeric_s = RegexValidator(r"'^[0-9a-zA-Z ]+$'", 'Only alphanumeric characters are allowed')
 alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
 
 def year_choices():

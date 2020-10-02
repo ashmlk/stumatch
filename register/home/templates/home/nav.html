@@ -102,7 +102,7 @@
   <div class="d-flex align-items-center d-md-none">
     <div>
       {% live_notify_badge %}
-      <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+      <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
         data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
         <svg style="transform: rotate(30deg)" width="22" height="22" viewBox="0 0 16 16" class="bi bi-bell-fill"
           fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -205,7 +205,7 @@
         <div class="d-flex align-items-center">
           <div>
             {% live_notify_badge %}
-            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+            <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
               data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
               <svg style="transform: rotate(30deg)" width="22" height="22" viewBox="0 0 16 16" class="bi bi-bell-fill"
                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">

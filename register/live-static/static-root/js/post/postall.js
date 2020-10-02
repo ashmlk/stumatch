@@ -367,7 +367,6 @@ $(document).ready(function (e) {
         });
     });
 })
-
 $(document).ready(function (e) {
 	var btn;
 	$('#blog-list').on("click",".show-form-delete", function (e) {
@@ -416,7 +415,6 @@ $(document).ready(function (e) {
 		window.location = $(this).attr('data-url');
 		return false;
 	})
-	
 	$(document).on("click", ".blog_likeBtn", function (e) {
 		var btn = $(this)
 		e.preventDefault();
@@ -434,7 +432,6 @@ $(document).ready(function (e) {
 			},
 		});
 	});
-
 	$(document).on("click", ".blogreply_likeBtn", function (e) {
 	var btn = $(this)
 	e.preventDefault();
@@ -455,7 +452,6 @@ $(document).ready(function (e) {
 
 	$(document).on("submit",'.blog-reply-form', function (e) {		
 		e.preventDefault();
-		e.stopPropagation();
 		e.stopImmediatePropagation();
 		var form = $(this).serialize();
 		$.ajax({
