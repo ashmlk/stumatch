@@ -598,7 +598,7 @@ def course_add_form_get_obj(request):
     
     if obj != None and obj1 == 'instructor': #have the code and want the instructor
         instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
-        .annotate(trigram=TrigramSimilarity('course_instructor', obj_text),  trigram_fn=TrigramSimilarity('course_course_instructor_fn', obj ), trigram_course=TrigramSimilarity('course_code', obj ))\
+        .annotate(trigram=TrigramSimilarity('course_instructor', obj_text),  trigram_fn=TrigramSimilarity('course_instructor_fn', obj ), trigram_course=TrigramSimilarity('course_code', obj ))\
         .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.15) | Q(trigram_fn__gte=0.5), Q(trigram_course__gte=0.3))\
         .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
         
@@ -768,14 +768,14 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         reviews_list = course.get_reviews(order=sb)
 
     if o == 'all':
-        review_a='active'
+        review_a='-active'
         review_s=''
         aria_rea='true'
         aria_res='false'
         link_get=True
     else:
         review_a=''
-        review_s='active'
+        review_s='-active'
         link_get=False
         aria_res='true'
         aria_rea='false'

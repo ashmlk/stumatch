@@ -11,9 +11,9 @@ from main.forms import MySelect
 from main.forms import UNIVERSITY_CHOICES
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
-alphanumeric = RegexValidator(r'^[0-9a-zA-Z]+$', 'Only alphanumeric characters are allowed( No spaces ).')
-alphanumeric_s = RegexValidator(r"'^[0-9a-zA-Z ]+$'", 'Only alphanumeric characters are allowed')
-alphabetical = RegexValidator(r'^[a-zA-Z ]+$', 'Only alphabetical characters are allowed.')
+alphanumeric = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'a-zÀ-ÿ])+$", 'Only alphanumeric characters are allowed( No spaces ).')
+alphanumeric_s = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'0-9a-zÀ-ÿ ])+$", 'Only alphanumeric characters are allowed')
+alphabetical = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'a-zÀ-ÿ])+$", 'Only alphabetical characters are allowed.')
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
@@ -95,15 +95,16 @@ class ReviewForm(forms.ModelForm):
                 'placeholder':'Write a review and let others know about your experience!',
                 'rows': 2 ,
                 'cols': 80}))
+    
     def __init__(self, *args, **kwargs):
         super(ReviewForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
-            
+        self.fields['review_interest'].widget.attrs['class'] = 'form-control-sm'
     class Meta:
         model = Review
         labels = {
-            "review_interest": "Rate",
+            "review_interest": "",
         }
         fields = ('body','review_interest')
     

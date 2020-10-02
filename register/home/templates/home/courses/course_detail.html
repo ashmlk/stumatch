@@ -176,18 +176,18 @@
         </form>
     </div>
     <div id="reviews" class="p-0 mt-1">
-        <ul class="d-flex justify-content-start nav nav-tabs mb-3" id="nav-tab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center {{ review_a }}"
+        <ul class="d-flex justify-content-start nav mb-3">
+            <li class="nav-item m-1">
+                <a class="menu-link{{ review_a }} nav-link d-flex align-items-center " style="border-radius: 5px !important;"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
                     All Reviews for {{ course.course_code }}
-                    <span class="ml-2 badge badge-primary badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
+                    <span class="ml-2 badge badge-primary{{ review_a }}  badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
                 </a>
             </li>
-            <li class="nav-item ">
-                <a class="nav-link d-flex align-items-center {{ review_s }}"
+            <li class="nav-item m-1">
+                <a class="menu-link{{ review_s }} nav-link d-flex align-items-center "  style="border-radius: 5px !important;"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews for {{ course.course_instructor_fn }} {{ course.course_instructor }}
-                    <span class="ml-2  badge badge-primary badge-pill" id="crsspecrw">{{ reviews_count }}</span>
+                    <span class="ml-2 badge badge-primary{{ review_s }}  badge-pill" id="crsspecrw">{{ reviews_count }}</span>
                 </a>
             </li>
         </ul>
