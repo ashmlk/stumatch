@@ -32,8 +32,7 @@ def create_bio():
 
 def create_posts(n):
     fake=Faker()
-    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    idl = [u.id for u in Profile.objects.all()[:100]]
     for i in range(n):
        id = random.choice(idl)
        title = fake.sentence()
@@ -50,8 +49,7 @@ def trim_posts():
         
 def create_blogs(n):
     fake=Faker()
-    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    idl = [u.id for u in Profile.objects.all()[:100]]
     for i in range(n):
        id = random.choice(idl)
        title = fake.sentence(nb_words=3)
@@ -62,17 +60,6 @@ def create_blogs(n):
        blog = Blog.objects.create(title=title, content=pr, author=Profile.objects.get(id=id))
        blog.save()
 
-def create_buzz(n):
-    fake=Faker()
-    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
-    for i in range(n):
-       id = random.choice(idl)
-       nickname=fake.word()
-       title = fake.sentence(nb_words=3)
-       content = fake.sentence(nb_words=10)
-       post = Buzz.objects.create(title=title, nickname=nickname, content=content, author=Profile.objects.get(id=id))
-       post.save()
        
 def add_tags_post():
     tags = ["love","instagood","photooftheday","fashion","beautiful","happy","cute","tbt","apple","like4like","followme","summer","girl","fun","travel","family","nature","smile","travel","nofilter","photography","smile","food","amazing","me"]
@@ -100,10 +87,9 @@ def add_tags_blog():
         p.tags.add(random.choice(tags))
         
 def add_rand_likes():
-    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    idl = [u.id for u in Profile.objects.all()[:100]]
     for p in Post.objects.all():
-        c = random.randint(7,36)
+        c = random.randint(10,90)
         ids = random.sample(idl,c)
         for i in ids:
             u = Profile.objects.get(id=i)
@@ -119,14 +105,14 @@ def update_sv():
     return "Success"
 
 def create_friends():
-    user = Profile.objects.get(username="squishy")
-    idl = [31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
+    user = Profile.objects.get(username="arshia")
+    idl =[u.id for u in Profile.objects.all()[:43]]
     for i in idl:
         other_user = Profile.objects.get(pk=i)
-        Friend.objects.add_friend(user,other_user,message='Hi! I would like to add you')
-        fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
-        fr.accept()
+        if other_user != user and not Friend.objects.are_friends(user, other_user):
+            Friend.objects.add_friend(user,other_user,message='Hi! I would like to add you')
+            fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+            fr.accept()
     return "success"
 
 def create_mutual():
@@ -162,9 +148,7 @@ def set_program():
 
 def create_comments():
     fake=Faker()
-    idl = [2,3, 4, 13 ,14, 15, 16, 17 ,18 ,19, 1 ,5, 6 ,7, 8 ,9 ,10 ,11 ,12 ,20 ,21 ,23 ,24 ,25 ,26 ,27, 28 ,29 ,30 ,31 ,32 ,33, 34 ,35, 36 ,37, 38, 39 ,40, 41, 42 ,43 ,44 ,45, 46, 47, 48 ,49, 50, 51, 52 ,53, 54, 55, 56, 57, 58, 59, 60 ,61 ,62, 63 ,\
-        64 ,65, 66, 67 ,68, 69, 70, 71 ,72]
-    
+    idl = [u.id for u in Profile.objects.all()[:100]]
     time_threshold = timezone.now() - datetime.timedelta(days=5)
     
     for p in Post.objects.filter(last_edited__gte=time_threshold):
@@ -238,8 +222,11 @@ def add_courses():
     
     cc = Course.objects.all().count()
     
+    ids = [c.id for c in  Course.objects.all()]
+    
     for p in Profile.objects.all():
-        random_id = random.sample(range(180,320),20) 
+        
+        random_id = random.sample(ids,20) 
         for i in random_id:
             c = Course.objects.get(id=i)
             p.courses.add(c)

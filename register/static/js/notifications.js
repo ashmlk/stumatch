@@ -60,6 +60,7 @@ $(document).ready(function () {
           success: function(data) {
             if(data.single_notification_delete){
               $(btn).closest('li').remove();
+              $('.nreadc').html(data.read_count);
             }
           }
       });

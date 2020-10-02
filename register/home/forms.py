@@ -11,9 +11,9 @@ from main.forms import MySelect
 from main.forms import UNIVERSITY_CHOICES
 
 alphanumeric_v2 = RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$', 'You may only use alphanumeric characters and/or dots (Consecutive dots are not allowed)')
-alphanumeric = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'a-zÀ-ÿ])+$", 'Only alphanumeric characters are allowed( No spaces ).')
-alphanumeric_s = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'0-9a-zÀ-ÿ ])+$", 'Only alphanumeric characters are allowed')
-alphabetical = RegexValidator(r"(?i)^(?:(?![×Þ÷þø])[-'a-zÀ-ÿ])+$", 'Only alphabetical characters are allowed.')
+alphanumeric = RegexValidator(r"(?i)^(?:(?![×Þ÷ßþø])[-'a-zÀ-ÿ])+$", 'Only alphanumeric characters are allowed( No spaces ).')
+alphanumeric_s = RegexValidator(r"(?i)^(?:(?![×Þ÷ßþø])[-'0-9a-zÀ-ÿ ])+$", 'Only alphanumeric characters are allowed')
+alphabetical = RegexValidator(r"(?i)^(?:(?![×Þ÷ßþø])[-'a-zÀ-ÿ])+$", 'Only alphabetical characters are allowed.')
 
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]

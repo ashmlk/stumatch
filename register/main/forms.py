@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from django.utils import timezone
 
 username_regex =  RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9._ ]+$', 'You may only use alphanumeric characters and/or dots and hyphen (Consecutive dots are not allowed)')
-alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
+alphanumeric = RegexValidator(r"^(?:[^\W_]|[ '-])+$", 'Only alphanumeric characters are allowed.')
 
 UNIVERSITY_CHOICES = (
 		('University',

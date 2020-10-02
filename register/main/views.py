@@ -121,7 +121,8 @@ def get_notifications(request):
      
     notifications_list = request.user.notifications.order_by('-timestamp')
 
-    read_count = str(request.user.notifications.read().count()) + " new notifications " if request.user.notifications.read().count() > 1 else 'no new notifications'
+    read_count = str(request.user.notifications.unread().count()) + " new notifications " if request.user.notifications.read().count() > 1 else 'no new notifications'
+    
     request.user.notifications.mark_all_as_read() # when user visits page mark all notifications as read
     
     page = request.GET.get('page', 1)
@@ -148,6 +149,7 @@ def delete_notification(request):
     notice_id = request.GET.get("notice_id", None)
     if notice_id: # if notice_id exists means one notification is being updated
         request.user.notifications.get(id=notice_id).delete()
+        data['read_count'] =  str(request.user.notifications.unread().count()) + " new notifications " if request.user.notifications.read().count() > 1 else 'no new notifications'
         data['single_notification_delete'] = True
         return JsonResponse(data)
     else: # if notice_id does not exists we are marking all user notifications as read

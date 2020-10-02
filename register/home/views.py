@@ -36,6 +36,7 @@ import json
 from home.algo import get_uni_info 
 from itertools import chain
 from home.templatetags.ibuilder import num_format
+from django.contrib.admin.options import get_content_type_for_model
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -400,6 +401,13 @@ def post_like(request,guid_url):
     if request.method == 'POST':   
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
+            try:
+                message = "CON_POST" + " liked your post."
+                request.user.notifications.get(actor_content_type=get_content_type_for_model(user),actor_object_id=user.id,\
+                     recipient=post.author, verb=message, target_content_type=get_content_type_for_model(post), target_object_id=post.id).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("Error in removing notification for post like")
         else:
             post.likes.add(user)
             if user != post.author:

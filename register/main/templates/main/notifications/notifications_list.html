@@ -4,14 +4,25 @@
 {% block content %}
 {% live_notify_list list_class="notifications-unread-list-ul" %}
 <div class="notifications-list-container p-1">
-    <div class="border-bottom mb-3 d-flex justify-content-between">
+    <div class="border-bottom mb-3">
         <div>
-            <div class="mb-2">
-                <h5>Notifications</h5>
+            <div class="d-flex justify-content-between">
+                <div class="mb-2">
+                    <h5>Notifications</h5>
+                </div>
+                <div class="dropdown float-right">
+                    <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                        <a class="small dropdown-item" href="{% url 'main:delete-notification' %}"><span class="text-danger">Delete All Notifications</span></a>
+                    </div>
+                </div>
             </div>
             <div class="notifications-info-all">
                 <div class="notificaitons-count-all">
-                    <span class="small text-muted">You have <strong>{{ read_count }}</strong>.
+                    <span class="small text-muted">You have <strong id="nreadc">{{ read_count }}</strong>.
                     </span>
                 </div>
             </div>
@@ -19,15 +30,6 @@
     </div>
     {% if notifications %}
     <div class="mb-2 infinite-container notifications">
-        <div class="dropdown float-right">
-            <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-                <i class="fas fa-ellipsis-h"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
-                <a class="small dropdown-item" href="{% url 'main:delete-notification' %}"><span class="text-danger">Delete All Notifications</span></a>
-            </div>
-        </div>
         <div class="infinite-container notifications-list">
             <ul class="list-group flush notifications-list-ul">
                 {% for notice in notifications %}
@@ -67,38 +69,40 @@
                     <div class="mt-1" style="font-size: 0.9rem;">
                         {% if 'CON_POST' in notice.verb %}
                             {% if notice.target %}
-                            <a class="card-link"
-                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <a class="card-link small"
+                                href="{{ notice.target.author.get_absolute_url }}">{{ notice.target.author.get_full_name }}</a>
                             <span>
                                 ·
                             </span>
                             {% endif %}
-                            <a class="text-dark"
-                                href="{% url 'home:post-detail' notice.target.guid_url  %}"><strong>{{ notice.target.title|capfirst }}</strong>
+                            <a class="text-muted small"
+                                href="{% url 'home:post-detail' notice.target.guid_url  %}">{{ notice.target.title|capfirst }}
                             </a>
                             <span>
                                 ·
                             </span>
-                            <span>
+                            <span class="small">
                                 {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             <p class="mt-1 text-muted">
+                                {% if notice.description %}
                                 {{ notice.description }}
+                                {% endif %}
                             </p>
                         {% elif 'CON_BLOG' in notice.verb %}
                             {% if notice.target %}
-                            <a class="card-link"
-                                href="{{ notice.target.author.get_absolute_url }}"><strong>{{ notice.target.author.get_full_name }}</strong></a>
+                            <a class="card-link small"
+                                href="{{ notice.target.author.get_absolute_url }}">{{ notice.target.author.get_full_name }}</a>
                             <span>
                                 ·
                             </span>
                             {% endif %}
-                            <a class="text-dark"
-                                href="{% url 'home:blog-detail' hid=notice.target.guid_url t=notice.target.slug  %}"><strong>{{ notice.target.title|capfirst }}</strong></a>
+                            <a class="text-muted small"
+                                href="{% url 'home:blog-detail' hid=notice.target.guid_url t=notice.target.slug  %}">{{ notice.target.title|capfirst }}</a>
                             <span>
                                 ·
                             </span>
-                            <span>
+                            <span class="small">
                                 {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
                             <p class="mt-1 text-muted">
