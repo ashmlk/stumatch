@@ -31,8 +31,9 @@
     </div>
 </div>
 <div>
-    <div class="bg-white rounded shadow-sm border">
-        <div class="c_code align-items-center" style="min-height: 4.9rem; background-color: {{ bgrnd }};">
+    <div class="bg-white shadow-sm border" 
+        style="overflow:hidden !important;border-top-left-radius: 20px !important;border-top-right-radius: 20px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+        <div class="c_code align-items-center" style="background-color: {{ bgrnd }} !important; opacity: 0.9 !important;">
             <div class="d-flex justify-content-between pt-4 p-1">
                 <div>
                     <h5 class="mt-1 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
@@ -47,44 +48,63 @@
         </div>
         <div class="col-sm mb-2">
             <div class="pt-2" style="min-height: 100px !important;">
-                <a class="c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                    <span class="text-dark">University:</span><span
-                        class="ml-1">{{ course.course_university|capfirst }}</span>
+                <a style="border-radius: 20px !important;" 
+                    class="text-left c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                    <span class="svg-icon ccs mr-1">
+                        <svg style="margin-top: -3px !important" width="1em" height="1em"
+                            viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                        </svg>
+                    </span>
+                    <span class="text-dark">University:</span>
+                    <span class="ml-1">{{ course.course_university|capfirst }}</span>
                 </a>
-                <a class="c_dis mb-1 course-goto btn btn-outline-primary "
+                <a style="border-radius: 20px !important;" class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
                     href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                    <span class="svg-icon ccs mr-1">
+                        <svg style="margin-top: -3px !important" width="1em" height="1em"
+                            viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                            <path fill-rule="evenodd"
+                                d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                        </svg>
+                    </span>
                     <span class="text-dark">Instructor:</span><span
                         class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </a>
                 {% if course.complexity_btn_ins == "None" %}
-                <div class="c_dis mb-1 btn btn-outline-secondary">
-                    <span>Difficulty With this Professor:</span><span
-                        class="ml-1">No ratings yet</span>
+                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
+                    <span>Difficulty with this professor:</span><span
+                        class="ml-1">No ratings</span>
                 </div>
                 {% else %}
-                <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
-                    <span>Difficulty With this Professor:</span><span
+                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                    <span>Difficulty with this professor:</span><span
                         class="ml-1">{{ course.average_complexity_ins }}</span>
                 </div>
                 {% endif %}
                 {% if course.complexity_btn == "None" %}
-                <div class="c_dis mb-1 btn btn-outline-secondary">
-                    <span>Course Overall Difficulty:</span><span
-                        class="ml-1">No ratings yet</span>
+                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
+                    <span>Course overall difficulty:</span><span
+                        class="ml-1">No ratings</span>
                 </div>
                 {% else %}
-                <div class="c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
-                    <span>Course Overall Difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                    <span>Course overall difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
                 </div>
                 {% endif %}
                 <hr>
                 <div class="c_dis mb-1" style="display: inline-block;">
-                    <span>Total Students:</span><span class="ml-1">{{ course.get_user_count }}</span>
+                    <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
                 </div>
                 </br>
                 <div class="c_dis mb-1" style="display: inline-block;">
                     <span>Total Students With Professor {{ course.course_instructor|capfirst }}:</span><span
-                        class="ml-1">{{ course.get_user_count_ins }}</span>
+                        class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
                 </div>
                 {% if taken %}
                 <div class="c_dis mb-1" style="display: inline-block;">
@@ -176,14 +196,14 @@
     </div>
     <div id="reviews" class="p-0 mt-1">
         <ul class="d-flex justify-content-start nav mb-3">
-            <li class="nav-item m-1">
+            <li class="nav-item border rounded m-1" style="border-radius: 8px !important;">
                 <a class="menu-link{{ review_a }} nav-link d-flex align-items-center " style="border-radius: 5px !important;"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
                     All Reviews for {{ course.course_code }}
                     <span class="ml-2 badge badge-primary{{ review_a }}  badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
                 </a>
             </li>
-            <li class="nav-item m-1">
+            <li class="nav-item  border rounded m-1" style="border-radius: 8px !important;">
                 <a class="menu-link{{ review_s }} nav-link d-flex align-items-center "  style="border-radius: 5px !important;"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews for {{ course.course_instructor_fn }} {{ course.course_instructor }}
                     <span class="ml-2 badge badge-primary{{ review_s }}  badge-pill" id="crsspecrw">{{ reviews_count }}</span>

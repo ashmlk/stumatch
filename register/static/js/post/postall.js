@@ -433,24 +433,23 @@ $(document).ready(function (e) {
 		});
 	});
 	$(document).on("click", ".blogreply_likeBtn", function (e) {
-	var btn = $(this)
-	e.preventDefault();
-	e.stopImmediatePropagation();
-	$.ajax({
-		type: "POST",
-		url: $(this).attr("data-url"),
-		dataType: 'json',
-		data: $(this).closest("form").serialize(),
-		success: function (data){
-			$(btn).closest(".blog-reply-like-section").html(data.reply_likes);
-		},
-		error: function(rs, e){
-			console.log(rs.responeText);
+		var btn = $(this)
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		$.ajax({
+			type: "POST",
+			url: $(this).attr("data-url"),
+			dataType: 'json',
+			data: $(this).closest("form").serialize(),
+			success: function (data){
+				$(btn).closest(".blog-reply-like-section").html(data.reply_likes);
 			},
+			error: function(rs, e){
+				console.log(rs.responeText);
+				},
+			});
 		});
-	});
-
-	$(document).on("submit",'.blog-reply-form', function (e) {		
+	$(document).on("submit", '.blog-reply-form', function (e) {		
 		e.preventDefault();
 		e.stopImmediatePropagation();
 		var form = $(this).serialize();
@@ -459,16 +458,16 @@ $(document).ready(function (e) {
 			url: $(this).attr("data-url"),
 			dataType: 'json',
 			data: form,
-			success: function (data){				
+			success: function (data){	
+				$(document).find('.blog-reply-count').html(data.reply_count);				
 				$(document).find('.blog-replies-list').prepend(data.new_reply);
-				$(document).find('.blog-reply-count').html(data.reply_count);	
 				$(document).find('#id_content').val('');	
 			},
 			error: function(rs, e){
 				console.log(rs.responeText);
 				},
 			});
-	});
+		});
 })
 
 $(document).on("click", ".etbm_btnall", function (e) {

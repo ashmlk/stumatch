@@ -147,6 +147,17 @@ class PostManager(models.Manager):
         sorted_post_ids = [p.id for p in sorted_post]
         
         return sorted_post_ids
+    
+    def get_top_for_user(self, user):
+ 
+        qs = user.post_set.all()
+        
+        qs_list = list(qs)
+        sorted_post = sorted(qs_list, key=lambda p: p.top(), reverse=True)
+        
+        sorted_post_ids = [p.id for p in sorted_post]
+        
+        return sorted_post_ids
         
     def get_trending_words(self):
         
@@ -852,7 +863,7 @@ class Course(models.Model):
         return (r_dic[self.average_complexity_ins()])
     
     def sem(self):      
-        r_dic = {0:"None",1:"Spring",2:"Summer",3:"Fall",4:"Winter",5:"Summer/Winter"}
+        r_dic = {0:"N/A",1:"Spring",2:"Summer",3:"Fall",4:"Winter",5:"Summer/Winter"}
         d = int(self.course_semester)
         return r_dic[d]
         

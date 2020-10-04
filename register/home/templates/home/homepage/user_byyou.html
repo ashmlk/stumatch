@@ -19,17 +19,35 @@
       </a>
     </div>
   </div>
+  <div class="dropdown ">
+    <button class="btn p-1 my-1 btn-light border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Sort By: {{ o|capfirst }}
+    </button>
+    {% if post_active %}
+    <div class="dropdown-menu mt-1" aria-labelledby="d_li">
+        <a class="small dropdown-item" href="{% url 'home:users-posts' %}?o=latest">Latest</a>
+        <a class="small dropdown-item" href="{% url 'home:users-posts' %}?o=oldest">Oldest</a>
+        <a class="small dropdown-item" href="{% url 'home:users-posts' %}?o=title">Title</a>
+        <a class="small dropdown-item" href="{% url 'home:users-posts' %}?o=likes">Most Likes</a>
+        <a class="small dropdown-item" href="{% url 'home:users-posts' %}?o=comments">Most Comments</a>
+    </div>
+    {% elif blog_active %}
+    <div class="dropdown-menu mt-1" aria-labelledby="d_li">
+      <a class="small dropdown-item" href="{% url 'home:users-blogs' %}?o=latest">Latest</a>
+      <a class="small dropdown-item" href="{% url 'home:users-blogs' %}?o=oldest">Oldest</a>
+      <a class="small dropdown-item" href="{% url 'home:users-blogs' %}?o=title">Title</a>
+      <a class="small dropdown-item" href="{% url 'home:users-blogs' %}?o=likes">Most Likes</a>
+      <a class="small dropdown-item" href="{% url 'home:users-blogs' %}?o=replies">Most Replies</a>
+  </div>
+    {% endif %}
+</div>
 </div>
   <div>
     {% if post_active %}
     <div  id="post-list">
         <div id="_np2u"></div>
         {% include 'home/posts/home_post.html' with posts=posts %}
-    </div>
-    {% elif buzz_active %}
-    <div id="buzz-list">
-        <div id="_nb21" class="buzz-ctr"></div>
-        {% include 'home/buzz/buzz_list.html' with buzzes=buzzes %}
     </div>
     {% elif blog_active %}
     <div id="blog-list">

@@ -7,7 +7,7 @@ class WwwRedirectMiddleware:
 
     def __call__(self, request):
         host = request.get_host().partition(':')[0]
-        if host == "joincampus.ca":
+        if host == "joincampus.ca" or host == "joincampus.herokuapp.com":
             return HttpResponsePermanentRedirect(
                 "https://www.joincampus.ca" + request.path
             )

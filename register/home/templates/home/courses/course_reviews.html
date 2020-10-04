@@ -2,12 +2,12 @@
 {% load ibuilder %}
 {% if all == 1 %}
 <div class="dropdown">
-    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+    <button class="btn p-1 mb-1 btn-light border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
-        Sort By
+        Sort By: {{ sortby|capfirst }}
     </button>
     <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
-        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Latest</a>
         <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins">Instructor</a>
         <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Course Year</a>
         <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=ins_cy">Year and Instructor</a>
@@ -16,12 +16,12 @@
 <div id="new-review-a"></div>
 {% elif all != 1 %}
 <div class="dropdown">
-    <button class="btn p-1 mb-1 border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+    <button class="btn p-1 mb-1 border btn-light btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
-        Sort By
+        Sort By: {{ sortby|capfirst }}
     </button>
     <div class="dropdown-menu mt-1" aria-labelledby="d_li">
-        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=latest">Newest</a>
+        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=latest">Latest</a>
         <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=cy">Course Year</a>
     </div>
 </div>

@@ -20,6 +20,7 @@ from django.contrib.auth import update_session_auth_hash
 from hashids import Hashids
 from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost, Profile
 from home.models import Post, Buzz, Blog, Review, Comment, BlogReply, BuzzReply
+from django.db.models import Q, F, Count, Avg, FloatField, Max, Min, Case, When
 from django.http import JsonResponse
 from taggit.models import Tag
 from friendship.models import Friend, Follow, Block, FriendshipRequest
@@ -1309,8 +1310,10 @@ def get_user(request,username):
         blnum = user.blog_set.count()
         cnum = user.courses.count()
         courses = user.courses.distinct('course_code','course_instructor')[:4]
-        posts = user.post_set.order_by('last_edited')[:4]
-        blogs = user.blog_set.order_by('last_edited')[:4]
+        post_ids = Post.objects.get_top_for_user(user=user)
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(post_ids)])
+        posts = Post.objects.select_related("author").filter(id__in=post_ids).order_by(-preserved)[:4]
+        blogs = user.blog_set.order_by('-last_edited')[:4]
         friends = Friend.objects.friends(user)
         num_friends = len(friends)
         context = {
@@ -1341,7 +1344,7 @@ def get_user(request,username):
         friends = Friend.objects.friends(user)[:6]
         num_friends = len(friends)
 
-        post_list = user.post_set.order_by('last_edited')
+        post_list = user.post_set.order_by('-last_edited')
         page = request.GET.get('page_posts', 1)
         paginator = Paginator(post_list, 4)
         try:
@@ -1351,7 +1354,7 @@ def get_user(request,username):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
         
-        blog_list = user.blog_set.order_by('last_edited')
+        blog_list = user.blog_set.order_by('-last_edited')
         page = request.GET.get('page_blogs', 1)
         paginator = Paginator(blog_list, 4)
         try:
@@ -1431,7 +1434,7 @@ def get_user(request,username):
         friends = Friend.objects.friends(user)[:6]
         num_friends = len(friends)
 
-        post_list = user.post_set.order_by('last_edited')
+        post_list = user.post_set.order_by('-last_edited')
         page = request.GET.get('page_posts', 1)
         paginator = Paginator(post_list, 4)
         try:
@@ -1441,7 +1444,7 @@ def get_user(request,username):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
         
-        blog_list = user.blog_set.order_by('last_edited')
+        blog_list = user.blog_set.order_by('-last_edited')
         page = request.GET.get('page_blogs', 1)
         paginator = Paginator(blog_list, 4)
         try:
@@ -1541,7 +1544,7 @@ def get_user_posts(request):
         
     if is_friend or user.public==True:
         
-        post_list = user.post_set.order_by('last_edited')
+        post_list = user.post_set.order_by('-last_edited')
         num_posts = post_list.count()
         
         page = request.GET.get('page', 1)

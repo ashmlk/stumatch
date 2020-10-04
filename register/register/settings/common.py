@@ -103,9 +103,9 @@ CKEDITOR_CONFIGS = {
 
 #CELERY CONFIG
 
-CELERY_BROKER_URL = os.getenv('REDISTOGO_URL', 'redis://127.0.0.1:6379')
+CELERY_BROKER_URL = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_BROKER_TRANSPORT = 'redis'
-CELERY_RESULT_BACKEND = os.getenv('REDISTOGO_URL', 'redis://127.0.0.1:6379')
+CELERY_RESULT_BACKEND = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -119,25 +119,25 @@ CELERY_BEAT_SCHEDULE = {
     },
     'update-top-posts': {
         'task':'home.tasks.get_top_posts',
-        'schedule': 4563.0,
+        'schedule': 3600.0,
     },
     'update-uni-posts': {
         'task':'home.tasks.uni_posts',
-        'schedule':5400.0,
+        'schedule':2700.0,
     },
     'update-trending-words-post': {
         'task':'home.tasks.get_trending_words_posts',
-        'schedule':2800.0,
+        'schedule':3000.0,
     },
     'update-trending-tags-post': {
         'task':'home.tasks.trending_tags_post',
-        'schedule':3600.0,
+        'schedule':2400.0,
     },  
 }
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
+        "BACKEND": "redis_cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -146,8 +146,6 @@ CACHES = {
         "KEY_PREFIX": "redis_one"
     }
 }
-
-# STREAM CONFIG
 
 CACHE_TTL = 60 * 15
 

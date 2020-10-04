@@ -50,8 +50,7 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 # main page that user see's the hope page
 @login_required
 def home(request):
-    
-    
+
     if len(request.user.university) < 1:
         request.session['no_university'] = True 
     
@@ -95,15 +94,60 @@ def home(request):
 @login_required
 def users_posts(request):
     
-    posts = request.user.post_set.order_by('-last_edited')
-    context = { 'posts':posts, 'post_active':'-active' }
+    order = request.GET.get('o','latest')
+    if order == 'latest':
+        posts_list = request.user.post_set.order_by('-last_edited')
+    elif order == 'oldest':
+        posts_list = request.user.post_set.order_by('last_edited')
+    elif order == 'title':
+        posts_list = request.user.post_set.order_by('title')
+    elif order == 'likes':
+        posts_list = request.user.post_set.annotate(like_count=Count('likes')).order_by('-like_count')
+    elif order == 'comments':
+         posts_list = request.user.post_set.annotate(comment_count=Count('comments')).order_by('-comment_count')
+    else:
+       posts_list = request.user.post_set.order_by('-last_edited')
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts_list, 10)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+        
+    
+    context = { 'posts':posts, 'post_active':'-active','o':order}
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
 def users_blogs(request):
     
-    blogs = request.user.blog_set.order_by('-last_edited')
-    context = {'blogs':blogs, 'blog_active':'-active' }
+    order = request.GET.get('o','latest')
+    if order == 'latest':
+        blogs_list = request.user.blog_set.order_by('-last_edited')
+    elif order == 'oldest':
+        blogs_list = request.user.blog_set.order_by('last_edited')
+    elif order == 'title':
+        blogs_list = request.user.blog_set.order_by('title')
+    elif order == 'likes':
+        blogs_list = request.user.blog_set.annotate(like_count=Count('likes')).order_by('-like_count')
+    elif order == 'replies':
+         blogs_list = request.user.blog_set.annotate(reply_count=Count('blog_replies')).order_by('-reply_count')
+    else:
+       blogs_list = request.user.blog_set.order_by('-last_edited')
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(blogs_list, 10)
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
+        
+    context = {'blogs':blogs, 'blog_active':'-active','o':order}
     return render(request, 'home/homepage/user_byyou.html', context)
 
 @login_required
@@ -115,9 +159,9 @@ def hot_posts(request):
     posts_list_ids = cache.get("hot_posts")
     blockers_id = request.session.get('blockers')
     
-    if post_list_ids:
+    if posts_list_ids:
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
-        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
     
     
     """ get hot words and tags related to posts form tags """
@@ -149,15 +193,15 @@ def hot_posts(request):
 @login_required
 def top_posts(request):
     
-    blockers_id = words = post_list_ids = posts_list = []
+    blockers_id = words = posts_list_ids = posts_list = []
     
     """ @param preserved keeps the order of the hot posts """
-    posts_list_ids = cache.get("hot_posts")
+    posts_list_ids = cache.get("top_posts")
     blockers_id = request.session.get('blockers')
     
-    if post_list_ids:
+    if posts_list_ids:
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
-        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(preserved)
+        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
     
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
@@ -401,13 +445,8 @@ def post_like(request,guid_url):
     if request.method == 'POST':   
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
-            try:
-                message = "CON_POST" + " liked your post."
-                request.user.notifications.get(actor_content_type=get_content_type_for_model(user),actor_object_id=user.id,\
-                     recipient=post.author, verb=message, target_content_type=get_content_type_for_model(post), target_object_id=post.id).delete()
-            except Exception as e:
-                print(e.__class__)
-                print("Error in removing notification for post like")
+            message = "CON_POST" + " liked your post."
+            notify.disconnect(sender=user, receiver=post.author, verb=message, target=post)
         else:
             post.likes.add(user)
             if user != post.author:
@@ -520,7 +559,7 @@ def course_list(request):
         courses = paginator.page(1)
     except EmptyPage:
          courses = paginator.page(paginator.num_pages)
-    context = { 'courses':courses }
+    context = { 'courses':courses,'yc':'text-primary','tt':': Your Courses' }
     return render(request,'home/courses/course_list.html',context)
 
 @login_required
@@ -587,6 +626,8 @@ def course_add(request):
             form.fields['course_university'].initial = request.user.university    
     context = {
         'form':form,
+        'ac':'text-primary',
+        'tt':': Add a Course'
     }
     return render(request,'home/courses/course_add.html', context)
 
@@ -763,11 +804,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
             course.course_reviews.add(review)
         data['reviews_count'] = course.reviews_count()
         data['reviews_all_count'] = course.reviews_all_count()
-        data['review'] = render_to_string('home/courses/new_review.html',{'review': review, 'course':course},request=request)
+        data['review'] = render_to_string('home/courses/new_review.html',{'review': review, 'course':course },request=request)
         return JsonResponse(data)
     else:
         form = ReviewForm
     
+    sortby = {'latest':'Latest', 'ins':'Instructor','cy':'Course Year', 'ins_cy':'Year and Instructor'}
     sb = request.GET.get('sb','latest')
     o = request.GET.get('rw', 'ins')
     if o == 'all':
@@ -814,6 +856,7 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         'link_get':link_get,
         'aria_res': aria_res,
         'aria_rea': aria_rea,
+        'sortby':sortby[sb]
     }
     
     return render(request,'home/courses/course_detail.html', context)  
@@ -1076,7 +1119,9 @@ def find_students(request):
         'prgm_active':prgm_active,
         'crs_active':crs_active,
         'needs_uni_edit':needs_uni_edit,
-        'needs_puni_edit':needs_puni_edit
+        'needs_puni_edit':needs_puni_edit,
+        'fs':'text-primary',
+        'tt':': Find Students'
     }
     
     return render(request,'home/courses/related_students/student_list.html',context)
@@ -1120,7 +1165,9 @@ def course_list_manager(request):
     lists = request.user.course_lists.order_by('created_on')
     
     context = {
-        'lists':lists
+        'lists':lists,
+        'ml':'text-primary',
+        'tt':': My Lists'
     }
     return render(request,'home/courses/course_lists/main_menu.html',context)
 
@@ -1357,7 +1404,7 @@ def remove_saved_course(request,hid):
 @login_required
 def saved_courses(request):
     courses = request.user.saved_courses.all()
-    return render(request,'home/courses/user_saved_courses.html',{'courses':courses})
+    return render(request,'home/courses/user_saved_courses.html',{'courses':courses,'sc':'text-primary','tt':': Saved Courses'})
 
 
 @login_required

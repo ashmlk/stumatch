@@ -38,7 +38,7 @@
             <div class="container-fluid pl-4 pr-5" style="margin-top: 64px !important;">
                 {% if not menu %}
                 <div class="d-md-none">
-                    <div class="row">
+                    <div class="row" style="margin-left: -1.5rem !important;">
                         <div class="col-md-4"></div>
                         <div class="col-md-5">
                             <div class="pt-3">
@@ -50,7 +50,7 @@
                                                     <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                                                     </svg>
                                             </div>
-                                            <span class="mx-2" style="padding-top: 4px !important; font-size: 1.1rem;">Menu</span>
+                                            <span style="padding-top: 4px !important; font-size: 1.1rem;">Menu {{ tt }}</span>
                                         </button>        
                                     </div>
                                 </div>
@@ -78,20 +78,20 @@
                             <div class="list-group">
                                 <a href="{% url 'home:course-list' %}" id="user-courses" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
                                     <img src="{% static 'default/courses/books.png' %}"  style="height:36px;width: 36px;">
-                                </span><span style="margin-top: 2px !important;">Your Courses</span></a>
+                                </span><span class="{{ yc }}" style="margin-top: 2px !important;">Your Courses</span></a>
                                 <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item d-flex align-items-center list-group-item-action">
                                     <span class="mr-2">
                                         <img src="{% static 'default/courses/addc.png' %}"  style="height:36px;width: 36px;">
-                                    </span><span style="margin-top: 2px !important;">Add a Course</span></a>
+                                    </span><span class="{{ ac }}" style="margin-top: 2px !important;">Add a Course</span></a>
                                 <a href="{% url 'home:find-students' %}?sl=prgm" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
                                     <img src="{% static 'default/courses/studentsgroup.png' %}"  style="height:36px;width: 36px;">
-                                </span><span style="margin-top: 2px !important;">Find Students</span></a>
+                                </span><span class="{{ fs }}" style="margin-top: 2px !important;">Find Students</span></a>
                                 <a href="{% url 'home:courses-saved' %}" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
                                     <img src="{% static 'default/courses/clk.png' %}"  style="height:36px;width: 36px;">
-                                </span><span style="margin-top: 2px !important;">Saved Courses</span></a>
+                                </span><span class="{{ sc }}" style="margin-top: 2px !important;">Saved Courses</span></a>
                                 <a href="{% url 'home:course-list-manager' %}" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
                                     <img src="{% static 'default/courses/mcrsli.png' %}"  style="height:36px;width: 36px;">
-                                </span><span style="margin-top: 2px !important;">My Lists</span></a>
+                                </span><span class="{{ ml }}" style="margin-top: 2px !important;">My Lists</span></a>
                             </div>
                             <div class="sticky-top d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>     
                         </div>
@@ -100,12 +100,10 @@
                         {% endblock %}
                     </div>
                     <div class="col-md-5">
-                        <div>
                             <div>
                                 {% block content %}
                                 {% endblock %}
                             </div>
-                        </div>
                     </div>
                     {% endif %}
                     <div class="col-md-3 d-none d-md-block">
