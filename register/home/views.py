@@ -37,6 +37,7 @@ from home.algo import get_uni_info
 from itertools import chain
 from home.templatetags.ibuilder import num_format
 from django.contrib.admin.options import get_content_type_for_model
+from main.models import notification_create_uuid
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -446,13 +447,16 @@ def post_like(request,guid_url):
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
             message = "CON_POST" + " liked your post."
-            notify.disconnect(sender=user, receiver=post.author, verb=message, target=post)
+            #post.author.notifications.get(unique_uuid = notification_create_uuid(actor_id=user.id, receiver_id=post.author.id, verb=message, target_id=post.id)).delete()
         else:
             post.likes.add(user)
             if user != post.author:
                 if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_likes:
                     message = "CON_POST" + " liked your post." # message to be sent to post author
-                    notify.send(sender=user, recipient=post.author, verb=message, target=post)
+                    notify.send(sender=user, recipient=post.author, verb=message, target=post, \
+                        unique_uuid = notification_create_uuid(actor_id=user.id, receiver_id=post.author.id, verb=message, target_id=post.id))
+                    for n in post.author.notifications.all():
+                        print(n.unique_uuid)
         data['likescount'] = post.likes.count()
         data['post_likes'] = render_to_string('home/posts/likes.html',{'post':post},request=request)
         return JsonResponse(data)

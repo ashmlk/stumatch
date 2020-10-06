@@ -75,12 +75,14 @@
                                 ·
                             </span>
                             {% endif %}
+                            {% if notice.target %}
                             <a class="text-muted small"
                                 href="{% url 'home:post-detail' notice.target.guid_url  %}">{{ notice.target.title|capfirst }}
                             </a>
                             <span>
                                 ·
                             </span>
+                            {% endif %}
                             <span class="small">
                                 {{ notice.timestamp|date:"Y/m/d " }}
                             </span>
@@ -97,11 +99,13 @@
                                 ·
                             </span>
                             {% endif %}
+                            {% if notice.target.guid_url %}
                             <a class="text-muted small"
                                 href="{% url 'home:blog-detail' hid=notice.target.guid_url t=notice.target.slug  %}">{{ notice.target.title|capfirst }}</a>
                             <span>
                                 ·
                             </span>
+                            {% endif %}
                             <span class="small">
                                 {{ notice.timestamp|date:"Y/m/d " }}
                             </span>

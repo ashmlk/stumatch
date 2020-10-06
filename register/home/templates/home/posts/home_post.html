@@ -1,4 +1,5 @@
 {% load static %}
+{% load thumbnail %}
 {% load ibuilder %}
 <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <div id="_np2u"></div>
@@ -16,8 +17,9 @@
             <div class="d-flex justify-content-between ml-1">
               <div class="d-flex m-2">
                 <div>
-                  <img class="img-create-post rounded-circle" style="height: 2.8rem;width: 2.8rem;"
-                    src="{{ post.author.image.url }}" />
+                  {% thumbnail post.author.image "50x50" crop="80% top" as im %}
+                    <img class="rounded-circle" style="margin:{{ im|margin:'50x50' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                  {% endthumbnail %}
                 </div>
                 <div class="ml-1">
                   <div>

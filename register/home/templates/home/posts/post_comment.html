@@ -1,7 +1,8 @@
 {% load static %}
 {% load ibuilder %}
+{% load thumbnail %}
 {% with post=post %}
-<div id="cm_all_r">
+<div id="cm_all_r" class="post-ctr">
   <div class="w-100" style="font-size: 0.8rem;">
     <div class="d-flex justify-content-end mx-2">
       <div class="ml-1">
@@ -29,8 +30,9 @@
           <div>
             <div class="d-flex">
               <div>
-                <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
-                  src="{{ comment.name.image.url }}"/>
+                {% thumbnail comment.name.image "40x40" crop="80% top" as im %}
+                  <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                {% endthumbnail %}
               </div>
               <div style="display: inline-block !important;">
                 <div class="d-block">
@@ -38,10 +40,12 @@
                     <a class="text-dark font-size-smaller" href="{{ comment.name.get_absolute_url }}"
                       style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">{{ comment.name.first_name }}
                       {{ comment.name.last_name }}</a>
-                    <span class="font-weight-light pl-2">{{ comment.body }}</span>
                   </div>
                 </div>
-                <div class="pl-3 comment-box-comment-like d-flex justify-content-start" style="margin-left: -2px !important;">
+                <div class="m-1 pl-2 text-dark" style="font-size: 0.95rem;">
+                  <span>{{ comment.body }}</span>
+                </div>
+                <div class="pl-3 comment-box-comment-like d-flex justify-content-start" style="margin-left: -4px !important;">
                   <div class="clcntr">
                     {% include 'home/posts/comment_like.html' with comment=comment  guid_url=guid_url %}
                   </div>
@@ -117,8 +121,9 @@
             {% for reply in comment.replies.all %}
             <div class="row pl-4 py-2 reply-box">
               <div class="col-xs">
-                <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
-                  src="{{ reply.name.image.url }}">
+                {% thumbnail reply.name.image "40x40" crop="80% top" as im %}
+                  <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                {% endthumbnail %}
               </div>
               <div class="col-xs">
                 <div class="d-flex">
@@ -127,9 +132,11 @@
                       <a class="text-dark font-size-smaller" href="{{ reply.author.get_absolute_url }}"
                         style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
                         {{ reply.name.get_full_name }} </a>
-                      <span class="font-weight-light pl-1">{{ reply.body }}</span>
                     </div>
-                  </div>
+                    <div class="m-1 pl-2 text-dark" style="font-size: 0.95rem;">
+                      <span>{{ reply.body }}</span>
+                    </div>
+                  </div>    
                   <div class="dropdown">
                     <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
                       aria-expanded="false">

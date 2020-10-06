@@ -245,8 +245,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-
-ACCOUNT_SIGNUP_FORM_CLASS = 'main.forms.SetUniversityForm'
+NOTIFICATIONS_NOTIFICATION_MODEL = 'main.Notification'
 
 SITE_ID = 3
 

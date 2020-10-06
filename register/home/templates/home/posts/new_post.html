@@ -1,5 +1,6 @@
 {% load ibuilder %}
 {% load static %}
+{% load thumbnail %}
 {% div_class as veid %}
 <div id="_pc_{{ veid }}" class="post-ctr infinite-item">
   <div class="row">
@@ -8,8 +9,9 @@
         <div class="d-flex justify-content-between ml-1">
           <div class="d-flex m-2">
             <div>
-              <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;"
-                src="{{ post.author.image.url }}" />
+              {% thumbnail post.author.image "50x50" crop="80% top" as im %}
+                    <img class="rounded-circle" style="margin:{{ im|margin:'50x50' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                  {% endthumbnail %}
             </div>
             <div class="ml-1">
               <div>

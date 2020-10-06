@@ -1,8 +1,10 @@
 {% load ibuilder %}
+{% load thumbnail %}
 <div class="row pl-4 py-2 reply-box">
   <div class="col-xs">
-    <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;"
-      src="{{ reply.name.image.url }}">
+    {% thumbnail reply.name.image "40x40" crop="80% top" as im %}
+      <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+    {% endthumbnail %}
   </div>
   <div class="col-xs">
     <div class="d-flex">
@@ -11,7 +13,9 @@
           <a class="text-dark font-size-smaller" href="{{ reply.author.get_absolute_url }}"
             style="font-weight: 600 !important ; color: rgb(9, 34, 110) !important;">
             {{ reply.name.get_full_name }} </a>
-          <span class="font-weight-light pl-1">{{ reply.body }}</span>
+        </div>
+        <div class="m-1 pl-2 text-dark" style="font-size: 0.95rem;">
+          <span>{{ reply.body }}</span>
         </div>
       </div>
       <div class="dropdown">

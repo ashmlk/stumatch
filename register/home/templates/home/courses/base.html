@@ -76,21 +76,22 @@
                     <div class="col-md-4">
                         {% if not course_detail %}
                         <div class="sticky-top d-none d-md-block w-75 bg-transparent" style="top: 64px !important;">
-                            <div class="list-group">
-                                <a href="{% url 'home:course-list' %}" id="user-courses" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
+                            <div>
+                                <a href="{% url 'home:course-list' %}" id="user-courses" class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action" style="border-radius: 25px;">
+                                    <span class="mr-2">
                                     <img src="{% static 'default/courses/books.png' %}"  style="height:36px;width: 36px;">
                                 </span><span class="{{ yc }}" style="margin-top: 2px !important;">Your Courses</span></a>
-                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="list-group-item d-flex align-items-center list-group-item-action">
+                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="mb-4 btn btn-md border  d-flex align-items-center list-group-item-action" style="border-radius: 25px;">
                                     <span class="mr-2">
-                                        <img src="{% static 'default/courses/addc.png' %}"  style="height:36px;width: 36px;">
+                                        <img src="{% static 'default/courses/addc.png' %}"  style="height:36px;width: 36px;" >
                                     </span><span class="{{ ac }}" style="margin-top: 2px !important;">Add a Course</span></a>
-                                <a href="{% url 'home:find-students' %}?sl=prgm" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
+                                <a href="{% url 'home:find-students' %}?sl=prgm" class="my-2 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
                                     <img src="{% static 'default/courses/studentsgroup.png' %}"  style="height:36px;width: 36px;">
                                 </span><span class="{{ fs }}" style="margin-top: 2px !important;">Find Students</span></a>
-                                <a href="{% url 'home:courses-saved' %}" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
+                                <a href="{% url 'home:courses-saved' %}" class=" mb-4 btn btn-md border d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
                                     <img src="{% static 'default/courses/clk.png' %}"  style="height:36px;width: 36px;">
                                 </span><span class="{{ sc }}" style="margin-top: 2px !important;">Saved Courses</span></a>
-                                <a href="{% url 'home:course-list-manager' %}" class="list-group-item d-flex align-items-center list-group-item-action"><span class="mr-2">
+                                <a href="{% url 'home:course-list-manager' %}" class="mb-4 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
                                     <img src="{% static 'default/courses/mcrsli.png' %}"  style="height:36px;width: 36px;">
                                 </span><span class="{{ ml }}" style="margin-top: 2px !important;">My Lists</span></a>
                             </div>
@@ -116,7 +117,7 @@
                 </div>       
             </div>
         </div>
-        <div class="modal fade" style="z-index: 999 !important;" id="modal-post">
+        <div class="modal fade"  id="modal-post">
             <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
               <div class="modal-content"></div>
             </div>

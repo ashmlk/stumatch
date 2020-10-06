@@ -16,9 +16,11 @@ from django.db.models import Q, F, Count, Avg, FloatField
 from hashids import Hashids
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 from django.urls import reverse
-
+from notifications.base.models import AbstractNotification
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
+
+hashids_notify  = Hashids(salt='2vbp W9PHh90H 2389V[H WOoksc',min_length=8)
 
 #CUSTOM MODEL MANAGERS
 class ProfileManager(UserManager):
@@ -466,3 +468,26 @@ class ReportBlogReply(ReportBase):
 class ReportCourseReview(ReportBase):
     
     reported_obj = models.ForeignKey('home.Review',on_delete=models.CASCADE, verbose_name='report_coursereview', related_name='reported_coursereviews')
+
+
+class Notification(AbstractNotification):
+    # custom field example
+    unique_uuid = models.CharField(max_length=255,unique=True, null=True)
+
+    class Meta(AbstractNotification.Meta):
+        abstract = False
+        app_label = 'main'
+        
+def notification_create_uuid(actor_id, receiver_id, verb, target_id):
+    
+    """
+    Generate unique id based on actor, receiver, verb and target
+    """
+    actor_hash = hashids_notify.encode(actor_id)
+    receiver_hash = hashids_notify.encode(receiver_id)
+    verb_hash = hashids_notify.encode(verb.replace(" ", ""))
+    target_hash = hashids_notify.encode(target_id)
+    
+    final_hash = actor_hash + receiver_hash + verb_hash + target_hash
+    return final_hash
+    

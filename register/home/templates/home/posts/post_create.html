@@ -9,7 +9,7 @@
 			</button>
 		</h5>
 		</div>
-	<div class="modal-body" style="height:350px; overflow-y: auto; margin:0;">
+	<div class="modal-body" style="height:340px; overflow-y: auto; margin:0;">
 		{{ form|crispy }}
 		{{ form.media }}
 		<div class="fallback">
@@ -26,14 +26,15 @@
 				<div class="dz-error-message"><span data-dz-errormessage></span></div>
 		  </div>
 	</div>
-	<button type="button" class="m-1 btn border border-dark rounded btn-md " id="add-images"><i class="mx-1 fas fa-camera"></i>Photo</button>
+	<button type="button" class="m-1 ml-3 btn btn-sm border border-light" style="border-radius: 20px;" id="add-images"><i class="mx-1 fas fa-camera"></i>Photo</button>
 	<div class="dz-default dz-message"></div>
 	<div class="modal-footer col-12">
 		<button type="submit" id="sub-etal" class="btn btn-primary"  style="border-radius: 20px; ">Post</button>
 	</div>
 </form>
+<script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
 <script src="{% static 'js/post/post-dz.js' %}"></script>
-<style>#div_id_tags {margin-bottom: -30px !important;}.selectize-input.items .item {margin-top: -3px !important;}</style>
+<style> #preview-selected > img{margin-top: 10px !important;}  .selectize-input.items .item {margin-top: -3px !important;}</style>
 
 
 

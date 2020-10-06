@@ -182,18 +182,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
-            message = Mail(
-                from_email='JoinCampus Team <no-reply@joincampus.ca>',
-                to_emails=user.email,
-                subject='Welcome to JoinCampus',
-                html_content = render_to_string('new_user_email.html', {'first_name': user.first_name.capitalize()})
-                )
-            try:
-                response = sg.send(message)
-            except Exception as e:
-                print(e)
-                
+            user = authenticate(username=user.username, password=raw_password)   
             return redirect('main:user_login')
     else:
         form = SignUpForm()

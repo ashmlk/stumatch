@@ -43,7 +43,7 @@ class PostForm(forms.ModelForm):
             "tags": "",
         }
         help_texts = {
-            'tags': 'Tags',
+            'tags': ' ',
         }
         fields = ('title','content','tags',)
         
@@ -53,6 +53,7 @@ class PostForm(forms.ModelForm):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:                     
             self.fields['title'].disabled = True
+        self.fields['tags'].widget.attrs['placeholder'] = 'Add tags'
    
 class ImageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

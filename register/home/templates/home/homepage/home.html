@@ -3,6 +3,7 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
+{% load thumbnail %}
 <title>Home - JoinCampus</title>
 {% endblock %}
 {% block content %}
@@ -42,23 +43,25 @@
 </div>
 {% else %}
 <div class="pl-1 pr-1">
-  <div class="ml-1 p-1 card ">
-    <div class="d-flex m-1 justify-content-left">
-      <div>
-        <img class="img-create-post rounded-circle" style="width: 50px;height: 50px;"
-          src="{{ request.user.image.url }}" alt="Profile image">
-      </div>
-      <div class="ml-1 w-100" style="height: 4rem;">
-        <input type="text" readonly="readonly"
-          class="bg-transparent border-0 form-control bg-transparent create-post-btn input-no-border"
-          placeholder="What's new?" data-url="{% url 'home:post-create' %}">
-      </div>
-      <div class="d-flex flex-column justify-content-center">
-        <div>
-          <button class="ml-1 p-0 btn border btn-sm btn-circle create-post-btn" data-url="{% url 'home:post-create' %}"
-            style="border:1px solid rgb(126, 192, 243) !important;">
-            <i class="fas fa-2x fa-camera" style="color:  rgb(126, 192, 243);"></i>
-          </button>
+  <div class="ml-1 p-1 ">
+    <div class="d-flex justify-content-between">
+      <div class="d-flex w-100 m-1 justify-content-left">
+        <div class="mt-2">
+          {% thumbnail request.user.image "60x60" crop="80% top" as im %}
+          <img class="rounded-circle" style="margin:{{ im|margin:'60x60' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+          {% endthumbnail %}
+        </div>
+        <div class="w-75">
+          <div>
+            <div class="h6 p-2">
+              <span class="ml-2">{{ request.user.get_full_name }}</span>
+            </div>
+          </div>
+          <div class="ml-1 mt-2 w-100 border" style="border-radius: 25px;">
+            <input type="text" readonly="readonly"
+              class="bg-transparent form-control bg-transparent create-post-btn input-no-border"
+              placeholder="What's new?" data-url="{% url 'home:post-create' %}">
+          </div>
         </div>
       </div>
     </div>

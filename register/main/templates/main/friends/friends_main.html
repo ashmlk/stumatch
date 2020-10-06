@@ -45,14 +45,13 @@
 <body class="pb-5">
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper">
-        <div class="container-fluid pt-4">
+        <div class="container pt-4">
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-md-9">
                     <div class="mt-5 pt-2">
                         <div class="friends-all-list">
                             <div class="row">
-                                <div class="col-sm-2"></div>
-                                <div class="col-sm-3">
+                                <div class="d-none d-md-block col-md-3">
                                     <div class="he-s-r border-bottom">
                                         <h6 class="text-dark display-4 font-weight-bolder" style="font-size: 1.6rem;">
                                             Friends
@@ -98,11 +97,40 @@
                                                         d="M11 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM1.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zm9.974.056v-.002.002zM6 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm4.5 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
                                                     <path fill-rule="evenodd"
                                                         d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z" />
-                                                </svg><span class="ml-3">Same Program</span></a>
+                                                </svg><span class="ml-3">{% if request.user.program %}{{ request.user.pogram }}{% else %}Program{% endif %}</span></a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-7">
+                                <div class="d-md-none col-md-3">
+                                    <div class="d-flex justify-content-between p-1 pb-3 border-bottom mb-1" id="_pol3" style="overflow-x: auto !important;">
+                                        <div class="btn btn-sm  mr-1 menu-link">
+                                          <a  href="{% url 'main:friends-main' %}" style="text-decoration: none;">
+                                              <span class="h6 text-center" style="white-space: nowrap;">Friends {% if  total_friends != 0 %}{{ total_friends }}{% endif %}</span>
+                                          </a>
+                                        </div>
+                                        <div class="btn  btn-sm  mr-1 menu-link">
+                                          <a  href="{% url 'main:friend-requests' %}" style="text-decoration: none;">
+                                              <span class="h6 text-center" style="white-space: nowrap;">Requests {% if  total_requests != 0 %}{{ total_friends }}{% endif %}</span>
+                                          </a>
+                                        </div>
+                                        <div class="btn  btn-sm  mr-1 menu-link">
+                                            <a  href="{% url 'main:friend-pending' %}" style="text-decoration: none;">
+                                                <span class="h6 text-center" style="white-space: nowrap;">Pending {% if  total_pending != 0 %}{{ total_friends }}{% endif %}</span>
+                                            </a>
+                                          </div>
+                                          <div class="btn  btn-sm  mr-1 menu-link">
+                                            <a  href="{% url 'main:settings-blocked' %}" style="text-decoration: none;">
+                                                <span class="h6 text-center" style="white-space: nowrap;">Blocked {% if  total_blocked != 0 %}{{ total_friends }}{% endif %}</span>
+                                            </a>
+                                          </div>
+                                          <div class="btn  btn-sm  mr-1 menu-link">
+                                            <a  href="{% url 'main:find-program' %}" style="text-decoration: none;">
+                                                <span class="h6 text-center"  style="white-space: nowrap;">{% if request.user.program %}{{ request.user.pogram }}{% else %}Program{% endif %}</span>
+                                            </a>
+                                          </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
                                     {% block content %}
                                     {% endblock %}
                                 </div>
@@ -110,7 +138,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4 d-none d-sm-block">
+                <div class="col-md-3 d-none d-md-block">
                     <div class="pt-2 mt-5">
                         {% block item %}
                         {% endblock %}

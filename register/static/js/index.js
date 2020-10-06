@@ -44,14 +44,6 @@ $(document).ready(function () {
       $('.loading').hide();
     }
   });
-  
-  $(window).scroll(function() {
-    if ($(window).scrollTop() > 80) {
-        $('.cp-cntr-h').show();
-    } else {
-      $('.cp-cntr-h').hide();
-      }
-  });
 
   $(function () {
     $('[data-tooltip="tooltip"]').tooltip()
@@ -69,9 +61,9 @@ $(document).ready(function () {
         "className": "highlight"
     });
   }
-  
 
 })
+
 $(document).ready(function () {
   $(".search-btn").on('click', function () {
       var target_form = $(this).attr('data-target')
