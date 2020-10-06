@@ -103,9 +103,9 @@ CKEDITOR_CONFIGS = {
 
 #CELERY CONFIG
 
-CELERY_BROKER_URL = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
+CELERY_BROKER_URL = os.environ.get('REDISTOGO_URL', 'redis://localhost:6379')
 CELERY_BROKER_TRANSPORT = 'redis'
-CELERY_RESULT_BACKEND = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
+CELERY_RESULT_BACKEND = os.environ.get('REDISTOGO_URL', 'redis://localhost:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

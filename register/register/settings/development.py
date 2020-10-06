@@ -4,6 +4,7 @@ import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+THUMBNAIL_DEBUG = True
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 
 SITE_ID = 8

@@ -40,12 +40,19 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
   <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body class="pb-5" style="background-color: white !important;">
   <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
   <div class="wrapper">
     <div class="container pt-4 u_pctr">   
         {% block content %}{% endblock %}
+    </div>
+  </div>
+  <div class="modal fade" id="modal-post">
+    <div class="modal-dialog modal-dialog-centered" style="overflow-y: hidden !important;">
+      <div class="modal-content"></div>
     </div>
   </div>
   <div class="modal fade" id="modal-report">

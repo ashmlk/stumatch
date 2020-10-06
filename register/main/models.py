@@ -374,9 +374,13 @@ class Profile(AbstractUser):
         return hashids_user.encode(self.id)
     
     def set_image_to_default(self):
-        self.image.delete(save=False)  # delete old image file
-        self.image = DEFAULT_IMAGE
-        self.save()
+        if self.image.url != DEFAULT_IMAGE:
+            self.image.delete(save=False)  # delete old image file
+            self.image = DEFAULT_IMAGE
+            self.save()
+        else:
+            self.image = DEFAULT_IMAGE
+            self.save()
 
 class BookmarkBase(models.Model):
     class Meta:

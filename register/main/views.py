@@ -239,6 +239,14 @@ def change_password(request):
 
 @login_required
 def edit_profile(request):
+        
+    context = {
+        'account_active':'setting-link-active'
+        }
+    return render(request, 'main/settings/edit_profile.html', context)
+
+@login_required
+def edit_profile_data(request):
     
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
@@ -248,17 +256,11 @@ def edit_profile(request):
     else:
         form = EditProfileForm(instance=request.user)
         
-    if request.user.image.url != '/media/defaults/user/default_u_i.png':
-        image_not_default = True
-    else:
-        image_not_default = False
-        
     context = {
         'form':form,
-        'image_not_default':image_not_default,
         'account_active':'setting-link-active'
         }
-    return render(request, 'main/settings/edit_profile.html', context)
+    return render(request, 'main/settings/edit_profile_data.html', context)
 
 @login_required
 def add_university(request):
@@ -294,18 +296,26 @@ def update_image(request, hid):
         if request.user == user:  
             user = request.user
             if request.user.is_authenticated:
-                image = request.FILES['image']
-                user.image = image
-                user.save()
-        if request.user.image.url == '/media/defaults/user/default_u_i.png':
-            image_not_default = False  
-        context = {
-            'image_not_default':image_not_default
+                try:
+                    image = request.FILES['cropped_image']
+                    user.image = image
+                    user.save()
+                    data['new_url'] = reverse('main:update-image', kwargs={'hid':request.user.get_hashid()})
+                    return JsonResponse(data)
+                except Exception as e:
+                    pass  
+           
+    if request.user.image.url != '/media/defaults/user/default_u_i.png':
+        image_not_default = True
+    else:
+        image_not_default = False
+
+
+    context = {
+        'image_not_default':image_not_default,
+        'account_active':'setting-link-active'
         }
-        img_url = user.image.url
-        data['img_url'] = img_url
-        data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)
-        return JsonResponse(data)
+    return render(request, 'main/settings/edit_profile_image.html', context)
 
 @login_required
 def remove_image(request, hid):
@@ -320,12 +330,7 @@ def remove_image(request, hid):
                 user.save()
                 image_not_default = False   
                 img_url = user.image.url
-        context = {
-            'image_not_default':image_not_default,
-            
-        }    
-        data['img_url'] = img_url    
-        data['image_updated'] = render_to_string('main/settings/image_update.html',context,request=request)   
+        data['new_url'] = reverse('main:update-image', kwargs={'hid':request.user.get_hashid()})
     else:
         if request.user == user:
             if request.user.is_authenticated: 
@@ -1025,12 +1030,13 @@ def add_remove_friend(request, hid, s):
             Friend.objects.remove_friend(user, other_user)
             is_friend = False
         elif action == 0:
-            Friend.objects.add_friend(user, other_user) # send a friend request to other_user
-            pending = True
-            if other_user.get_friendrequest_notify:
-                fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
-                message = "CON_FRRE" + "has sent you a friend request"
-                notify.send(sender=user, recipient=other_user, verb=message, target=fr)
+            if not FriendshipRequest.objects.filter(from_user=user,to_user=other_user).exists():
+                Friend.objects.add_friend(user, other_user) # send a friend request to other_user
+                pending = True
+                if other_user.get_friendrequest_notify:
+                    fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
+                    message = "CON_FRRE" + "has sent you a friend request"
+                    notify.send(sender=user, recipient=other_user, verb=message, target=fr)
                 
         friends_list = Friend.objects.friends(request.user)
         requests = Friend.objects.requests(user=request.user)
@@ -1093,7 +1099,8 @@ def friends_main(request):
     mutual_friends_with_friends = dict()
     
     # get friends of request.user
-    friends_list = Friend.objects.friends(request.user)
+    friends= Friend.objects.friends(request.user)
+    friends_list = Profile.objects.filter(id__in=[u.id for u in friends])
     blocked = Block.objects.blocking(request.user)
     pending_requests = Friend.objects.sent_requests(user=request.user)
     requests = Friend.objects.requests(user=request.user)
@@ -1167,6 +1174,7 @@ def friend_requests(request):
     total_friends = request.session.get('total_friends')
     total_requests = request.session.get('total_requests')
     total_pending = request.session.get('total_pending')
+    total_blocked = request.session.get('total_blocked')
        
     context = {
         'friend_requests':friend_requests,
@@ -1176,6 +1184,7 @@ def friend_requests(request):
         'total_friends':total_friends,
         'total_requests':total_requests,
         'total_pending':total_pending,
+        'total_blocked':total_blocked
     }
     
     return render(request, 'main/friends/friend_requests.html', context)
@@ -1183,15 +1192,14 @@ def friend_requests(request):
 @login_required
 def friend_pending_requests(request):
     
+    lister = Friend.objects.sent_requests(user=request.user)
+    ids = [l.to_user.id for l in lister] 
+    user_list = Profile.objects.filter(id__in=ids)
     
-    lister = FriendshipRequest.objects.select_related("from_user", "to_user").filter(from_user=request.user).all()
-    
-    usernames = [l.to_user.username for l in lister ]
-    
-    user_list = Profile.objects.filter(username__in=usernames).order_by('last_name')
     total_friends = request.session.get('total_friends')
     total_requests = request.session.get('total_requests')
     total_pending = request.session.get('total_pending')
+    total_blocked = request.session.get('total_blocked')
     
     pending = True
     
@@ -1211,6 +1219,7 @@ def friend_pending_requests(request):
         'total_friends':total_friends,
         'total_requests':total_requests,
         'total_pending':total_pending,
+        'total_blocked':total_blocked,
         'pending':pending,
     } 
 

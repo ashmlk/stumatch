@@ -103,7 +103,7 @@
                 </div>
                 </br>
                 <div class="c_dis mb-1" style="display: inline-block;">
-                    <span>Total Students With Professor {{ course.course_instructor|capfirst }}:</span><span
+                    <span>Total Students With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:</span><span
                         class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
                 </div>
                 {% if taken %}

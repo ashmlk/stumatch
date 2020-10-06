@@ -1,6 +1,7 @@
 {% extends "main/userhome/base_friend_public.html" %}
 {% load crispy_forms_tags %}
 {% load ibuilder %}
+{% load thumbnail %}
 {% load static %}
 {% block profilecontent %}
 <div class="infinite-container card-columns mt-1">
@@ -18,7 +19,7 @@
                     <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
                 </div>       
                 <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                    <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </div>
                 <div class="my-1 border p-1 border rounded shadow-sm t-stu">
                     <span class="text-dark">Total Enrollments: </span><span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>

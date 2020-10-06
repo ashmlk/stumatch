@@ -1,0 +1,73 @@
+{% extends 'main/settings/base_setting.html' %}
+{% load thumbnail %}
+{% load static %}
+{% block content %}
+<div class="edit-pro-all">
+  <div class="mb-3 border-bottom setting-menu-sub">
+    <h5>Change Profile Photo</h5>
+  </div>
+  <div class="d-flex justify-content-center pro-img-ctr">
+    <div class="ml-2 mt-1 mb-3 change-image-rmv">
+        <form method="POST" class="submit-img-pro-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="image" accept="image/*" id="id_image">
+            <div class="mt-2 d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center mb-2">
+                      {% thumbnail user.image "250x250" crop="80% top" as im %}
+                           <img class="rounded-circle" style="margin:{{ im|margin:'250x250' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                      {% endthumbnail %}
+                    </div>
+                    <div id="updtimgbtn" class="d-flex justify-content-center"></div>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" id="myCroppieBtn"
+                            class="btn no-border no-outline edit-profile-clickable text-primary">
+                            Edit
+                        </button>
+                    </div>
+                    {% if image_not_default %}
+                    <div id="remrevctr" class="d-flex justify-content-center">
+                        <button data-url="{% url 'main:remove-image' hid=request.user.get_hashid %}" type="button"
+                            id="rmvproimg" class="btn no-border no-outline edit-profile-clickable text-danger">
+                            Remove
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="uploadimageModal">
+    <div class="modal-dialog" role="document" style="min-width: 700px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Profile Picture</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div id="image_demo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary no-border no-outline crop_image"
+                    style="border-radius:20px;">Save</button>
+                <button type="button" class="btn btn-secondary no-border no-outline" style="border-radius:20px;"
+                    data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="uidnameinput" type="hidden" value="{{ request.user.get_hashid }}" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.0/croppie.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/profiles/update_image.js' %}"></script>
+{% endblock %}

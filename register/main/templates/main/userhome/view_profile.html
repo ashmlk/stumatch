@@ -1,6 +1,7 @@
 {% extends "main/userhome/base_friend_public.html" %}
 {% load crispy_forms_tags %}
 {% load ibuilder %}
+{% load thumbnail %}
 {% load static %}
 {% block profilecontent %}
 <div class="my-2  content-boxes info-user-all">
@@ -94,7 +95,7 @@
                                 <path fill-rule="evenodd"
                                     d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
                             </svg>
-                                <strong class="ml-2"">Blogs</strong>
+                                <strong class="ml-2">Blogs</strong>
                             </div>
                             <div>
                                 <span class="navbarMainHeaderuser-num">{{ blnum }}</span>
@@ -129,7 +130,7 @@
                                 <div class="course-user-detail"
                                     style="margin-bottom:-0.9rem !important;margin-left: -2px !important;">
                                     <a href="{%url 'home:course-instructor'  par1=course.course_university_slug par2=course.course_instructor_slug %}"
-                                        class="h6">Professor {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</a>
+                                        class="h6">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</a>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +174,11 @@
             <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
                 {% for friend in friends %}
                 <div class="m-1 card" style="width: 8.7rem !important;">
-                    <img class="card-img-top" src="{{ friend.image.url }}">
+                    <div class="d-flex justify-content-center">
+                        {% thumbnail friend.image "110x110" crop="80% top" as im %}
+                        <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                    {% endthumbnail %}
+                    </div>
                     <div class="card-body">
                         <div class="card-friend-name-holder">
                             <a class="card-link text-dark"
@@ -240,7 +245,11 @@
                     <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
                         {% for friend in friends %}
                         <div class="m-1 card" style="width: 11.7rem !important;">
-                            <img class="card-img-top" src="{{ friend.image.url }}">
+                            <div class="d-flex justify-content-center">
+                                {% thumbnail friend.image "110x110" crop="80% top" as im %}
+                                <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                            {% endthumbnail %}
+                            </div>
                             <div class="card-body">
                                 <div class="card-friend-name-holder">
                                     <a class="card-link text-dark"
