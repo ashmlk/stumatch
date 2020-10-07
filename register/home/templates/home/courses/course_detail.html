@@ -49,7 +49,7 @@
         <div class="col-sm mb-2">
             <div class="pt-2" style="min-height: 100px !important;">
                 <a style="border-radius: 20px !important;" 
-                    class="text-left c_dis mb-1 course-goto btn btn-outline-primary " href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                    class="text-left c_dis mb-1 course-goto btn btn-outline-primary" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                     <span class="svg-icon ccs mr-1">
                         <svg style="margin-top: -3px !important" width="1em" height="1em"
                             viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
@@ -194,22 +194,26 @@
             </div>
         </form>
     </div>
-    <div id="reviews" class="p-0 mt-1">
-        <ul class="d-flex justify-content-start nav mb-3">
-            <li class="nav-item border rounded m-1" style="border-radius: 8px !important;">
-                <a class="menu-link{{ review_a }} nav-link d-flex align-items-center " style="border-radius: 5px !important;"
-                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
-                    All Reviews for {{ course.course_code }}
-                    <span class="ml-2 badge badge-primary{{ review_a }}  badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
-                </a>
-            </li>
-            <li class="nav-item  border rounded m-1" style="border-radius: 8px !important;">
-                <a class="menu-link{{ review_s }} nav-link d-flex align-items-center "  style="border-radius: 5px !important;"
-                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews for {{ course.course_instructor_fn }} {{ course.course_instructor }}
-                    <span class="ml-2 badge badge-primary{{ review_s }}  badge-pill" id="crsspecrw">{{ reviews_count }}</span>
-                </a>
-            </li>
-        </ul>
+    <div id="reviews" class="p-0  mt-1">
+        <div class=" d-flex justify-content-start  mb-3">
+            <div class="p-1">
+                <div  class="small nav-item border rounded" style="border-radius: 8px !important;">
+                    <a class="menu-link{{ review_a }} nav-link d-flex align-items-center " style="border-radius: 5px !important;"
+                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
+                        All Reviews for {{ course.course_code }}
+                        <span class="ml-2 badge badge-primary{{ review_a }}  badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="p-1">
+                <div class="small nav-item  border rounded" style="border-radius: 8px !important;">
+                    <a class="menu-link{{ review_s }} nav-link d-flex align-items-center "  style="border-radius: 5px !important;"
+                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews for {{ course.course_instructor_fn }} {{ course.course_instructor }}
+                        <span class="ml-2 badge badge-primary{{ review_s }}  badge-pill" id="crsspecrw">{{ reviews_count }}</span>
+                     </a>
+                </div>  
+            </div>
+        </div>
         <div class="m-1">
             {% if not taken %}
             <p class="text-center">Add this course to your courses to write a review</p>

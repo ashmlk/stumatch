@@ -38,61 +38,129 @@
         <div class="wrapper mb-5">
             <div class="container-fluid pl-4 pr-5" style="margin-top: 64px !important;">
                 {% if not menu %}
-                <div class="d-md-none">
-                    <div class="row" style="margin-left: -1.5rem !important;">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-5">
-                            <div class="pt-3">
-                                <div class="mb-1 menu-go-back">
-                                    <div class="pb-1 l d-flex align-item-center ">
-                                        <button class="no-border no-outline btn mnbtn menu-link-active btn-sm text-dark" style="border-radius: 20px !important;" data-url="{% url 'home:course-menu' %}">
-                                            <div class="clicker float-left">
-                                                <svg width="16" height="16" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-                                                    </svg>
-                                            </div>
-                                            <span style="padding-top: 4px !important; font-size: 1.1rem;">Menu {{ tt }}</span>
-                                        </button>        
-                                    </div>
-                                </div>
-                            </div>
+                <div class="d-md-none mb-1" style="margin-right: -3rem !important;">
+                    <div class="d-flex" style="overflow-x:auto !important;margin-left: -1.5rem !important;">
+                        <div class="mx-2">
+                            <a href="{% url 'home:course-menu' %}" id="user-courses" class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action"
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                <span class="mr-2">
+                                    <svg width="20" height="20" viewBox="0 0 16 16" class="bi bi-chevron-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                        </svg>
+                                </span>
+                                <span  style="white-space:nowrap !important;margin-top: 2px !important;">Menu {{ tt }}</span>
+                            </a>
+                        </div> 
+                        <div class="mx-2">
+                            <a href="{% url 'home:course-dashboard' %}" id="user-courses" class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action" 
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                <span class="mr-2">
+                                    <svg width="22" height="22" viewBox="0 0 16 16" class="{{ yc }} bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>
+                                        </svg>
+                                </span>
+                                <span class="{{ yc }}" style="white-space:nowrap !important;margin-top: 2px !important;">Dashboard</span>
+                            </a>
+                        </div>  
+                        <div class="mx-2">
+                            <a  href="{% url 'home:courses-add' %}" id="course-add" class="mx-1 btn btn-md border  d-flex align-items-center list-group-item-action" 
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                <span class="mr-2">
+                                    <svg width="22" height="22" viewBox="0 0 16 16" class="{{ ac }} bi bi-file-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
+                                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z"/>
+                                        </svg>
+                                </span>
+                                <span class="{{ ac }}" style="white-space:nowrap !important;margin-top: 2px !important;">Add Course</span>
+                            </a>
+                        </div>
+                        <div class="mx-2">
+                            <a href="{% url 'home:find-students' %}?sl=prgm" class="{{ fs }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                <span class="mr-2">
+                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                                        </svg>
+                                </span>
+                                <span class="{{ fs }}" style="white-space:nowrap !important;margin-top: 2px !important;">Connect</span>
+                            </a>
+                        </div>
+                        <div class="mx-2">
+                            <a href="{% url 'home:courses-saved' %}" class="{{ sc }} mx-1 btn btn-md border d-flex align-items-center list-group-item-action"
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                <span class="mr-2">
+                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
+                                        <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
+                                        <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+                                        </svg>
+                                </span>
+                                <span class="{{ sc }}" style="white-space:nowrap !important;margin-top: 2px !important;">Saved Courses</span>
+                            </a>
+                        </div>
+                        <div class="mx-2">
+                            <a href="{% url 'home:course-list-manager' %}" class="{{ ml }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
+                            style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;"><span class="mr-2">
+                                <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+                                    </svg>
+                            </span><span class="{{ ml }}" style="white-space:nowrap !important;margin-top: 2px !important;">My Lists</span></a>
                         </div>
                     </div>
                 </div>
                 {% endif %}
                 <div class="row">
                     {% if menu %}
-                    <div class="col-md-12 d-flex justify-content-center">
+                    <div class="col-md-12">
                         <div>
-                            <div>
-                                <div>
-                                    {% block contentmenu %}
-                                    {% endblock %}
-                                </div>
-                            </div>
+                            {% block contentmenu %}
+                            {% endblock %}
                         </div>
                     </div>
                     {% else %}
                     <div class="col-md-4">
                         {% if not course_detail %}
                         <div class="sticky-top d-none d-md-block w-75 bg-transparent" style="top: 64px !important;">
-                            <div>
-                                <a href="{% url 'home:course-list' %}" id="user-courses" class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action" style="border-radius: 25px;">
+                            <div class="mt-2">
+                                <a href="{% url 'home:course-dashboard' %}" id="user-courses" class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action" style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
                                     <span class="mr-2">
-                                    <img src="{% static 'default/courses/books.png' %}"  style="height:36px;width: 36px;">
-                                </span><span class="{{ yc }}" style="margin-top: 2px !important;">Your Courses</span></a>
-                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="mb-4 btn btn-md border  d-flex align-items-center list-group-item-action" style="border-radius: 25px;">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="{{ yc }} bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>
+                                          </svg>
+                                    </span>
+                                    <span class="{{ yc }}" style="margin-top: 2px !important;">Dashboard</span>
+                                </a>
+                                <a  href="{% url 'home:courses-add' %}" id="course-add" class="mb-4 btn btn-md border  d-flex align-items-center list-group-item-action" style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
                                     <span class="mr-2">
-                                        <img src="{% static 'default/courses/addc.png' %}"  style="height:36px;width: 36px;" >
-                                    </span><span class="{{ ac }}" style="margin-top: 2px !important;">Add a Course</span></a>
-                                <a href="{% url 'home:find-students' %}?sl=prgm" class="my-2 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
-                                    <img src="{% static 'default/courses/studentsgroup.png' %}"  style="height:36px;width: 36px;">
-                                </span><span class="{{ fs }}" style="margin-top: 2px !important;">Find Students</span></a>
-                                <a href="{% url 'home:courses-saved' %}" class=" mb-4 btn btn-md border d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
-                                    <img src="{% static 'default/courses/clk.png' %}"  style="height:36px;width: 36px;">
-                                </span><span class="{{ sc }}" style="margin-top: 2px !important;">Saved Courses</span></a>
-                                <a href="{% url 'home:course-list-manager' %}" class="mb-4 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;"><span class="mr-2">
-                                    <img src="{% static 'default/courses/mcrsli.png' %}"  style="height:36px;width: 36px;">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="{{ ac }} bi bi-file-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
+                                            <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z"/>
+                                          </svg>
+                                    </span>
+                                    <span class="{{ ac }}" style="margin-top: 2px !important;">Add Course</span>
+                                </a>
+                                <a href="{% url 'home:find-students' %}?sl=prgm" class="{{ fs }} mb-4 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                    <span class="mr-2">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                                          </svg>
+                                    </span>
+                                    <span class="{{ fs }}" style="margin-top: 2px !important;">Connect</span>
+                                </a>
+                                <a href="{% url 'home:courses-saved' %}" class="{{ sc }} mb-4 btn btn-md border d-flex align-items-center list-group-item-action"style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                    <span class="mr-2">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
+                                            <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
+                                            <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+                                          </svg>
+                                    </span>
+                                    <span class="{{ sc }}" style="margin-top: 2px !important;">Saved Courses</span>
+                                </a>
+                                <a href="{% url 'home:course-list-manager' %}" class="{{ ml }} mb-4 btn btn-md border  d-flex align-items-center list-group-item-action"style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;"><span class="mr-2">
+                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+                                      </svg>
                                 </span><span class="{{ ml }}" style="margin-top: 2px !important;">My Lists</span></a>
                             </div>
                             <div class="sticky-top d-none d-md-block" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>     
@@ -101,19 +169,13 @@
                         {% block contentright %}
                         {% endblock %}
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-7">
                             <div>
                                 {% block content %}
                                 {% endblock %}
                             </div>
                     </div>
                     {% endif %}
-                    <div class="col-md-3 d-none d-md-block">
-                        <div>
-                            {% block item %}
-                            {% endblock %}
-                        </div>  
-                    </div>
                 </div>       
             </div>
         </div>

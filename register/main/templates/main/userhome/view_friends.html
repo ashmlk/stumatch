@@ -21,7 +21,7 @@
                     <div class="d-flex justify-content-center">
                         {% thumbnail friend.image "110x110" crop="80% top" as im %}
                         <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                    {% endthumbnail %}
+                        {% endthumbnail %}
                     </div>
                     <div class="card-body">
                         <div class="card-friend-name-holder">

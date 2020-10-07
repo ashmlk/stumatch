@@ -27,6 +27,7 @@ urlpatterns = [
     path('post/<str:guid_url>/delete/', views.post_delete, name='post-delete'),
     path('post/comment/<str:hid>/delete/', views.comment_delete, name='comment-delete'),
     path('courses/', views.course_menu, name='course-menu'),
+    path('courses/dashboard/', views.course_dashboard, name='course-dashboard'),
     path('courses/lists/', views.course_list, name='course-list'),
     path('courses/add/', views.course_add, name='courses-add'),
     path('courses/add/get_obj', views.course_add_form_get_obj, name='courses-add-get-obj'),

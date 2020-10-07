@@ -549,7 +549,37 @@ def post_comment_list(request, guid_url):
 
 @login_required
 def course_menu(request):
-    return render(request,'home/courses/course_menu.html',{'menu':True})
+    
+    csc_school = ''
+    csc_count = 0
+    no_courses = no_common_school =  False       
+    possible_friends = Profile.objects.get_similar_friends(user=request.user)[:5]  
+    courses_most_enrolled = request.user.courses.annotate(enrolled=Count('profiles')).order_by('-profiles')[:3]  
+    user_lists = request.user.course_lists.order_by('-created_on')[:3] 
+    friends_with_courses = Profile.objects.friends_with_courses(user=request.user)
+    fwc_count = friends_with_courses.count()
+    friends_with_courses = friends_with_courses[:5]
+    common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]
+    user_course_count = request.user.courses.count()
+    saved_courses = request.user.saved_courses.all()[:4]
+    if request.user.courses.count() < 1:
+        no_courses = True
+        
+    context = {
+        'menu':True,
+        'friends':possible_friends,
+        'courses':courses_most_enrolled,
+        'lists': user_lists,
+        'friends_courses': friends_with_courses,
+        'fwc_count':fwc_count,
+        'csc_school':csc_school,
+        'csc_count':csc_count,
+        'ucc':user_course_count,
+        'saved_courses':saved_courses,
+        'no_courses':no_courses,
+        }
+    
+    return render(request,'home/courses/course_menu.html',context)
 
 @login_required
 def course_list(request):
@@ -565,6 +595,43 @@ def course_list(request):
          courses = paginator.page(paginator.num_pages)
     context = { 'courses':courses,'yc':'text-primary','tt':': Your Courses' }
     return render(request,'home/courses/course_list.html',context)
+
+@login_required
+def course_dashboard(request):
+    
+    # user courses
+    course_list = request.user.courses.order_by("course_code")
+    course_count = course_list.count()
+    
+    # get top courses based on ratings
+    top_courses = request.user.courses.annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:4]
+    
+    # get most enrolled school
+    common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]['course_university']
+    
+    # get school top courses
+    top_school_courses = Course.objects.filter(course_university=common_school_course)\
+        .exclude(id__in=[c.id for c in top_courses]).exclude(course_code__in=[c.course_code for c in top_courses])\
+            .annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:6]
+            
+    page = request.GET.get('page', 1)
+    paginator = Paginator(course_list , 7)
+    try:
+        courses = paginator.page(page)
+    except PageNotAnInteger:
+        courses = paginator.page(1)
+    except EmptyPage:
+         courses = paginator.page(paginator.num_pages)
+         
+    context = { 
+               'top_courses':top_courses,
+               'top_school_courses':top_school_courses,
+               'top_school':common_school_course,
+               'courses':courses,
+               'yc':'text-primary',
+               'tt':': Dashboard' 
+               }
+    return render(request,'home/courses/course_dashboard.html',context)
 
 @login_required
 def courses_instructor(request,par1,par2):
@@ -1166,7 +1233,7 @@ def get_course_mutual_students(request):
 @login_required
 def course_list_manager(request):
     
-    lists = request.user.course_lists.order_by('created_on')
+    lists = request.user.course_lists.order_by('-created_on')
     
     context = {
         'lists':lists,

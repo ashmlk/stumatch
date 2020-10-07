@@ -189,7 +189,8 @@ $(document).ready(function () {
 			  $("#modal-comment-reply").modal("show");
 			  });
 	*/
-	$('.post-ctr').on('click','.view-replies',function () {
+	$('.post-ctr').on('click','.view-replies',function (e) {
+			e.stopImmediatePropagation();
 			  var h = $(this).data('hidden');
 			  var curr = $(this).text()
 			  var newt = $(this).attr('text')

@@ -5,18 +5,6 @@
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
-{% if courses %}
-<div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
-    <div class="d-flex justify-content-between mb-0">
-        <div class="m-0">
-            <h6 class="display-4" style="font-size: 2.2rem;">Saved Courses</h4>
-        </div>
-        <div>
-            <img  src="{% static 'default/courses/sv_nts.png' %}" alt="Course Image" style="margin-top:-15px;height:100px;width: 100px;">
-        </div>
-    </div>
-</div>
-{% endif %}
 <div class="card-columns mt-1" style="margin-left: -0.85rem;margin-right: -0.85rem;">
     {% for course in courses %}
     {% bg_rand as bgrnd %}

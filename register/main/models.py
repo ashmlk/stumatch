@@ -61,7 +61,7 @@ class ProfileManager(UserManager):
                 (Q(similarity_university__gte=0.8) & Q(similarity_program__gte=0.7)) |
                 (Q(similarity_program__gte=0.85)) & 
                 (Q(public=True))
-            ).order_by('-similarity_university','-similarity_program')
+            ).exclude(is_superuser=True).order_by('-similarity_university','-similarity_program')
         )
     
         return qs
@@ -83,7 +83,7 @@ class ProfileManager(UserManager):
                         Q(last_name__unaccent__trigram_similar=search_text) |
                         Q(first_name__unaccent__trigram_similar=search_text) |
                         Q(username__unaccent__icontains=search_text), trigram__gte=0.2
-                    ).order_by('-trigram')
+                    ).exclude(is_superuser=True).order_by('-trigram')
                 )
             if qs.count() < 1:
                 return self.search(search_text)[:5]
@@ -160,7 +160,7 @@ class ProfileManager(UserManager):
                     Q(username__unaccent__trigram_similar=search_text) |
                     Q(last_name__unaccent__trigram_similar=search_text) |
                     Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.1
-                ).order_by('-rank')[:5]
+                ).exclude(is_superuser=True).order_by('-rank')[:5]
             )
             
             if qs.count() < 1:
@@ -185,7 +185,7 @@ class ProfileManager(UserManager):
                     Q(last_name__unaccent__trigram_similar=search_text) |
                     Q(first_name__unaccent__trigram_similar=search_text) |
                     Q(username__unaccent__icontains=search_text), trigram__gte=0.03
-                ).order_by('-trigram')
+                ).exclude(is_superuser=True).order_by('-trigram')
             )
         return qs
         
@@ -262,7 +262,7 @@ class ProfileManager(UserManager):
                 Q(username__unaccent__trigram_similar=search_text) |
                 Q(last_name__unaccent__trigram_similar=search_text) |
                 Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.03
-            ).order_by('-rank')
+            ).exclude(is_superuser=True).order_by('-rank')
         )
         
         return qs
@@ -279,11 +279,55 @@ class ProfileManager(UserManager):
             self.get_queryset()
             .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor, courses__course_instructor_fn__iexact=instructor_fn)
             .exclude(username__in=usernames)
+            .exclude(is_superuser=True)
+            .order_by('last_name','first_name','university').distinct('last_name','first_name','university')
+        )
+        
+        return qs
+    
+    def get_similar_friends(self, user):
+        
+        usernames = []
+        
+        user_courses = user.courses.all()
+        friends = Friend.objects.friends(user)
+        blocked =  Block.objects.blocking(user)
+        
+        if friends:
+            for f in friends:
+                usernames.append(str(f))
+        if blocked:
+            for b in blocked:
+                usernames.append(str(b))
+                
+        qs = (
+            self.get_queryset()
+            .filter(Q(university=user.university) | Q(courses__course_code__in=[c.course_code for c in user_courses]))
+            .exclude(username__in=usernames)
+            .exclude(is_superuser=True)
             .order_by('last_name','first_name','university').distinct('last_name','first_name','university')
         )
         
         return qs
         
+    def friends_with_courses(self, user):
+        
+        f_usernames = []
+        friends = Friend.objects.friends(user)
+        if friends:
+            for f in friends:
+                f_usernames.append(str(f))
+      
+        qs = (
+            self.get_queryset()
+            .filter(username__in=f_usernames)
+            .annotate(course_count=Count('courses'))
+            .filter(course_count__gte=1)
+            .order_by('last_name','first_name')
+        )
+        
+        return qs
+    
 class SearchLogManager(models.Manager):
     
     def related_terms(self, term):
