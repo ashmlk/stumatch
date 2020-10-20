@@ -212,7 +212,6 @@ $(document).ready(function (e) {
           $('#modal-report').modal('hide');
           $('body').removeClass('modal-open');
           $('.modal-backdrop').remove();  
-          alert(success_url)
           location.href = success_url;
         } else {
             $('.modal-body').html('<p class="text-center">There was an error with your request</p>');

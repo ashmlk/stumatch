@@ -100,8 +100,8 @@
             {% include 'home/blog/blog_like.html' with blog=blog %}
         </div>
         <div class="mx-2 blog-responses">
-            <a href="{% url 'home:blog-replies' slug=blog.slug guid_url=blog.guid_url %}" class="btn border btn-lg"
-                style="border-radius: 20px;">
+            <a href="{% url 'home:blog-replies' slug=blog.slug guid_url=blog.guid_url %}" class="btn border btn-md"
+                style="border:solid 1px rgba(158, 158, 158, 0.623) !important;border-radius: 20px;">
                 <span style="font-size:1rem; color:  rgb(158, 158, 158);">
                     View Replies
                     <span class="ml-1">

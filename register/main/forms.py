@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import check_password
 from datetime import datetime, timezone
 from django.utils import timezone
 
+
 username_regex =  RegexValidator(r'^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9._ ]+$', 'You may only use alphanumeric characters and/or dots and hyphen (Consecutive dots are not allowed)')
 alphanumeric = RegexValidator(r"^(?:[^\W_]|[ '-])+$", 'Only alphanumeric characters are allowed.')
 
@@ -99,7 +100,7 @@ class ContactForm(forms.Form):
         )
     email = forms.EmailField()
     message = forms.CharField(widget=forms.Textarea)
-    
+ 
 class SignUpForm(UserCreationForm):
     
 	username = forms.CharField(
@@ -111,7 +112,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Username",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -125,7 +126,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "First name",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -139,7 +140,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Last name",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -151,7 +152,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.EmailInput(
 			attrs={
 				"placeholder": "Email",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -163,7 +164,7 @@ class SignUpForm(UserCreationForm):
 
   		widget=MySelect(
         attrs={
-			"class":"form-control"
+			"class":"form-control mb-2"
 		}
         ), 
 	)
@@ -176,7 +177,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.PasswordInput(
 			attrs={
 				"placeholder": "Password",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -189,7 +190,7 @@ class SignUpForm(UserCreationForm):
 		widget=forms.PasswordInput(
 			attrs={
 				"placeholder": "Confirm Password",
-				"class": "form-control"
+				"class": "form-control mb-2"
 			}
 		)
 	)
@@ -205,97 +206,95 @@ class SignUpForm(UserCreationForm):
 				super().__init__(*args,**kwargs)
 				for field in self.fields:
 						self.fields[field].widget.attrs.update({'class':'form-control','placeholder':self.fields[field].label})
+      
+	def clean_username(self):
+		username = self.cleaned_data.get('username')
+		if Profile.objects.filter(username=username).exists():
+				if Profile.objects.filter(username=username, is_active=False).exists():
+					p = Profile.objects.filter(username=username, is_active=False).delete()
+				elif Profile.objects.filter(username=username, is_active=True).exists():
+					raise forms.ValidationError("A user with this username already exists.")
+		return username
+
+	def clean_email(self):
+		email = self.cleaned_data.get('email')
+		if Profile.objects.filter(email=email).exists():
+				if Profile.objects.filter(email=email, is_active=False).exists():
+					p = Profile.objects.filter(email=email, is_active=False).delete()
+				elif Profile.objects.filter(email=email, is_active=True).exists():
+					raise forms.ValidationError("A user with this email already exists.")
+		return email
                 		
 class EditProfileForm(UserChangeForm):
     
 	username = forms.CharField(
-		max_length=50,
+		max_length=255,
 		min_length=1,
 		required=False,
 		validators=[username_regex],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Username",
-				"class": "form-control",
+				"class": "form-control mb-2",
 				
 			}
 		)
 	)
 
 	first_name = forms.CharField(
-		max_length=50,
+		max_length=255,
 		min_length=1,
 		required=False,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "First name",
-				"class": "form-control",
+				"class": "form-control mb-2",
     			
 			}
 		)
 	)
 
 	last_name = forms.CharField(
-		max_length=50,
+		max_length=255,
 		min_length=1,
 		required=False,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Last name",
-				"class": "form-control",
+				"class": "form-control mb-2",
     			
 			}
 		)
 	)
-
-	university = forms.ChoiceField(
-		label='University',
-		required=True,
-  		choices = UNIVERSITY_CHOICES,
-
-  		widget=MySelect(
-        attrs={
-			"class":"form-control",
-			
-		}
-        ), 
-	)
-
+	'''
 	email = forms.EmailField(
-     
-		max_length=100,
+
 		required=False,
 		widget=forms.EmailInput(
 			attrs={
 				"placeholder": "Email",
-				"class": "form-control",
+				"class": "form-control mb-2",
     		
 			}
 		)
 	)
+ 	'''
     
 	bio = forms.CharField(
 		required=False,
 		widget=forms.Textarea(
 			attrs={
 				"placeholder":"Enter something about yourself",
-				"class": "form-control",
-				"rows":"4",
+				"class": "form-control mt-3",
+				"rows":"5",
     		
 			}
 		)
 	)
-	program = forms.CharField(
-		required=False,
-		widget=forms.TextInput(
-			attrs={
-				"placeholder":"What are you studying?",
-				"class": "form-control",
-			}
-		)
-	)
+
+
   
 	password = None
 
@@ -303,7 +302,7 @@ class EditProfileForm(UserChangeForm):
  
 	class Meta:
 		model = Profile
-		fields=('username','first_name','last_name','university','program','email','bio',)
+		fields=('username','first_name','last_name','bio',)
 
 
 class SetUniversityForm(forms.ModelForm):

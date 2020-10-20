@@ -13,7 +13,7 @@
             <div class="card border-0">
                 <a class="text-center menu-link{{ prgm_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=prgm">
                     <div class="m-1 p-2">
-                        Students In Your Program
+                        {% if request.user.university %}At {{ request.user.university|capfirst }}{% else %}At Your University{% endif %}
                     </div>
                 </a>
             </div>
@@ -22,7 +22,7 @@
             <div class="card border-0">
                  <a class="text-center menu-link{{ crs_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=crs">
                     <div class="m-1 p-2">
-                        Students In Your Courses
+                        In Your Courses
                     </div>
                  </a>
             </div>

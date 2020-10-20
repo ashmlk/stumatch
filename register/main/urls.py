@@ -6,9 +6,9 @@ from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
 from django.conf.urls import handler400, handler403, handler404, handler500
 
 handler404 = 'main.views.handle_404'
-handler500 = 'main.views.handle_500'
-handler403 = 'main.views.handle_403'
-handler400 = 'main.views.handle_400'
+#handler500 = 'main.views.handle_500'
+#handler403 = 'main.views.handle_403'
+#handler400 = 'main.views.handle_400'
 # SET THE NAMESPACE!
 app_name = 'main'
 
@@ -19,12 +19,14 @@ urlpatterns=[
     path('about/',views.about_html,name='site-about'),
     path('contact/',views.contact_us,name='contact-us'),
     path('signup/',views.signup,name='signup'),
+    path('update/email/signup/action/',views.update_user_email_on_verification,name='update-user-email-signup'),
     #path('signup/complete',views.user_completesignup,name='user_completesignup'),
     path('',views.user_login, name='user_login'),
     path('signout', views.user_logout, name='user_logout'),
     path('report/submit/<str:reporter_id>', views.report_object,name='report-object'),
     path('settings/edit/profile/', views.edit_profile, name='settings-edit'),
     path('update/profile/data/', views.edit_profile_data, name='update-profile-data'),
+    path('update/profile/university/', views.edit_profile_university, name='update-profile-university'),
     path('update/add/university/', views.add_university, name='update-university'),
     path('update/profile/image/<str:hid>/', views.update_image, name='update-image'),
     path('remove/profile/image/<str:hid>/', views.remove_image, name='remove-image'),
@@ -34,6 +36,7 @@ urlpatterns=[
     path('settings/security/search/', views.search_settings, name='search-settings'),
     path('settings/security/data/manage/', views.deletion_menu, name='delete-menu'),
     path('settings/security/data/posts', views.deletion_post, name='post-deletion'),
+    path('settings/security/data/blogs', views.deletion_blog, name='blog-deletion'),
     path('settings/security/data/courses', views.deletion_course, name='course-deletion'),
     path('settings/security/data/profile', views.deletion_account, name='account-deletion'),
     path('settings/notifications/', views.notification_settings_all, name='notifications-settings-all'),
@@ -64,5 +67,5 @@ urlpatterns=[
     path('your_notifications/', views.get_notifications,name='get-notifications'),
     path('your_notifications/mark_as_read', views.mark_notification_as_read,name='mark-notification-as-read'),
     path('your_notifications/delete', views.delete_notification,name='delete-notification'),
-    
+    path('get/user/mentions', views.get_user_mentions,name='get-user-mentions')
 ]

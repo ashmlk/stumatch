@@ -1,0 +1,35 @@
+{% extends 'main/settings/base_setting.html' %}
+{% block content %}
+<div class="mb-3 border-bottom setting-menu-sub">
+  <h5>Edit University and Program</h5>
+</div>
+<div class="edit-pro-all">
+  <form method="POST" action="{% url 'main:update-profile-university' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form.hidden_fields %}
+    {{ field }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+    <div class="my-2 row align-items-center d-flex">
+      <div class="col-sm-2">
+        <span class="text-muted">
+          {% if forloop.counter == 1 %}
+          University
+          {% else %}
+          Program
+          {% endif %}
+        </span>
+      </div>
+      <div class="field-main-pro col-sm-9 w-100">
+        {{ field }}
+        <span class="text-danger">{{ field.errors }}</span>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="mt-4 d-flex justify-content-end col-11" style="margin-left:20px !important;border-radius: 20px; ">
+      <button type="submit" class="btn btn-md no-border btn-primary" style="border-radius: 20px; ">Save</button>
+    </div>
+  </form>
+</div>
+<input id="uidnameinput" type="hidden" value="{{ request.user.get_hashid }}" />
+{% endblock %}

@@ -58,8 +58,7 @@
                     <div class="mt-4 mb-2 p-1">
                         <a class="card-link"
                             href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                            <span class="text-dark">Instructor:</span><span
-                                class="ml-1">{{ course.course_instructor|capfirst }}</span>
+                            <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                         </a>
                     </div>
                 </div>
@@ -120,26 +119,29 @@
     {% endif %}
 </div>
 {% endblock %}
+
 {% block item %}
-<div class="le_m_bx">
-    <div class="card border-0" style="background-color: rgba(210, 230, 248, 0.356); border-radius: 20px;">
-        <div class="content-holder">
-            <div class="pl-3 pr-3 pt-3 border-bottom">
-                <div>
-                    <h5 class="font-weight-bolder card-title">Related Searches</h5>
+    {% if not no_related  %}
+    <div class="le_m_bx">
+        <div class="card border-0" style="background-color: rgba(210, 230, 248, 0.356); border-radius: 20px;">
+            <div class="content-holder">
+                <div class="pl-3 pr-3 pt-3 border-bottom">
+                    <div>
+                        <h5 class="font-weight-bolder card-title">Related Searches</h5>
+                    </div>
                 </div>
+                {% for term in  related_terms %}
+                <div data-target="_st_{{ term.search_text }}" class="search-btn pl-3 pr-3 pb-1 pt-2 border-bottom">
+                    <form id="_st_{{ term.search_text }}" method="GET" action="{% url 'home:search-all' %}">
+                        <input type="hidden" name="q" value="{{ term.search_text }}" />
+                        <input type="hidden" name="o" value="top" />
+                        <span class="text-dark">{{ term.search_text }}</span>
+                    </form>
+                </div>
+                {% endfor %}
+                <div class="pl-3 pr-3 pb-1 pt-1 m-1"></div>
             </div>
-            {% for term in  related_terms %}
-            <div data-target="_st_{{ term.search_text }}" class="search-btn pl-3 pr-3 pb-1 pt-2 border-bottom">
-                <form id="_st_{{ term.search_text }}" method="GET" action="{% url 'home:search-all' %}">
-                    <input type="hidden" name="q" value="{{ term.search_text }}" />
-                    <input type="hidden" name="o" value="top" />
-                    <span class="text-dark">{{ term.search_text }}</span>
-                </form>
-            </div>
-            {% endfor %}
-            <div class="pl-3 pr-3 pb-1 pt-1 m-1"></div>
         </div>
     </div>
-</div>
+    {% endif %}
 {% endblock %}

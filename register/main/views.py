@@ -36,6 +36,8 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from register.settings.production import sg
 from django.template import RequestContext
+from django.contrib.contenttypes.models import ContentType
+from allauth.account.utils import *
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -174,22 +176,46 @@ def mark_notification_as_read(request):
 @login_required
 def user_logout(request):
     logout(request)
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
+    for _ in list(storage._loaded_messages):
+        del storage._loaded_messages[0]
     return redirect('main:user_login')
     
 def signup(request):
+    
+    if request.user.is_authenticated:
+        if request.user.is_active:
+            return redirect('home:home')     
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)   
+            storage = messages.get_messages(request)
+            for _ in storage:
+                pass
+            for _ in list(storage._loaded_messages):
+                del storage._loaded_messages[0]
+            user = form.save(commit=False)  
+            user.is_active = False
+            user.save()
+            send_email_confirmation(request, user, True)
             return redirect('main:user_login')
     else:
         form = SignUpForm()
     return render(request, 'main/signup.html', {'form': form})
 
-@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
+#@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
+    
+    if request.user.is_authenticated:
+        if request.user.is_active:
+            storage = messages.get_messages(request)
+            for _ in storage:
+                pass
+            for _ in list(storage._loaded_messages):
+                del storage._loaded_messages[0]
+            return redirect('home:home')             
     message = ''
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -198,15 +224,37 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
+                storage = messages.get_messages(request)
+                for _ in storage:
+                    pass
+                for _ in list(storage._loaded_messages):
+                    del storage._loaded_messages[0]
                 return redirect('home:home')
             else:
-                HttpResponse('Account is disabled')
+                return HttpResponse('Account is disabled')
         if user is None:
             message = 'Sorry the username or password you entered is incorrect please try again'
     else:
         message = ''
     return render(request, 'main/user_login.html', {'message': message})
+    
+def update_user_email_on_verification(request):
+    
+    data = dict()
+    user = request.user
+    if request.method == "POST":
+        new_email = request.POST.get('email')
+        user.add_email_address(request, new_email)
+        return render(request, 'account/custom_snippets/verification_sent.html', {'email': new_email})
 
+    else:
+        context = {
+            'email':''
+        }
+        data['form'] = render_to_string('account/email/update_email.html',context,request=request)
+    
+    return JsonResponse(data)
+        
 @login_required
 def change_password(request):
     if request.method == 'POST':
@@ -214,9 +262,19 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
+            storage = messages.get_messages(request)
+            for _ in storage:
+                pass
+            for _ in list(storage._loaded_messages):
+                del storage._loaded_messages[0]
             messages.success(request, 'Your password was successfully updated.')
             return redirect('main:change-password')
         else:
+            storage = messages.get_messages(request)
+            for _ in storage:
+                pass
+            for _ in list(storage._loaded_messages):
+                del storage._loaded_messages[0]
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
@@ -251,6 +309,25 @@ def edit_profile_data(request):
         }
     return render(request, 'main/settings/edit_profile_data.html', context)
 
+
+@login_required
+def edit_profile_university(request):
+    
+
+    if request.method == 'POST':
+        form  = SetUniversityForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('main:settings-edit')
+        else:
+            data['form_valid'] = False
+    else:
+        form = SetUniversityForm(instance=request.user)
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/settings/edit_profile_university.html',context)   
+
 @login_required
 def add_university(request):
     
@@ -259,10 +336,10 @@ def add_university(request):
     if request.method == 'POST':
         form  = SetUniversityForm(request.POST, instance=request.user)
         if form.is_valid():
-            form.save()
             if len(request.user.university) > 1:
                 request.session['no_university'] = False
             data['form_valid'] = True
+            form.save()
         else:
             data['form_valid'] = False
     else:
@@ -663,6 +740,11 @@ def login_info(request):
 def deletion_menu(request):
     
     if request.user.is_authenticated:
+        storage = messages.get_messages(request)
+        for _ in storage:
+            pass
+        for _ in list(storage._loaded_messages):
+            del storage._loaded_messages[0]
         return render(request, 'main/settings/deletion/menu.html',{'privacy_active':'setting-link-active'})
     else:
         return redirect('main:settings-edit')
@@ -946,43 +1028,65 @@ def accept_reject_friend_request(request,hid, s):
     other_user = get_object_or_404(Profile, id=id)
     user = request.user
     if request.method == 'POST':
+        actor_type = ContentType.objects.get_for_model(Profile)
+        target_type = ContentType.objects.get_for_model(FriendshipRequest)
         action = int(s)
         is_friend=None
-        if action == 0:   
+        if action == 0:  # to accept friend request sent by other_user to user
             fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+            try:
+                message = "CON_FRRE" + "has sent you a friend request"
+                user.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=other_user.id, target_content_type__id=target_type.id, \
+                target_object_id=fr.id, recipient=user, verb=message).delete()
+            except Exception as e:
+                print(e.__class__)   
+                print("There was an issue with deleting a friend request")           
             fr.accept()
             is_friend=True
-            if other_user.get_friendrequestaccepted_notify:
+            if other_user.get_friendrequestaccepted_notify: 
                 message = "CON_FRRE" + "has accepted your friend request"
                 notify.send(sender=user, recipient=other_user, verb=message, target=fr)
-        elif action == 1:   
+                    
+        elif action == 1:  # to cancel a request sent by other user to user
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
                 try:
                     message = "CON_FRRE" + "has sent you a friend request"
-                    request.user.notifications.get(actor=other_user,recipient=user,verb=message,target=fr).delete()
+                    user.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=other_user.id, target_content_type__id=target_type.id, \
+                    target_object_id=fr.id, recipient=user, verb=message).delete()
                 except Exception as e:
-                    print(e.__class__)
-                fr.cancel()
-        elif action == 2:
+                    print(e.__class__)   
+                    print("There was an issue with deleting a friend request")                  
+                fr.cancel()        
+                
+        elif action == 2: # unblock a user and set the option to option add friend
             if Block.objects.is_blocked(user, other_user):
                 Block.objects.remove_block(user,other_user)
-        elif action == 3:
+                
+        elif action == 3: # cancel pending request from user
+            
             if FriendshipRequest.objects.filter(from_user=user,to_user=other_user).exists():
                 fr = FriendshipRequest.objects.get(from_user=user,to_user=other_user)
                 try:
                     message = "CON_FRRE" + "has sent you a friend request"
-                    request.user.notifications.get(actor=user,recipient=other_user,verb=message,target=fr).delete()
+                    other_user.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                    target_object_id=fr.id, recipient=other_user, verb=message).delete()
                 except Exception as e:
-                    print(e.__class__)
+                    print(e.__class__)   
+                    print("There was an issue with deleting a friend request") 
                 fr.cancel()
+                
             if FriendshipRequest.objects.filter(from_user=other_user,to_user=user).exists():
                 fr = FriendshipRequest.objects.get(from_user=other_user,to_user=user)
+                
                 try:
                     message = "CON_FRRE" + "has sent you a friend request"
-                    request.user.notifications.get(actor=other_user,recipient=user,verb=message,target=fr).delete()
+                    other_user.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=other_user.id, target_content_type__id=target_type.id, \
+                    target_object_id=fr.id, recipient=other_user, verb=message).delete()
                 except Exception as e:
-                    print(e.__class__)
+                    print(e.__class__)   
+                    print("There was an issue with deleting a friend request") 
+                    
                 fr.cancel()
                 
             is_friend=False
@@ -1785,5 +1889,14 @@ def report_object(request,reporter_id):
         data['html_form'] =  render_to_string('report/report_form.html',context,request=request) 
     
     return JsonResponse(data)
+
+
+def get_user_mentions(request):
+    
+    text = request.GET.get('q', None)
+    top_users = Profile.objects.search_topresult(search_text=text)[:10]
+    top_users_json = list(top_users[:10].values('first_name','last_name','username','image'))
+    return JsonResponse(top_users_json, safe=False)
+
     
     

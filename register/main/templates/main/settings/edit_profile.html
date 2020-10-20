@@ -1,9 +1,22 @@
 {% extends 'main/settings/base_setting.html' %}
 {% block content %}
+<style>a .d-flex:hover{border-radius: 8px; background-color:rgb(207, 205, 205) !important;}.text-dark{border-radius: 7px;text-decoration: none !important;}</style>
 <a class="text-dark mb-1 account-privacy-info" href="{% url 'main:update-profile-data' %}">
     <div class="d-flex p-2 pt-3  justify-content-between">
         <div class="setting-menu-sub">
             <h6>Personal Information</h6>
+        </div>
+        <div>
+            <svg width="1em" height="1em" style="margin-top:-5px !important;" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </div>
+    </div>
+</a>
+<a class="text-dark mb-1 account-privacy-info" href="{% url 'main:update-profile-university' %}">
+    <div class="d-flex p-2 pt-3  justify-content-between">
+        <div class="setting-menu-sub">
+            <h6>University and Program</h6>
         </div>
         <div>
             <svg width="1em" height="1em" style="margin-top:-5px !important;" viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

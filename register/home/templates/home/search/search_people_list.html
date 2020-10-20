@@ -1,11 +1,13 @@
+{% load thumbnail %}
 <div class="infinite-container users-list">
     {% for user in users %}
     <div class="infinite-item mb-2 card">
-        <div class="card-body">
+        <div class="p-2">
             <div class="d-flex m-2">
                 <div>
-                    <img class="img-create-post rounded-circle" style="height: 2.7rem;width: 2.7rem;" src="{{ user.image.url }}"
-                    alt="Profile image">
+                    {% thumbnail user.image "60x60" crop="80% top" as im %}
+                        <img class="rounded-circle" style="margin:{{ im|margin:'60x60' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                    {% endthumbnail %}
                 </div >
                 <div class="ml-1">
                     <div>
@@ -13,16 +15,13 @@
                     </div>
                     <div style="margin-top: -0.35rem;">
                         <a class="small" style="color: rgb(1,119,200)" href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
+                        {% if user.university %}
                         <span class="mx-0 small text-muted">·</span>
                         <span class="text-muted small">{{ user.university|capfirst }}</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            {% if request.user.university == user.university %}
-                <span class="text-muted ml-2 small">
-                    You both go to {{ request.user.university }}
-                </span>
-            {% endif %}
         </div>
     </div>
 {% empty %}

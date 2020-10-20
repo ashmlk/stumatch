@@ -7,11 +7,11 @@
     <title>Courses - JoinCampus</title>
 {% endblock %}
 {% block contentmenu %}
-<div class="mt-5 p-2">
+<div class="container mt-5 p-2">
     <div class="mb-3">
         <div class="db fs">
-            <div class="row p-1">
-                <div class="col-md-6 ">
+            <div class="row p-1 mb-2">
+                <div class="col-md-6">
                     <div class="box-c">
                         <div class="title mb-1 d-flex justify-content-between">
                             <a href="{% url 'home:course-dashboard' %}" style="text-decoration: none;">
@@ -35,8 +35,8 @@
                                   </div>
                             </div>
                         </div>
-                        <div class="border-top pt-2">
-                            <div class="col-md-10">
+                        <div class="pt-2">
+                            <div class="col-md-12">
                                 {% for course in courses %}
                                 {% bg_rand as bgrnd %}
                                 {% div_class as veid %}
@@ -99,7 +99,7 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         <div class="p-1">
                                             <div class="text-center">
-                                                <span class="text-muted">You have not added any courses.</span>
+                                                <span class="text-muted">You haven't added any courses</span>
                                             </div>
                                             <div class="text-center">
                                                 <span class="text-muted small">Click <a href="{% url 'home:courses-add' %}">here</a> to add courses</span>
@@ -114,17 +114,17 @@
                 </div>
                 <div class="col-md-6 p-1">
                     <div class="box-c">
-                        <div class="title mb-1">
+                        <div class="title mb-4">
                             <a href="{% url 'home:find-students' %}?sl=prgm" style="text-decoration: none;">
                                 <div class="h5 font-weight bolder text-dark">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
                                       </svg>
-                                      <span class="mx-2">Connect</span>
+                                      <span class="mx-2">Discover People</span>
                                 </div>   
                             </a>                            
                         </div>
-                        <div class="card pt-2 p-1">
+                        <div class="card pt-2 p-1 px-2 mx-3">
                             <div>
                                 {% for user in friends %}
                                 <div class="infinite-item mb-2 card">
@@ -155,7 +155,7 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         <div class="p-1">
                                             <div class="text-center">
-                                                <span class="text-muted">Click <a href="{% url 'home:find-students' %}?sl=prgm">here</a> find students</span>
+                                                <a class="small" href="{% url 'home:find-students' %}?sl=prgm">Discover People</a>
                                             </div>                                         
                                         </div>
                                     </div>
@@ -163,7 +163,7 @@
                                 {% endfor %}
                                 {% if friends %}
                                 <a href="{% url 'home:find-students' %}?sl=prgm" class="btn col-md-12 w-100 menu-link-active" style="border-radius: 5px !important;">
-                                    View More
+                                    See All
                                 </a>
                                 {% endif %}
                             </div>
@@ -178,7 +178,7 @@
             <div class="row p-1">
                 <div class="col-md-4 p-1">
                     <div class="box-c">
-                        <div class="title mb-1">
+                        <div class="title mb-4">
                             <a href="{% url 'home:courses-add' %}" style="text-decoration: none;">
                                 <div class="h5 font-weight bolder text-dark">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-file-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -189,7 +189,7 @@
                                 </div>
                             </a>                                     
                         </div>
-                        <div class="card">
+                        <div class="mt-2 card mx-3">
                             <div class="p-2">
                                 <div class="d-flex align-items-center justify-content-left">
                                     <div class="p-1">
@@ -210,13 +210,13 @@
                                         {% endif %}
                                         {% if no_courses %}
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <div class="p-1">
+                                            <div class="pl-4 mx-auto">
+                                                <div class="p-1 mx-auto">
                                                     <div class="text-center">
-                                                        <span class="text-muted">You haven't added any courses</span>
+                                                        <span class="text-center text-muted">You haven't added any courses</span>
                                                     </div>
                                                     <div class="text-center">
-                                                        <span class="ml-1 mt-1 text-muted small"><a href="{% url 'home:courses-add' %}">Add Courses</a></span>
+                                                        <span class="ml-1 mt-1 text-center text-muted small"><a href="{% url 'home:courses-add' %}">Add Courses</a></span>
                                                     </div>                                      
                                                 </div>
                                             </div>
@@ -227,22 +227,33 @@
                             </div>
                             <div class="d-flex pl-3">
                                 {% for user in friends_courses %}
-                                <div style="margin-left: -13px;">
-                                    {% thumbnail user.image "30x30" crop="90% top" as im %}
-                                    <img class="rounded-circle" style="margin:{{ im|margin:'30x30' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                <div style="margin-left: -10px;">
+                                    {% thumbnail user.image "35x35" crop="90% top" as im %}
+                                    <img class="rounded-circle" style="margin:{{ im|margin:'35x35' }}; border:3px solid white !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
                                     {% endthumbnail %}
                                 </div>
                                 {% endfor %}
-                                <div class="text-muted small mx-2 pt-2">
-                                    <span> and others have enrolled in courses</span>
+                                {% if friends_courses and fwc_count %}
+                                <div class="text-muted small"
+                                 style="background-color:rgb(219, 219, 219);width:36px;height:36px;margin-left: -10px;border:3px solid white !important; border-radius: 50%; text-align: center; padding: 5px 5px 2px 2px;">
+                                    <span class="small">+{{ fwc_count }}</span>
                                 </div>
+                                {% elif not no_courses %}
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="p-1 pl-4">
+                                        <div class="text-center">
+                                            <span class="text-center text-muted small" style="margin-left: 5.7rem;"><a  href="{% url 'home:courses-add' %}">Add more</a></span>
+                                        </div>                                         
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 p-1">
                     <div class="box-c">
-                        <div class="title mb-1">
+                        <div class="title mb-4">
                             <a href="{% url 'home:course-list-manager' %}" style="text-decoration: none;">
                                 <div class="h5 font-weight bolder text-dark">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -252,7 +263,7 @@
                                 </div>  
                             </a>                
                         </div>
-                        <div class="card">
+                        <div class="card mx-3">
                             <ul class="list-group list-group-flush">
                                 {% for list in lists %}
                                 <li class="list-group-item">
@@ -306,7 +317,7 @@
                 </div>
                 <div class="col-md-4 p-1">
                     <div class="box-c">
-                        <div class="title mb-1">
+                        <div class="title mb-4">
                             <a href="{% url 'home:courses-saved' %}" style="text-decoration: none;">
                                 <div class="h5 font-weight bolder text-dark">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -318,39 +329,47 @@
                                 </div>  
                             </a>                                  
                         </div>
-                        <div class="card">
+                        <div class="mt-2 mx-3">
                             {% for course in saved_courses %}
                             {% bg_rand as bgrnd %}
-                            <div class="card mb-2 bg-white">
-                                <div class="d-flex justify-content-between course-title-box course-goto"  data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}" style="height:5rem; background-color: {{ bgrnd }};">
-                                    <div class="ml-2"> 
-                                        <a class="mx-2 my-auto text-white"  style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"><h3 class="font-weight-bold">{{ course.course_code }}</h3></a>
-                                    </div>
-                                </div>
+                            <div class="card mb-2 bg-white" style="border-radius:15px;">
+                                <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
+                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:15px;border-top-right-radius:15px;"
+                                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
+                                        <div class="ml-2">               
+                                            <h3 class="pt-2 font-weight-bold">{{ course.course_code }}</h3>                
+                                        </div>
+                                </a>
                                 <div class="row p-1">
                                     <div class="col-sm" >
-                                        <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                                            <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                            <span class="text-dark">University:</span><span class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
                                         </div>       
-                                        <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                                            <span class="text-dark">Instructor:</span><span class="ml-1">{{ course.course_instructor_fn }} {{ course.course_instructor|capfirst }}</span>
+                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                                            <span class="text-dark">Instructor:</span><span class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
                                         </div>
-                                        <div class="my-1 course-goto border rounded p-1 btn-outline-primary" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
-                                            <span class="text-dark">Total Enrollments: </span><span class="mr-1">{{ course.get_user_count_ins }}</span>
+                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
+                                            <span class="text-dark">Total Enrollments: </span><span class=" text-primary mr-1">{{ course.get_user_count_ins }}</span>
                                         </div>
+                                        <div class="my-1  p-1 pb-2">
+                                            <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                                        </div>  
                                     </div>     
                                 </div>
                             </div>
                             {% empty %}
-                            <div class="card-body">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <div class="p-1">
-                                        <div class="text-center">
-                                            <span class="text-muted">You have not added any courses.</span>
-                                        </div>                                       
+                            <div class="card mx-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="p-1">
+                                            <div class="text-center">
+                                                <span class="text-muted">You haven't saved any courses</span>
+                                            </div>                                       
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            
                             {% endfor %}
                         </div>
                     </div>

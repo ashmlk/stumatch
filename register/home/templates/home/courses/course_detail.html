@@ -61,6 +61,7 @@
                     <span class="text-dark">University:</span>
                     <span class="ml-1">{{ course.course_university|capfirst }}</span>
                 </a>
+                <hr style="margin: 1px 1px 4px 1px !important;">
                 <a style="border-radius: 20px !important;" class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
                     href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
                     <span class="svg-icon ccs mr-1">
@@ -76,6 +77,7 @@
                     <span class="text-dark">Instructor:</span><span
                         class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </a>
+                <hr style="margin: 1px 1px 4px 1px !important;">
                 {% if course.complexity_btn_ins == "None" %}
                 <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
                     <span>Difficulty with this professor:</span><span
@@ -87,6 +89,7 @@
                         class="ml-1">{{ course.average_complexity_ins }}</span>
                 </div>
                 {% endif %}
+                <hr style="margin: 1px 1px 4px 1px !important;">
                 {% if course.complexity_btn == "None" %}
                 <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
                     <span>Course overall difficulty:</span><span
@@ -97,21 +100,21 @@
                     <span>Course overall difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
                 </div>
                 {% endif %}
-                <hr>
-                <div class="c_dis mb-1" style="display: inline-block;">
+                <hr style="margin: 1px 1px 1px 1px !important;">
+                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
                     <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
                 </div>
                 </br>
-                <div class="c_dis mb-1" style="display: inline-block;">
+                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
                     <span>Total Students With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:</span><span
                         class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
                 </div>
                 {% if taken %}
-                <div class="c_dis mb-1" style="display: inline-block;">
+                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
                     <span class="small text-muted">You have taken this course.</span>
                 </div>
                 {% else %}
-                <div class="c_dis mb-1" style="display: inline-block;">
+                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
                     <span class="small text-muted">You have <span class="text-danger">not </span> taken this
                         course.</span>
                 </div>

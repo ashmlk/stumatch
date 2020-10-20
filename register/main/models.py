@@ -310,17 +310,21 @@ class ProfileManager(UserManager):
         
         return qs
         
-    def friends_with_courses(self, user):
+    def friends_with_courses(self, user, university):
         
         f_usernames = []
         friends = Friend.objects.friends(user)
         if friends:
             for f in friends:
                 f_usernames.append(str(f))
-      
+        if university == '':
+            if user.university:
+                university = user.university
+            else:
+                return None
         qs = (
             self.get_queryset()
-            .filter(username__in=f_usernames)
+            .filter(username__in=f_usernames, university=university)
             .annotate(course_count=Count('courses'))
             .filter(course_count__gte=1)
             .order_by('last_name','first_name')
@@ -376,7 +380,7 @@ DEFAULT_IMAGE = 'defaults/user/default_u_i.png'
 class Profile(AbstractUser):
     bio = models.TextField()
     university = models.CharField(max_length=50)
-    program = models.CharField(blank=True,max_length=100)
+    program = models.CharField(null=True,blank=True,max_length=255)
     image = models.ImageField(default='defaults/user/default_u_i.png', upload_to=upload_to_uuid('profile_image/profiles/'), blank=True)
     courses = models.ManyToManyField('home.Course',related_name='profiles')
     public = models.BooleanField(default=True, blank=True)
@@ -418,6 +422,10 @@ class Profile(AbstractUser):
 
     def get_hashid(self):
         return hashids_user.encode(self.id)
+    
+    def add_email_address(self, request, new_email):
+
+        return EmailAddress.objects.change(request, self.user, new_email, confirm=True)
     
     def set_image_to_default(self):
         if self.image.url != DEFAULT_IMAGE:
@@ -513,25 +521,3 @@ class ReportCourseReview(ReportBase):
     
     reported_obj = models.ForeignKey('home.Review',on_delete=models.CASCADE, verbose_name='report_coursereview', related_name='reported_coursereviews')
 
-
-class Notification(AbstractNotification):
-    # custom field example
-    unique_uuid = models.CharField(max_length=255,unique=True, null=True)
-
-    class Meta(AbstractNotification.Meta):
-        abstract = False
-        app_label = 'main'
-        
-def notification_create_uuid(actor_id, receiver_id, verb, target_id):
-    
-    """
-    Generate unique id based on actor, receiver, verb and target
-    """
-    actor_hash = hashids_notify.encode(actor_id)
-    receiver_hash = hashids_notify.encode(receiver_id)
-    verb_hash = hashids_notify.encode(verb.replace(" ", ""))
-    target_hash = hashids_notify.encode(target_id)
-    
-    final_hash = actor_hash + receiver_hash + verb_hash + target_hash
-    return final_hash
-    

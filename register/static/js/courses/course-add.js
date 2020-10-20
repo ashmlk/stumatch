@@ -69,7 +69,8 @@ $(document).ready(function () {
                         for (i in data.ins){
                             var element = "<li class='list-group-item itm-slct itm-slct-ins' data-inslastname = " 
                             + data.ins[i]["course_instructor"] + " data-insfirstname = " + data.ins[i]["course_instructor_fn"]
-                            + ">" + data.ins[i]["course_instructor_fn"] + " " + data.ins[i]["course_instructor"] + "</li>"
+                            + ">" + data.ins[i]["course_instructor_fn"] + " " + data.ins[i]["course_instructor"] 
+                            + "<span class='float-right text-muted small ml-2 mt-1'>" + data.ins[i]["course_university"] + " </span>" + "</li>"
                             $('#crs-ins-dp').find('ul').append(element);
                         }
                     $('#crs-ins-dp').show();
@@ -95,10 +96,10 @@ $(document).ready(function () {
         */
         if ($('#id_course_code').val().length > 0 ) {
             // course code field has been set
-            var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&o=" + $('#id_course_code').val() + "&ot=instructor";
+            var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&o=" + $('#id_course_code').val() + "&ot=instructor" + "&is_fn=True";
         } else {
             // value of course instructor is unknown so we are now just searching for similar course code
-            var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&oj=instructor";
+            var get_url = "/courses/add/get_obj?u=" + selectedUni + "&q=" + obj_text + "&oj=instructor" + "&is_fn=True";
         }
         if(obj_text != ''){
             $.ajax({
@@ -107,16 +108,17 @@ $(document).ready(function () {
                 dataType: 'json',
                 success: function (data) {
                     if (data.ins.length > 0 ) {
-                        $('#crs-ins-dp').find('li').remove();
+                        $('#crs-ins-fn-dp').find('li').remove();
                         for (i in data.ins){
                             var element = "<li class='list-group-item itm-slct itm-slct-ins' data-inslastname = "
                             + data.ins[i]["course_instructor"] + " data-insfirstname = " 
-                            + data.ins[i]["course_instructor_fn"]  + ">" + data.ins[i]["course_instructor_fn"] + " " + data.ins[i]["course_instructor"] + "</li>"
-                            $('#crs-ins-dp').find('ul').append(element);
+                            + data.ins[i]["course_instructor_fn"]  + ">" + data.ins[i]["course_instructor_fn"] + " " + data.ins[i]["course_instructor"] 
+                            + "<span class='float-right text-muted small ml-2 mt-1'>" + data.ins[i]["course_university"] + " </span>" + "</li>"
+                            $('#crs-ins-fn-dp').find('ul').append(element);
                         }
-                    $('#crs-ins-dp').show();
+                    $('#crs-ins-fn-dp').show();
                     } else if( data.ins.length <= 0){
-                        $('#crs-ins-dp').find('li').remove();
+                        $('#crs-ins-fn-dp').find('li').remove();
                     }
                 },
                 error: function (rs, e) {
@@ -124,8 +126,8 @@ $(document).ready(function () {
                 },
             })
         } else {
-            $('#crs-ins-dp').find('ul').empty();
-            $('#crs-ins-dp').hide();
+            $('#crs-ins-fn-dp').find('ul').empty();
+            $('#crs-ins-fn-dp').hide();
         }
     });
 

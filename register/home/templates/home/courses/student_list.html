@@ -68,13 +68,13 @@
     {% if o == 'ins' %}
       <div class="btn flex-fill mr-1 menu-link menu-link{{ post_active }}">
         <a  href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=all" style="text-decoration: none;">
-            <span class="h6 text-center">View All students</span>
+            <span class="h6 text-center">See All students</span>
         </a>
       </div>
     {% endif %}
       <div class="btn flex-fill mr-1 menu-link menu-link{{ buzz_active}}">
         <a  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}" style="text-decoration: none;">
-            <span class="h6 text-center">View All Professor</span>
+            <span class="h6 text-center">See All Professors</span>
         </a>
       </div>
     </div>

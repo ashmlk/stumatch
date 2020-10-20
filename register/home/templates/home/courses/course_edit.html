@@ -12,17 +12,41 @@
         </div>
     </div>
     <div class="py-2">
-        <form method="POST" action="{% url 'home:courses-edit' hid=course.get_hashid %}">
+        <form method="POST" action="{% url 'home:courses-add' %}">
             {% csrf_token %}
-            {{ form|crispy }}
+            {% for field in form.hidden_fields %}
+            {{ field }}
+            {% endfor %}
+            {% for field in form.visible_fields %}
+            <div class="my-2 row align-items-center d-flex">
+            <div class="col-12 w-100">
+                <span class="text-muted">
+                {{ field.label }}
+                </span>
+            </div>
+            <div class="col-sm-12 w-100">
+                {{ field }}
+                {% if field.name|stringformat:"s" == "course_code" %}
+                <div class="mb-1 p-1 border rounded query-result bg-white" id="crs-cc-dp"><ul class="list-group list-group-flush"></ul></div>
+                {% elif field.name|stringformat:"s" == "course_instructor" %}
+                <div class="mb-1 p-1 border rounded query-result bg-white" id="crs-ins-dp" style="text-transform: capitalize;"><ul class="list-group list-group-flush"></ul></div>
+                {% elif field.name|stringformat:"s" == "course_instructor_fn" %}
+                <div class="mb-1 p-1 border rounded query-result bg-white" id="crs-ins-fn-dp" style="text-transform: capitalize;"><ul class="list-group list-group-flush"></ul></div>
+                {% endif %}
+                <span class="small text-muted">{{ field.help_text }}</span>
+                <span class="text-danger">{{ field.errors }}</span>
+            </div>
+            </div>  
+            {% endfor %}
             <input type="hidden" id="get_files_link" data-json="">
             <div class="d-flex justify-content-end">
                 <div>
-                    <button type="submit" class="btn border-light btn-primary"  style="border-radius: 20px;">Save</button>
+                    <button type="submit" class="btn border-light btn-primary" style="border-radius: 20px;">Save</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+<script src="{% static 'js/courses/course-add.js' %}"></script>
 {% endblock %}
 

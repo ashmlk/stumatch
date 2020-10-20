@@ -58,3 +58,4 @@ $(document).ready (function () {
         $('#my-dropzone').get(0).dropzone.hiddenFileInput.click();
     })
 })
+

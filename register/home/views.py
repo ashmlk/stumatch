@@ -13,7 +13,7 @@ from django.db.models import Q, F, Count, Avg, FloatField, Max, Min, Case, When
 from hashids import Hashids
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, RedirectView
 from django.forms import modelformset_factory 
-from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply, CourseList, CourseListObjects
+from .models import Post, Comment, Images, Course, Review, Buzz, BuzzReply, Blog, BlogReply, CourseList, CourseListObjects, Professors
 from main.models import Profile, SearchLog
 from .forms import PostForm, CommentForm, CourseForm, CourseEditForm, ImageForm, ReviewForm, BuzzForm, BuzzReplyForm, BlogForm, BlogReplyForm, CourseListForm, CourseListObjectsForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -37,7 +37,7 @@ from home.algo import get_uni_info
 from itertools import chain
 from home.templatetags.ibuilder import num_format
 from django.contrib.admin.options import get_content_type_for_model
-from main.models import notification_create_uuid
+from django.contrib.contenttypes.models import ContentType
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -162,7 +162,12 @@ def hot_posts(request):
     
     if posts_list_ids:
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
-        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
+        if request.user.university:
+            posts_list = Post.objects.select_related("author")\
+                .annotate(relevancy=Count(Case(When(author__university=request.user.university, then=None))))\
+                .filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
+        else:
+             posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
     
     
     """ get hot words and tags related to posts form tags """
@@ -202,7 +207,12 @@ def top_posts(request):
     
     if posts_list_ids:
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(posts_list_ids)])
-        posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
+        if request.user.university:
+            posts_list = Post.objects.select_related("author")\
+                .annotate(relevancy=Count(Case(When(author__university=request.user.university, then=None))))\
+                .filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
+        else:
+             posts_list = Post.objects.select_related("author").filter(id__in=posts_list_ids).exclude(author__id__in=blockers_id).order_by(-preserved)
     
     """ get hot words and tags related to posts form tags """
     tags = cache.get("tt_post")
@@ -446,17 +456,23 @@ def post_like(request,guid_url):
     if request.method == 'POST':   
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
-            message = "CON_POST" + " liked your post."
-            #post.author.notifications.get(unique_uuid = notification_create_uuid(actor_id=user.id, receiver_id=post.author.id, verb=message, target_id=post.id)).delete()
+            try:
+                message = "CON_POST" + " liked your post."
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Post)
+                post.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=request.user.id, target_content_type__id=target_type.id, \
+                    target_object_id=post.id, recipient=post.author, verb=message).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("Error in removing like notification from post")
+            
         else:
             post.likes.add(user)
             if user != post.author:
                 if post.author.get_notify and post.author.get_post_notify_all and post.author.get_post_notify_likes:
-                    message = "CON_POST" + " liked your post." # message to be sent to post author
-                    notify.send(sender=user, recipient=post.author, verb=message, target=post, \
-                        unique_uuid = notification_create_uuid(actor_id=user.id, receiver_id=post.author.id, verb=message, target_id=post.id))
-                    for n in post.author.notifications.all():
-                        print(n.unique_uuid)
+                    message = "CON_POST" + " liked your post." 
+                    notify.send(sender=user, recipient=post.author, verb=message, target=post)
+          
         data['likescount'] = post.likes.count()
         data['post_likes'] = render_to_string('home/posts/likes.html',{'post':post},request=request)
         return JsonResponse(data)
@@ -472,6 +488,22 @@ def comment_like(request,guid_url,hid):
     if request.method == 'POST':    
         if comment.likes.filter(id=user.id).exists():
             comment.likes.remove(user)
+            try:
+                message = "CON_POST" + " liked your comment on " + comment.post.author.get_full_name() + "'s post."
+                description = comment.body
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Post)
+                action_type = ContentType.objects.get_for_model(Comment)             
+                # remove notification sent to comment author that user liked their notification
+                comment.name.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                    target_object_id=comment.post.id, recipient=comment.name, verb=message, action_object_content_type__id=action_type.id, action_object_object_id=comment.id).delete()
+                # remove notification from post author's notification list
+                message = "CON_POST" + " liked a comment on your post"
+                comment.post.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                    target_object_id=comment.post.id, recipient=comment.post.author, verb=message, action_object_content_type__id=action_type.id, action_object_object_id=comment.id).delete()          
+            except Exception as e:              
+                print(e.__class__)
+                print("Error removing notification from liked comment")         
         else:
             comment.likes.add(user)
             try:
@@ -498,6 +530,40 @@ def comment_delete(request,hid):
     comment=get_object_or_404(Comment,id=id)
     if request.method=="POST":
         if comment.name==request.user or request.user == comment.post.author:
+
+            try:
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Post)
+                action_type = ContentType.objects.get_for_model(Comment) 
+                
+                '''
+                Delete notification for comment, post author.
+                Comment can either be a reply, or a parent comment, in both cases notification for comment's post's author should be deleted.
+                '''   
+                description = "Reply: " + comment.body
+                message_comment = "CON_POST" + " replied to your comment on " + comment.post.author.get_full_name() + "'s post." # message comment is sent to the parent comment
+                message_post = "CON_POST" + " replied to a comment on your post." # message_post is sent to the post author of the reply's parent comment
+                
+                if comment.is_reply:
+                    # the comment is a reply - delete te notification sent to the parent comment
+                    comment.reply.name.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=comment.name.id, target_content_type__id=target_type.id, \
+                        target_object_id=comment.post.id, recipient=comment.reply.name, description=description, verb=message_comment, \
+                            action_object_content_type__id=action_type.id, action_object_object_id=comment.id).delete()
+
+                # first case, if the comment is a reply the description would be as above
+                    comment.post.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=comment.name.id, 
+                            target_content_type__id=target_type.id, target_object_id=comment.post.id, recipient=comment.post.author, description=description,\
+                                verb=message_post, action_object_content_type__id=action_type.id, action_object_object_id=comment.id).delete()
+                
+                # second case the comment is a parent comment. The description for parent comment is different
+                message = "CON_POST" + " commented on your post." # message to send to post author when user comments on their post
+                description = "Comment: " + comment.body
+                comment.post.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=comment.name.id, target_content_type__id=target_type.id, \
+                        target_object_id=comment.post.id, recipient=comment.name, description=description, verb=message, action_object_content_type__id=action_type.id, action_object_object_id=comment.id).delete()  
+            except Exception as e:
+                print(e.__class__)
+                print("There is an with removing notifications for deleting comment on post")      
+                
             comment.delete()
             data['form_is_valid'] = True
     else:
@@ -551,19 +617,30 @@ def post_comment_list(request, guid_url):
 def course_menu(request):
     
     csc_school = ''
-    csc_count = 0
+    csc_count = user_course_count = 0
+    fwc_count = None
+    user_lists = courses_most_enrolled = common_school_course = saved_courses = friends_with_courses = [] 
     no_courses = no_common_school =  False       
-    possible_friends = Profile.objects.get_similar_friends(user=request.user)[:5]  
-    courses_most_enrolled = request.user.courses.annotate(enrolled=Count('profiles')).order_by('-profiles')[:3]  
-    user_lists = request.user.course_lists.order_by('-created_on')[:3] 
-    friends_with_courses = Profile.objects.friends_with_courses(user=request.user)
-    fwc_count = friends_with_courses.count()
-    friends_with_courses = friends_with_courses[:5]
-    common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]
-    user_course_count = request.user.courses.count()
-    saved_courses = request.user.saved_courses.all()[:4]
-    if request.user.courses.count() < 1:
+    possible_friends = Profile.objects.get_similar_friends(user=request.user)[:5] 
+    if request.user.courses.exists():
+        courses_most_enrolled = request.user.courses.annotate(enrolled=Count('profiles')).order_by('-profiles')[:3]  
+        user_lists = request.user.course_lists.order_by('-created_on')[:3] 
+        common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]
+        user_course_count = request.user.courses.count()
+        saved_courses = request.user.saved_courses.all()[:4]
+        csc_school = common_school_course['course_university']
+        csc_count = common_school_course['school_count']
+    else: 
         no_courses = True
+    
+    friends_with_courses = Profile.objects.friends_with_courses(user=request.user, university=csc_school)
+    
+    if friends_with_courses != None:
+        fwc_count = friends_with_courses.count() 
+        if not fwc_count < 9:
+            if fwc_count != 9:
+                fwc_count = fwc_count - 2
+                friends_with_courses = friends_with_courses[:8]
         
     context = {
         'menu':True,
@@ -636,16 +713,26 @@ def course_dashboard(request):
 @login_required
 def courses_instructor(request,par1,par2):
     instructor_rating = -1
-    courses = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
+    course_list = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
+    
     try:
-        instructor_rating = Course.objects.instructor_average_voting(ins=courses.first().course_instructor, ins_fn=courses.first().course_instructor_fn, university=courses.first().course_university)
+        instructor_rating = Course.objects.instructor_average_voting(ins=course_list.first().course_instructor, ins_fn=course_list.first().course_instructor_fn, university=course_list.first().course_university)
     except:
-        message = "Issue with getting instructor rating for: " + courses.first().course_instructor_fn.capitalize() + " " + courses.first().course_instructor.capitalize() + " at " + courses.first().course_university
+        message = "Issue with getting instructor rating for: " + course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize() + " at " + course_list.first().course_university
         print(message)
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(course_list , 6)
+    try:
+        courses = paginator.page(page)
+    except PageNotAnInteger:
+        courses = paginator.page(1)
+    except EmptyPage:
+         courses = paginator.page(paginator.num_pages)
     context = {
          'courses':courses,
-         'instructor':courses.first().course_instructor_fn.capitalize() + " " + courses.first().course_instructor.capitalize(),
-         'university':courses.first().course_university,
+         'instructor':course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize(),
+         'university':course_list.first().course_university,
          'instructor_rating':instructor_rating
          }
     return render(request,'home/courses/instructor_course_list.html',context)
@@ -660,6 +747,10 @@ def course_add(request):
             uni = course.course_university.strip().lower()
             ins_fn = course.course_instructor_fn.strip().lower()
             ins = course.course_instructor.strip().lower()
+            try:
+                Professors.objects.get_or_create(first_name=ins_fn, last_name=ins, university=uni)   
+            except Exception as e:
+                print(e.__class__)   
             has_course = request.user.courses.filter(course_code=code,course_instructor_fn__iexact=ins_fn, course_instructor__iexact=ins,course_year=course.course_year,\
                 course_university__iexact=uni,course_semester=course.course_semester).exists()
             max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=uni,course_semester=course.course_semester).count()
@@ -714,13 +805,20 @@ def course_add_form_get_obj(request):
     obj = request.GET.get('o', None) #value that is initially typed in in course or instructor field
     obj0 = request.GET.get('oj', None) #value that we want without previous data - one field is blank
     obj1 = request.GET.get('ot', None) #value that we want - if set to course we are looking for course
+    is_fn = request.GET.get('is_fn', False)
     obj_text = request.GET.get('q', None)
     
+
     if obj != None and obj1 == 'instructor': #have the code and want the instructor
-        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
+        
+        instructor_list = Course.objects.values('course_instructor','course_instructor_fn','course_university')\
         .annotate(trigram=TrigramSimilarity('course_instructor', obj_text),  trigram_fn=TrigramSimilarity('course_instructor_fn', obj ), trigram_course=TrigramSimilarity('course_code', obj ))\
         .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.15) | Q(trigram_fn__gte=0.5), Q(trigram_course__gte=0.3))\
         .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
+        
+        if len(instructor_list) < 5:
+            instructor_list = Professors.objects.search(text=obj_text,university=uni, first_name=is_fn)[:12]
+           
         
     if obj != None and obj1 == 'code': #have the instructor and want the code, obj has to be set to value of course instructor field
         course_code_list = Course.objects.values_list('course_code', flat=True)\
@@ -729,11 +827,9 @@ def course_add_form_get_obj(request):
             .order_by('course_code','-trigram').distinct('course_code')[:7]
             
     elif obj0 == 'instructor': # if obj0 is instructor no value is provided and user wants list of of instructors
-        instructor_list = Course.objects.values('course_instructor','course_instructor_fn')\
-            .annotate(trigram=TrigramSimilarity('course_instructor', obj_text), trigram_fn=TrigramSimilarity('course_instructor_fn', obj_text))\
-            .filter(Q(course_university__unaccent=uni), Q(trigram__gte=0.1) | Q(trigram_fn__gte=0.5))\
-            .order_by('course_instructor','-trigram').distinct('course_instructor')[:7]
-            
+     
+       instructor_list = Professors.objects.search(text=obj_text,university=uni, first_name=is_fn)[:12]
+       
     elif obj0 == 'code': # if obj0 is code then user is requesting list of course codes
         course_code_list = Course.objects.values_list('course_code', flat=True).annotate(trigram=TrigramSimilarity('course_code', obj_text)).filter(course_university__unaccent=uni, trigram__gte=0.1).\
             order_by('course_code','-trigram').distinct('course_code')[:7]
@@ -756,6 +852,13 @@ def course_edit(request, hid):
         form = CourseEditForm(request.POST)
         if form.is_valid():
             course = form.save() 
+            uni = course.course_university.strip().lower()
+            ins_fn = course.course_instructor_fn.strip().lower()
+            ins = course.course_instructor.strip().lower()
+            try:
+                Professors.objects.get_or_create(first_name=ins_fn, last_name=ins, university=uni)   
+            except Exception as e:
+                print(e.__class__)   
             request.user.courses.add(course)  
             request.user.courses.remove(course_init)
             return redirect('home:course-list')
@@ -775,6 +878,13 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
         form = CourseForm(request.POST or none)
         if form.is_valid():
             course = form.save(False)
+            uni = course.course_university.strip().lower()
+            ins_fn = course.course_instructor_fn.strip().lower()
+            ins = course.course_instructor.strip().lower()
+            try:
+                Professors.objects.get_or_create(first_name=ins_fn, last_name=ins, university=uni)   
+            except Exception as e:
+                print(e.__class__)   
             max_reached =  request.user.courses.filter(course_year=course.course_year,course_university__iexact=course.course_university,course_semester=course.course_semester).count()
             course_exists = Course.objects.filter(course_code=course.course_code,course_instructor_fn__iexact=course.course_instructor_fn,\
                                                     course_instructor__iexact=course.course_instructor,course_year=course.course_year,\
@@ -950,13 +1060,20 @@ def course_share(request,hid):
 
 @login_required
 def course_instructors(request,course_university_slug,course_code):
-    courses = Course.objects.filter(course_university_slug=course_university_slug,course_code=course_code).order_by('course_university_slug','course_instructor_slug','course_code').distinct('course_university_slug','course_instructor_slug','course_code')
+    num_instructors = 'No instructors found'
+    courses = Course.objects.filter(course_university_slug=course_university_slug,course_code=course_code).\
+        order_by('course_university_slug','course_instructor_slug','course_code').distinct('course_university_slug','course_instructor_slug','course_code')
     taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code).exists()
+    if courses:
+        num_instructors = courses.count()
+        num_instructors = str(num_instructors) + ' Instructors' if num_instructors > 1 else str(num_instructors) + ' Instructors'
+            
     context = {
         'code':course_code,
         'university': courses.first().course_university,
         'courses': courses,
-        'taken':taken
+        'taken':taken,
+        'num_instructors':num_instructors
     }
     
     return render(request,'home/courses/course_instructors.html', context)
@@ -976,8 +1093,10 @@ def review_like(request, hid, hidc, status):
     if request.method == "POST":
         if status=="like":
             
-            """ Send a notification to the review author that someone has disliked their review
-                The identity of the user who performed the action (actor) will not be disclosed """
+            '''
+            Send a notification to the review author that someone has disliked their review
+                The identity of the user who performed the action (actor) will not be disclosed 
+            '''
             if review.author != user:    
                 message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
                 description = review.body
@@ -986,21 +1105,26 @@ def review_like(request, hid, hidc, status):
             review.dislikes.remove(user)
             review.likes.add(user)
 
-        elif status=="dislike":
-            
-            """ Send a notification to the review author that someone has disliked their review
-                The identity of the user who performed the action (actor) will not be disclosed """
-            if review.author != user: 
-                message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
-                description = review.body
-                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
-            
+        elif status=="dislike": 
             review.likes.remove(user)
             review.dislikes.add(user)
             
+            try:
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Course)
+                action_type = ContentType.objects.get_for_model(Review) 
+                message = "CON_CRRW" + "A student liked your review on " # in template course.code should be added in order to add link to page
+                description = review.body
+                review.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                        target_object_id=course.id, recipient=review.author, description=description, verb=message, \
+                            action_object_content_type__id=action_type.id, action_object_object_id=review.id).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("There was an error removing notifications for course review like")
+            
         elif status=="rmvlike":
             review.likes.remove(user)
-            
+   
         elif status == "rmvdislike":
             review.dislikes.remove(user)
             
@@ -1015,11 +1139,7 @@ def review_like(request, hid, hidc, status):
         elif status == "udislike":
             review.likes.remove(user)
             review.dislikes.add(user)
-            if review.author != user: 
-                message = "CON_CRRW" + "A student disliked your review on " # in template course.code should be added in order to add link to page
-                description = review.body
-                notify.send(sender=user, recipient=review.author, verb=message, description=description, target=course, action_object=review)
-            
+
     data['review'] = render_to_string('home/courses/review_like.html',{'review':review, 'course':course},request=request)
     return JsonResponse(data)
 
@@ -1071,7 +1191,7 @@ def university_detail(request):
             u_empty='No students found'
           
         page = request.GET.get('page', 1)
-        paginator = Paginator(user_list , 7)
+        paginator = Paginator(user_list , 8)
         try:
             users = paginator.page(page)
         except PageNotAnInteger:
@@ -1096,7 +1216,7 @@ def university_detail(request):
             u_empty='No courses found'
             
         page = request.GET.get('page', 1)
-        paginator = Paginator(course_list , 7)
+        paginator = Paginator(course_list , 8)
         try:
             courses = paginator.page(page)
         except PageNotAnInteger:
@@ -1125,7 +1245,7 @@ def university_detail(request):
             u_empty='No instructors found'
             
         page = request.GET.get('page', 1)
-        paginator = Paginator(instructor_list , 7)
+        paginator = Paginator(instructor_list , 8)
         try:
             instructors = paginator.page(page)
         except PageNotAnInteger:
@@ -1567,10 +1687,19 @@ def blog_like(request,guid_url):
     if request.method == 'POST':   
         if blog.likes.filter(id=user.id).exists():
             blog.likes.remove(user)
+            try:
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Blog)
+                message = "CON_BLOG" + "liked your blog."
+                blog.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                        target_object_id=blog.id, recipient=blog.author, verb=message).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("There was an error removing notification for liked blog")
         else:
             blog.likes.add(user)
             if blog.author.get_notify and blog.author.get_blog_notify_all and blog.author.get_blog_notify_likes:
-                message = "CON_BLOG" + "liked your blog post." 
+                message = "CON_BLOG" + "liked your blog." 
                 notify.send(sender=user, recipient=blog.author, verb=message, target=blog)
         data['blog_likes'] = render_to_string('home/blog/blog_like.html',{'blog':blog},request=request)
         return JsonResponse(data)
@@ -1604,7 +1733,7 @@ def blog_replies(request,guid_url,slug):
                 if blog.author.get_notify and blog.author.get_blog_notify_all and blog.author.get_blog_notify_comments:
                     message = "CON_BLOG" + "replied to your blog post." 
                     description = reply.content
-                    notify.send(sender=user, recipient=blog.author, description=description, verb=message, target=blog)
+                    notify.send(sender=user, recipient=blog.author, description=description, verb=message, target=blog, action_object=reply)
             data['form_is_valid'] = True
             data['new_reply'] = render_to_string('home/blog/blog_reply_new.html',{'reply':reply,'blog':blog},request=request)
             data['reply_count'] = num_format(blog.blog_replies.count())
@@ -1629,13 +1758,24 @@ def blog_reply_like(request,hid):
     if request.method == 'POST':   
         if reply.reply_likes.filter(id=user.id).exists():
             reply.reply_likes.remove(user)
+            try:
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Blog)
+                action_type = ContentType.objects.get_for_model(BlogReply)
+                message = "CON_BLOG" + "liked your reply." 
+                description = reply.content
+                blog.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=user.id, target_content_type__id=target_type.id, \
+                        target_object_id=blog.id, recipient=blog.author, verb=message, action_object_content_type__id=action_type.id, action_object_object_id=reply.id).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("There was an error removing notification for liked blog")
         else:
             reply.reply_likes.add(user)
             if user != reply.author:
                 if reply.author.get_notify and reply.author.get_blog_notify_all and reply.author.get_blog_notify_comments:
                     message = "CON_BLOG" + "liked your reply." 
                     description = reply.content
-                    notify.send(sender=user, recipient=reply.author, description=description, verb=message, target=blog)
+                    notify.send(sender=user, recipient=reply.author, description=description, verb=message, target=blog, action_object=reply)
         data['reply_likes'] = render_to_string('home/blog/blog_reply_like.html',{'reply':reply},request=request)
         return JsonResponse(data)
     
@@ -1649,6 +1789,17 @@ def blog_reply_delete(request,hid, guid_url):
     
     if request.method == 'POST':
         if request.user == blog.author or request.user == reply.author:
+            try:
+                actor_type = ContentType.objects.get_for_model(Profile)
+                target_type = ContentType.objects.get_for_model(Blog)
+                action_type = ContentType.objects.get_for_model(BlogReply)
+                message = "CON_BLOG" + "replied to your blog post." 
+                description = reply.content
+                blog.author.notifications.filter(actor_content_type__id=actor_type.id, actor_object_id=reply.author.id, target_content_type__id=target_type.id, \
+                        target_object_id=blog.id, recipient=blog.author, verb=message, action_object_content_type__id=action_type.id, action_object_object_id=reply.id).delete()
+            except Exception as e:
+                print(e.__class__)
+                print("There was an error in removing the notification for deleted blog reply")
             reply.delete()
             data['form_is_valid'] = True
             data['reply_count'] = num_format(blog.blog_replies.count())
@@ -1769,12 +1920,11 @@ def search(request):
             users = Profile.objects.search_topresult(search_term)
             courses = Course.objects.search(search_term)[:3]
             
-            related_terms = SearchLog.objects.related_terms(search_term)
+            related_terms = SearchLog.objects.related_terms(search_term)        
+            no_related = True if related_terms.count() < 1 else False
             
-            if (posts.exists() or blogs.exists() or users.exists() or courses.exists()):
-                empty = False 
-            else:
-                empty = True
+        
+            empty = False if (posts.exists() or blogs.exists() or users.exists() or courses.exists()) else True
                 
             context = {
                 'posts':posts,
@@ -1784,7 +1934,8 @@ def search(request):
                 'related_terms':related_terms,
                 'courses':courses,
                 'q':search_term,
-                'top_active':'-active'
+                'top_active':'-active',
+                'no_related':no_related
             }
             
             return render(request, 'home/search/search_top.html', context)
@@ -1876,6 +2027,8 @@ def search_dropdown(request):
         search_term = request.GET.get('q', None)
         user_recent_search = [str(i) for i in request.user.recent_searches.order_by('-time_stamp')[:3]]
         most_similar = [str(i) for i in SearchLog.objects.filter(search_text__icontains=search_term).order_by('-time_stamp')[:4]]
+        top_users = Profile.objects.search_topresult(search_text=search_term)[:5]
+        most_similar = most_similar + [u.first_name + " " + u.last_name for u in top_users]
         
         data = {
             'search_user': user_recent_search,

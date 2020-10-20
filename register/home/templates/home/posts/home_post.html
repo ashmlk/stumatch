@@ -22,9 +22,9 @@
                   {% endthumbnail %}
                 </div>
                 <div class="ml-1">
-                  <div>
+                  <a href="{{ post.author.get_absolute_url }}" class="text-dark">
                     <strong class="mx-0">{{ post.author.get_full_name }}</strong>
-                  </div>
+                  </a>
                   <div style="margin-top: -0.35rem;">
                     <a class="small" style="color: rgb(1,119,200)"
                       href="{{ post.author.get_absolute_url }}">@{{ post.author.get_username }}</a>

@@ -2,9 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <div id="#headerPlaceholder"></div>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180528762-1"></script>
+    <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-180528762-1');</script>
   <title>About - JoinCampus</title>
   <meta charset="utf-8">
+  <meta name="description" content="Learn about JoinCampus. Find out about our platform, community and values. Find how you can find other students and connect with them."/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -12,23 +14,13 @@
     href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
-  <link rel="apple-touch-icon" sizes="57x57" href="{% static 'favicon_folder/apple-icon-57x57.png' %}">
-  <link rel="apple-touch-icon" sizes="60x60" href="{% static 'favicon_folder/apple-icon-60x60.png' %}">
-  <link rel="apple-touch-icon" sizes="72x72" href="{% static 'favicon_folder/apple-icon-72x72.png' %}">
-  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'favicon_folder/apple-icon-76x76.png' %}">
-  <link rel="apple-touch-icon" sizes="114x114" href="{% static 'favicon_folder/apple-icon-114x114.png' %}">
-  <link rel="apple-touch-icon" sizes="120x120" href="{% static 'favicon_folder/apple-icon-120x120.png' %}">
-  <link rel="apple-touch-icon" sizes="144x144" href="{% static 'favicon_folder/apple-icon-144x144.png' %}">
-  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'favicon_folder/apple-icon-152x152.png' %}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-icon-180x180.png' %}">
-  <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'favicon_folder/android-icon-192x192.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon_folder/favicon-96x96.png' %}">
-  <link rel="manifest" href="{% static 'favicon_folder/manifest.json' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-touch-icon.png?v=1.0' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png?v=1.0' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_folder/favicon-16x16.png?v=1.0' %}">
+  <link rel="manifest" href="{% static 'favicon_folder/site.webmanifest' %}">
+  <link rel="mask-icon" href="{% static 'favicon_folder/safari-pinned-tab.svg' %}" color="#90c4f5">
   <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="{% static 'favicon_folder/ms-icon-144x144.png' %}">
   <meta name="theme-color" content="#ffffff">
-  <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -38,7 +30,6 @@
     integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
   <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -57,9 +48,9 @@
                     <div class="about-container">
                         <div style="margin-top: 3rem !important;">
                             <div class="p-5">
-                                <div class="py-3 d-flex  justify-content-center align-items-center">
-                                    <div>
-                                        <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}">
+                                <div class="py-3 w-100  d-flex  justify-content-center">
+                                    <div class="pl-5 logo-name">
+                                        <img class="img-fluid" src="{% static 'logo/m/logo-main-name.png' %}" style="width: 375px;"/>
                                     </div>
                                 </div>
                                 <div class="my-2">
@@ -129,42 +120,36 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="content-holder p-5" style="background-color:  rgba(90, 180, 248, 0.329);">
-                            <div class="container ">
-                                <div class="mt-1 card border-light">
-                                    <div class="card-body">
-                                        <h5 class="card-title font-weight-bolder">Our Platform</h5>
-                                        <div class="card-text" style="font-size: large; font-weight: bolder;">
-                                            <span class="h3 text-muted">
-                                                We strive to bring students together and help them excel in their personal and work life.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 3rem !important;">
-                            <div class="content-holder p-5">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-3">
-                                           <div class="img-fluid"> 
-                                               <img class="pl-2 img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 8.9rem;">
-                                           </div>
-                                        </div>
-                                        <div class="col-9">
-                                            <div class="mt-1  rounded p-4" style="background-color: rgba(241, 241, 241, 0.664);">
-                                                <span class="h5 text-dark">
-                                                    Our mission is to build a safe platform for students, and help them connect freely with others, and engage in interesting topics and expand their networks. 
-                                                    With your help, we will build a big community.
+                        <div class="content-holder container pl-4" >
+                            <div class="row w-100  d-flex justify-content-between">
+                                <div class="col-md-6 p-1">
+                                    <div class="mt-1 card border-0">
+                                        <div class="card-body">
+                                            <h5 class="card-title font-weight-bolder">Our Goal</h5>
+                                            <div class="card-text" style="font-size: large; font-weight: bolder;">
+                                                <span class="h3 text-muted">
+                                                    We strive to bring students together and help them excel in their personal and work life.
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <div class="col-md-6 p-1">
+                                    <div class="mt-1 card border-0">
+                                        <div class="card-body">
+                                            <h5 class="card-title font-weight-bolder">Our Values</h5>
+                                            <div class="card-text" style="font-size: large; font-weight: bolder;">
+                                                <span class="h3 text-muted">
+                                                    We believe every student should be able to express themselves freely. We believe every
+                                                    student deserves to belong, and find the support they need. 
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                            
                             </div>
                         </div>
+
                         <div class="border-top" style="margin-top: 3rem !important;">
                             <div class="p-5">
                                 <div class="my-2">

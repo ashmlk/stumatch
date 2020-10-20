@@ -30,6 +30,13 @@ SECRET_KEY = 'e2a&eyvw$gfs=8o)xzru2f@@7iiy-3+da18o#immnl7ln@3xm-'
 ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'main.Profile'
+ACCOUNT_EMAIL_VERIFICATION='mandatory'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "JoinCampus "
+SOCIALACCOUNT_ADAPTER = 'main.adapters.SocialAccountAdapter'
 
 # Application definition
 
@@ -43,8 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.postgres',
-    'main',
-    'home',
+    'main.apps.MainConfig',
+    'home.apps.HomeConfig',
     'crispy_forms',
     'ckeditor',
     'taggit',
@@ -245,7 +252,6 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-NOTIFICATIONS_NOTIFICATION_MODEL = 'main.Notification'
 
 SITE_ID = 3
 
@@ -255,7 +261,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'app183550357@heroku.com'
 EMAIL_HOST_PASSWORD = 'pxnz2ghd3106'
-DEFAULT_FROM_EMAIL = 'Corscope Team <no-reply@corscope.com>'
+DEFAULT_FROM_EMAIL = 'JoinCampus Team <no-reply@joincampus.ca>'
 
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')

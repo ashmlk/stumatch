@@ -1,0 +1,19 @@
+{% load account %}
+{% user_display user as user_display %}
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+
+Welcome to JoinCampus {{ user_display }}!
+
+You are receiving this email to confirm your registration on JoinCampus. 
+
+If this was not you please ignore this message. 
+
+To activate your account, go to {{ activate_url }}
+
+{% endblocktrans %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+JoinCampus Team
+{{ site_domain }}{% endblocktrans %}
+{% endautoescape %}

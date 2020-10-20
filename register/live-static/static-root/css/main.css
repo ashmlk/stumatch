@@ -708,3 +708,21 @@ box-shadow:  -9px 9px 18px #949ca1,
   margin-left: 0.8rem !important;
   height: auto !important;
   } 
+
+.separator-line {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+.separator-line::before, .separator-line::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgb(226,230,234);
+    
+}
+.separator-line::before {
+    margin-right: .6em;
+}
+.separator-line::after {
+    margin-left: .6em;
+}

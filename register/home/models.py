@@ -166,13 +166,7 @@ class PostManager(models.Manager):
         qs = self.get_queryset().filter(author__public=True, last_edited__gte=time_threshold) 
           
         words = list()
-        ''' 
-        for p in qs:
-            words.append(common_words(p.content))
-        counter = Counter(chain.from_iterable(words))
-        result = [word for word, word_count in counter.most_common(11)]
-        return result
-        '''
+        
         for p in qs:
             words.append((p.content).split())
         words = chain.from_iterable(words)
@@ -186,6 +180,22 @@ class PostManager(models.Manager):
         tags = Post.tags.most_common(extra_filters={'post__in': qs })[:5]
         
         return tags
+
+class CommentManager(models.Manager):
+    
+    def most_recent_comments_by_friends(post_ids, friends_ids):
+        
+        qs = (
+            self.get_queryset().raw(
+                'SELECT post_id, id, text FROM joincampus_comment\
+                (SELECT post_id, id, text, rank() OVER (PARTITION BY post_id ORDER BY id DESC)\
+                FROM joincampus_comment WHERE post_id in %s AND name_id in %s) sub\
+                WHERE rank <= 2\
+                ORDER BY post_id, id', params=[post_ids, friends_ids]
+            )
+        )
+        
+        return qs
                     
 class BlogManager(models.Manager):
     
@@ -425,9 +435,13 @@ class CourseManager(models.Manager):
                     
                 ) + SearchVector(
                     'course_university','course_instructor', weight='B', config='english'
-                )
+                    
+                ) + SearchVector(
+                    'course_code','course_instructor','course_instructor_fn', weight='B', config='english'          
+                ) 
                 
               )
+        
         search_query = SearchQuery(
             search_text, config='english'
         )
@@ -449,7 +463,7 @@ class CourseManager(models.Manager):
             .annotate(rank=search_rank, trigram=trigram, bs=Greatest('trigram','rank'))
             .filter(
                 Q(rank__gte=0.2)|
-                Q(trigram__gte=0.09)|
+                Q(trigram__gte=0.1)|
                 Q(course_code__unaccent__trigram_similar=search_text) 
             )
             .filter(id__in=ds).order_by('-bs')
@@ -487,12 +501,71 @@ class CourseManager(models.Manager):
         if avg.get('as_float__avg'):
             return round(avg.get('as_float__avg'), 2)
         else:
-            return 0
+            return -1
+ 
+class ProfessorsManager(models.Manager):
+    
+    def search(self, text, university=None, first_name=False):
         
+
+        if first_name:
+            search_vectors = ( 
+                SearchVector(
+                    'last_name', weight='C', config='english'
+            
+                ) + SearchVector(
+                    'first_name', weight='A', config='english'
+                )
+            )
+        else:
+            search_vectors = ( 
+                SearchVector(
+                    'last_name', weight='A', config='english'
+            
+                ) + SearchVector(
+                    'first_name', weight='A', config='english'
+                )
+            )
+            
+        search_query = SearchQuery(
+            text, config='simple'
+        )
+        
+        search_rank = SearchRank(search_vectors,search_query)
+        
+        trigram_firstname = TrigramSimilarity('last_name', text) 
+        trigram_lastname = TrigramSimilarity('first_name', text)
+            
+        
+        
+        if university != None:
+            qs = (
+                self.get_queryset()
+                .filter(university__unaccent__iexact=university)
+                .annotate(course_instructor_fn=F('first_name'), course_instructor=F('last_name'), course_university=F('university'), \
+                    trigram_firstname=trigram_firstname, trigram_lastname=trigram_lastname)
+                .values('course_instructor_fn','course_instructor','course_university')
+                .filter(Q(sv=search_query)| Q(trigram_lastname__gte=0.2) | Q(trigram_firstname__gte=0.3))
+                .annotate(rank=search_rank + trigram_firstname + trigram_lastname)
+                .order_by('-rank')
+            )
+        else:
+            qs = (
+                self.get_queryset()
+                .annotate(course_instructor_fn=F('first_name'), course_instructor=F('last_name'), course_university=F('university'), \
+                    trigram_firstname=trigram_firstname, trigram_lastname=trigram_lastname)
+                .values('course_instructor_fn','course_instructor','course_university')
+                .filter(Q(sv=search_query)| Q(trigram_lastname__gte=0.2) | Q(trigram_firstname__gte=0.3))
+                .annotate(rank=search_rank + trigram_firstname + trigram_lastname)
+                .order_by('-rank')
+            )
+        
+        return qs
+       
 class Post(models.Model):
     title = models.CharField(max_length=100)
     guid_url = models.CharField(max_length=255,unique=True, null=True)
-    content = models.TextField(validators=[MaxLengthValidator(1200)])
+    content = models.TextField(validators=[MaxLengthValidator(2100)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(auto_now_add=True)
     last_edited= models.DateTimeField(auto_now=True)
@@ -602,6 +675,12 @@ class Post(models.Model):
         likes = self.likes.count()
         
         return top_score_posts(likes,comments)
+    
+    def get_comments(self, ids):
+        
+        comments = self.comments.select_related("name").order_by('-created_on')
+        
+        
         
                
 def image_create_uuid_p_u(instance, filename):
@@ -642,7 +721,6 @@ class Comment(models.Model):
     name = models.ForeignKey(Profile, on_delete=models.CASCADE)
     body = models.TextField(validators=[MaxLengthValidator(350)])
     created_on = models.DateTimeField(auto_now_add=True)
-    active = models.BooleanField(default=False)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")
     likes= models.ManyToManyField(Profile, blank=True, related_name='comment_likes')
 
@@ -651,6 +729,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.name)
+
+    @property
+    def is_reply(self):
+        return self.reply_id is not None
     
     def likes_count(self):
         return self.likes.count()
@@ -1209,3 +1291,18 @@ class CourseListObjects(models.Model):
     def get_hashid(self):
         return hashids.encode(self.id)
     
+class Professors(models.Model):
+    
+    first_name = models.CharField(max_length=255, null = False)
+    last_name = models.CharField(max_length=255, null = False)
+    university = models.CharField(max_length=255, null = False)
+    ratings = models.DecimalField(max_digits=15, decimal_places=6, null = True)
+    
+    sv = pg_search.SearchVectorField(null=True)
+    
+    objects = ProfessorsManager()
+    
+    class Meta:
+        indexes = [
+            GinIndex(fields=['sv'],name='search_idx_professors'),
+        ]

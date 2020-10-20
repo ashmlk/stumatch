@@ -5,7 +5,18 @@ import os
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 THUMBNAIL_DEBUG = True
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+
+'''
+SENDGRID_API_KEY = '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'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'app183550357@heroku.com'
+EMAIL_HOST_PASSWORD = 'pxnz2ghd3106'
+DEFAULT_FROM_EMAIL = 'JoinCampus Team <no-reply@joincampus.ca>'
+'''
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SITE_ID = 8
 

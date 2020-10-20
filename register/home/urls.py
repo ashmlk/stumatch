@@ -4,9 +4,9 @@ from home import views
 from django.conf.urls import handler400, handler403, handler404, handler500
 
 handler404 = 'main.views.handle_404'
-handler500 = 'main.views.handle_500'
-handler403 = 'main.views.handle_403'
-handler400 = 'main.views.handle_400'
+#handler500 = 'main.views.handle_500'
+#handler403 = 'main.views.handle_403'
+#handler400 = 'main.views.handle_400'
 
 # removed trailing backslashes
 urlpatterns = [

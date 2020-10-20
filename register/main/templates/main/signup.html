@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180528762-1"></script>
+  <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-180528762-1');</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JoinCampus - Sign up</title>
@@ -10,38 +12,29 @@
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
   <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">    
-  <link rel="apple-touch-icon" sizes="57x57" href="{% static 'favicon_folder/apple-icon-57x57.png' %}">
-  <link rel="apple-touch-icon" sizes="60x60" href="{% static 'favicon_folder/apple-icon-60x60.png' %}">
-  <link rel="apple-touch-icon" sizes="72x72" href="{% static 'favicon_folder/apple-icon-72x72.png' %}">
-  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'favicon_folder/apple-icon-76x76.png' %}">
-  <link rel="apple-touch-icon" sizes="114x114" href="{% static 'favicon_folder/apple-icon-114x114.png' %}">
-  <link rel="apple-touch-icon" sizes="120x120" href="{% static 'favicon_folder/apple-icon-120x120.png' %}">
-  <link rel="apple-touch-icon" sizes="144x144" href="{% static 'favicon_folder/apple-icon-144x144.png' %}">
-  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'favicon_folder/apple-icon-152x152.png' %}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-icon-180x180.png' %}">
-  <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'favicon_folder/android-icon-192x192.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-touch-icon.png' %}">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon_folder/favicon-96x96.png' %}">
-  <link rel="manifest" href="{% static 'favicon_folder/manifest.json' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_folder/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'favicon_folder/site.webmanifest' %}">
+  <link rel="mask-icon" href="{% static 'favicon_folder/safari-pinned-tab.svg' %}" color="#90c4f5">
   <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="{% static 'favicon_folder/ms-icon-144x144.png' %}">
   <meta name="theme-color" content="#ffffff">
 </head>
 <body>
   <div class="wrapper">
     <div class="container">
-      <div class="d-flex justify-content-center">
-        <div class="align-items-center is-responsive my-4 mx-auto ">
-          <div class="d-flex my-auto align-items-center">
-            <div class="logo-name">
-              <a href="{% url 'main:user_login' %}">
-                <img class="img-fluid" src="{% static 'logo/m/logo-main-name.png' %}" height="80%" width="80%">
-              </a>
-            </div>
-            <div>
-            </div>
+      <div class="d-flex justify-content-center mt-5 col-12">
+        <div class="is-responsive col-lg-5 my-auto mx-auto" style="padding-bottom: 2vh;"">
+          <div class="my-4">
+            <a href="{% url 'main:user_login' %}">
+              <div class="d-flex my-auto justify-content-center align-items-center">
+                <div class="logo-name">
+                  <img class="img-fluid" src="{% static 'logo/m/logo-main-name.png' %}" width="90%" height="90%"/>
+                </div>
+              </div>
+            </a>          
+            <h5 class="text-center mt-3 mx-0">Create an account and discover other students</h5>
           </div>
-          <h5 class="text-center mt-3 mx-0">Create an account to find your friends and connect!</h5>
         </div>
       </div>
       <div class="d-flex justify-content-center col-12">
@@ -52,7 +45,7 @@
           <form enctype="multipart/form-data" method="POST" action="{% url 'main:signup' %}">
             {% csrf_token %}
             <div class="form-fields">
-              {{ form.as_p}}
+              {{ form|crispy}}
             </div>
             <div class="mt-2">
               <div class="mb-3 text-muted small">
@@ -61,7 +54,7 @@
                 </span>
               </div>
               <div>
-                <button type="submit" class="float-right btn btn-primary"  style="border-radius: 20px; ">Sign Up</button>
+                <button type="submit" class="float-right btn btn-primary"  style="border-radius: 20px; ">Sign up</button>
               </div>
             </div>
           </form>
