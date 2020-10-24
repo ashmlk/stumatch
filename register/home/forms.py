@@ -16,7 +16,10 @@ alphanumeric_s = RegexValidator(r"(?i)^(?:(?![×Þ÷ßþø])[-'0-9a-zÀ-ÿ ])+$"
 alphabetical = RegexValidator(r"(?i)^(?:(?![×Þ÷ßþø])[-'a-zÀ-ÿ ])+$", 'Only alphabetical characters are allowed.')
 
 def year_choices():
-    return [(r,r) for r in range(1984, datetime.date.today().year+1)]
+    return [(r,r) for r in range(2000, datetime.date.today().year+3)]
+
+def course_list_year_choices():
+    return [(r,r) for r in range(2000, datetime.date.today().year+11)]    
 
 def current_year():
     return datetime.date.today().year
@@ -114,7 +117,7 @@ class CourseForm(forms.ModelForm):
     course_code = forms.CharField(
 		label='',
 		max_length=20,
-		min_length=5,
+		min_length=4,
 		required=True,
   		validators=[alphanumeric_s],
 		widget=forms.TextInput(
@@ -128,7 +131,7 @@ class CourseForm(forms.ModelForm):
     course_instructor_fn = forms.CharField(
 		label='', 
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
   		validators=[alphabetical],
 		widget=forms.TextInput(
@@ -142,7 +145,7 @@ class CourseForm(forms.ModelForm):
     course_instructor = forms.CharField(
 		label='', 
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
   		validators=[alphabetical],
 		widget=forms.TextInput(
@@ -164,13 +167,12 @@ class CourseForm(forms.ModelForm):
         ), 
 	)
     
-    course_year = forms.TypedChoiceField(
-        coerce=int,
+    course_year = forms.ChoiceField(
+        label='Year',
         choices=year_choices,
         initial=current_year,
-        widget=forms.TextInput(
+        widget=forms.Select(
 		    attrs={
-				"placeholder": "When did you take this course?",
 				"class": "form-control"
 			}
 		)
@@ -196,8 +198,8 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         labels = {
-            "course_prof_difficulty": "Difficulty with this professor?",
-            "course_difficulty": 'Course overall difficulty?'          
+            "course_prof_difficulty": "Difficulty with this professor",
+            "course_difficulty": 'Course overall difficulty'          
         }
         fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
         
@@ -207,7 +209,7 @@ class CourseEditForm(forms.ModelForm):
     course_code = forms.CharField(
 		label='',
 		max_length=20,
-		min_length=5,
+		min_length=4,
 		required=True,
   		validators=[alphanumeric_v2],
 		widget=forms.TextInput(
@@ -221,7 +223,7 @@ class CourseEditForm(forms.ModelForm):
     course_instructor_fn = forms.CharField(
 		label='', 
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
   		validators=[alphabetical],
 		widget=forms.TextInput(
@@ -235,10 +237,9 @@ class CourseEditForm(forms.ModelForm):
     course_instructor = forms.CharField(
 		label='', 
 		max_length=50,
-		min_length=2,
+		min_length=1,
 		required=True,
   		validators=[alphabetical],
-        help_text='Please omit any title(Dr., Professor, Mr., Mrs.,...)',
 		widget=forms.TextInput(
 			attrs={
 				"placeholder": "Instructor Lastname",
@@ -259,13 +260,12 @@ class CourseEditForm(forms.ModelForm):
         ), 
 	)
     
-    course_year = forms.TypedChoiceField(
-        coerce=int,
+    course_year = forms.ChoiceField(
+        label='Year',
         choices=year_choices,
         initial=current_year,
-        widget=forms.TextInput(
+        widget=forms.Select(
 		    attrs={
-				"placeholder": "When did you take this course?",
 				"class": "form-control"
 			}
 		)
@@ -292,8 +292,8 @@ class CourseEditForm(forms.ModelForm):
     class Meta:
         model = Course
         labels = {
-            "course_prof_difficulty": "Difficulty with this professor?",
-            "course_difficulty": 'Course overall difficulty?'
+            "course_prof_difficulty": "Difficulty with this professor",
+            "course_difficulty": 'Course overall difficulty'
             
         }
         fields=('course_code','course_university','course_instructor_fn','course_instructor','course_year','course_semester','course_difficulty','course_prof_difficulty')
@@ -412,9 +412,9 @@ class CourseListForm(forms.ModelForm):
 		)
 	)
     
-    year = forms.TypedChoiceField(
-        coerce=int,
-        choices=year_choices,
+    year = forms.ChoiceField(
+        label='Year',
+        choices=course_list_year_choices,
         initial=current_year,
         widget=forms.TextInput(
 		    attrs={
@@ -454,7 +454,7 @@ class CourseListObjectsForm(forms.ModelForm):
   		validators=[alphabetical],
 		widget=forms.TextInput(
 			attrs={
-				"placeholder": "Instructor Fullname",
+				"placeholder": "Instructor",
 				"class": "form-control"
 			}
 		)

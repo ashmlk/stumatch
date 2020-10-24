@@ -1448,7 +1448,7 @@ def get_user(request,username):
 
         post_list = user.post_set.order_by('-last_edited')
         page = request.GET.get('page_posts', 1)
-        paginator = Paginator(post_list, 4)
+        paginator = Paginator(post_list, 1)
         try:
             posts = paginator.page(page)
         except PageNotAnInteger:
@@ -1456,16 +1456,8 @@ def get_user(request,username):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
         
-        blog_list = user.blog_set.order_by('-last_edited')
-        page = request.GET.get('page_blogs', 1)
-        paginator = Paginator(blog_list, 4)
-        try:
-            blogs = paginator.page(page)
-        except PageNotAnInteger:
-            blogs = paginator.page(1)
-        except EmptyPage:
-            blogs = paginator.page(paginator.num_pages)
-        
+        blogs = user.blog_set.order_by('-last_edited')[:5]
+
         context = {
             'user':user,
             'is_friend':True,
@@ -1538,7 +1530,7 @@ def get_user(request,username):
 
         post_list = user.post_set.order_by('-last_edited')
         page = request.GET.get('page_posts', 1)
-        paginator = Paginator(post_list, 4)
+        paginator = Paginator(post_list, 1)
         try:
             posts = paginator.page(page)
         except PageNotAnInteger:
@@ -1546,16 +1538,8 @@ def get_user(request,username):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
         
-        blog_list = user.blog_set.order_by('-last_edited')
-        page = request.GET.get('page_blogs', 1)
-        paginator = Paginator(blog_list, 4)
-        try:
-            blogs = paginator.page(page)
-        except PageNotAnInteger:
-            blogs = paginator.page(1)
-        except EmptyPage:
-            blogs = paginator.page(paginator.num_pages)
-        
+        blogs = user.blog_set.order_by('-last_edited')[:5]
+
         context = {
             'user':user,
             'pnum':pnum,

@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="py-2">
-        <form method="POST" action="{% url 'home:courses-add' %}">
+        <form method="POST" action="{% url 'home:courses-edit' hid=course.get_hashid %}">
             {% csrf_token %}
             {% for field in form.hidden_fields %}
             {{ field }}
@@ -48,5 +48,6 @@
     </div>
 </div>
 <script src="{% static 'js/courses/course-add.js' %}"></script>
+<style>input[name='course_instructor_fn']{text-transform: capitalize;}input[name='course_instructor']{text-transform: capitalize;}</style>
 {% endblock %}
 

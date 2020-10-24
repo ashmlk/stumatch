@@ -37,16 +37,18 @@
                                 {% if user.university and user.program %}
                                 <span class="text-muted"> at </span>
                                 <strong>
-                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std"
+                                        style="text-decoration: none;">
                                         {{ user.university|capfirst }}
-                                    </a> 
+                                    </a>
                                 </strong>
                                 {% elif user.university and not user.program %}
                                 <span class="text-muted">Goes to </span>
                                 <strong>
-                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std"
+                                        style="text-decoration: none;">
                                         {{ user.university|capfirst }}
-                                    </a> 
+                                    </a>
                                 </strong>
                                 {% endif %}
                             </div>
@@ -57,44 +59,42 @@
                         <div class="my-2 d-flex justify-content-between">
                             <div>
                                 <svg class="text-muted" width="18" height="18" viewBox="0 0 16 16" class="bi bi-book"
-                                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd"
-                                                            d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
-                                                        <path fill-rule="evenodd"
-                                                            d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
-                                                    </svg>
+                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
+                                    <path fill-rule="evenodd"
+                                        d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
+                                </svg>
                                 <strong class="ml-2"">Courses</strong>
                             </div>
                             <div>
-                                <span class="navbarMainHeaderuser-num">{{ cnum }}</span>
+                                <span class=" navbarMainHeaderuser-num">{{ cnum }}</span>
                             </div>
                         </div>
                         <div class="my-2  d-flex justify-content-between">
                             <div>
                                 <svg class="text-muted" width="18" height="18" viewBox="0 0 16 16"
-                                class="bi bi-card-heading" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
-                                <path fill-rule="evenodd"
-                                    d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
-                                <path
-                                    d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z" />
-                            </svg>
+                                    class="bi bi-card-heading" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+                                    <path fill-rule="evenodd"
+                                        d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+                                    <path
+                                        d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z" />
+                                </svg>
                                 <strong class="ml-2"">Posts</strong>
                             </div>
                             <div>
-                                <span class="navbarMainHeaderuser-num">{{ pnum }}</span>
+                                <span class=" navbarMainHeaderuser-num">{{ pnum }}</span>
                             </div>
                         </div>
                         <div class="my-2  d-flex justify-content-between">
                             <div>
-                                <svg  class="text-muted" width="18" height="18" viewBox="0 0 16 16"
-                                class="bi bi-justify" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
-                            </svg>
+                                <svg class="text-muted" width="18" height="18" viewBox="0 0 16 16" class="bi bi-justify"
+                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
+                                </svg>
                                 <strong class="ml-2">Blogs</strong>
                             </div>
                             <div>
@@ -107,7 +107,7 @@
         </div>
         <div class="col-sm-6">
             <div class="card">
-                <div class="card-header bg-transparent">
+                <div class="card-header">
                     <strong>Mutual Courses</strong>
                 </div>
                 {% if courses %}
@@ -130,7 +130,8 @@
                                 <div class="course-user-detail"
                                     style="margin-bottom:-0.9rem !important;margin-left: -2px !important;">
                                     <a href="{%url 'home:course-instructor'  par1=course.course_university_slug par2=course.course_instructor_slug %}"
-                                        class="h6">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</a>
+                                        class="h6">{{ course.course_instructor_fn|capfirst }}
+                                        {{ course.course_instructor|capfirst }}</a>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +139,7 @@
                     </div>
                     <div class="mt-2 view-course-btn">
                         <form class="w-100 form-pro-link pro-link-goto" action="{% url 'main:get_user_courses' %}">
-                            <input type="hidden" name="id" value="{{ user.get_hashid }}"/>
+                            <input type="hidden" name="id" value="{{ user.get_hashid }}" />
                             <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">
                                 View All
                             </button>
@@ -171,30 +172,49 @@
                 {% endif %}
             </div>
             {% if friends %}
-            <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
+            <div class="row d-flex justify-content-start pl-4 pr-4 pt-4 pb-2 friends-list">
                 {% for friend in friends %}
-                <div class="m-1 card" style="width: 8.7rem !important;">
-                    <div class="d-flex justify-content-center p-2">
-                        {% thumbnail friend.image "110x110" crop="80% top" as im %}
-                        <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                    {% endthumbnail %}
-                    </div>
-                    <div class="card-body">
-                        <div class="card-friend-name-holder">
-                            <a class="card-link text-dark"
-                                href="{{ friend.get_absolute_url }}">{{ friend.get_full_name }}</a>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12 p-1">
+                    <div class="m-1 card">
+                        <div class="pt-2 d-flex justify-content-center">
+                            {% thumbnail friend.image "110x110" crop="80% top" as im %}
+                            <img class="mt-2 rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}"
+                                width="{{ im.x }}" height="{{ im.y }}">
+                            {% endthumbnail %}
+                        </div>
+                        <div class="card-body">
+                            <div class="card-friend-name-holder d-flex justify-content-center">
+                                <a class="card-link text-dark"
+                                    href="{{ friend.get_absolute_url }}">{{ friend.get_full_name }}</a>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 d-flex text-muted justify-content-center user-info">
+                            {% if friend.university %}
+                                <div class="text-center u_pui">
+                                    <strong style="white-space: nowrap !important;">
+                                        {{ friend.university|capfirst }}
+                                    </strong>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            {% endif %}
-            <div class="pb-2 px-4 friend-sbtn">
+            <div class="my-2 px-4 friend-sbtn">
                 <form class="w-100 form-pro-link pro-link-goto" action="{% url 'main:get_user_friends' %}">
-                    <input type="hidden" name="id" value="{{ user.get_hashid }}"/>
-                    <button type="submit" class="col-12 btn " style="background-color: rgb(226,230,234);">View All</button>
+                    <input type="hidden" name="id" value="{{ user.get_hashid }}" />
+                    <button type="submit" class="col-12 btn " style="background-color: rgb(226,230,234);">View
+                        All</button>
                 </form>
             </div>
+            {% else %}
+            <div class="px-4 my-2">
+                <div class="w-100">
+                    <span class="btn col-12" style="background-color: rgb(226,230,234);">No friends to show</span>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -207,7 +227,6 @@
         </div>
         <div class="u_pctr">
             <div id="post-list">
-                <div id="_np2u"></div>
                 {% include 'home/posts/home_post.html' with posts=posts is_upage=True %}
             </div>
         </div>
@@ -215,7 +234,7 @@
     <div class="col-sm-6 blog-by-user p-2">
         <div class="d-flex justify-content-between">
             <div class="post-title-view p-1 mt-2">
-                <strong>Blogs</strong>
+                <strong>Recent Blogs</strong>
             </div>
         </div>
         <div class="u_blgctr mt-2">
@@ -245,10 +264,11 @@
                     <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
                         {% for friend in friends %}
                         <div class="m-1 card" style="width: 11.7rem !important;">
-                            <div class="d-flex justify-content-center">
+                            <div class="pt-2 d-flex justify-content-center">
                                 {% thumbnail friend.image "110x110" crop="80% top" as im %}
-                                <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                            {% endthumbnail %}
+                                <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}"
+                                    width="{{ im.x }}" height="{{ im.y }}">
+                                {% endthumbnail %}
                             </div>
                             <div class="card-body">
                                 <div class="card-friend-name-holder">
@@ -259,16 +279,18 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <div class="pb-2 px-4 friend-sbtn">
+                    <div class="mt-2 pb-2 px-4 friend-sbtn">
                         <form class="w-100 form-pro-link pro-link-goto" action="{% url 'main:get_user_friends' %}">
-                            <input type="hidden" name="id" value="{{ user.get_hashid }}"/>
-                            <button type="submit" class="col-12 btn " style="background-color: rgb(226,230,234);">View All</button>
+                            <input type="hidden" name="id" value="{{ user.get_hashid }}" />
+                            <button type="submit" class="col-12 btn " style="background-color: rgb(226,230,234);">View
+                                All</button>
                         </form>
                     </div>
                     {% else %}
                     <div class="px-4 my-2">
                         <div class="w-100">
-                            <span class="btn col-12" style="background-color: rgb(226,230,234);">No friends to show</span>
+                            <span class="btn col-12" style="background-color: rgb(226,230,234);">No friends to
+                                show</span>
                         </div>
                     </div>
                     {% endif %}
@@ -276,19 +298,8 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 blog-by-user p-2">
-        {% if blogs %}
-        <div class="d-flex justify-content-between">
-            <div class="post-title-view p-1 mt-2">
-                <strong>Blogs</strong>
-            </div>
-        </div>
-        <div class="u_blgctr mt-2">
-            <div id="blog-list">
-                {% include 'home/blog/blog_list.html' with blogs=blogs is_upage=True %}
-            </div>
-        </div>
-        {% elif posts %}
+    <div class="col-sm-6 blog-by-user p-2">   
+        {% if posts %}
         <div class="d-flex justify-content-between">
             <div class="post-title-view p-1 mt-2">
                 <strong>Posts</strong>
@@ -296,8 +307,18 @@
         </div>
         <div class="u_pctr">
             <div id="post-list">
-                <div id="_np2u"></div>
                 {% include 'home/posts/home_post.html' with posts=posts is_upage=True %}
+            </div>
+        </div>
+        {% elif blogs %}
+        <div class="d-flex justify-content-between">
+            <div class="post-title-view p-1 mt-2">
+                <strong>Recent Blogs</strong>
+            </div>
+        </div>
+        <div class="u_blgctr mt-2">
+            <div id="blog-list">
+                {% include 'home/blog/blog_list.html' with blogs=blogs is_upage=True %}
             </div>
         </div>
         {% endif %}
@@ -338,4 +359,5 @@
         }
     }
 </style>
+
 {% endblock %}

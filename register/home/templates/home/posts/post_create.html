@@ -9,7 +9,7 @@
 			</button>
 		</h5>
 		</div>
-	<div class="modal-body" style="height:340px; overflow-y: auto; margin:0;">
+	<div class="modal-body" style="height:345px; overflow-y: auto; margin:0;">
 		{{ form|crispy }}
 		{{ form.media }}
 		<div id=mentions style="display: hidden;"><ul class="list-group"></ul></div>
@@ -40,7 +40,6 @@
 <script>
 $(document).ready(function () {
 
-
 	var tribute = new Tribute({
 		values: function (search, cb) {
 			getUsernames(search, users => cb(users))
@@ -62,13 +61,12 @@ $(document).ready(function () {
 			var data = JSON.parse(xhr.responseText);
 			cb(data);
 			if (xhr.readyState == 4 && xhr.status == "200") {
-				$.each(data, function(i, item) {
+				$.each(data, function(i, item) {	
 					tribute.append(0,[
 						{
-							name: item.first_name,
-							last: item.last_name,
-							username:item.username,
-							img: item.image
+							name: data[i].first_name,
+							last: data[i].last_name,
+							username: data[i].username	
 						},
 					]);
 				});

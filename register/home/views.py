@@ -676,21 +676,28 @@ def course_list(request):
 @login_required
 def course_dashboard(request):
     
+    top_school_courses = courses = course_list = top_courses = []
+    course_count = 0
+    common_school_course = ''
     # user courses
     course_list = request.user.courses.order_by("course_code")
-    course_count = course_list.count()
     
-    # get top courses based on ratings
-    top_courses = request.user.courses.annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:4]
-    
-    # get most enrolled school
-    common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]['course_university']
-    
-    # get school top courses
-    top_school_courses = Course.objects.filter(course_university=common_school_course)\
-        .exclude(id__in=[c.id for c in top_courses]).exclude(course_code__in=[c.course_code for c in top_courses])\
-            .annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:6]
-            
+    try:
+        if course_list:
+            course_count = course_list.count()
+            # get top courses based on ratings
+            top_courses = request.user.courses.annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:4]
+        
+            # get most enrolled school
+            common_school_course = request.user.courses.values("course_university").annotate(school_count=Count('course_university')).order_by('-school_count')[0]['course_university']
+        
+            # get school top courses
+            top_school_courses = Course.objects.filter(course_university=common_school_course)\
+                .exclude(id__in=[c.id for c in top_courses]).exclude(course_code__in=[c.course_code for c in top_courses])\
+                    .annotate(rating=F('course_likes')-F('course_dislikes')).order_by('-rating')[:6]
+    except Exception as e:
+        print(e.__class__)
+               
     page = request.GET.get('page', 1)
     paginator = Paginator(course_list , 7)
     try:
@@ -802,6 +809,11 @@ def course_add_form_get_obj(request):
     course_code_list = instructor_list = []
     
     uni = request.GET.get('u', request.user.university)
+    if uni == 'University':
+        if request.user.university != None:
+            uni = request.user.university
+        else:
+            uni = None
     obj = request.GET.get('o', None) #value that is initially typed in in course or instructor field
     obj0 = request.GET.get('oj', None) #value that we want without previous data - one field is blank
     obj1 = request.GET.get('ot', None) #value that we want - if set to course we are looking for course
@@ -1465,6 +1477,7 @@ def course_list_obj(request, hid):
         'list':li,
         'courses':objects,
         'num_items': num_items,
+        'ml':'text-primary',
         o+'_selected':'selected'
     }
     return render(request,'home/courses/course_lists/course_list.html',context)
@@ -1489,7 +1502,9 @@ def course_list_obj_add_course(request, hid):
         else:
             data['form_is_valid'] = False
     else:
-        form = CourseListObjectsForm
+        form = CourseListObjectsForm()
+        if not request.user.university == None:
+            form.fields['course_university'].initial = request.user.university    
     
     action_url = reverse('home:course-list-addcrs',kwargs={'hid':li.get_hashid()})
     context = {

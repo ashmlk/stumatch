@@ -11,12 +11,39 @@
 		</h5>
 		</div>
 	<div class="modal-body">
-		{{ form|crispy }}
+		{% if not action_url %}
+			{{ form|crispy }}
+			{% else %}
+			<div id="course-list-document">
+				{% for field in form.hidden_fields %}
+				{{ field }}
+				{% endfor %}
+				{% for field in form.visible_fields %}
+				<div class="my-2 row align-items-center d-flex">
+				<div class="col-12 w-100">
+					<span class="text-muted">
+					{{ field.label }}
+					</span>
+				</div>
+				<div class="col-sm-12 w-100">
+					{{ field }}
+					{% if field.name|stringformat:"s" == "course_instructor" %}
+					<div class="mb-1 p-1 border rounded query-result bg-white" id="crs-ins-dp" style="text-transform: capitalize;"><ul class="list-group list-group-flush"></ul></div>
+					{% endif %}
+					<span class="small text-muted">{{ field.help_text }}</span>
+					<span class="text-danger">{{ field.errors }}</span>
+				</div>
+				</div>  
+			{% endfor %}
+			</div>		
+		{% endif %}
 	</div>
 	<div class="modal-footer col-12">
 		<button type="submit" class="{{ form_class }}-btn btn btn-primary no-border"  style="border-radius: 20px; ">{% if actionbtn_m %}{{ actionbtn_m }}{% else %}Create{% endif %}</button>
 	</div>
 </form>
+<script src="{% static 'js/courses/course-add.js' %}"></script>
+<style>input[name='course_instructor']{text-transform: capitalize;}</style>
 
 
 

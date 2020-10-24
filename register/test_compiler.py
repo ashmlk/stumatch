@@ -105,7 +105,7 @@ def update_sv():
     return "Success"
 
 def create_friends():
-    user = Profile.objects.get(username="arshia")
+    user = Profile.objects.get(username="Anthonyuser2")
     idl =[u.id for u in Profile.objects.all()[:43]]
     for i in idl:
         other_user = Profile.objects.get(pk=i)

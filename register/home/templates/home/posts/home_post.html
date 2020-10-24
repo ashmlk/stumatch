@@ -18,7 +18,8 @@
               <div class="d-flex m-2">
                 <div>
                   {% thumbnail post.author.image "50x50" crop="80% top" as im %}
-                    <img class="rounded-circle" style="margin:{{ im|margin:'50x50' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                  <img class="rounded-circle" style="margin:{{ im|margin:'50x50' }}" src="{{ im.url }}"
+                    width="{{ im.x }}" height="{{ im.y }}">
                   {% endthumbnail %}
                 </div>
                 <div class="ml-1">
@@ -87,8 +88,8 @@
               <div class="my-2">
                 <div class="pb-3 p_ico" style="margin-right: -1.25rem;margin-left: -1.25rem;">
                   {% if  post.has_image %}
-                  <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}" class="carousel slide mt-2 mb-2"
-                    data-interval="false" data-ride="carousel">
+                  <div id="carousel-{{ post.title|cut:' ' }}-{{ post.author.username }}"
+                    class="carousel slide mt-2 mb-2" data-interval="false" data-ride="carousel">
                     <ol class="carousel-indicators">
                       {% for i in post.image_count_as_list %}
                       <li data-target="#carousel-{{ post.title|cut:' ' }}" data-slide-to="{{ forloop.counter0 }}"></li>
@@ -152,35 +153,34 @@
         </div>
       </div>
     </div>
-    {% empty %}
-    <div class="d-flex justify-content-center">
-      <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show.</h5>
-    </div>
-    {% endfor %}
+  {% empty %}
+  <div class="d-flex justify-content-center">
+    <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show.</h5>
   </div>
+  {% endfor %}
+</div>
+{% if is_upage %}
+{% if posts.has_next %}
+<a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
+{% endif %}
+{% elif search_result %}
+{% if posts.has_next %}
+<a class="infinite-more-link" href="?q={{ q }}&o=post&page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% elif id_required %}
+{% if posts.has_next %}
+<a class="infinite-more-link" href="?id={{ user.get_hashid }}&page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% else %}
+{% if posts.has_next %}
+<a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% endif %}
 
-  {% if is_upage %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
-  {% endif %}
-  {% elif search_result %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?q={{ q }}&o=post&page={{ posts.next_page_number }}"></a>
-  {% endif %}
-  {% elif id_required %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?id={{ user.get_hashid }}&page={{ posts.next_page_number }}"></a>
-  {% endif %}
-  {% else %}
-  {% if posts.has_next %}
-  <a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
-  {% endif %}
-  {% endif %}
-
-  <div class="mt-2 loading" style="display: none;">
-    <div class="d-flex justify-content-center">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
+<div class="mt-2 loading" style="display: none;">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
     </div>
   </div>
+</div>

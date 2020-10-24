@@ -52,6 +52,7 @@
       <div class="modal-content"></div>
     </div>
   </div>
+  <script>$(document).ready(function () {$('.carousel').each(function() {var c = this;$(c).find(".carousel-item").removeClass('active');$(c).find(".carousel-item").filter(':first').addClass("active");});});</script>
   <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
   <script src="{% static 'initial/initial.js' %}"></script>
   <!--<script src="{% static 'js/post/postall.js' %}"></script>-->

@@ -48,7 +48,6 @@
               {% block content %}
               {% endblock %}
             </div>
-            <div class="d-sm-none" id="#footerPlaceholder">{% include 'home/footer.html' %}</div>
           </div>
         </div>
         <div class="col-md-3 col-sm-2 d-none d-md-block" style="margin-left: 3rem !important;">
@@ -118,14 +117,6 @@
   <script src="{% static 'initial/initial.js' %}"></script>
   <!-- <script src="{% static 'js/post/postall.js' %}"></script> -->
   <script src="{% static 'js/index.js' %}"></script>
-  <script>
-    $(document).ready(function () {
-      $('.carousel').each(function() {
-        var c = this;
-        $(c).find(".carousel-item").removeClass('active');
-        $(c).find(".carousel-item").filter(':first').addClass("active");
-      });
-  });
-  </script>
+  <script>$(document).ready(function () {$('.carousel').each(function() {var c = this;$(c).find(".carousel-item").removeClass('active');$(c).find(".carousel-item").filter(':first').addClass("active");});});</script>
 </body>
 </html>

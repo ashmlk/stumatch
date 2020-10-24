@@ -18,7 +18,7 @@
             </div>
             <div class="f-name mt-3">
                 <div class="content-holder">
-                    <h4 class="text-center text-dark">{{ user.get_full_name }}</h4>
+                    <h3 class="font-weight-bolder text-center text-dark">{{ user.get_full_name }}</h3>
                 </div>
             </div>
             <div class="mt-2 p-2 u-bio">
@@ -44,9 +44,10 @@
                 </div>
             </div>
         </div>
-        <div class="sticky-top my-2 p-2 mb-3 bg-white profile-header-main-links d-flex justify-content-between"
+        
+        <div class="sticky-top my-2 border-bottom px-2 pt-2 mb-3 bg-white profile-header-main-links d-flex justify-content-between"
             style="top:54px !important; overflow-y: auto !important;">
-            <div class="options-user-r">
+            <div class="options-user-r" style="margin-left: -8px;">
                 <div class="d-flex justify-content-start">
                     <a class=" rounded-0 p-2 text-dark pro-link-goto{{ pro_active }}"
                         href="{% url 'main:get_user' user.username %}">
@@ -243,7 +244,7 @@
                     <div class="row d-flex justify-content-center pl-4 pr-4 pt-4 pb-2 friends-list">
                         {% for friend in friends %}
                         <div class="p-1  m-1 card" style="width: 8.7rem !important;">
-                            <div class="d-flex justify-content-center">
+                            <div class="pt-2 d-flex justify-content-center">
                                 {% thumbnail friend.image "110x110" crop="80% top" as im %}
                                 <img class="rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
                             {% endthumbnail %}
