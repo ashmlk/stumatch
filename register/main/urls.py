@@ -4,7 +4,11 @@ from main import views
 from django.contrib.auth import views as auth_views
 from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
 from django.conf.urls import handler400, handler403, handler404, handler500
-
+from django.contrib.sitemaps.views import sitemap
+from main.sitemaps import StaticViewSitemap
+sitemaps = {
+    'static': StaticViewSitemap
+}
 handler404 = 'main.views.handle_404'
 #handler500 = 'main.views.handle_500'
 #handler403 = 'main.views.handle_403'
@@ -13,6 +17,7 @@ handler404 = 'main.views.handle_404'
 app_name = 'main'
 
 urlpatterns=[
+    path('spofnv394hp9hwb0werh3w3w0r9vw-qi3r9h-wiepvhAER-QWRIOEw89hABVP.xml', sitemap, {'sitemaps': sitemaps}),
     path('policies/data/',views.policy_html,name='web-policy'),
     path('policies/cookies/',views.cookies_html,name='cookies-policy'),
     path('terms/',views.terms_html,name='site-terms'),

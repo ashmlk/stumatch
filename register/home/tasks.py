@@ -12,6 +12,7 @@ from django.utils import timezone
 import datetime
 from django.db.models import Q, F, Count, Avg, FloatField
 from django.contrib.postgres.search import (SearchQuery, SearchRank, SearchVector, TrigramSimilarity,)
+from register.mentions import send_mention_notifications, delete_mention_notifications
 
 # Celery tasks for Post model 
 
@@ -59,3 +60,11 @@ def uni_posts(self):
         
         cache.set(u,np, timeout=None)
 
+
+@shared_task(bind=True)
+def async_send_mention_notifications(self, sender_id, post_id):
+    send_mention_notifications(sender_id=sender_id, post_id=post_id)
+    
+@shared_task(bind=True)
+def async_delete_mention_notifications(self, sender_id, post_id, content):
+    delete_mention_notifications(sender_id=sender_id, post_id=post_id, content=content)

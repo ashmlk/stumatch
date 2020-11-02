@@ -133,7 +133,7 @@ class PostManager(models.Manager):
     
     def get_top(self):
         
-        time_threshold = timezone.now() - datetime.timedelta(days=3)
+        time_threshold = timezone.now() - datetime.timedelta(days=6)
         
         qs = (
             self.get_queryset()

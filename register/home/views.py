@@ -38,6 +38,8 @@ from itertools import chain
 from home.templatetags.ibuilder import num_format
 from django.contrib.admin.options import get_content_type_for_model
 from django.contrib.contenttypes.models import ContentType
+from home.forms import current_year
+from home.tasks import async_send_mention_notifications, async_delete_mention_notifications
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -52,45 +54,83 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 @login_required
 def home(request):
 
-    if len(request.user.university) < 1:
-        request.session['no_university'] = True 
-    
-    words = []
-    
-    friends = Friend.objects.friends(request.user)
-    
-    """ get a list of users that user has blocked and save it to request.session """
-    blockers_list = Block.objects.blocked(request.user)
-    request.session['blockers'] = [u.id for u in blockers_list]
-    
-    posts_list = Post.objects.select_related('author').filter(Q(author__in=friends)|Q(author=request.user)).order_by('-last_edited')
-    
-    """ get hot words and tags related to posts form tags """
-    tags = cache.get("tt_post")
-    top_words = cache.get("trending_words_posts")
-    if top_words:
-        words = top_words['phrases']
-    
-    """ @param is_home is set to True """
-    """ home.html is used in other functions, is_home changes the view """
-    is_home = True
-    page = request.GET.get('page', 1)
-    paginator = Paginator(posts_list, 10)
     try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
-    
-    context = { 
-                'posts':posts,
-                'is_home':is_home,
-                'tags':tags,
-                'words':words,
-                'home_active':'-active',
-            }
-    return render(request, 'home/homepage/home.html', context)
+        no_friends_and_university = no_friends_only = discover_students =  False
+        no_post_message = '' 
+        if len(request.user.university) < 1:
+            request.session['no_university'] = True   
+        words = posts = []  # return none if paginator failed to return
+        friends = Friend.objects.friends(request.user)
+        try:
+            if (len(request.user.university) < 1) and (len(friends) < 1):    
+                no_friends_and_university = True
+                no_post_message = 'Welcome to JoinCampus!'
+        except Exception as e:
+            print(e.__class__)
+            print(e)
+            
+        """ get a list of users that user has blocked and save it to request.session """
+        blockers_list = Block.objects.blocked(request.user)
+        request.session['blockers'] = [u.id for u in blockers_list]
+        
+        posts_list = Post.objects.select_related('author').filter(Q(author__in=friends)|Q(author=request.user)).order_by('-last_edited')
+        
+        try:
+            if posts_list.count() < 1:
+                if len(request.user.university) > 1:
+                    uni = request.user.university
+                    posts_list = cache.get(uni.replace(" ", "")+"_latest_university_posts")
+                    if posts_list == None:
+                        posts_list = Post.objects.select_related('author').filter(Q(author__university=request.user.university)).order_by('-last_edited')
+                        cache.set(uni.replace(" ", "")+"_latest_university_posts", posts_list, 7200)              
+                    no_post_message = 'Latest posts at ' + request.user.university
+                    if posts_list.count() < 1:
+                        discover_students = True
+                else: # the user may or may not have any friends however, university is still not set
+                    no_friends_and_university = True # show same message as user with no friends and school set 
+                    no_post_message = 'Find more students to see their posts' # display additional message meaning user probably had no friends or friends haven't posted
+        except Exception as e:
+            print(e.__class__)
+            print(e) 
+            posts_list = [] # just return an empty posts list     
+        """ get hot words and tags related to posts form tags """
+        tags = cache.get("tt_post")
+        top_words = cache.get("trending_words_posts")
+        if top_words:
+            words = top_words['phrases']
+        
+        """ @param is_home is set to True """
+        """ home.html is used in other functions, is_home changes the view """
+        is_home = True
+        page = request.GET.get('page', 1)
+        paginator = Paginator(posts_list, 10)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        
+        context = { 
+                    'posts':posts,
+                    'is_home':is_home,
+                    'tags':tags,
+                    'words':words,
+                    'home_active':'-active',
+                    'discover_students':discover_students,
+                    'no_post_message':no_post_message,            
+                    'no_friends_and_university':no_friends_and_university
+                }
+        return render(request, 'home/homepage/home.html', context)
+    except Exception as e:
+        print(e.__class__)
+        print(e)
+        context = { 
+            'posts':[],
+            'is_home':True,
+            'home_active':'-active',          
+        }
+        return render(request, 'home/homepage/home.html', context)
 
 @login_required
 def users_posts(request):
@@ -331,6 +371,11 @@ def post_create(request):
                     image_instance.save()
             data['form_is_valid'] = True
             data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request)
+            try:
+                async_send_mention_notifications.delay(post.author.id, post.id)
+            except Exception as e:
+                print(e.__class__)
+                print(e)
         else:
             data['form_is_valid'] = False
     else:
@@ -355,6 +400,11 @@ def post_update(request, guid_url):
                 form.save()
                 data['form_is_valid'] = True
                 data['post'] = render_to_string('home/posts/new_post.html',{'post':post},request=request) 
+                try:
+                    async_send_mention_notifications.delay(post.author.id, post.id)
+                except Exception as e:
+                    print(e.__class__)
+                    print(e)
         else:
             form = PostForm(instance=post)
             form.instance.author = request.user
@@ -367,6 +417,11 @@ def post_delete(request, guid_url):
     post = get_object_or_404(Post, guid_url=guid_url)
     if request.method == 'POST':
         if post.author == request.user:
+            try:
+                async_delete_mention_notifications.delay(post.author.id, post.id, post.content)
+            except Exception as e:
+                print(e.__class__)
+                print(e)
             post.delete()
             data['form_is_valid'] = True
     else:
@@ -917,13 +972,13 @@ def course_auto_add(request, course_code,course_instructor_slug, course_universi
                     data["message"] = "Course added successfully"
             data['form_is_valid'] = True
     else:
-        empty = ''
+ 
         form = CourseForm(initial={
             'course_code':course.course_code,
             'course_instructor_fn':course.course_instructor_fn, 
             'course_instructor': course.course_instructor, 
             'course_university':course.course_university,
-            'course_year': empty 
+            'course_year': current_year() 
             })
         
         form.fields['course_code'].widget.attrs['readonly']  = True
@@ -1000,7 +1055,11 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         data['review'] = render_to_string('home/courses/new_review.html',{'review': review, 'course':course },request=request)
         return JsonResponse(data)
     else:
-        form = ReviewForm
+        form = ReviewForm()
+        try:
+            form.fields['body'].widget.attrs['placeholder'] = "Write a review for " + course.course_code + " with " + course.course_instructor_fn.capitalize() + " " + course.course_instructor.capitalize()
+        except Exception as e:
+            print(e.__class__)
     
     sortby = {'latest':'Latest', 'ins':'Instructor','cy':'Course Year', 'ins_cy':'Year and Instructor'}
     sb = request.GET.get('sb','latest')
@@ -1185,6 +1244,10 @@ def university_detail(request):
     uni = request.GET.get('u',request.user.university)
     obj = request.GET.get('obj','std')
     u_empty = ''
+    
+    if len(uni) < 1:
+        add_uni = True if len(request.user.university) < 1 else False
+        return render(request,'home/courses/university_detail.html',{'is_empty':True , 'add_uni':add_uni})
     
     data = get_uni_info(uni) 
       

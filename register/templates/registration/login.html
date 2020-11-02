@@ -1,0 +1,97 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html>
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180528762-1"></script>
+    <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-180528762-1');</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name=”robots” content="index, follow">
+    <meta name=”googlebot” content="index, follow">
+    <meta name="description" content="JoinCampus is a platform that students can connect with each other, manage their courses, and find others in their classes and expand their network."/>
+    <title>JoinCampus - Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_folder/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_folder/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon_folder/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'favicon_folder/safari-pinned-tab.svg' %}" color="#90c4f5">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body class="d-flex flex-column min-vh-100">
+      <div class="container">
+        <div class="row" style="height: 100vh;">
+          <div class="is-responsive card  col-lg-4 col-md-9 col-11 my-auto mx-auto" style="padding-bottom: 3vh;">
+            <div class="align-items-center is-responsive mt-5 mb-4">
+              <a href="{% url 'main:user_login' %}">
+                <div class="d-flex justify-content-center align-items-center">
+                  <div class="d-flex justify-content-center logo-name" >
+                    <img class="img-fluid" src="{% static 'logo/m/logo-name.svg' %}" style="margin-top: -1.5rem; margin-bottom: -1.5rem;" width="90%"/>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% if messages %}
+              <div class="mb-2">
+                  <div class="d-flex align-items-center">
+                      <div>
+                          {% for message in messages %}
+                          <div class="alert alert-light alert-dismissible fade show" role="alert">
+                            <span {% if message.tags %} {% if message.tags == 'error' %} class="text-danger" {% else %} class="text-{{ message.tags }}" {% endif %} {% endif %}> {{ message }} </span><br>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>                
+                          {% endfor %}
+                      </div>
+                  </div>
+              </div>
+          {% endif %}
+            <div class="card-signin my-auto">
+              <div class="card-body">
+                <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
+                  {% csrf_token %}
+                  <div class="form-label-group">
+                    <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>
+                    <br/>
+                  </div>
+                  <div class="form-label-group">
+                   <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
+                  </div>
+                  <button type="submit" class="btn mt-3 w-100 btn-primary ">
+                    <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-24px;font-weight: 500;">Log in</span>
+                  </button>
+                  <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
+                  <a class="btn mt-2 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
+                    <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span>
+                  </a>
+                  <hr class="my-4">
+                  <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
+                  <a class="text-muted" href="{% url 'account_reset_password' %}" id="signup" style="font-size: .9rem;">Forgot Password?</a>
+                  <input type="hidden" name="vp" value="md">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div id="footer-main-div">
+      {% include 'footer_main.html' %}
+    </div>
+</body>
+<style>
+  .google-icon {
+    margin-left: 10px;
+    width: 22px;
+    height: 22x;
+  }
+</style>
+</html>

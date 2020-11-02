@@ -37,6 +37,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "JoinCampus "
 SOCIALACCOUNT_ADAPTER = 'main.adapters.SocialAccountAdapter'
+ACCOUNT_SIGNUP_FORM_CLASS = "main.forms.SignUpForm"
 
 # Application definition
 
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'django.contrib.postgres',
     'main.apps.MainConfig',
     'home.apps.HomeConfig',

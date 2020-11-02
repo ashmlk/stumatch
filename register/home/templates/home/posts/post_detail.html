@@ -110,7 +110,7 @@
               </div>
               {% endif %}
             </div>
-            <p class="card-text">{{ post.content }}</p>
+            <p class="card-text">{{ post.content|urlize }}</p>
           </div>
           <div class="post-tags d-flex">
             {% for tag in post.tags.all %}

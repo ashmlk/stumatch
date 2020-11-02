@@ -54,7 +54,7 @@
         {% if o != 'all' %}
         <span class="mr-1 small text-muted">{{ course.get_user_count_ins }} {% if course.get_user_count == 1 %}<span>person
             has</span>{% else %}
-        <span>people have</span>{% endif %} enrolled in this course with professor {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}.</span>
+        <span>people have</span>{% endif %} enrolled in this course with professor <strong>{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</strong>.</span>
         </br>
         {% endif %}
         <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person

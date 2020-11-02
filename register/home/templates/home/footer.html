@@ -2,38 +2,37 @@
 <footer class="page-footer font-small pt-2">
     <div class="row">
       <div class="ml-3">       
-        <a class="text-muted small" href="{% url 'main:site-about' %}">
+        <a class="text-muted small text-muted text-muted" href="{% url 'main:site-about' %}">
           About
           </a>
       </div>
       <div class="ml-3">       
-        <a class="text-muted small" href="{% url 'main:site-terms' %}">
+        <a class="text-muted small text-muted" href="{% url 'main:site-terms' %}">
           Terms
           </a> 
       </div>
       <div class="ml-3">       
-        <a class="text-muted small" href="{% url 'main:web-policy' %}">
+        <a class="text-muted small text-muted" href="{% url 'main:web-policy' %}">
           Privacy
           </a>
       </div>
       <div class="ml-3">       
-        <a class="text-muted small" href="{% url 'main:cookies-policy' %}">
+        <a class="text-muted small text-muted" href="{% url 'main:cookies-policy' %}">
           Cookies
           </a>
       </div>
       <div class="ml-3">       
-        <a class="text-muted small" target="_blank" href="{% url 'main:contact-us' %}">
+        <a class="text-muted small text-muted" target="_blank" href="{% url 'main:contact-us' %}">
           Contact Us
           </a>
       </div>
       {% if request.user.is_authenticated %}
       <div class="ml-3">       
-        <a class="text-muted small" target="_blank" href="https://forms.gle/cJQPNCQZRuDSbTTH9">
+        <a class="text-muted small text-muted" target="_blank" href="https://forms.gle/cJQPNCQZRuDSbTTH9">
           Feedback
           </a>
       </div>
       {% endif %}                                                                                                                                             
     </div>
-    <div class="footer-copyright small mt-1 text-muted">JoinCampus © 2020
-      </div>
+    <div class="footer-copyright small mt-1 text-muted">JoinCampus © 2020</div>
   </footer> 

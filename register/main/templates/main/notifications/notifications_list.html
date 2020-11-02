@@ -20,12 +20,6 @@
                     </div>
                 </div>
             </div>
-            <div class="notifications-info-all">
-                <div class="notificaitons-count-all">
-                    <span class="small text-muted">You have <strong id="nreadc">{{ read_count }}</strong>.
-                    </span>
-                </div>
-            </div>
         </div>
     </div>
     {% if notifications %}
@@ -45,25 +39,32 @@
                     </div>
                     <div class="d-flex align-items-center">
                         {% if not 'CON_CRRW' in notice.verb %}
-                        <div class="mr-1 actor-image">
-                            <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;"
-                                src="{{ notice.actor.image.url }}" />
-                        </div>
+                            {% if notice.actor %}
+                                <div class="mr-1 actor-image">
+                                    <img class="img-create-post rounded-circle" style="height: 2.6rem;width: 2.6rem;"
+                                        src="{{ notice.actor.image.url }}" />
+                                </div>
+                            {% endif %}
                         {% endif %}
                         <div>
-                            {% if not  'CON_CRRW' in notice.verb %} 
+                        {% if not  'CON_CRRW' in notice.verb %} 
+                            {% if notice.actor %}
                             <a class="card-link"
-                                href="{{ notice.actor.get_absolute_url }}">{{ notice.actor.get_full_name|capfirst }}</a>
+                                href="{{ notice.actor.get_absolute_url }}">{{ notice.actor.get_full_name }}</a>
                             {% endif %}
-                            {% if 'CON_CRRW' in notice.verb %}
-                                <span>{{ notice.verb|slice:"8:" }}</span>
-                                <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{{ notice.target.course_code }}</a>
-                                <span>with professor</span>
-                                <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
-                                    {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}</a>
-                                {% else %}
-                                <span>{{ notice.verb|slice:"8:" }}</span>
-                            {% endif %}
+                        {% endif %}
+                        {% if 'CON_CRRW' in notice.verb %}
+                            <span>{{ notice.verb|slice:"8:" }}</span>
+                            <a class="card-link" href="{% url 'home:course-detail' notice.target.course_university_slug notice.target.course_instructor_slug notice.target.course_code %}">{
+                                { notice.target.course_code }}
+                            </a>
+                            <span>with professor</span>
+                            <a class="card-link" href="{%url 'home:course-instructor' par2=notice.target.course_instructor_slug par1=notice.target.course_university_slug %}">
+                                {{ notice.target.course_instructor_fn |capfirst }} {{ notice.target.course_instructor|capfirst }}
+                            </a>
+                        {% else %}
+                            <span>{{ notice.verb|slice:"8:" }}</span>
+                        {% endif %}
                         </div>
                     </div>
                     <div class="mt-1" style="font-size: 0.9rem;">
@@ -132,6 +133,15 @@
                         <p class="mt-1 text-muted">
                             <strong class="text-dark">Review: </strong>{{ notice.description }}
                         </p>
+                        {% elif 'CON_MENT' in notice.verb %}
+                        <span>
+                            {{ notice.timestamp|date:"Y/m/d " }}
+                        </span>
+                        {% if notice.target %}
+                        <p class="mt-1 text-muted">
+                            <a href="{% url 'home:post-detail' notice.target.guid_url  %}" style="text-decoration: none;"><strong class="text-dark">{{ notice.description }}</strong></a>
+                        </p>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </li>

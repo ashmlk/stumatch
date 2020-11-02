@@ -12,8 +12,6 @@
   <a class="navbar-brand ml-1 mr-3" href="{% url 'home:home' %}">
     <div class="d-none d-lg-block">
       <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
-      <img class="img-fluid" src="{% static 'logo/m/logo-name-only-2.svg' %}"
-        style="margin-left:-4px;margin-bottom:-7px;height: 2.2rem;">
     </div>
     <div class="d-lg-none">
       <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
@@ -286,7 +284,7 @@
               <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
           </div>
           <div class="nav-name-icons ml-3 d-md-none">
-            <span>Logout</span>
+            <span>Log out</span>
           </div>
         </div>
       </li>
@@ -304,7 +302,7 @@
           <a class="dropdown-item" href="{% url 'main:settings-edit' %}"><i class="fas mr-1 fa-cog"></i> Settings</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item text-dark" href="{% url 'main:user_logout' %}"><i
-              class="fas mr-1 fa-sign-out-alt"></i> Logout</a>
+              class="fas mr-1 fa-sign-out-alt"></i> Log out</a>
         </div>
       </li>
     </ul>

@@ -32,7 +32,7 @@
   <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
   <script src="{% static 'js/index.js' %}"></script>
 </head>
-<body class="pb-5" style="background-color: white !important;">
+<body class="d-flex flex-column min-vh-100" style="background-color: white !important;">
 {% if request.user.is_authenticated %}
   <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
 {% else %}
@@ -53,7 +53,7 @@
       <div class="modal-content"></div>
     </div>
   </div>
-  <div id="footer-main-div">
+  <div id="footer-main-div" style="margin-top: 250px;">
     {% include 'footer_main.html' %}
   </div>
 </body>

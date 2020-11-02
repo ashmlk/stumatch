@@ -5,7 +5,7 @@
 <div id="_pc_{{ veid }}" class="post-ctr infinite-item">
   <div class="row">
     <div class="col-sm-12 col-12">
-      <div class="ml-1 mb-2 mt-2 pb-3" style="border-bottom:solid 1px rgba(136, 136, 136, 0.288) ;">
+      <div class="ml-1 mb-2 mt-2 pb-3 card" >
         <div class="d-flex justify-content-between ml-1">
           <div class="d-flex m-2">
             <div>
@@ -107,7 +107,11 @@
               </div>
               {% endif %}
             </div>
-            <p class="card-text" style="margin-left:-9px;margin-top: -0.9rem;">{{ post.content }}</p>
+            <p class="card-text" style="margin-left:-9px;margin-top: -0.9rem;">
+              {% with content=post.content|urlize %}
+              {{ content|mention_urlize|safe }}
+              {% endwith %}
+            </p>
           </div>
           <div class="post-tags d-flex">
             {% for tag in post.tags.all %}

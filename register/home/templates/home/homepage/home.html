@@ -102,8 +102,32 @@
   </div>
 </div>
 {% endif %}
+{% if no_post_message %}
+  {% if not discover_students %}
+    <div class="ml-2 text-muted btn btn-light btn-sm">
+      <span class="small">{{ no_post_message }}</span>
+    </div>
+  {% endif %}
+{% endif %}
+{% if no_friends_and_university %}
+<div id="welcome_cards_container">
+  <div class="d-flex justify-content-center" style="z-index:-1;">
+    <div class="w-75">
+      {% include 'slider/slider.html' %}
+    </div>
+  </div>
+</div>
+{% elif discover_students %}
+<div id="welcome_cards_container">
+  <div class="d-flex justify-content-center" style="z-index:-1;">
+    <div class="w-75">
+      {% include 'slider/slider_discover_students.html' %}
+    </div>
+  </div>
+</div>
+{% endif %}
 <div id="post-list">
-  <div>
+  <div class="pb-5">
     {% include 'home/posts/home_post.html' %}
   </div>
 </div>

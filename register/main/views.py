@@ -38,6 +38,8 @@ from register.settings.production import sg
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from allauth.account.utils import *
+import time
+
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
@@ -208,20 +210,19 @@ def signup(request):
 #@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
     
-    if request.user.is_authenticated:
-        if request.user.is_active:
-            storage = messages.get_messages(request)
-            for _ in storage:
-                pass
-            for _ in list(storage._loaded_messages):
-                del storage._loaded_messages[0]
-            return redirect('home:home')             
-    message = ''
+           
+    #message = ''
     if request.method == 'POST':
+        storage = messages.get_messages(request)
+        for _ in storage:
+            pass
+        for _ in list(storage._loaded_messages):
+            del storage._loaded_messages[0]
         username = request.POST.get('username')
         password = request.POST.get('password')
+        vp = request.POST.get('vp', None)
         user = authenticate(username=username, password=password)
-        if user:
+        if user is not None:
             if user.is_active:
                 login(request, user)
                 storage = messages.get_messages(request)
@@ -232,11 +233,14 @@ def user_login(request):
                 return redirect('home:home')
             else:
                 return HttpResponse('Account is disabled')
-        if user is None:
-            message = 'Sorry the username or password you entered is incorrect please try again'
-    else:
-        message = ''
-    return render(request, 'main/user_login.html', {'message': message})
+        else:
+            messages.error(request,'Sorry, the username or password you entered is not correct')
+            if vp == 'md':
+                return redirect('login') 
+            else:
+                return redirect('main:user_login')
+              
+    return render(request, 'main/user_login.html')
     
 def update_user_email_on_verification(request):
     
@@ -723,10 +727,13 @@ def get_blocking(request):
 def login_info(request):
     
     if request.user.is_authenticated:
-        last_login_utc = Profile.objects.get(username=request.user.username).last_login
-        last_login = last_login_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
-        date_joined_utc = Profile.objects.get(username=request.user.username).date_joined
-        date_joined = date_joined_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        #last_login_utc = request.user.last_login  
+        #date_joined_utc = request.user.date_joined
+        #last_login = last_login_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        #date_joined = date_joined_utc.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        
+        last_login = request.user.get_last_login_local()
+        date_joined = request.user.get_date_joined_local()
         
         context = {
             'last_login':last_login,
@@ -1634,7 +1641,7 @@ def get_user_posts(request):
         num_posts = post_list.count()
         
         page = request.GET.get('page', 1)
-        paginator = Paginator(post_list, 6)
+        paginator = Paginator(post_list, 8)
         try:
             posts = paginator.page(page)
         except PageNotAnInteger:
@@ -1687,7 +1694,7 @@ def get_user_blogs(request):
         num_blogs = blog_list.count()
         
         page = request.GET.get('page', 1)
-        paginator = Paginator(blog_list, 6)
+        paginator = Paginator(blog_list, 8)
         try:
             blogs = paginator.page(page)
         except PageNotAnInteger:
@@ -1741,14 +1748,14 @@ def get_user_courses(request):
         num_courses = course_list.count()
         
         page = request.GET.get('page', 1)
-        paginator = Paginator(course_list, 7)
+        paginator = Paginator(course_list, 8)
         try:
             courses = paginator.page(page)
         except PageNotAnInteger:
             courses = paginator.page(1)
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
-            
+        
         if FriendshipRequest.objects.filter(from_user=user,to_user=request.user).exists():
             requested=True   
         elif FriendshipRequest.objects.filter(from_user=request.user,to_user=user).exists():
@@ -1880,6 +1887,10 @@ def get_user_mentions(request):
     text = request.GET.get('q', None)
     top_users = Profile.objects.search_topresult(search_text=text)[:10]
     top_users_json = list(top_users[:10].values('first_name','last_name','username','image'))
+    for value in top_users_json:
+        newURL = settings.MEDIA_URL
+        newURL += value['image']
+        value['image'] = newURL
     return JsonResponse(top_users_json, safe=False)
 
     

@@ -17,6 +17,8 @@ from hashids import Hashids
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 from django.urls import reverse
 from notifications.base.models import AbstractNotification
+import time
+from datetime import datetime
 
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
@@ -57,10 +59,11 @@ class ProfileManager(UserManager):
                 similarity_university = TrigramSimilarity('university', university),
                 similarity_program = TrigramSimilarity('program', program)
             ).filter(
+                (Q(is_active=True)) &
                 (Q(university__unaccent__icontains=university) & Q(program__unaccent__icontains=program)) |
                 (Q(similarity_university__gte=0.8) & Q(similarity_program__gte=0.7)) |
                 (Q(similarity_program__gte=0.85)) & 
-                (Q(public=True))
+                (Q(public=True)) 
             ).exclude(is_superuser=True).order_by('-similarity_university','-similarity_program')
         )
     
@@ -79,10 +82,11 @@ class ProfileManager(UserManager):
                         TrigramSimilarity('first_name', search_text),
                         TrigramSimilarity('last_name', search_text))
                     ).filter(
-                        Q(username__unaccent__trigram_similar=search_text) |
+                        (Q(is_active=True)) &
+                        (Q(username__unaccent__trigram_similar=search_text) |
                         Q(last_name__unaccent__trigram_similar=search_text) |
                         Q(first_name__unaccent__trigram_similar=search_text) |
-                        Q(username__unaccent__icontains=search_text), trigram__gte=0.2
+                        Q(username__unaccent__icontains=search_text)), trigram__gte=0.2
                     ).exclude(is_superuser=True).order_by('-trigram')
                 )
             if qs.count() < 1:
@@ -156,10 +160,11 @@ class ProfileManager(UserManager):
                 self.get_queryset()
                 .annotate(rank=search_rank, trigram = trigram)
                 .filter(
-                    Q(rank__gte=0.3)|
+                    (Q(is_active=True)) &
+                    (Q(rank__gte=0.3)|
                     Q(username__unaccent__trigram_similar=search_text) |
                     Q(last_name__unaccent__trigram_similar=search_text) |
-                    Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.1
+                    Q(first_name__unaccent__trigram_similar=search_text)), trigram__gte=0.1
                 ).exclude(is_superuser=True).order_by('-rank')[:5]
             )
             
@@ -181,10 +186,11 @@ class ProfileManager(UserManager):
                     TrigramSimilarity('first_name', search_text),
                     TrigramSimilarity('last_name', search_text))
                 ).filter(
-                    Q(username__unaccent__trigram_similar=search_text) |
+                    (Q(is_active=True)) &
+                    (Q(username__unaccent__trigram_similar=search_text) |
                     Q(last_name__unaccent__trigram_similar=search_text) |
                     Q(first_name__unaccent__trigram_similar=search_text) |
-                    Q(username__unaccent__icontains=search_text), trigram__gte=0.03
+                    Q(username__unaccent__icontains=search_text)), trigram__gte=0.03
                 ).exclude(is_superuser=True).order_by('-trigram')
             )
         return qs
@@ -258,10 +264,11 @@ class ProfileManager(UserManager):
             self.get_queryset()
             .annotate(rank=search_rank, trigram = trigram)
             .filter(
-                Q(rank__gte=0.2)|
+                (Q(is_active=True)) &
+                (Q(rank__gte=0.2)|
                 Q(username__unaccent__trigram_similar=search_text) |
                 Q(last_name__unaccent__trigram_similar=search_text) |
-                Q(first_name__unaccent__trigram_similar=search_text), trigram__gte=0.03
+                Q(first_name__unaccent__trigram_similar=search_text)), trigram__gte=0.03
             ).exclude(is_superuser=True).order_by('-rank')
         )
         
@@ -277,7 +284,7 @@ class ProfileManager(UserManager):
         
         qs = (
             self.get_queryset()
-            .filter(courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor, courses__course_instructor_fn__iexact=instructor_fn)
+            .filter(is_active=True, courses__course_code=code, courses__course_university__iexact=university, courses__course_instructor__iexact=instructor, courses__course_instructor_fn__iexact=instructor_fn)
             .exclude(username__in=usernames)
             .exclude(is_superuser=True)
             .order_by('last_name','first_name','university').distinct('last_name','first_name','university')
@@ -302,7 +309,7 @@ class ProfileManager(UserManager):
                 
         qs = (
             self.get_queryset()
-            .filter(Q(university=user.university) | Q(courses__course_code__in=[c.course_code for c in user_courses]))
+            .filter((Q(is_active=True)) & (Q(university=user.university) | Q(courses__course_code__in=[c.course_code for c in user_courses])))
             .exclude(username__in=usernames)
             .exclude(is_superuser=True)
             .order_by('last_name','first_name','university').distinct('last_name','first_name','university')
@@ -324,7 +331,7 @@ class ProfileManager(UserManager):
                 return None
         qs = (
             self.get_queryset()
-            .filter(username__in=f_usernames, university=university)
+            .filter(is_active=True, username__in=f_usernames, university=university)
             .annotate(course_count=Count('courses'))
             .filter(course_count__gte=1)
             .order_by('last_name','first_name')
@@ -396,6 +403,7 @@ class Profile(AbstractUser):
     get_post_notify_all = models.BooleanField(default=True, blank=True)
     get_post_notify_likes = models.BooleanField(default=True, blank=True)
     get_post_notify_comments = models.BooleanField(default=True, blank=True)
+    get_post_notify_mentions = models.BooleanField(default=True, blank=True)
     get_buzz_notify_all = models.BooleanField(default=True, blank=True)
     get_buzz_notify_likes = models.BooleanField(default=True, blank=True)
     get_buzz_notify_comments = models.BooleanField(default=True, blank=True)
@@ -413,6 +421,10 @@ class Profile(AbstractUser):
         indexes = [
             GinIndex(fields=['sv'],name='search_idx_user'),
         ]
+    
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        super(Profile, self).save(*args, **kwargs) 
         
     def __str__(self):
         return self.username
@@ -422,11 +434,7 @@ class Profile(AbstractUser):
 
     def get_hashid(self):
         return hashids_user.encode(self.id)
-    
-    def add_email_address(self, request, new_email):
 
-        return EmailAddress.objects.change(request, self.user, new_email, confirm=True)
-    
     def set_image_to_default(self):
         if self.image.url != DEFAULT_IMAGE:
             self.image.delete(save=False)  # delete old image file
@@ -435,6 +443,18 @@ class Profile(AbstractUser):
         else:
             self.image = DEFAULT_IMAGE
             self.save()
+
+    def get_last_login_local(self):
+        
+        epoch = time.mktime(self.last_login.timetuple())
+        offset = datetime.fromtimestamp (epoch) - datetime.utcfromtimestamp (epoch)
+        return self.last_login + offset
+    
+    def get_date_joined_local(self):
+        
+        epoch = time.mktime(self.date_joined.timetuple())
+        offset = datetime.fromtimestamp (epoch) - datetime.utcfromtimestamp (epoch)
+        return self.date_joined + offset
 
 class BookmarkBase(models.Model):
     class Meta:

@@ -4,6 +4,8 @@ import random
 from django import template
 from main.models import Profile, BookmarkBuzz, BookmarkBlog, BookmarkPost
 from hashids import Hashids
+import re, html
+from register.mentions import extract
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
 
 register = template.Library()
@@ -56,4 +58,12 @@ def is_bookmarked(context):
 @register.filter(name='get_dict_item')
 def get_dict_item(dictionary, key):
     return dictionary.get(key)
+
+@register.filter
+def mention_urlize(value):
+  
+    new_string = re.sub(r"\B@(?<!@@)(\w{1,31})", r'<a href="/u/\1">\g<0></a>', value)
+    return new_string
+
+        
 

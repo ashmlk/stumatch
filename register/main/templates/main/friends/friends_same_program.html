@@ -19,7 +19,7 @@
 <div class="m-0 mb-2 border-bottom pb-1 p-0" style="margin-left: -0.95rem !important;">
     <div class="m-0">
         <h6 class="display-4" style="font-size: 1.6rem;">
-            <strong>{{ request.user.university|capfirst }}:</strong><br />"{{ request.user.program|capfirst }}"</h6>
+            <strong>{{ request.user.university|capfirst }}:</strong><br/>"{{ request.user.program|capfirst }}"</h6>
     </div>
 </div>
 {% endif %}
@@ -34,8 +34,7 @@
                     </div>
                     <div class="ml-1">
                         <div>
-                            <span class="mx-0 text-dark font-weight-bolder">{{ user.first_name }}
-                                {{ user.last_name}}</span>
+                            <a href="{{ user.get_absolute_url }}" style="text-decoration: none;"><span class="mx-0 text-dark font-weight-bolder">{{ user.get_full_name }}</span></a>
                         </div>
                         <div style="margin-top: -0.35rem;">
                             <a class="small" style="color: rgb(1,119,200)" href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>

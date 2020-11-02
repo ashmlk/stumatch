@@ -115,6 +115,10 @@ def similar_string_ratio(a, b):
 def get_uni_info(university):
     
     with open('static/jsons/world_universities_and_domains.json') as file:
-        data = json.load(file)
-        return next(item for item in data if similar_string_ratio(item["name"], university) > 0.9)
+        try:
+            data = json.load(file)
+            return next(item for item in data if similar_string_ratio(item["name"], university) > 0.9)
+        except Exception as e:
+            print(e)
+            return None
         

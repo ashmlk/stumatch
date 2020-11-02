@@ -13,7 +13,7 @@
             <div class="card border-0">
                 <a class="text-center menu-link{{ prgm_active }}" style="text-decoration: none;" href="{% url 'home:find-students' %}?sl=prgm">
                     <div class="m-1 p-2">
-                        {% if request.user.university %}At {{ request.user.university|capfirst }}{% else %}At Your University{% endif %}
+                        {% if request.user.university %}At {{ request.user.university|capfirst }} {{ request.user.program|capfirst  }}{% else %}At Your University{% endif %}
                     </div>
                 </a>
             </div>

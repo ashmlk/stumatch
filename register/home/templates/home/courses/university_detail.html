@@ -3,16 +3,27 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-<title>{{ uni|capfirst }} - JoinCampus</title>
+<title>{% if uni %}{{ uni|capfirst }} - {% else %}University - {% endif %} JoinCampus</title>
 {% endblock %}
 {% block content %}
 {% if is_empty %}
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-center">
-            <h4 class="text-muted">Error in processing your request</h4>
+            <h6 class="text-muted">The university you were looking for is not found please try again</h6>
         </div>
     </div>
+    {% if add_uni %}
+    <div class="d-flex justify-content-center">
+        <div class="m-2">
+            <button style="border-radius: 20px;" class="btn btn-primary d-flex align-items-center mr-1 add-uni-btn" data-url="{% url 'main:update-university' %}?success_url=home">
+                <div>
+                  <span class="h6"><span style="white-space: nowrap !important;">Add University</span></span>
+                </div>
+            </button>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% else %}
 <div class="content">

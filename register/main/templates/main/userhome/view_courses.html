@@ -9,7 +9,7 @@
     {% bg_rand as bgrnd %}
     {% div_class as veid %}
     {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-    <div class="col-md-6 p-1">
+    <div class="infinite-item col-md-6 p-1">
         <div class="card my-1" style="border-radius: 15px;">
             <div class="p-0" >
                 <a style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
@@ -94,6 +94,4 @@
     </div>
   </div>
 </div>
-
-
 {% endblock %}

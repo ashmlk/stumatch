@@ -17,8 +17,8 @@
             </div>
             <div class="row d-flex justify-content-start pl-4 pr-4 pt-4 pb-2 friends-list infinite-container">
                 {% for friend in friends %}
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 p-1">
-                    <div class="infinite-item card d-flex justify-content-center">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12 p-1 infinite-item ">
+                    <div class="card d-flex justify-content-center">
                         <div>
                             <div class="d-flex justify-content-center p-2">
                                 {% thumbnail friend.image "110x110" crop="80% top" as im %}

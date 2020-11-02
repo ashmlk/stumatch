@@ -20,7 +20,7 @@ text-transform: none;
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:visited {
-background-color: rgb(126, 192, 243)!important;
+background-color: rgb(72, 123, 224)!important;
 }
 
 .btn-primary:hover {
@@ -314,11 +314,11 @@ color:  rgba(43, 98, 153, 0.678);
 }
 
 .mnpglk-active svg {
-color: rgb(126, 192, 243) !important;
+color: rgb(72, 123, 224) !important;
 }
 
 .mnpglk-active span {
-color: rgb(126, 192, 243) !important;
+color: rgb(72, 123, 224) !important;
 }
 
 .side-tab-link-holder svg {
@@ -333,7 +333,7 @@ min-width: 3rem !important;
 border-left: solid 3px rgba(136, 136, 136, 0.144);
 }
 .side-tab-link-holder .mnpglk:hover{
-border-left: solid 3px rgb(126, 192, 243) !important;
+border-left: solid 3px rgb(72, 123, 224) !important;
 
 }
 .side-tab-link-holder .mnpglk:hover .col-1{
@@ -341,7 +341,7 @@ margin-left: -3px !important;
 }
 
 .side-tab-link-holder .mnpglk-active {
-border-left: solid 3px rgb(126, 192, 243) !important; 
+border-left: solid 3px rgb(72, 123, 224) !important; 
 }
 
 .side-tab-link-holder .mnpglk-active .col-1{
@@ -377,11 +377,11 @@ ol.carousel-indicators {
   }
 
   .mnpglk-active svg {
-    color: rgb(126, 192, 243) !important;
+    color: rgb(72, 123, 224) !important;
   }
 
   .mnpglk-active span {
-    color: rgb(126, 192, 243) !important;
+    color: rgb(72, 123, 224) !important;
   }
 
   .side-tab-link-holder svg {
@@ -396,7 +396,7 @@ ol.carousel-indicators {
     border-left: solid 3px rgba(136, 136, 136, 0.144);
   }
   .side-tab-link-holder .mnpglk:hover{
-    border-left: solid 3px rgb(126, 192, 243) !important;
+    border-left: solid 3px rgb(72, 123, 224) !important;
 
   }
   .side-tab-link-holder .mnpglk:hover .col-1{
@@ -404,7 +404,7 @@ ol.carousel-indicators {
   }
 
   .side-tab-link-holder .mnpglk-active {
-    border-left: solid 3px rgb(126, 192, 243) !important; 
+    border-left: solid 3px rgb(72, 123, 224) !important; 
   }
   
   .side-tab-link-holder .mnpglk-active .col-1{
@@ -443,7 +443,7 @@ ol.carousel-indicators {
       cursor: pointer;
   }
   .profile-header-main-links .pro-link-goto-active {
-      border-bottom:solid 3px rgb(126, 192, 243);
+      border-bottom:solid 3px rgb(72, 123, 224);
       margin-right: 1.2rem !important;
       font-weight: 500 !important;
       font-size: 1rem !important;
@@ -454,7 +454,7 @@ ol.carousel-indicators {
       cursor: pointer;
   }
   .profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
-      color: rgb(126, 192, 243) !important;
+      color: rgb(72, 123, 224) !important;
       padding-top: 3px !important;
       margin-bottom: -4px !important;
       
@@ -521,10 +521,10 @@ box-shadow:  -9px 9px 18px #949ca1,
 }
 
 .mnpglk-active svg {
-  color: rgb(126, 192, 243) !important;
+  color: rgb(72, 123, 224) !important;
 }
 .mnpglk-active span {
-  color: rgb(126, 192, 243) !important;
+  color: rgb(72, 123, 224) !important;
 }
 .side-tab-link-holder svg {
   color: rgb(71, 71, 71);
@@ -537,7 +537,7 @@ box-shadow:  -9px 9px 18px #949ca1,
   border-left: solid 3px rgba(136, 136, 136, 0.144);
 }
 .side-tab-link-holder .mnpglk:hover{
-  border-left: solid 3px rgb(126, 192, 243) !important;
+  border-left: solid 3px rgb(72, 123, 224) !important;
 
 }
 .side-tab-link-holder .mnpglk:hover .col-1{
@@ -545,7 +545,7 @@ box-shadow:  -9px 9px 18px #949ca1,
 }
 
 .side-tab-link-holder .mnpglk-active {
-  border-left: solid 3px rgb(126, 192, 243) !important; 
+  border-left: solid 3px rgb(72, 123, 224) !important; 
 }
 
 .side-tab-link-holder .mnpglk-active .col-1{
@@ -584,7 +584,7 @@ box-shadow:  -9px 9px 18px #949ca1,
     cursor: pointer;
 }
 .profile-header-main-links .pro-link-goto-active {
-    border-bottom:solid 3px rgb(126, 192, 243);
+    border-bottom:solid 3px rgb(72, 123, 224);
     margin-right: 1.2rem !important;
     font-weight: 500 !important;
     font-size: 1rem !important;
@@ -595,7 +595,7 @@ box-shadow:  -9px 9px 18px #949ca1,
     cursor: pointer;
 }
 .profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
-    color: rgb(126, 192, 243);
+    color: rgb(72, 123, 224);
     padding-top: 3px !important;
     margin-bottom: -4px !important;
     
@@ -643,7 +643,7 @@ box-shadow:  -9px 9px 18px #949ca1,
  margin-left: -9999px !important;
 }
 .setting-link-active a{
-  color: rgb(126, 192, 243) !important;
+  color: rgb(72, 123, 224) !important;
 }
 .edit-pro-all .edit-field-label {
   font-weight: 600;
@@ -725,4 +725,20 @@ box-shadow:  -9px 9px 18px #949ca1,
 }
 .separator-line::after {
     margin-left: .6em;
+}
+
+.bg-primary-dark {
+  background-color: #2B4A87 !important;
+}
+
+.bg-primary-main {
+  background-color: #487BE0 !important;
+}
+
+.bg-primary-medium {
+  background-color:#406DC7 !important;
+}
+
+.bg-primary-mid-dark {
+  background-color: #375FAD !important;
 }

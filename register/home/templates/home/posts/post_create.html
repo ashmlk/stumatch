@@ -1,5 +1,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'highlight-textarea/jquery.highlight-within-textarea.css' %}">
 <form method="POST" data-url="{% url 'home:post-create' %}" id="my-dropzone" class="dropzone post-create-form" enctype="multipart/form-data">
 	{% csrf_token %}
 		<div class="modal-header text-center">
@@ -34,54 +35,12 @@
 	</div>
 </form>
 <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-<script src="{% static 'js/post/post-dz.js' %}"></script>
 <link rel="stylesheet" href="{% static 'tribute/tribute.css' %}" />
 <script src="{% static 'tribute/tribute.js' %}"></script>
-<script>
-$(document).ready(function () {
-
-	var tribute = new Tribute({
-		values: function (search, cb) {
-			getUsernames(search, users => cb(users))
-		},
-		menuItemTemplate: function (item) {
-			return '<img src="'+item.original.img.url + '">' + item.original.name + " " + item.original.last;
-		},
-		selectTemplate: function (item) {
-			return '@' + item.original.username;
-		},
-	});
-	tribute.attach(document.getElementById("id_content"));
-
-	function getUsernames(search, cb){
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', '/get/user/mentions?q='+search, true);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = function () {
-			var data = JSON.parse(xhr.responseText);
-			cb(data);
-			if (xhr.readyState == 4 && xhr.status == "200") {
-				$.each(data, function(i, item) {	
-					tribute.append(0,[
-						{
-							name: data[i].first_name,
-							last: data[i].last_name,
-							username: data[i].username	
-						},
-					]);
-				});
-			} else if (xhr.status === 403) {
-				cb([]);
-			}
-		}
-		xhr.send(null);
-	}
-
-})
-</script>
-<style> #preview-selected > img{margin-top: 10px !important;}  .selectize-input.items .item {margin-top: -3px !important;}</style>
-
-
+<script src="{% static 'highlight-textarea/jquery.highlight-within-textarea.js' %}"></script>
+<script src="{% static 'js/post/post-dz.js' %}"></script>
+<script src="{% static 'js/post/mentions.js' %}"></script>
+<style>.hwt-container {width: 100% !important; margin-left: 10px !important;} #preview-selected > img{margin-top: 10px !important;}  .selectize-input.items .item {margin-top: -3px !important;}.tribute-container{background-color: white; border-radius: 8px; border: 1px solid rgba(158, 158, 158, 0.459);}.tribute-container ul li{background-color: white;}.tributehighlight{background-color: rgb(245, 245, 245) !important;}</style>
 
 
 

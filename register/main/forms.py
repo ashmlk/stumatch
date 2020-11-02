@@ -207,8 +207,10 @@ class SignUpForm(UserCreationForm):
 				for field in self.fields:
 						self.fields[field].widget.attrs.update({'class':'form-control','placeholder':self.fields[field].label})
       
+      
 	def clean_username(self):
 		username = self.cleaned_data.get('username')
+		username=username.lower()
 		if Profile.objects.filter(username=username).exists():
 				if Profile.objects.filter(username=username, is_active=False).exists():
 					p = Profile.objects.filter(username=username, is_active=False).delete()
@@ -268,19 +270,6 @@ class EditProfileForm(UserChangeForm):
 			}
 		)
 	)
-	'''
-	email = forms.EmailField(
-
-		required=False,
-		widget=forms.EmailInput(
-			attrs={
-				"placeholder": "Email",
-				"class": "form-control mb-2",
-    		
-			}
-		)
-	)
- 	'''
     
 	bio = forms.CharField(
 		required=False,
@@ -304,6 +293,15 @@ class EditProfileForm(UserChangeForm):
 		model = Profile
 		fields=('username','first_name','last_name','bio',)
 
+	def clean_username(self):
+			username = self.cleaned_data.get('username')
+			username=username.lower()
+			if Profile.objects.filter(username=username).exists():
+					if Profile.objects.filter(username=username, is_active=False).exists():
+						p = Profile.objects.filter(username=username, is_active=False).delete()
+					elif Profile.objects.filter(username=username, is_active=True).exists():
+						raise forms.ValidationError("A user with this username already exists.")
+			return username
 
 class SetUniversityForm(forms.ModelForm):
     

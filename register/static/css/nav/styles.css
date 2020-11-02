@@ -11,7 +11,7 @@
     background: none;
     box-shadow: none;
     border: 0;
-    color: #666666;
+    color: #666666 !important;
     padding: 0 8px 0 15px;
     border-left: solid 1px #ccc;
 }
@@ -108,18 +108,18 @@
 
 .main-top-nav .nav-link svg {
     margin-top: 2px !important;
-    color: rgb(136, 136, 136) !important;
+    color: rgb(72, 123, 224) !important;
 }
 
 .main-top-nav .nav-link i {
     margin-bottom: -3px !important;
-    color: rgb(136, 136, 136) !important;
+    color: rgb(72, 123, 224) !important;
 }
 
 .main-top-nav .nav-link {
     border-color: transparent !important;
     cursor: pointer !important;
-    background-color: rgba(136, 136, 136, 0.144) !important;
+    background-color: rgba(72, 123, 224, 0.144) !important;
 }
 
 .main-top-nav .nav-link:hover {
@@ -133,16 +133,16 @@
 .main-top-nav .navbar-toggler {
     border-color: transparent !important;
     cursor: pointer !important;
-    background-color: rgba(136, 136, 136, 0.144) !important;
+    background-color: rgba(72, 123, 224, 0.144) !important;
 }
 .main-top-nav .navbar-toggler svg {
     margin-top: 2px !important;
-    color: rgb(136, 136, 136) !important;
+    color: rgb(72, 123, 224) !important;
 }
 .main-top-nav .nav-name-icons {
     font-size: 1.1rem !important;
     font-weight: 400 !important;
-    color: rgb(136, 136, 136) !important;
+    color: rgb(72, 123, 224) !important;
 }
 .main-top-nav .nav-goto-holder:hover {
     opacity: 0.8;

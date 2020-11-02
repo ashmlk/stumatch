@@ -12,7 +12,7 @@
         {% if  is_upage %}
         <div class="ml-1 mb-2 mt-2 pb-3 card" style="padding-bottom: 0px !important;">
           {% else %}
-          <div class="ml-1 mb-2 mt-2 pb-3" style="border-bottom:solid 1px rgba(136, 136, 136, 0.288) ;">
+          <div class="ml-1 mb-2 mt-2 pb-3 card" >
             {% endif %}
             <div class="d-flex justify-content-between ml-1">
               <div class="d-flex m-2">
@@ -23,7 +23,7 @@
                   {% endthumbnail %}
                 </div>
                 <div class="ml-1">
-                  <a href="{{ post.author.get_absolute_url }}" class="text-dark">
+                  <a href="{{ post.author.get_absolute_url }}" style="text-decoration: none;" class="text-dark">
                     <strong class="mx-0">{{ post.author.get_full_name }}</strong>
                   </a>
                   <div style="margin-top: -0.35rem;">
@@ -118,7 +118,11 @@
                   </div>
                   {% endif %}
                 </div>
-                <p class="card-text" style="margin-left:-9px;margin-top: -0.9rem;">{{ post.content }}</p>
+                <p class="card-text" style="margin-left:-9px;margin-top: -0.9rem;">
+                  {% with content=post.content|urlize %}
+                  {{ content|mention_urlize|safe }}
+                  {% endwith %}
+                </p>
               </div>
               <div style="margin-left:-9px;" class="post-tags d-flex">
                 {% for tag in post.tags.all %}
@@ -154,29 +158,15 @@
       </div>
     </div>
   {% empty %}
-  <div class="d-flex justify-content-center">
-    <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show.</h5>
-  </div>
+  {% if not no_friends_and_university %}
+    {% if not discover_students %}
+      <div class="d-flex justify-content-center">
+        <h5 class="h5 font-weight-lighter my-3 text-muted">No posts to show.</h5>
+      </div>
+    {% endif %}
+  {% endif %}
   {% endfor %}
 </div>
-{% if is_upage %}
-{% if posts.has_next %}
-<a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
-{% endif %}
-{% elif search_result %}
-{% if posts.has_next %}
-<a class="infinite-more-link" href="?q={{ q }}&o=post&page={{ posts.next_page_number }}"></a>
-{% endif %}
-{% elif id_required %}
-{% if posts.has_next %}
-<a class="infinite-more-link" href="?id={{ user.get_hashid }}&page={{ posts.next_page_number }}"></a>
-{% endif %}
-{% else %}
-{% if posts.has_next %}
-<a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
-{% endif %}
-{% endif %}
-
 <div class="mt-2 loading" style="display: none;">
   <div class="d-flex justify-content-center">
     <div class="spinner-border text-primary" role="status">
@@ -184,3 +174,24 @@
     </div>
   </div>
 </div>
+{% if is_upage %}
+{% if posts.has_next %}
+<span style="color: rgba(255, 255, 255, 0);">.</span>
+<a class="infinite-more-link" href="?page_posts={{ posts.next_page_number }}"></a>
+{% endif %}
+{% elif search_result %}
+{% if posts.has_next %}
+<span style="color: rgba(255, 255, 255, 0);">.</span>
+<a class="infinite-more-link" href="?q={{ q }}&o=post&page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% elif id_required %}
+{% if posts.has_next %}
+<span style="color: rgba(255, 255, 255, 0);">.</span>
+<a class="infinite-more-link" href="?id={{ user.get_hashid }}&page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% else %}
+{% if posts.has_next %}
+<span style="color: rgba(255, 255, 255, 0);">.</span>
+<a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
+{% endif %}
+{% endif %}

@@ -1,38 +1,37 @@
-<footer class="p-2 page-footer" style="font-size: 0.9rem; margin-bottom: -4.5rem !important;">
+<footer class="border-top p-2 page-footer" style="font-size: 0.9rem;">
     <div class="ml-2 mr-2">
-      <hr class="mt-5">
-      <div class="row">
+      <div class="row d-flex">
         <div class="col">
           <div class="mb-1 text-center">       
-            <a href="{% url 'main:site-about' %}">
+            <a class="text-muted  text-muted"href="{% url 'main:site-about' %}">
               About
               </a>
           </div>
         </div>
         <div class="col">
           <div class="mb-1 text-center">       
-            <a href="{% url 'main:site-terms' %}">
+            <a class="text-muted  text-muted"href="{% url 'main:site-terms' %}">
               Terms
               </a>
           </div>
         </div>
         <div class="col">
           <div class="mb-1 text-center ">       
-            <a href="{% url 'main:web-policy' %}" style="white-space: nowrap !important;">
+            <a class="text-muted  text-muted"href="{% url 'main:web-policy' %}" style="white-space: nowrap !important;">
               Privacy
               </a>
           </div>
         </div>
         <div class="col">
           <div class="mb-1 text-center ">       
-            <a href="{% url 'main:cookies-policy' %}">
+            <a class="text-muted  text-muted"href="{% url 'main:cookies-policy' %}">
               Cookies
               </a>
           </div>
         </div>
         <div class="col">
           <div class="mb-1 text-center ">       
-            <a href="{% url 'main:contact-us' %}" style="white-space: nowrap !important;">
+            <a class="text-muted  text-muted"href="{% url 'main:contact-us' %}" style="white-space: nowrap !important;">
               Contact Us
               </a>
           </div>
@@ -40,7 +39,7 @@
         {% if request.user.is_authenticated %}
         <div class="col">
           <div class="mb-1 text-center">       
-            <a href="https://forms.gle/cJQPNCQZRuDSbTTH9" target="_blank">
+            <a class="text-muted  text-muted"href="https://forms.gle/cJQPNCQZRuDSbTTH9" target="_blank">
               Feedback
               </a>
           </div>
@@ -48,7 +47,7 @@
         {% endif %}
       </div>
     </div>
-    <div class="footer-copyright text-center py-3 text-muted">
+    <div class="footer-copyright text-center py-1 text-muted">
      JoinCampus © 2020
       </div>
   </footer> 

@@ -135,8 +135,13 @@ $(document).ready(function () {
         e.stopPropagation();
         var first_name = $(this).attr('data-insfirstname');
         var last_name = $(this).attr('data-inslastname');
-        $('#id_course_instructor').val(last_name);
-        $('#id_course_instructor_fn').val(first_name);
+        if($('#course-list-document').length){
+            $('#id_course_instructor').val(first_name +" "+ last_name);
+        }else{
+            $('#id_course_instructor').val(last_name);
+            $('#id_course_instructor_fn').val(first_name);
+        }
+
         $('.query-result').hide();
     })
 

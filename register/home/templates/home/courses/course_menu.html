@@ -138,7 +138,7 @@
                                                 </div>
                                                 <div class="ml-1">
                                                     <div>
-                                                        <span class="mx-0 text-dark font-weight-bolder">{{ user.get_full_name|capfirst }}</span>
+                                                        <a href="{{ user.get_absolute_url }}" style="text-decoration: none;"> <span class="mx-0 text-dark font-weight-bolder">{{ user.get_full_name }}</span></a>
                                                     </div>
                                                     <div style="margin-top: -0.35rem;">
                                                         <a class="small" style="color: rgb(1,119,200)" href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
@@ -204,7 +204,7 @@
                                                         d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                 </svg>
                                             </span>
-                                            <span  style="font-size: 0.9rem;" class="text-dark">You have {{ csc_count }} courses from</span>
+                                            <span  style="font-size: 0.9rem;" class="text-dark">You have {{ csc_count }} {% if csc_count == 1 %} course {% else %} courses {% endif %} from</span>
                                             <span  style="font-size: 0.9rem;" class="ml-1">{{ csc_school }}</span>                                      
                                         </div>
                                         {% endif %}
