@@ -742,3 +742,88 @@ box-shadow:  -9px 9px 18px #949ca1,
 .bg-primary-mid-dark {
   background-color: #375FAD !important;
 }
+
+.bg-primary-azure {
+  background-color: #0080FF;
+}
+
+#about-mainctr .items-detailed {
+  margin-bottom: 3.4rem;
+}
+
+#about-mainctr  .items-detailed .font-weight-bolder {
+  border-left: 4px solid rgb(248, 135, 94);
+  padding-left: 10px;
+}
+
+#about-mainctr  .items-detailed .box-al {
+  padding-left: 14px;
+}
+
+#about-mainctr  .items-detailed .detailed-list {
+  padding-left: 10px;
+}
+
+.bg-purple-main {
+  background-color: #50479A;
+}
+
+.bg-purple-slim{
+  background-color: #7C6DED;
+}
+
+.bg-purple-light {
+  background-color: #8373FA;
+}
+
+.bg-purple-mid-dark {
+  background-color: #6F61D4;
+}
+
+.bg-violet {
+  background-color: #8447FF;
+}
+
+.bg-green-main {
+background-color: #009924;
+}
+.bg-green-dark{
+  background-color:#006E1A ;
+}
+.bg-green-lime{
+  background-color: #00ED37;
+}
+.bg-green-lime-b{
+  background-color: #00FA3A;
+}
+.bg-green-lime-dark{
+  background-color: #00D632;
+}
+.about-card-ctr .card {
+  margin-bottom: 1rem;
+}
+.social-inner ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+}
+
+.social-inner li {
+  float: left;
+}
+
+.social-inner li a {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .about-responsive-h1 {
+    font-size: 4vh !important;
+  }
+}

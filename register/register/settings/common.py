@@ -32,12 +32,12 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'main.Profile'
 ACCOUNT_EMAIL_VERIFICATION='mandatory'
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_EMAIL_REQUIRED=  True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "JoinCampus "
 SOCIALACCOUNT_ADAPTER = 'main.adapters.SocialAccountAdapter'
-ACCOUNT_SIGNUP_FORM_CLASS = "main.forms.SignUpForm"
+
 
 # Application definition
 
@@ -141,7 +141,11 @@ CELERY_BEAT_SCHEDULE = {
     'update-trending-tags-post': {
         'task':'home.tasks.trending_tags_post',
         'schedule':2400.0,
-    },  
+    },
+    'update-university-info-data': {
+        'task':'home.tasks.universities_list_page_items',
+        'schedule':10800.0,
+    }, 
 }
 
 CACHES = {
@@ -256,14 +260,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SITE_ID = 3
-
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'app183550357@heroku.com'
-EMAIL_HOST_PASSWORD = 'pxnz2ghd3106'
-DEFAULT_FROM_EMAIL = 'JoinCampus Team <no-reply@joincampus.ca>'
 
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')

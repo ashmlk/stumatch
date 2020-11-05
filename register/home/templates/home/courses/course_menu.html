@@ -8,6 +8,21 @@
 {% endblock %}
 {% block contentmenu %}
 <div class="container mt-5 p-2">
+    {% if incoming %}
+    <div class="jumbotron jumbotron-fluid bg-primary-medium" style="padding:10px 10px 10px 10px !important;">
+        <p class="lead text-white text-center mt-3">Explore universities and see their courses, instructors, and students.</p>
+        <hr class="mb-2">
+        <div class="d-flex justify-content-center">
+            <div class="m-2">
+                <a style="border-radius: 20px;" class="btn btn-light d-flex align-items-center mr-1 " href="{% url 'home:university-detail' %}?u={{ request.user.university }}">
+                    <div>
+                        <span class="h6"><span style="white-space: nowrap !important;">Explore Universities</span></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <div class="mb-3">
         <div class="db fs">
             <div class="row p-1 mb-2">

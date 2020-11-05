@@ -57,5 +57,6 @@ $(document).ready (function () {
     $('#add-images').on("click", function () {
         $('#my-dropzone').get(0).dropzone.hiddenFileInput.click();
     })
-})
 
+    
+})

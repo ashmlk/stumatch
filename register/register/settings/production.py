@@ -71,7 +71,7 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 
-EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')

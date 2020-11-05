@@ -271,12 +271,12 @@ def test_email():
     from sendgrid.helpers.mail import Mail
 
     message = Mail(
-        from_email='contact@joincampus.ca',
-        to_emails='contact@joincampus.ca',
+        from_email='no-reply@joincampus.ca',
+        to_emails='arshiama@hotmail.com',
         subject='Sending with Twilio SendGrid is Fun',
         html_content='<strong>and easy to do anywhere, even with Python</strong>')
     try:
-        sg = SendGridAPIClient('secret_key')
+        sg = SendGridAPIClient('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')
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
