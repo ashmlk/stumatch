@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'main.apps.MainConfig',
     'home.apps.HomeConfig',
+    'chat',
     'crispy_forms',
     'ckeditor',
     'ckeditor_uploader',
@@ -72,7 +73,8 @@ INSTALLED_APPS = [
     'admin_honeypot',
     'whitenoise.runserver_nostatic',
     'storages',
-    'sorl.thumbnail'
+    'sorl.thumbnail',
+    'channels',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -195,6 +197,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'register.wsgi.application'
+ASGI_APPLICATION = "register.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database

@@ -55,6 +55,7 @@ urlpatterns = [
     # removed r'^home/' 
     url(r'',include(('home.urls','home'), namespace='home')),
     url(r'^friendship/', include('friendship.urls')),
+    path('chat/', include('chat.urls', namespace='chat')),
         
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) # + allauth_urlpatterns
 
