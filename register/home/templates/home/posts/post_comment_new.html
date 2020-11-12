@@ -7,9 +7,7 @@
       <div>
         <div class="d-flex">
           <div>
-            {% thumbnail comment.name.image "40x40" crop="80% top" as im %}
-            <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-          {% endthumbnail %}
+            <img class="rounded-circle"  src="{{ comment.name.image.url }}" width="40px" height="40px">
           </div>
           <div style="display: inline-block !important;">
             <div class="d-block">

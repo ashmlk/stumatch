@@ -1,5 +1,5 @@
 from django.contrib.postgres.search import SearchVector
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up, email_confirmed
 from allauth.account.models import EmailAddress
@@ -8,10 +8,21 @@ from main.models import Profile
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from register.settings.production import sg
+import random
 
 @receiver(post_save, sender=Profile)
 def update_search_vector_profile(sender, instance, **kwargs):
     Profile.objects.filter(pk=instance.pk).update(sv=SearchVector('username','first_name','last_name','university','program'))
+    
+@receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_empty_profile")
+def set_username(sender, instance, **kwargs):
+    if not instance.username:
+        rand = random.getrandbits(64)
+        username = "user" + str(rand)
+        while Profile.objects.filter(username=username):
+            rand = random.getrandbits(64)
+            username = "user" + str(rand)
+        instance.username = username
 
 @receiver(post_save, sender=Profile, dispatch_uid="send_welcome_email_on_user_sign_up")
 def user_signed_up_views(sender, instance, **kwargs):

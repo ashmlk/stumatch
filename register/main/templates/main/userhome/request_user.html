@@ -104,25 +104,30 @@
                                         </span>
                                     </div>
                                     <div class="u_pui">
-                                        {% if user.program %}
-                                        <span class="text-muted">
-                                            Studies {{ user.program|capfirst }}
-                                        </span>
+                                        {% if user.university == "Incoming Student" %}
+                                        <span class="text-muted">You're an </span>
+                                        <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                            {{ user.university|capfirst }}
+                                        </a> 
+                                        {% elif user.program %}
+                                            {% if not user.university == "Incoming Student" %}
+                                            <span class="text-muted">
+                                                Studies {{ user.program|capfirst }}
+                                            </span>
+                                            {% endif %}
                                         {% endif %}
-                                        {% if user.university and user.program %}
-                                        <span class="text-muted"> at </span>
-                                        <strong>
-                                            <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
-                                                {{ user.university|capfirst }}
-                                            </a> 
-                                        </strong>
-                                        {% elif user.university and not user.program %}
-                                        <span class="text-muted">Goes to </span>
-                                        <strong>
-                                            <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
-                                                {{ user.university|capfirst }}
-                                            </a> 
-                                        </strong>
+                                        {% if not user.university == "Incoming Student" %}
+                                            {% if user.university and user.program %}
+                                                <span class="text-muted"> at </span>                                          
+                                                <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                    {{ user.university|capfirst }}
+                                                </a>                                        
+                                            {% elif user.university and not user.program %}
+                                                <span class="text-muted">Goes to </span>                                           
+                                                <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                    {{ user.university|capfirst }}
+                                                </a>                                          
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                     {% endif %}

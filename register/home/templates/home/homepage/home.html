@@ -45,9 +45,7 @@
 <div class="pl-1 pr-1">
     <div class="w-100 d-flex m-1" >
       <div class="mt-2">
-        {% thumbnail request.user.image "60x60" crop="80% top" as im %}
-        <img class="rounded-circle" style="margin:{{ im|margin:'60x60' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-        {% endthumbnail %}
+        <img class="rounded-circle"  src="{{ request.user.image.url }}" width="60px" height="60px">
       </div>
       <div class="w-100 d-flex align-items-center">
         <div class="ml-1 mt-2 w-100 border" style="border-radius: 25px;">

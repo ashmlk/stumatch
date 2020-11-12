@@ -29,6 +29,9 @@ from allauth.account import views as allauth_views
 from allauth.socialaccount import views as allauth_socialviews
 from allauth.socialaccount import providers
 from importlib import import_module
+from ckeditor_uploader import views as ckeditor_views
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 handler404 = 'main.views.handle_404'
 #handler500 = 'main.views.handle_500'
@@ -43,7 +46,8 @@ urlpatterns = [
     url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/', admin.site.urls),    
     url(r'^taggit/', include('taggit_selectize.urls')),
-    path('ckeditor/',include('ckeditor_uploader.urls')),
+    url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
     path('',views.user_login,name='user_login'),
     path('',include('main.urls'),name='main'), 
     path('accounts/', include('allauth.urls')), 

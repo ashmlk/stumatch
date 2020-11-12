@@ -402,6 +402,8 @@ $(document).ready(function (e) {
 			$('#modal-post-delete').modal('hide');
 			$('body').removeClass('modal-open');
 			$('.modal-backdrop').remove();  
+			$('#blog-detail').empty();
+			$('#blog-detail').html('<div class="d-flex justify-content-center"><div class="p-2"><p class="lead text-danger">This blog has been removed.</p></div></div>')
 			$(btn).closest('.blog-ctr').remove();
 		  } 
 		}

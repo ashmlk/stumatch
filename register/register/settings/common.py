@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'crispy_forms',
     'ckeditor',
+    'ckeditor_uploader',
     'taggit',
     'taggit_selectize',
     'dal',
@@ -76,7 +77,7 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-CKEDITOR_UPLOAD_PATH = 'uploads/files/'
+CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
 
 TAGGIT_SELECTIZE = {
     'MINIMUM_QUERY_LENGTH': 1,

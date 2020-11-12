@@ -314,7 +314,7 @@ class EditProfileForm(UserChangeForm):
 	username = forms.CharField(
 		max_length=255,
 		min_length=1,
-		required=False,
+		required=True,
 		validators=[username_regex],
 		widget=forms.TextInput(
 			attrs={
@@ -328,7 +328,7 @@ class EditProfileForm(UserChangeForm):
 	first_name = forms.CharField(
 		max_length=255,
 		min_length=1,
-		required=False,
+		required=True,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={
@@ -342,7 +342,7 @@ class EditProfileForm(UserChangeForm):
 	last_name = forms.CharField(
 		max_length=255,
 		min_length=1,
-		required=False,
+		required=True,
 		validators=[alphanumeric],
 		widget=forms.TextInput(
 			attrs={

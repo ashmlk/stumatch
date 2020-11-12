@@ -9,9 +9,7 @@
         <div class="d-flex justify-content-between ml-1">
           <div class="d-flex m-2">
             <div>
-              {% thumbnail post.author.image "50x50" crop="80% top" as im %}
-                    <img class="rounded-circle" style="margin:{{ im|margin:'50x50' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                  {% endthumbnail %}
+                <img class="rounded-circle"  src="{{ post.author.image.url }}" width="50px" height="50px">
             </div>
             <div class="ml-1">
               <a href="{{ post.author.get_absolute_url }}" class="text-dark">

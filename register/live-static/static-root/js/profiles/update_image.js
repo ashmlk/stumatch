@@ -3,7 +3,7 @@ $(document).ready(function () {
     $(document).on('click', '#myCroppieBtn', function () {
       $('.edit-pro-all #id_image').click();
     })
-
+    
     var image_crop = $('#image_demo').croppie({
       viewport: {
         width: 320,
@@ -11,7 +11,7 @@ $(document).ready(function () {
         type: 'circle'
       },
       boundary: {
-        width: 500,
+        width: 500, 
         height: 500,
       }
     });

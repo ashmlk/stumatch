@@ -3,7 +3,7 @@ from register.celery import app
 from django.core import serializers
 import celery
 from celery import shared_task
-from home.models import Post, Buzz, Blog
+from home.models import Post, Buzz, Blog, Course
 from main.models import Profile
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.conf import settings
