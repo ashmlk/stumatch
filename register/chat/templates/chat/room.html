@@ -1,18 +1,90 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html class=''>
+
 <head>
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet'
+        type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
+    <script src="https://use.typekit.net/hoy3lrg.js"></script>
+    <script>try { Typekit.load({ async: true }); } catch (e) { }</script>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+    <link rel='stylesheet' href='{% static "chat/style.css" %}'>
+    <link rel='stylesheet prefetch'
+        href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
+
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
+    <div id="frame">
+        <div id="sidepanel" style="border-right: none !important;">
+            <div id="contacts">
+                <div id="search" style="border-bottom: 1px solid rgb(206, 204, 204);">
+                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Search contacts..." />
+                </div>
+                <ul>
+                    <li class="contact">
+                        <div class="wrap">
+                            <span class="contact-status online"></span>
+                            <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+                            <div class="meta">
+                                <p class="name">Louis Litt</p>
+                                <p class="preview">You just got LITT up, Mike.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="contact active">
+                        <div class="wrap">
+                            <span class="contact-status busy"></span>
+                            <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                            <div class="meta">
+                                <p class="name">Harvey Specter</p>
+                                <p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call
+                                    their bluff. Or, you do any one of a hundred and forty six other things.</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content" style="background-color: #fff !important;">
+            <div class="contact-profile">
+                <img src="{{ request.user.image.url }}" alt="" />
+                <p class="font-weight-bold text-dark">@{{ username }}</p>
+
+                <div class="social-media">
+                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="messages">
+                <ul id="chat-log">
+                   
+                </ul>
+            </div>
+            <div class="message-input border-left">
+                <div class="wrap">
+                    <input type="text" class='m-1' id="chat-message-input" placeholder="Send a message" style="font-size:0.9rem;border:1px solid rgb(185, 182, 182) ; border-radius: 25px;">
+                    <button class="m-1 submit btn btn-primary btn-md" id="chat-message-submit" style="border-radius: 22px;">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="request-user-username" value="{{ request.user.username }}">
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+    <script src="{% static 'chat/main.js' %}"></script>
     {{ room_name|json_script:"room-name" }}
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-        const chatSocket = new WebSocket(
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        var username = document.getElementById('request-user-username').value;
+        const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
             + '/ws/chat/'
@@ -20,9 +92,19 @@
             + '/'
         );
 
+        chatSocket.onopen = function(e) {
+            fetchMessages();
+        }
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            if (data['command'] === 'messages') {
+                for (let i=0; i< data['messages'].length; i++){
+                    createMessage(data['messages'][i]);   
+                }
+            } else if (data['command'] === 'new_message') {
+                createMessage(data['message'])
+            }
         };
 
         chatSocket.onclose = function(e) {
@@ -31,19 +113,43 @@
 
         document.querySelector('#chat-message-input').focus();
         document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
+            if (e.keyCode === 13) { 
                 document.querySelector('#chat-message-submit').click();
             }
         };
-
+        
         document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
+            var messageInputDOM = document.getElementById('chat-message-input');
+            var message = messageInputDOM.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'command': 'new_message',
+                'message': message,
+                'from': username,
             }));
-            messageInputDom.value = '';
+            messageInputDOM.value = '';
         };
+
+        function fetchMessages() {
+            chatSocket.send(JSON.stringify({'command':'fetch_messages'}));
+        }
+
+        function createMessage(data){
+            var author = data['author'];
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var pTag = document.createElement('p');
+            pTag.textContent = data.content;
+            imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
+            if (author === username) {
+                msgListTag.className = 'replies';                
+            } else {
+                msgListTag.className = 'sent';
+            }
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(pTag);
+            document.querySelector('#chat-log').appendChild(msgListTag);
+        }
     </script>
 </body>
+
 </html>
