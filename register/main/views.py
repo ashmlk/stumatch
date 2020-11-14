@@ -210,7 +210,8 @@ def signup(request):
 #@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
     
-           
+    if request.user.is_authenticated:
+        return redirect('home:home')   
     #message = ''
     if request.method == 'POST':
         storage = messages.get_messages(request)
