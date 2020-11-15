@@ -774,6 +774,7 @@ class Review(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     body = models.TextField(validators=[MaxLengthValidator(400)])
     created_on = models.DateTimeField(auto_now_add=True)
+    is_anonymous = models.BooleanField(default=False, blank=False)
     likes= models.ManyToManyField(Profile, blank=True, related_name='review_likes')
     dislikes= models.ManyToManyField(Profile, blank=True, related_name='review_dislikes')
     review_interest = models.CharField(
@@ -789,6 +790,13 @@ class Review(models.Model):
     
     def get_hashid(self):
         return hashids.encode(self.id)
+    
+    def get_author(self):
+
+        if self.is_anonymous:
+            return "Anonymous Student"
+        else:
+            return self.author.get_full_name()
 
     def get_interest(self):
         interest = {'1':'Interesting','2':'Relatively Interesting','3':'Not Interesting','4':'No Opinion'}
@@ -817,7 +825,7 @@ class Review(models.Model):
             return str(years) + "y"
         
     def get_course_prof(self):
-        return Course.objects.get(course_reviews__id=self.id).course_instructor + " " + Course.objects.get(course_reviews__id=self.id).course_instructor_fn
+        return Course.objects.get(course_reviews__id=self.id).course_instructor_fn + " " + Course.objects.get(course_reviews__id=self.id).course_instructor
     
     def get_course_yr(self):
         return Course.objects.get(course_reviews__id=self.id).course_year
