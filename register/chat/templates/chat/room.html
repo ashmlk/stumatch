@@ -20,47 +20,10 @@
 
 <body>
     <div id="frame">
-        <div id="sidepanel" style="border-right: none !important;">
-            <div id="contacts">
-                <div id="search" style="border-bottom: 1px solid rgb(206, 204, 204);">
-                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-                    <input type="text" placeholder="Search contacts..." />
-                </div>
-                <ul>
-                    <li class="contact">
-                        <div class="wrap">
-                            <span class="contact-status online"></span>
-                            <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
-                            <div class="meta">
-                                <p class="name">Louis Litt</p>
-                                <p class="preview">You just got LITT up, Mike.</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="contact active">
-                        <div class="wrap">
-                            <span class="contact-status busy"></span>
-                            <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-                            <div class="meta">
-                                <p class="name">Harvey Specter</p>
-                                <p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call
-                                    their bluff. Or, you do any one of a hundred and forty six other things.</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="content" style="background-color: #fff !important;">
             <div class="contact-profile">
-                <img src="{{ request.user.image.url }}" alt="" />
+                <img src="{{ user2.image.url }}" alt="" />
                 <p class="font-weight-bold text-dark">@{{ username }}</p>
-
-                <div class="social-media">
-                    <i class="fa fa-facebook" aria-hidden="true"></i>
-                    <i class="fa fa-twitter" aria-hidden="true"></i>
-                    <i class="fa fa-instagram" aria-hidden="true"></i>
-                </div>
             </div>
             <div class="messages">
                 <ul id="chat-log">
@@ -75,20 +38,24 @@
             </div>
         </div>
     </div>
-    <input type="hidden" id="request-user-username" value="{{ request.user.username }}">
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
     <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
     <script src="{% static 'chat/main.js' %}"></script>
-    {{ room_name|json_script:"room-name" }}
+    {{ room_id|json_script:"room-id" }}
+    {{ username|json_script:"request-user-username" }}
+    {{ user2-username|json_script:"user2-username" }}
     <script>
 
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-        var username = document.getElementById('request-user-username').value;
+        const roomName = JSON.parse(document.getElementById('room-id').textContent);
+        var username =  JSON.parse(document.getElementById('request-user-username').textContent);
+        var user2 =  JSON.parse(document.getElementById('user2-username').textContent);
         const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
             + '/ws/chat/'
-            + roomName
+            + user2
+            + '/'
+            + room_id
             + '/'
         );
 
@@ -139,7 +106,7 @@
             var imgTag = document.createElement('img');
             var pTag = document.createElement('p');
             pTag.textContent = data.content;
-            imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
+            imgTag.src = data['img'];
             if (author === username) {
                 msgListTag.className = 'replies';                
             } else {

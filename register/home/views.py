@@ -1248,13 +1248,17 @@ def university_detail(request):
     user_list = []
     uni = request.GET.get('u',request.user.university)
     obj = request.GET.get('obj','std')
+    user_program =  request.GET.get('user_prgrm', None)
+    user_courses = request.GET.get('user_courses', None)
     u_empty = ''
+    
+    user_has_program = True if len(request.user.program) > 0 else False
+    user_has_courses = True if request.user.courses.count() > 0 else False
     
     if len(uni) < 1:
         add_uni = True if len(request.user.university) < 1 else False
         return render(request,'home/courses/university_detail.html',{'is_empty':True , 'add_uni':add_uni})
-    try:
-        
+    try:   
         if uni.strip().lower() == 'incoming student':
             add_uni = True
             uni_list = UNI_LIST
@@ -1290,7 +1294,17 @@ def university_detail(request):
     user_list = Profile.objects.filter(Q(university__iexact=uni)|Q(courses__course_university__iexact=uni)).exclude(id__in=blockers_id).order_by('username','last_name').distinct('username')
     cr = Course.objects.filter(course_university__iexact=uni).\
         order_by('course_code','course_instructor','course_instructor_fn').distinct('course_code','course_instructor','course_instructor_fn')
+    
+    try:
+        if user_program == 'user' and user_has_program:
+            user_list = user_list.filter(program=request.user.program)      
+        if user_courses == 'user' and user_has_courses:
+            user_list = user_list.filter(courses__id__in=request.user.courses.all().distinct('course_code').values_list('id', flat=True))
+    except Exception as e:
+        print(e.__class__)
+        print(e)
         
+       
     num_courses = cr.count()
     num_enrolled = len(user_list)
     
@@ -1368,7 +1382,9 @@ def university_detail(request):
             'u_empty':u_empty,
             'data':data,
             'num_enrolled':num_enrolled,
-            'num_courses':num_courses
+            'num_courses':num_courses,
+            'user_has_courses':user_has_courses,
+            'user_has_program':user_has_program,
             }
         return render(request,'home/courses/university_detail_instructors.html',context)
     

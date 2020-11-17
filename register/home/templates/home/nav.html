@@ -115,7 +115,7 @@
       <div class="mr-1 d-flex align-items-center">
         <div>
           <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-            data-placement="bottom" title="Notifications" data-delay='{ "show": 500, "hide": 100 }'
+            data-placement="bottom" title="Home" data-delay='{ "show": 500, "hide": 100 }'
             href="{% url 'home:home' %}">
             <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-house-door-fill" fill="currentColor"
               xmlns="http://www.w3.org/2000/svg">
@@ -123,6 +123,15 @@
                 d="M6.5 10.995V14.5a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5V11c0-.25-.25-.5-.5-.5H7c-.25 0-.5.25-.5.495z" />
               <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
             </svg></a>
+        </div>
+      </div>
+      <div class="mr-1 d-flex align-items-center">
+        <div>
+          <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+            data-placement="bottom" title="Messages" data-delay='{ "show": 500, "hide": 100 }'
+            href="{% url 'chat:index' %}">
+            <i class='fas fa-comments' style="font-size: 22px !important;"></i>
+          </a>
         </div>
       </div>
       <div class="d-flex align-items-center ">
@@ -228,6 +237,20 @@
           </div>
           <div class="nav-name-icons ml-3 d-md-none">
             <span>Home</span>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item active mt-1 mr-2 nav-goto-holder" data-url="{% url 'chat:index' %}">
+        <div class="mr-1 d-flex align-items-center">
+          <div>
+            <a class="d-flex align-items-center nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              data-placement="bottom" title="Notifications" data-delay='{ "show": 500, "hide": 100 }'
+              href="{% url 'chat:index' %}">
+              <i class='fas fa-comments' style="font-size: 22px !important;"></i>
+            </a>
+          </div>
+          <div class="nav-name-icons ml-3 d-md-none">
+            <span>Messages</span>
           </div>
         </div>
       </li>
