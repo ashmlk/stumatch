@@ -33,13 +33,15 @@ from django.core.cache import cache
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector, TrigramSimilarity
 from notifications.signals import notify
 import json
-from home.algo import get_uni_info 
+from home.algo import get_uni_info, get_similar_university
 from itertools import chain
 from home.templatetags.ibuilder import num_format
 from django.contrib.admin.options import get_content_type_for_model
 from django.contrib.contenttypes.models import ContentType
 from home.forms import current_year
 from home.tasks import async_send_mention_notifications, async_delete_mention_notifications
+from django.templatetags.static import static
+from django.contrib.staticfiles import finders
 
 # Max number of courses can have in every semester
 MAX_COURSES = 7
@@ -779,17 +781,47 @@ def course_dashboard(request):
 
 @login_required
 def courses_instructor(request,par1,par2):
-    instructor_rating = -1
-    course_list = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
-    
+    course_list = []
+    university = instructor = ''
+    num_courses = num_students = None
+    #instructor_rating = -1
+    #course_list = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
+    # try:
+    #     instructor_rating = Course.objects.instructor_average_voting(ins=course_list.first().course_instructor, ins_fn=course_list.first().course_instructor_fn, university=course_list.first().course_university)
+    # except:
+    #     message = "Issue with getting instructor rating for: " + course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize() + " at " + course_list.first().course_university
+    #     print(message)
     try:
-        instructor_rating = Course.objects.instructor_average_voting(ins=course_list.first().course_instructor, ins_fn=course_list.first().course_instructor_fn, university=course_list.first().course_university)
-    except:
-        message = "Issue with getting instructor rating for: " + course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize() + " at " + course_list.first().course_university
-        print(message)
+        instructor = Professors.objects.filter(name_slug=par2, university_slug=par1).first()
+        if instructor == None:  
+            course_list = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
+            instructor = course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize()
+            university = course_list.first().course_university
+            num_students = Profile.objects.filter(courses__course_instructor_fn__iexact=course_list.first().course_instructor_fn, \
+                courses__course_instructor__iexact=course_list.first().course_instructor, courses__course_university__iexact=university).\
+                    order_by('username').distinct('username').count()
+            num_courses = None
+        else:  
+            course_list = instructor.courses.all().order_by('course_code')
+            university = instructor.university
+            num_students = Profile.objects.filter(courses__course_instructor_fn__iexact= instructor.first_name, \
+                courses__course_instructor__iexact=instructor.last_name, courses__course_university__iexact=university).\
+                    order_by('username').distinct('username').count()
+            num_courses = instructor.courses.count()
+            instructor = instructor.first_name.capitalize() + " " + instructor.last_name.capitalize()               
+    except Exception as e:
+        print(e)
     
+    if num_courses:
+        num_courses = str(num_courses) + " courses" if num_courses > 1 else str(num_courses) + " course"
+    if num_students:
+        if num_students > 1:
+            num_students = "{val:,} students took a course with this instructor".format(val=num_students)
+        else:
+            num_students = "{val:,} student took a course with this instructor".format(val=num_students)
+        
     page = request.GET.get('page', 1)
-    paginator = Paginator(course_list , 6)
+    paginator = Paginator(course_list , 8)
     try:
         courses = paginator.page(page)
     except PageNotAnInteger:
@@ -798,9 +830,11 @@ def courses_instructor(request,par1,par2):
          courses = paginator.page(paginator.num_pages)
     context = {
          'courses':courses,
-         'instructor':course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize(),
-         'university':course_list.first().course_university,
-         'instructor_rating':instructor_rating
+         'instructor':instructor,
+         'university':university,
+         'num_courses':num_courses,
+         'num_students':num_students
+         #'instructor_rating':instructor_rating
          }
     return render(request,'home/courses/instructor_course_list.html',context)
 
@@ -1248,13 +1282,38 @@ def university_detail(request):
     user_list = []
     uni = request.GET.get('u',request.user.university)
     obj = request.GET.get('obj','std')
+    #user_program =  request.GET.get('user_prgrm', '')
+    #user_courses = request.GET.get('user_courses', '')
     u_empty = ''
+    load_src = None
+    user_has_program = user_has_courses = False
+    
+    if uni == None:
+        uni = ''
+    
+    #user_has_program = True if len(user_program) > 0 else False
+    #user_has_courses = True if request.user.courses.count() > 0 else False
     
     if len(uni) < 1:
         add_uni = True if len(request.user.university) < 1 else False
         return render(request,'home/courses/university_detail.html',{'is_empty':True , 'add_uni':add_uni})
+    
+    uni = get_similar_university(uni)
+    
+    data = get_uni_info(uni)
+    logo_path = None
+    
     try:
-        
+        logo_path = static('default/university/' + uni.lower().replace(' ','') + ".png")
+        try:
+            if finders.find(logo_path) == None:
+                logo_path == None
+        except Exception as e:
+            print(e)
+    except Exception as e:
+        logo_path = None
+    
+    try:   
         if uni.strip().lower() == 'incoming student':
             add_uni = True
             uni_list = UNI_LIST
@@ -1281,25 +1340,51 @@ def university_detail(request):
     except Exception as e:
         print(e.__class__)
         print(e)
-    
-    data = get_uni_info(uni) 
       
+    
     if data == None:
         data = []
-          
-    user_list = Profile.objects.filter(Q(university__iexact=uni)|Q(courses__course_university__iexact=uni)).exclude(id__in=blockers_id).order_by('username','last_name').distinct('username')
+        
+    # removed filter for course_university -> |Q(courses__course_university__iexact=uni)
+    user_list = Profile.objects.filter(university__iexact=uni).exclude(id__in=blockers_id).order_by('last_name', 'first_name')
     cr = Course.objects.filter(course_university__iexact=uni).\
         order_by('course_code','course_instructor','course_instructor_fn').distinct('course_code','course_instructor','course_instructor_fn')
+    
+    # try:
+    #     if user_program == 'user' and user_has_program:
+    #         user_list = user_list.filter(program=request.user.program)      
+    #     if user_courses == 'user' and user_has_courses:
+    #         user_list = user_list.filter(courses__id__in=request.user.courses.all().distinct('course_code').values_list('id', flat=True))
+    # except Exception as e:
+    #     print(e.__class__)
+    #     print(e)
         
-    num_courses = cr.count()
-    num_enrolled = len(user_list)
+    num_courses = num_enrolled = 0
+    #num_courses = cr.count()
+    #num_enrolled = len(user_list)
+    try:
+        if cr.count() > 1:
+            num_courses = "{val:,} courses at this university".format(val=cr.count())
+        else:
+            num_courses = "{val:,} course at this university".format(val=cr.count())
+        if len(user_list) > 1:
+            num_enrolled  = "{val:,} students go here".format(val=len(user_list))
+        else:
+            if (len(user_list)) == 0:
+                num_enrolled = "No student is enrolled here"
+            else:
+                num_enrolled  = "{val:,} student goes here".format(val=len(user_list))
+    except Exception as e:
+        print(e)
+        num_courses = str(cr.count()) + " courses at this university" if cr.count() > 1 else str(cr.count()) + " course at this university"     
+        num_enrolled  = str(len(user_list)) + " students go here" if len(user_list) > 1 else str(len(user_list)) + " goes here"
     
     if obj == 'std':
         if len(user_list) < 1:
-            u_empty='No students found'
+            u_empty='No student found'
           
         page = request.GET.get('page', 1)
-        paginator = Paginator(user_list , 8)
+        paginator = Paginator(user_list , 12 )
         try:
             users = paginator.page(page)
         except PageNotAnInteger:
@@ -1309,12 +1394,15 @@ def university_detail(request):
             
         context = {
             'uni':uni,
+            'logo_path':logo_path,
             'users':users,
             'sa':'-active',
             'u_empty':u_empty,
             'data':data,
             'num_enrolled':num_enrolled,
             'num_courses':num_courses,
+            #'user_has_courses':user_has_courses,
+            #'user_has_program':user_has_program,
             } 
         return render(request,'home/courses/university_detail_students.html',context)
     
@@ -1334,6 +1422,7 @@ def university_detail(request):
          
         context = {
             'uni':uni,
+            'logo_path':logo_path,
             'courses':courses,
             'ca':'-active',
             'u_empty':u_empty,
@@ -1344,14 +1433,22 @@ def university_detail(request):
         return render(request,'home/courses/university_detail_courses.html',context)
     
     elif obj == 'ins':
-        qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_instructor_fn','course_university').distinct('course_instructor','course_instructor_fn','course_university')
+        try:
+            # qs = Course.objects.filter(course_university__iexact=uni).order_by('course_instructor','course_instructor_fn','course_university').distinct('course_instructor','course_instructor_fn','course_university')
 
-        instructor_list = Course.objects.filter(course_university__iexact=uni).annotate(user_count=Count('profiles')).\
-            order_by('-user_count').filter(id__in=qs).values_list('course_university','course_instructor','course_instructor_fn','user_count','course_university_slug','course_instructor_slug')
+            # instructor_list = Course.objects.filter(id__in=qs).annotate(user_count=Count('profiles'), course_count=Count('course_code')).\
+            #     order_by('-user_count').values_list('course_university','course_instructor','course_instructor_fn','user_count','course_university_slug','course_instructor_slug', 'course_count')
             
-        if instructor_list.count() < 1:
-            u_empty='No instructors found'
+            instructor_list = Professors.objects.filter(university=uni.lower()).annotate(course_count=Count('courses'), user_count=Count('courses'))\
+                .filter(course_count__gte=1).order_by('last_name', 'first_name')
             
+            if instructor_list.count() < 1:
+                u_empty='No instructors found'
+        except Exception as e:
+            print(e)
+            print(e.__class__)
+            instructor_list = []
+                     
         page = request.GET.get('page', 1)
         paginator = Paginator(instructor_list , 8)
         try:
@@ -1363,12 +1460,13 @@ def university_detail(request):
         
         context = {
             'uni':uni,
+            'logo_path':logo_path,
             'instructors':instructors,
             'ia':'-active',
             'u_empty':u_empty,
             'data':data,
             'num_enrolled':num_enrolled,
-            'num_courses':num_courses
+            'num_courses':num_courses,
             }
         return render(request,'home/courses/university_detail_instructors.html',context)
     

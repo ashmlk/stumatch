@@ -11,6 +11,9 @@ import datetime
 from math import log, sqrt
 import json 
 from difflib import SequenceMatcher
+import difflib
+
+UNI_LIST = ['Acadia University', 'Alberta University of the Arts', 'Algoma University', 'Athabasca University', 'Atlantic School of Theology', "Bishop's University", 'Booth University College', 'Brandon University', 'Brock University', 'Canadian Mennonite University', 'Cape Breton University', 'Capilano University', 'Carleton University', 'Concordia University', 'Crandall University', 'Dalhousie University', 'Emily Carr University of Art and Design', 'Fairleigh Dickinson University', 'Institut national de la recherche scientifique', 'Kingswood University', 'Kwantlen Polytechnic University', 'Lakehead University', 'Laurentian University', 'MacEwan University', 'McGill University', 'McMaster University', 'Memorial University of Newfoundland', 'Mount Allison University', 'Mount Royal University', 'Mount Saint Vincent University', 'New York Institute of Technology', 'Niagara University', 'Nipissing University', 'Nova Scotia College of Art and Design University', 'Ontario College of Art and Design University', 'Ontario Tech University', "Queen's University at Kingston", 'Quest University', 'Redeemer University College', 'Royal Military College of Canada', 'Royal Roads University', 'Ryerson University', 'Saint Francis Xavier University', "Saint Mary's University", 'Simon Fraser University', "St. Stephen's University", 'St. Thomas University', "The King's University", 'Thompson Rivers University', 'Trent University', 'Trinity Western University', 'Tyndale University', 'University Canada West', 'University College of the North', 'University of Alberta', 'University of British Columbia', 'University of Calgary', 'University of Fredericton', 'University of Guelph', "University of King's College", 'University of Lethbridge', 'University of Manitoba', 'University of New Brunswick', 'University of Northern British Columbia', 'University of Ottawa', 'University of Prince Edward Island', 'University of Regina', 'University of Saskatchewan', 'University of Toronto', 'University of Victoria', 'University of Waterloo', 'University of Western Ontario', 'University of Windsor', 'University of Winnipeg', 'University of the Fraser Valley', 'Université Laval', 'Université Sainte-Anne', 'Université de Moncton', 'Université de Montréal', 'Université de Sherbrooke', "Université de l'Ontario français", 'Université du Québec en Abitibi-Témiscamingue', 'Université du Québec en Outaouais', 'Université du Québec à Chicoutimi', 'Université du Québec à Montréal', 'Université du Québec à Rimouski', 'Université du Québec à Trois-Rivières', 'Vancouver Island University', 'Wilfrid Laurier University', 'York University', 'Yukon University', 'École de technologie supérieure', "École nationale d'administration publique"]
 
 stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", 
               "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", 
@@ -108,6 +111,10 @@ def top_buzz(likes, dislikes, wots, comments):
 
     return (left - right) / under
 
+def get_similar_university(name):
+    
+    return difflib.get_close_matches(name, UNI_LIST)[0]
+    
 def similar_string_ratio(a, b):
     
     return SequenceMatcher(None, a, b).ratio()

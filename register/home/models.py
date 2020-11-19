@@ -1304,6 +1304,9 @@ class Professors(models.Model):
     first_name = models.CharField(max_length=255, null = False)
     last_name = models.CharField(max_length=255, null = False)
     university = models.CharField(max_length=255, null = False)
+    courses = models.ManyToManyField(Course, related_name='instructor_courses')
+    university_slug = models.SlugField(max_length = 250, null = True, blank = True)
+    name_slug = models.SlugField(max_length = 250, null = True, blank = True)
     ratings = models.DecimalField(max_digits=15, decimal_places=6, null = True)
     
     sv = pg_search.SearchVectorField(null=True)
@@ -1314,3 +1317,39 @@ class Professors(models.Model):
         indexes = [
             GinIndex(fields=['sv'],name='search_idx_professors'),
         ]
+    
+    def save(self, *args, **kwargs):
+        self.university_slug = slugify(self.university.strip().lower())
+        self.name_slug = '-'.join((slugify(self.first_name.strip().lower()), slugify(self.last_name.strip().lower()))) 
+        super(Professors, self).save(*args, **kwargs)
+         
+    def get_instructor_page_url(self):
+        
+        try:
+            if self.name_slug and self.university_slug:
+                return reverse('home:course-instructor', kwargs={'par1':self.university_slug, 'par2':self.name_slug})
+            return "#"
+        except Exception as e:
+            print(e)
+            return "#"
+    
+    def get_student_count(self):
+        
+        try:
+            count =  Profile.objects.filter(courses__course_instructor_fn__iexact=self.first_name,courses__course_instructor__iexact=self.last_name,\
+                courses__course_university__iexact=self.university).distinct('username').count()
+            return count
+        except Exception as e:
+            print(e)
+            return 0
+          
+    def add_to_courses(self, course):
+        
+        try:
+            if not self.courses.filter(course_code=course.course_code, course_university=course.course_university).exists():
+                self.courses.add(course)
+                self.save()
+        except Exception as e:
+            print(e)
+            print(e.__class__)
+    

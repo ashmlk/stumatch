@@ -924,15 +924,15 @@ def deletion_account(request):
     
     if request.user.is_authenticated:  
         if request.method == 'POST':
-   
             form = ConfirmPasswordForm(request.POST, instance=request.user)
             if form.is_valid():
-                #request.user.delete()
-                print("lol")
-                success_message = "Your account has been removed"
-                messages.success(request,success_message)
-                return redirect('main:delete-menu')
-
+                try:
+                    success_message = "Your account <"+  str(request.user.username) +"> has been removed successfully."
+                    request.user.delete()             
+                    messages.success(request,success_message)
+                except Exception as e:
+                    print(e)
+                return redirect('main:user_login')
             else:
                 error_message = "There was an issue processing your request, please try again"
                 messages.error(request,error_message)

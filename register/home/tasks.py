@@ -3,7 +3,7 @@ from register.celery import app
 from django.core import serializers
 import celery
 from celery import shared_task
-from home.models import Post, Buzz, Blog, Course
+from home.models import Post, Buzz, Blog, Course, Professors
 from main.models import Profile
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.conf import settings
@@ -104,3 +104,13 @@ def universities_list_page_items(self):
     except Exception as e:
         print(e.__class__)
         print(e)
+
+     
+@shared_task(bind=True)
+def update_instructor_courses(course):
+    try:
+        ins = Professors.objects.get(first_name=course.course_instructor_fn, last_name=course.course_instructor, university=course.course_university)
+        ins.add_to_courses(course)
+    except Exception as e:
+        print(e)
+        print(e.__class__)
