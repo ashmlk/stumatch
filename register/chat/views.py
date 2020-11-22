@@ -1,15 +1,23 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from main.models import Profile
 from .models import PrivateChat
 from hashids import Hashids
 
-hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ iojpf909wrwas',min_length=32)
+hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 @login_required
 def index(request):
-    return render(request, 'chat/index.html')
+    
+    users, last_message_content = PrivateChat.objects.get_user_chats(user=request.user)
+    context = {
+        'users':users,
+        'last_message_content':last_message_content
+    }
+    return render(request, 'chat/index.html', context)
 
 # @login_required
 # def room(request, room_name):
@@ -23,7 +31,7 @@ def get_or_create_private_chat(request, id):
     
     id = hashids_user.decode(id)[0]
     user1 = request.user
-    user2 = Profile.object.get(id = id)
+    user2 = Profile.objects.get(id = id)
     try:
         if PrivateChat.objects.filter(user1=user1, user2=user2):
             chatroom = PrivateChat.objects.get(user1=user1, user2=user2)
@@ -34,22 +42,20 @@ def get_or_create_private_chat(request, id):
     except Exception as e:
         print(e)
         return redirect('chat:index')
-    return redirect('chat:private-chat', room_id=chatroom.get_hashid())
+    return redirect(reverse('chat:private-chat', kwargs={'room_id':chatroom.guid}))
     
-    
+
 @login_required
-def private_chat(request, room_id=None):
+def private_chat(request, room_id):
     
-    if room_id != None:
+    #try:
+    chatroom = PrivateChat.objects.get(guid=room_id)
+    # except Exception as e:
+    #     print(e)
+    #     return redirect('chat:index')
+    if not request.user in [chatroom.user1, chatroom.user2]:
         return redirect('chat:index')
-    try:
-        id = hashid.decode(id)[0]
-        chatroom = PrivateChat.objects.get(id=id)
-    except:
-        return redirect('chat:index')
-    
-    user2 = chatroom.user2 if chatroom.user1 == request.user else chatroom.user1
-        
+    user2 = chatroom.user2 if chatroom.user1 == request.user else chatroom.user1     
     messages_all = chatroom.messages.all()
     page = request.GET.get('page', 1)
     paginator = Paginator(messages_all, 10)
@@ -60,9 +66,13 @@ def private_chat(request, room_id=None):
     except EmptyPage:
         messages = paginator.page(paginator.num_pages)
     
+    users, last_message_content = PrivateChat.objects.get_user_chats(user=request.user)
+    
     context = {
         'room_id': room_id,
         'username':request.user.username,
-        'user2':user2
+        'user2':user2,
+        'users':users,
+        'last_message_content':last_message_content
     }
     return render(request, 'chat/room.html', context)

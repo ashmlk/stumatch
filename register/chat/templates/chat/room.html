@@ -1,39 +1,28 @@
+{% extends 'chat/index.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html class=''>
-
-<head>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet'
-        type='text/css'>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    
-    <script src="https://use.typekit.net/hoy3lrg.js"></script>
-    <script>try { Typekit.load({ async: true }); } catch (e) { }</script>
-    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
-    <link rel='stylesheet' href='{% static "chat/style.css" %}'>
-    <link rel='stylesheet prefetch'
-        href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
-</head>
-
-<body>
-    <div id="frame">
-        <div class="content" style="background-color: #fff !important;">
-            <div class="contact-profile">
-                <img src="{{ user2.image.url }}" alt="" />
-                <p class="font-weight-bold text-dark">@{{ username }}</p>
+{% block title %}{{ user2.username }} - Messages{% endblock %}
+{% block chat %}
+    <div>
+        <div style="background-color: #fff !important;">
+            <div class="d-flex align-items-center border-bottom p-1" style="padding-top: 10px !important; padding-bottom: 11px !important;">
+                <div class="mr-2">
+                    <img class="rounded-circle"  src="{{ user2.image.url }}"
+                    width="50px" height="50px">
+                </div>
+                <div class="pt-2">
+                    <p class="h6 text-dark" style="margin-bottom: -4px !important;">{{ user2.get_full_name }}</p>
+                    <a href="{{ user2.get_absolute_url }}" style="text-decoration: none;"><span class="text-muted small" >@{{ user2.get_username }}</span></a>
+                </div>        
             </div>
-            <div class="messages">
-                <ul id="chat-log">
+            <div class="messages" style="height: 75vh; overflow-y: auto; padding-bottom: 15px;">
+                <div id="chat-log" class="px-2 pl-5 pt-3 d-flex flex-column" style="overflow-y: auto  !important;">
                    
-                </ul>
+                </div>
             </div>
-            <div class="message-input border-left">
-                <div class="wrap">
-                    <input type="text" class='m-1' id="chat-message-input" placeholder="Send a message" style="font-size:0.9rem;border:1px solid rgb(185, 182, 182) ; border-radius: 25px;">
-                    <button class="m-1 submit btn btn-primary btn-md" id="chat-message-submit" style="border-radius: 22px;">Send</button>
+            <div class="mt-2 bg-white message-input " style="position:absolute!important;bottom: 0 !important; width: 100% !important;">
+                <div class="w-100  d-flex col-12">
+                    <input type="text" class='form-control no-outline form-control-lg m-1' id="chat-message-input" placeholder="Message..." style="border-radius: 25px;">
+                    <!-- <button class="submit" id="chat-message-submit">Submit</button> -->
                 </div>
             </div>
         </div>
@@ -43,9 +32,10 @@
     <script src="{% static 'chat/main.js' %}"></script>
     {{ room_id|json_script:"room-id" }}
     {{ username|json_script:"request-user-username" }}
-    {{ user2-username|json_script:"user2-username" }}
+    {{ user2.username|json_script:"user2-username" }}
+    {{ user2.get_hashid|json_script:"hashiduser2"}}
     <script>
-
+        const hashiduser2 = JSON.parse(document.getElementById('hashiduser2').textContent);
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var username =  JSON.parse(document.getElementById('request-user-username').textContent);
         var user2 =  JSON.parse(document.getElementById('user2-username').textContent);
@@ -55,9 +45,33 @@
             + '/ws/chat/'
             + user2
             + '/'
-            + room_id
+            + roomName
             + '/'
         );
+
+        jQuery.fn.urlize = function() {
+            if (this.length > 0) {
+                this.each(function(i, obj){
+                    var x = $(obj).html();
+                    var list = x.match( /\b(http:\/\/|www\.|http:\/\/www\.)[^ <]{2,200}\b/g );
+                    if (list) {
+                        for ( i = 0; i < list.length; i++ ) {
+                            var prot = list[i].indexOf('http://') === 0 || list[i].indexOf('https://') === 0 ? '' : 'http://';
+                            x = x.replace( list[i], "<a target='_blank' href='" + prot + list[i] + "'>"+ list[i] + "</a>" );
+                        }
+
+                    }
+                    $(obj).html(x);
+                });
+
+            }
+        };
+
+        document.addEventListener("DOMNodeInserted", function(event) {
+            $($(event.target).children()[0]).find('p').linkify({
+                target: "_blank"
+            });
+        });
 
         chatSocket.onopen = function(e) {
             fetchMessages();
@@ -78,14 +92,8 @@
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
         document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) { 
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-        
-        document.querySelector('#chat-message-submit').onclick = function(e) {
+        if (e.keyCode === 13) { 
             var messageInputDOM = document.getElementById('chat-message-input');
             var message = messageInputDOM.value;
             chatSocket.send(JSON.stringify({
@@ -94,29 +102,68 @@
                 'from': username,
             }));
             messageInputDOM.value = '';
-        };
+            }
+        };       
+        // document.querySelector('#chat-message-submit').onclick = function(e) {
+        //     var messageInputDOM = document.getElementById('chat-message-input');
+        //     var message = messageInputDOM.value;
+        //     chatSocket.send(JSON.stringify({
+        //         'command': 'new_message',
+        //         'message': message,
+        //         'from': username,
+        //     }));
+        //     messageInputDOM.value = '';
+        // };
 
         function fetchMessages() {
-            chatSocket.send(JSON.stringify({'command':'fetch_messages'}));
+            chatSocket.send(JSON.stringify({'command':'fetch_messages','room_id':roomName}));
         }
 
         function createMessage(data){
             var author = data['author'];
-            var msgListTag = document.createElement('li');
-            var imgTag = document.createElement('img');
+            if ("last_message_content" in data) {
+                $("#"+hashiduser2+"__chat__last_msg").find('.message').html(data['last_message_content']);
+                $("#"+hashiduser2+"__chat__last_msg").find('.time').html(data['last_message_time']);
+                $("#"+hashiduser2+"__chat__last_msg").find('.button__separator_time').html("•");             
+            }
+            var divMainMessageTag = document.createElement('div');
+            divMainMessageTag.className = 'message-container ';
+            var msgListTag = document.createElement('div');
+            msgListTag.className = 'mb-3 ';
             var pTag = document.createElement('p');
             pTag.textContent = data.content;
-            imgTag.src = data['img'];
             if (author === username) {
-                msgListTag.className = 'replies';                
+                divMainMessageTag.className += 'sent float-right';                
             } else {
-                msgListTag.className = 'sent';
+                divMainMessageTag.className += 'replies float-left';
             }
-            msgListTag.appendChild(imgTag);
-            msgListTag.appendChild(pTag);
+            divMainMessageTag.appendChild(pTag);
+            msgListTag.appendChild(divMainMessageTag);
             document.querySelector('#chat-log').appendChild(msgListTag);
         }
-    </script>
-</body>
 
-</html>
+    </script>
+    <style>
+        #chat-log div div.message-container {
+            list-style-type: none;
+            margin-top: auto;
+            margin-bottom: auto;
+            margin-right: 10px !important;          
+            border-radius: 25px;
+            padding: 5px;
+            max-width: 50% !important;
+        }
+        #chat-log div div.message-container p {
+            word-wrap: break-word !important;
+            margin:7px;
+        }
+        #chat-log div div.sent {
+            background-color: rgba(226, 226, 226, 0.664);
+        }
+        #chat-log div div.replies {
+            background-color: white;
+            border: 1px rgb(163, 163, 163) solid;
+        }
+
+    </style>
+{% endblock %}

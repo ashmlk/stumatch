@@ -5,6 +5,7 @@ from .models import Message, PrivateChat
 from main.models import Profile
 from django.db.models import Q
 from hashids import Hashids
+import math
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ iojpf909wrwas',min_length=32)
 
@@ -14,17 +15,20 @@ class ChatConsumer(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.user = None
         self.room = None
+        self.messages_pre_connect_count = None
+        self.last_message = None
+        self.last_message_id = None
         
-    def fetch_messages(self, data):
-        messages = Message.last_10_messages()
+    def fetch_messages(self, data, page=None):
+        room = PrivateChat.objects.get(guid=data['room_id'])
+        messages = room.get_messages()
         result = []
         for message in messages:
             json_message =  {
             'id':message.id,
             'author':message.author.username,
             'content':message.content,
-            'timestamp':str(message.timestamp),
-            'img':message.author.image.url
+            'timestamp':str(message.get_time_sent),
             }
             result.append(json_message)
         content = {
@@ -41,12 +45,16 @@ class ChatConsumer(WebsocketConsumer):
                 content=data['message'],
                 privatechat = self.room
             )
+        self.last_message = message
+        self.last_message_id = message.id
+        print(self.last_message_id)
         json_message =  {
             'id':message.id,
             'author':message.author.username,
             'content':message.content,
-            'timestamp':str(message.timestamp),
-            'img':message.author.image.url
+            'timestamp':str(message.get_time_sent),
+            'last_message_content':self.last_message.content,
+            'last_message_time':self.last_message.get_time_sent()
             }
         content = {
             'command':'new_message',
@@ -63,20 +71,19 @@ class ChatConsumer(WebsocketConsumer):
         self.user = self.scope['user']
         self.user2 = self.scope['url_route']['kwargs']['user2']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        user1 = Profile.object.get(username = self.user.username)
+        user1 = Profile.objects.get(username = self.user.username)
         user2 = Profile.objects.get(username = self.user2)
-        
-        self.room_id = hashid.decode(self.room_id)[0]
-        
+
         if PrivateChat.objects.filter(
-            Q(user1 = user1, user2=user2, id=self.room_id) | Q(user1=user2, user2=user1, id=self.room_id)
+            Q(user1 = user1, user2=user2, guid=self.room_id) | Q(user1=user2, user2=user1, guid=self.room_id)
         ).exists():
             self.room = PrivateChat.objects.filter(
-                Q(user1 = user1, user2=user2, id=self.room_id) | Q(user1=user2, user2=user1, id=self.room_id)
+                Q(user1 = user1, user2=user2, guid=self.room_id) | Q(user1=user2, user2=user1, guid=self.room_id)
             )[0]
         else:
             self.room = PrivateChat.objects.create(user1=user1, user2=user2)
-        self.room_group_name = 'chat_%s' % str(self.room.get_hashid)
+        self.room_group_name = 'chat_%s' % str(self.room.guid)
+        self.messages_pre_connect_count = self.room.get_messages_count()
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -85,6 +92,7 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
+        self.room.set_last_message(self.last_message_id)
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
@@ -93,8 +101,7 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
-        
-    
+          
     def send_chat_message(self, message):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,

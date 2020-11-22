@@ -37,7 +37,6 @@ from nltk.collocations import *
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
-from math import log
 from home.algo import score, _commonwords, common_words, epoch_seconds, top_score_posts, hot_buzz, top_buzz
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 

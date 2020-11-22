@@ -135,7 +135,8 @@
                                 </a>
                                 
                             </div>
-                           
+                            <!-- for testing only -->
+                            <a href="{% url 'chat:get-or-create-private-chat' id=user.get_hashid %}">Message</a>
                         </div>
                     </div>
                     {% block profilecontent %}{% endblock %}
