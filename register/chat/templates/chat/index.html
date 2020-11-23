@@ -82,7 +82,7 @@
                                                         <span class="message">
                                                             {{  dict|get_dict_item:"content" }}
                                                         </span>                                            
-                                                        <span class="button__separator_time">
+                                                        <span class="mx-1 button__separator_time">
                                                         {% if dict|get_dict_item:"content" != '' %}•{% endif %}
                                                         </span>                                                 
                                                         <span class="time">
@@ -122,12 +122,15 @@
     <script src="{% static 'linkifyjs/linkify.min.js' %}"></script>
     <script src="{% static 'linkifyjs/linkify-jquery.min.js' %}"></script>
     <style>
-        .last_message_holder .message{   
-            white-space: nowrap;
-            width: 100%;                   /* IE6 needs any width */
-            overflow: hidden;              /* "overflow" value must be different from  visible"*/ 
-            -o-text-overflow: ellipsis;    /* Opera < 11*/
-            text-overflow:    ellipsis;    /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
+        .last-message-holder .message {   
+            white-space: nowrap !important;
+            display:inline-block;
+            max-width: 180px !important;    
+            color: red;               /* IE6 needs any width */
+            overflow: hidden !important;              /* "overflow" value must be different from  visible"*/ 
+            -o-text-overflow: ellipsis !important;    /* Opera < 11*/
+            text-overflow:    ellipsis !important; 
+            float:  left !important;   /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
         }
      </style>
 </body>

@@ -76,7 +76,7 @@ class PrivateChat(models.Model):
         
     def set_last_message(self, message):
         self.last_message = message
-        self.save()
+        #self.save()
     
     def get_messages_count(self):
         return Message.objects.filter(privatechat=self).count()
