@@ -1,8 +1,16 @@
 $(document).ready(function(){
+
+	var anon_or_not = ''
+	$(document).on('click', '.rw-submit-btn', function () {
+		anon_or_not = $(this).attr('data-value');
+
+	});
+	
 	$(document).on('submit','.course-review-form', function (e) {
 		e.preventDefault();
 		e.stopImmediatePropagation();
-		var form = $(this).serialize();
+		var form = $(this).serializeArray();
+		form.push({name: "rw_submit", value:anon_or_not});
 		$.ajax({
 		  url: $(this).attr('data-url'),
 		  type: 'POST',
@@ -14,7 +22,8 @@ $(document).ready(function(){
 			$(".no-review-box").remove();
             $("#crsrwalcts").html(data.reviews_all_count)
             $("#crsspecrw").html(data.reviews_count)
-            $('textarea').val('');
+			$('#crwfrmcntr').find(form).remove()
+			$('#crwfrmcntr').html('<p class="text-muted text-center">Your review was successfully submitted. You can write <strong>one</strong> review for every instructor\'s course</p>')
 		  },
 		  error: function(rs, e){
 					console.log(rs.responeText);
@@ -64,6 +73,9 @@ $(document).ready(function (e) {
                     $('#_rc_'+veid).remove();
 					$("#crsrwalcts").html(data.reviews_all_count)
 					$("#crsspecrw").html(data.reviews_count)
+					if(data.can_review){
+						$('#crwfrmcntr').html(data.review_form);
+					}
                 }
                 else{
                     $('#modal-review-delete .modal-content').html(data.html_form);
@@ -71,58 +83,4 @@ $(document).ready(function (e) {
 			}
 		})
 	});
-});
-
-
-$(document).ready(function () {
-	var newest = $('#dvmc').clone(true);
-
-	$(document).on('click', '.srbtnmenu button', function (e) {
-		var btn = $(this);
-		$('.srbtn').each(function () {
-			$(this).removeClass('active');
-		});
-		$(btn).addClass('active');
-	});
-
-	$('.odyr').on('click',function (e) {  
-		e.preventDefault()
-		$('#dvmc').find('.cntr').sort(function(a, b) { 
-			var contentA = parseInt($(a).attr('data-year')); 
-			var contentB = parseInt($(b).attr('data-year')); 
-			return contentB - contentA;
-		}).appendTo("#dvmc");
-	});
-
-	$('.odins').on('click',function (e) {  
-		e.preventDefault()
-		$('#dvmc').find('.cntr').sort(function(a, b) { 
-			var contentA = $(a).attr('data-ins').toLowerCase(); 
-			var contentB = $(b).attr('data-ins').toLowerCase();
-			return String.prototype.localeCompare.call(contentA, contentB);
-		}).appendTo("#dvmc");
-	});
-
-	$('.odiyr').on('click',function (e) {  
-		e.preventDefault()
-		$('#dvmc').find('.cntr').sort(function(a, b) { 
-			var contentA = $(a).attr('data-ins').toLowerCase(); 
-			var contentB = $(b).attr('data-ins').toLowerCase();
-			if (contentA === contentB){
-				var conA = parseInt($(a).attr('data-year')); 
-				var conB = parseInt($(b).attr('data-year'));
-				return conB - conA;
-			}
-			else {
-				return String.prototype.localeCompare.call(contentA, contentB);
-			}
-		}).appendTo("#dvmc");
-	});
-
-	$('.odnw').on('click',function (e) {
-		e.preventDefault();
-		if (!$(this).hasClass('active'))
-		$('#a').html(newest)
-	});
-	
 });

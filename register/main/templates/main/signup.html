@@ -29,20 +29,17 @@
           <div class="my-4">
             <a href="{% url 'main:user_login' %}">
               <div class="d-flex my-auto justify-content-center align-items-center">
-                <div class="ml-4 logo-name">
-                  <img class="img-fluid" src="{% static 'logo/m/logo-name.svg' %}" style="margin-top: -2rem; margin-bottom: -1.2rem;" width="90%"/>
+                <div class="logo-name">
+                  <img class="img-fluid" src="{% static 'logo/m/logo-name.png' %}"/>
                 </div>
               </div>
             </a>          
-            <h6 class="text-center text-muted mt-3 mx-0">Create an account and discover other students</h6>
+            <h6 class="text-center mt-3 mx-0" style="color:rgb(90, 90, 90);font-weight: 430;">Create an account and start connecting with students and discovering courses</h6>
           </div>
         </div>
       </div>
       <div class="d-flex justify-content-center">
-        <div class="col-lg-4 col-md-7 col-9">
-          {% if registered %}
-          <h1 class="display-5 font-weight-lighter">Registeration Completed</h1>
-          {% else %}
+        <div class="col-lg-4 col-md-9 col-11">
           <form enctype="multipart/form-data" method="POST" action="{% url 'main:signup' %}">
             {% csrf_token %}
             <div class="form-fields">
@@ -62,7 +59,6 @@
               </div>
             </div>
           </form>
-          {% endif %}
         </div>
       </div>
     </div>

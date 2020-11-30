@@ -178,9 +178,27 @@ class MySelect(Select):
 
 class ContactForm(forms.Form):
     name = forms.CharField(
-        max_length=200
+        label = '',
+        required = True,
+        min_length=1,
+        max_length=200,
+        widget=forms.TextInput(
+				attrs={
+					"placeholder":"Full name"
+				}
+			)
         )
-    email = forms.EmailField()
+    email = forms.EmailField(
+		label='',
+		max_length=200,
+		required=True,
+		widget=forms.EmailInput(
+			attrs={
+				"placeholder": "Email",
+				"class": "form-control mb-2"
+			}
+		)
+	)
     message = forms.CharField(widget=forms.Textarea)
  
 class SignUpForm(UserCreationForm):

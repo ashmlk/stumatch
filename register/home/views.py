@@ -1078,17 +1078,29 @@ def course_vote(request, hid, code, status=None):
 @login_required      
 def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
+    cannot_review=False
     course = Course.objects.filter(course_university_slug=course_university_slug,course_instructor_slug=course_instructor_slug,course_code=course_code)\
         .order_by('course_university','course_instructor_slug','course_code','course_year').distinct('course_university','course_instructor_slug','course_code').first()
     taken = request.user.courses.filter(course_university_slug=course_university_slug,course_code=course_code,course_instructor_slug=course_instructor_slug).exists()
-    
+    try:
+        cannot_review = Review.objects.filter(author=request.user, course_reviews__course_code=course_code, course_reviews__course_university_slug=course_university_slug, course_reviews__course_instructor_slug=course_instructor_slug).exists()
+    except Exception as e:
+        print(e)
     if request.method == 'POST':
         form = ReviewForm(request.POST or None)
         if form.is_valid():
-            review = form.save(False)
-            review.author = request.user
-            review.save()
-            course.course_reviews.add(review)
+            cr = Review.objects.filter(author=request.user, course_reviews__course_code=course_code, course_reviews__course_university_slug=course_university_slug, course_reviews__course_instructor_slug=course_instructor_slug).exists()
+            if not cr:
+                review = form.save(False)
+                review.author = request.user
+                submit_button = request.POST.get('rw_submit')
+                print(submit_button)
+                if submit_button == 'anon':
+                    review.is_anonymous = True
+                review.save()
+                course.course_reviews.add(review)
+            else: 
+                pass
         data['reviews_count'] = course.reviews_count()
         data['reviews_all_count'] = course.reviews_all_count()
         data['review'] = render_to_string('home/courses/new_review.html',{'review': review, 'course':course },request=request)
@@ -1099,7 +1111,7 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
             form.fields['body'].widget.attrs['placeholder'] = "Write a review for " + course.course_code + " with " + course.course_instructor_fn.capitalize() + " " + course.course_instructor.capitalize()
         except Exception as e:
             print(e.__class__)
-    
+
     sortby = {'latest':'Latest', 'ins':'Instructor','cy':'Course Year', 'ins_cy':'Year and Instructor'}
     sb = request.GET.get('sb','latest')
     o = request.GET.get('rw', 'ins')
@@ -1147,11 +1159,37 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         'link_get':link_get,
         'aria_res': aria_res,
         'aria_rea': aria_rea,
-        'sortby':sortby[sb]
+        'sortby':sortby[sb],
+        'cannot_review':cannot_review,
     }
     
     return render(request,'home/courses/course_detail.html', context)  
 
+@login_required
+def user_course_reviews(request):
+    
+    try:
+        course = course_code = course_instructor = course_reviews = ''
+        course_university_slug = request.GET.get('course_university', None)
+        course_instructor_slug = request.GET.get('course_instructor', None)
+        course_code = request.GET.get('course_code', None)
+        reviews = Review.objects.filter(author=request.user, course_reviews__course_code=course_code)
+        course = Course.objects.filter(course_code=course_code, course_university_slug=course_university_slug, course_instructor_slug=course_instructor_slug).first()
+        if course != None:         
+            course_instructor = course.course_instructor_fn.capitalize() + " " + course.course_instructor.capitalize()
+            course_code = course.course_code
+            context = {
+                'reviews':reviews,
+                'course':course,
+                'course_instructor':course_instructor,
+                'course_code':course_code
+            }
+            return render(request,'home/courses/user_course_reviews.html', context)
+        else :
+            return render(request,'home/courses/user_course_reviews.html', {'is_error':True})
+    except Exception as e:
+        print(e)
+        return render(request,'home/courses/user_course_reviews.html', {'is_error':True})
 
 @login_required
 def course_share(request,hid):
@@ -1267,9 +1305,14 @@ def review_delete(request, hidc, hid):
     if request.method == 'POST':
         if review.author == request.user:
             review.delete()
+            cr = Review.objects.filter(author=request.user, course_reviews__course_code=course.course_code, course_reviews__course_university_slug=course.course_university_slug, course_reviews__course_instructor_slug=course.course_instructor_slug).exists()
             data['form_is_valid'] = True
             data['reviews_count'] = course.reviews_count()
             data['reviews_all_count'] = course.reviews_all_count()
+            if not cr:
+                data['can_review'] = True
+                context = {'review':review,'course':course, 'form':ReviewForm()}
+                data['review_form'] = render_to_string('home/courses/course_review_form.html',context,request=request)
     else:
         context = {'review':review,'course':course}
         data['html_form'] = render_to_string('home/courses/review_delete.html',context,request=request)

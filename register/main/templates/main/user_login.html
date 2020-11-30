@@ -27,135 +27,181 @@
     <meta name="theme-color" content="#ffffff">
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <div class="row pl-2" style="margin-right: 0px;">
-    <div class="col-lg-6 col-md-12 col-sm-12 col-12 bg-primary-dark" style="margin-right: -5px !important;">
-      <div class="container">
-        <div class="row" style="min-height: 100vh;">
-          <div class="mx-auto content-holder m-4 mt-5 p-3" >
-            <div class="card bg-primary-medium border-0" style="border-radius: 25px; margin-left: 4px;">
-              <div class="d-flex justify-content-center pt-3">
-                <img class="img-fluid" src="{% static 'logo/m/logo-white.png' %}" style="height: 6.54rem;"/>
-              </div>
-              <div class="card-body">
+  <div class="d-block d-md-none">
+    {% if request.user.is_authenticated %}
+      <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
+    {% else %}
+      <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav_una.html' %}</div>
+    {% endif %}
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-12 col-sm-12 col-12 " >
+        <div class="container">
+          <div class="d-flex flex-column" style="min-height: 100vh;">
+            <div class="content-holder m-1 mb-3  p-0" style="margin-top: 7.6rem !important;">
+              <div class="card border-0 bg-transparent">
                 <div class="p-2">
-                  <div class=" text-white h2">
-                    We help students connect and explore.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="w-100 p-1 d-block d-lg-none">
-            <div class="container">
-              <div class="p-4">
-                <div class="row px-2">
-                  <div class="my-2 col-12 w-100">
-                    <a href="{% url 'login' %}" class="btn mt-3 w-100 btn-md btn-primary no-border">
-                      <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-4px;font-weight: 500;">Log in</span>
-                    </a>
-                  </div>
-                  <div class="my-2 col-12 w-100">
-                    <a href="{% url 'main:signup' %}" class="btn mt-3 w-100 btn-md btn-light border-light">
-                      <span style="font-weight: 500;">Sign up</span>
-                    </a>
-                  </div>
-                </div>
-              </div>       
-            </div>
-          </div>
-          <div class="mx-auto pb-5">          
-            <div class="m-4">            
-              <div class="text-white my-4">
-                <div class="h4">
-                  <span class="mr-2">
-                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                    </svg>
-                  </span>
-                  Find students at your school and connect.</div>
-              </div>
-              <div class="text-white my-4">
-                <div class="h4">
-                  <span class="mr-2">
-                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
-                    </svg>
-                  </span>
-                  Review courses and find your classmates.</div>
-              </div>
-              <div class="text-white mb-4">
-                <div class="h4">
-                  <span class="mr-2">
-                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                      <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                    </svg>
-                  </span>
-                  Create content and share with others.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-6 col-md-7  d-none d-lg-block ">
-      <div class="container">
-        <div class="row" style="height: 100vh;">
-          <div class="is-responsive card  col-lg-6 col-md-8 col-11 my-auto mx-auto" style="padding-bottom: 3vh;">
-            <div class="align-items-center is-responsive mt-5 mb-4">
-              <a href="{% url 'main:user_login' %}">
-                <div class="d-flex justify-content-center align-items-center">
-                  <div class="d-flex justify-content-center logo-name" >
-                    <img class="img-fluid" src="{% static 'logo/m/logo-name.svg' %}" style="margin-top: -2.5rem; margin-bottom: -2.5rem;" width="90%"/>
-                  </div>
-                </div>
-              </a>
-            </div>
-            {% if messages %}
-              <div class="mb-2">
-                  <div class="d-flex align-items-center">
-                      <div>
-                          {% for message in messages %}
-                          <div class="alert alert-light alert-dismissible fade show" role="alert">
-                            <span {% if message.tags %} {% if message.tags == 'error' %} class="text-danger" {% else %} class="text-{{ message.tags }}" {% endif %} {% endif %}> {{ message }} </span><br>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>                
-                          {% endfor %}
+                    <div class="d-none d-lg-block" style="margin-top:10rem;">
+                      <div class="main-h1 text-white text-left h1 font-weight-bolder" >
+                        Connect with students at your school anytime, anywhere
                       </div>
-                  </div>
+                      <div class="mt-3">
+                        <div class="pt-1">
+                          <p style="color:rgb(90, 90, 90);font-weight: 430;">
+                            JoinCampus makes it easier for students to connect and share their moments.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-block d-lg-none" style="margin-top: -3rem;">
+                      <div class="main-h1 text-white text-center h1 font-weight-bolder">
+                        Connect with students at your school anytime, anywhere
+                      </div>
+                    </div>         
+                </div>
               </div>
-          {% endif %}
-            <div class="card-signin my-auto">
-              <div class="card-body">
-                <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
-                  {% csrf_token %}
-                  <div class="form-label-group">
-                    <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>
-                    <br/>
+            </div>       
+            <div class="mt-4 mb-5 w-100 d-block d-lg-none">
+              <div class="container">
+                <div class="w-100 p-4">
+                  <div class="row">
+                    <div class="mt-2 col-12 w-100">
+                      <a href="{% url 'main:signup' %}" class="btn mt-3 w-100 btn-md btn-primary">
+                        <span style="font-weight: 500;">Sign up</span>
+                      </a>
+                    </div>
+                    <div class="col-12 w-100">
+                      <a href="{% url 'login' %}" class="btn mt-3 w-100 btn-md btn-primary" style="border:1px solid #487be0 !important;background-color: rgba(255, 255, 255, 0) !important;">
+                        <img class="img-fluid float-left" style="height: 1.5rem; margin-right: -20px;" src="{% static 'logo/m/logo.png' %}"/><span style="color: #487be0;"  style="font-weight: 500 !important;">Log in</span>
+                      </a>
+                    </div>            
                   </div>
-                  <div class="form-label-group">
-                   <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
+                </div>       
+              </div>
+            </div>
+            <div class="mx-auto d-flex justify-content-center  pb-2  d-block d-lg-none">          
+              <div>            
+                <div class="mb-5 mt-5 h5 ">
+                  <div class="mb-2 text-center text-m-purple">
+                    <span class="mx-1">
+                      <svg width="21" height="21" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                      </svg>
+                    </span>
+                    <span class="mx-1 ">
+                      Find students
+                    </span>
                   </div>
-                  <button type="submit" class="btn mt-3 w-100 btn-md btn-primary no-border">
-                    <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-24px;font-weight: 500;">Log in</span>
-                  </button>
-                  <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
-                  <a class="btn mt-2 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
-                    <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span></a>
-                  <hr class="my-4">
-                  <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
-                  <a class="text-muted" href="{% url 'account_reset_password' %}" id="signup" style="font-size: .9rem;">Forgot Password?</a>
-                 
-                </form>
+                  <div  class="text-center mt-2 text-m-grey"> 
+                    <p style="font-size: 400; font-size: 1rem;">
+                      Discover new friends by easily connecting with students in your courses, program and school.
+                    </p>                           
+                  </div>
+                </div>
+                <div class="text-muted h5 my-5">
+                  <div class="mb-2 text-center text-m-purple">
+                    <span class="mx-1">
+                      <svg width="21" height="21" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+                      </svg>
+                    </span>
+                    <span class="mx-1">
+                      Review and rate courses
+                    </span>
+                  </div>
+                  <div class="mt-2 text-center text-m-grey">
+                    <p style="font-size: 400; font-size: 1rem;">
+                      Explore courses at your university and see reviews by different students for each course.
+                    </p>
+                  </div>
+                </div>
+                <div class="text-muted h5 my-5">
+                  <div class="mb-2 text-center text-m-purple">
+                    <span class="mx-1">
+                      <svg width="21" height="21" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                      </svg>
+                    </span>
+                    <span class="mx-1">
+                      Create content
+                    </span>
+                  </div>
+                  <div>        
+                    <div class="text-center mt-2 text-m-grey">
+                      <p style="font-size: 400; font-size: 1rem;">
+                        Create posts and write blogs to share your moments and ideas with other students. 
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>  
-  </div> 
+      <div class="col-lg-6 col-md-7 d-none d-lg-block ">
+        <div >
+          <div class="row" style="height: 100vh;">
+            <div class="is-responsive card  col-lg-8 col-md-9 col-11 my-auto mx-auto" style="padding-bottom: 3vh;padding-top: 3vh;">
+              <div class="align-items-center d-flex my-2">
+                <a href="{% url 'main:user_login' %}">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <div class="d-flex justify-content-center logo-name" >
+                      <img class="img-fluid" src="{% static 'logo/m/logo-name.png' %}" />
+                    </div>
+                  </div>
+                </a>
+              </div>
+              {% if messages %}
+                <div class="mb-2">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            {% for message in messages %}
+                            <div class="alert alert-light alert-dismissible fade show" role="alert">
+                              <span {% if message.tags %} {% if message.tags == 'error' %} class="text-danger" {% else %} class="text-{{ message.tags }}" {% endif %} {% endif %}> {{ message }} </span><br>
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>                
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+              <div class="card-signin my-auto">
+                <div class="card-body">
+                  <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
+                    {% csrf_token %}
+                    <div class="form-label-group">
+                      <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required>
+                      <br/>
+                    </div>
+                    <div class="form-label-group" style="margin-top: -15px;">
+                     <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
+                    </div>
+                    <button type="submit" class="btn mt-4 w-100 btn-md btn-primary">
+                      <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-24px;font-weight: 500;">Log in</span>
+                    </button>
+                    <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
+                    <a class="btn mt-2 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
+                      <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span></a>
+                    <div class="mt-4">
+                      <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
+                      <a class="text-muted" href="{% url 'account_reset_password' %}" id="signup" style="font-size: .9rem;">Forgot Password?</a>
+                    </div>
+                                  
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div> 
+  </div>
+ 
     <div id="footer-main-div">
       {% include 'footer_main_social.html' %}
     </div>

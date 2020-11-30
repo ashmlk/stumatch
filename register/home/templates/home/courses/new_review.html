@@ -1,6 +1,7 @@
 {% load static %}
 {% load ibuilder %}
 {% div_class as veid %}
+{% with rw_crs_prof=review.get_course_prof rw_sm=review.get_course_sm rw_crs_yr=review.get_course_yr %}
 <div class="infinite-item cntr row bg-white mt-1" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}" data-year="{{ rw_crs_yr }}"
     data-ins="{{ rw_crs_prof }}">
     <div class="col-sm">
@@ -17,23 +18,37 @@
             {% endif %}
             <div class="d-flex justify-content-between">
                 <div class="d-flex">
+                    {% if not review.is_anonymous %}
                     <div class="c-n-img p-1 mr-0">
-                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
-                            src="{{ review.author.image.url }}" alt="Profile image">
+                        <img class="img-create-post rounded-circle"
+                            style="height: 2.5rem;width: 2.5rem;" src="{{ review.author.image.url }}" alt="{{ review.author.get_full_name }}">
                     </div>
+                    {% else %}
+                    <div class="c-n-img p-1 mr-0">
+                        <img class="img-create-post rounded-circle"
+                            style="height: 2.5rem;width: 2.5rem;" src="{% static 'default/courses/anonymous_reviewer.png' %}" >
+                    </div>
+                    {% endif %}
                     <div>
                         <div class="d-flex mt-1 flex-column">
                             <div class="u_n d-fle">
                                 <div>
-                                    <span class="ml-1"
-                                        style="font-weight: 500;">{{ review.author.get_full_name }}</span>
+                                    {% if not review.is_anonymous %}
+                                    <a href="{{ review.author.get_absolute_url }}" class="text-dark ml-1"
+                                        style="font-weight: 500; text-decoration: none;">{{ review.author.get_full_name }}</a>
+                                    {% else %}
+                                    <span class="text-dark ml-1"
+                                        style="font-weight: 500;">Anonymous Reviewer</span>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
                                 <div class="ml-1" style="font-size: 0.8rem;">
+                                    {% if not review.is_anonymous %}
                                     <a class="text-muted"
                                         href="{{ review.author.get_absolute_url }}">@{{ review.author.get_username }}</a>
-                                    <span>·</span>
+                                        <span>·</span>
+                                    {% endif %}                                 
                                     <span>{{ review.get_created_on }}</span>
                                     <span class="rounded p-1 small" style="background-color: rgb(209, 209, 209);"><strong style="color: black;">{{ review.get_interest }}</strong></span>
                                 </div>
@@ -72,14 +87,12 @@
                 </div>
             </div>
             <div class="card-body m-0">
-                <div class="content display-4" style="font-size: 1.2rem;">
-                    {{ review.body }}
-                </div>
-
+                <p class="card-text">{{ review.body }}</p>
             </div>
-            <div class="m-1 mt-2 review-likes-container">
+            <div class="review-likes-container">
                 {% include 'home/courses/review_like.html' with review=review %}
             </div>
         </div>
     </div>
 </div>
+{% endwith %}

@@ -186,7 +186,6 @@ def user_logout(request):
     return redirect('main:user_login')
     
 def signup(request):
-    
     if request.user.is_authenticated:
         if request.user.is_active:
             return redirect('home:home')     
@@ -209,9 +208,9 @@ def signup(request):
 
 #@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
 def user_login(request):
-    
     if request.user.is_authenticated:
-        return redirect('home:home')   
+        if request.user.is_active:
+            return redirect('home:home')   
     #message = ''
     if request.method == 'POST':
         storage = messages.get_messages(request)

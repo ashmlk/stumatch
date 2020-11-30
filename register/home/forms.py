@@ -95,7 +95,7 @@ class ReviewForm(forms.ModelForm):
         label='',
         widget=forms.Textarea(
             attrs={
-                'style':'resize:none; outline:none;',
+                'style':'resize:none; outline:none;width:100% !important; height:100% !important;',
                 'class':'form-control',
                 'placeholder':'Write a review and let others know about your experience!',
                 'rows': 2 ,

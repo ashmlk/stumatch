@@ -19,39 +19,43 @@
                     <div class="mb-3 border-bottom info-et-all">
                         <div class="d-flex pb-3 uni-user">
                             {% if user.program or user.university %}
-                            <div class="mr-1">
-                                <span class="mr-2">
-                                    <svg style="margin-top:-5px !important;" width="16" height="16" viewBox="0 0 16 16"
-                                        class="bi bi-hexagon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                                    </svg>
-                                </span>
-                            </div>
-                            <div class="u_pui">
-                                {% if user.program %}
-                                <span class="text-muted">
-                                    Studies {{ user.program|capfirst }}
-                                </span>
-                                {% endif %}
-                                {% if user.university and user.program %}
-                                <span class="text-muted"> at </span>
-                                <strong>
-                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std"
-                                        style="text-decoration: none;">
+                                <div class="mr-2">
+                                    <span class="mr-2">
+                                        <svg style="margin-top:-5px !important;" width="16" height="16"
+                                            viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="u_pui">
+                                    {% if user.university == "Incoming Student" %}
+                                    <span class="text-muted">You're an </span>
+                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
                                         {{ user.university|capfirst }}
-                                    </a>
-                                </strong>
-                                {% elif user.university and not user.program %}
-                                <span class="text-muted">Goes to </span>
-                                <strong>
-                                    <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std"
-                                        style="text-decoration: none;">
-                                        {{ user.university|capfirst }}
-                                    </a>
-                                </strong>
-                                {% endif %}
-                            </div>
+                                    </a> 
+                                    {% elif user.program %}
+                                        {% if not user.university == "Incoming Student" %}
+                                        <span class="text-muted">
+                                            Studies {{ user.program|capfirst }}
+                                        </span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if not user.university == "Incoming Student" %}
+                                        {% if user.university and user.program %}
+                                            <span class="text-muted"> at </span>                                          
+                                            <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                {{ user.university|capfirst }}
+                                            </a>                                        
+                                        {% elif user.university and not user.program %}
+                                            <span class="text-muted">Goes to </span>                                           
+                                            <a href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                {{ user.university|capfirst }}
+                                            </a>                                          
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
                             {% endif %}
                         </div>
                     </div>

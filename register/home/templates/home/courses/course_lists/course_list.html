@@ -91,7 +91,8 @@
         <div class="pt-2 border-top course-list-content-holder">
             <div class="row">
                 {% for course in courses %}
-                <div class="col-md-6 item-list my-1 mb-4">
+                {% bg_rand as bgrnd %}
+                <!-- <div class="col-md-6 item-list my-1 mb-4">
                     <div class="neosquare">
                         <div class="p-3">
                             <div class="item-info">
@@ -209,6 +210,90 @@
                             </div>
                         </div>
                     </div>
+                </div> -->
+                <div class="col-md-6 item-list my-1 mb-4">
+                    <div class="card my-1" style="border-radius: 15px;">
+                        <div class="p-0" >
+                            <div class="d-flex p-3 border align-items-center justify-content-between" 
+                            style="background-color:{{bgrnd}};border-top-left-radius: 15px !important;border-top-right-radius: 15px; min-height:4rem;">
+                                <div class="w-100 d-flex text-white align-items-center justify-content-between">
+                                    <div class="mt-2 item-title">
+                                        <h5 class="font-weight-bolder">{{ course.course_code }}</h5>
+                                    </div>
+                                    <div class="dropdown" >
+                                        <button class="text-white btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right mt-1"  aria-labelledby="d_li">
+                                            <button class="small dropdown-item list-editcrs-btn" 
+                                                data-url="{% url 'home:course-list-editcrs' hid=list.get_hashid hid_item=course.get_hashid %}">
+                                                <svg class="bi mr-1 bi-pencil-square" width="1em" height="1em"
+                                                    viewBox="0 0 16 16" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                                </svg>
+                                                <span class="mx-1">Edit</span>
+                                            </button>
+                                            <button type="button" data-type="list" 
+                                                class="dropdown-item btn btn-sm list-deletecrs-btn"
+                                                data-url="{% url 'home:course-list-deletecrs' hid=list.get_hashid hid_item=course.get_hashid %}">
+                                                <svg width="1em" height="1em" viewBox="0 0 16 16"
+                                                    class="bi bi-trash" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                                </svg>
+                                                <span class="mx-1">Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                    
+                            <div class="row mt-1 mx-1 " >
+                                <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary" style="border-radius: 20px !important;" 
+                                    data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                    <span class="svg-icon ccs mr-1">
+                                        <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                            viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                </div>
+                                <div class="c_dis border p-2 mr-2 mb-1 btn-outline-primary" style="border-radius: 20px !important;">
+                                    <span class="svg-icon ccs mr-1">
+                                        <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                            viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                            <path fill-rule="evenodd"
+                                                d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                        </svg>
+                                    </span>
+                                    <span class="text-dark">Instructor:</span>
+                                    <span class="ml-1">{{ course.course_instructor }}</span>
+                                </div>
+                                <div class="c_dis border p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
+                                    <span class="svg-icon ccs mr-1 text-primary">
+                                        <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                            viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                      </svg>
+                                    </span>
+                                    Added {{ course.get_created_on }}
+                                </div>
+                            </div>
+                        </div>   
+                    </div>    
                 </div>
                 {% empty %}
                 <div class="mx-2 text-center">
