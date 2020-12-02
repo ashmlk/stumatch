@@ -201,7 +201,7 @@ def signup(request):
             user.is_active = False
             user.save()
             send_email_confirmation(request, user, True)
-            return redirect('main:user_login')
+            return redirect('login')
     else:
         form = SignUpForm()
     return render(request, 'main/signup.html', {'form': form})

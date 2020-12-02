@@ -10,7 +10,7 @@
     <meta name=”robots” content="index, follow">
     <meta name=”googlebot” content="index, follow">
     <meta name="description" content="JoinCampus is a platform that students can connect with each other, manage their courses, and find others in their classes and expand their network."/>
-    <title>JoinCampus - Login</title>
+    <title>JoinCampus: A platform for students to connect and explore</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -175,7 +175,7 @@
                   <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
                     {% csrf_token %}
                     <div class="form-label-group">
-                      <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required>
+                      <input type="text" name="username" id="inputText" class="form-control" placeholder="Username or Email" required>
                       <br/>
                     </div>
                     <div class="form-label-group" style="margin-top: -15px;">

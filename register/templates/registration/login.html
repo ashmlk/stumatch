@@ -27,13 +27,13 @@
     <meta name="theme-color" content="#ffffff">
 </head>
 <body class="d-flex flex-column min-vh-100">
-      <div class="container">
-        <div class="row" style="height: 100vh;">
+      <div class="d-flex align-items-center container min-vh-100">
+        <div class="row" >
           <div class="is-responsive card  col-lg-4 col-md-9 col-11 my-auto mx-auto" style="padding-bottom: 3vh;">
-            <div class="align-items-center is-responsive mt-5 mb-4">
+            <div class="align-items-center mt-5 mb-4">
               <a href="{% url 'main:user_login' %}">
                 <div class="d-flex justify-content-center align-items-center">
-                  <div class="d-flex justify-content-center logo-name" >
+                  <div class="logo-name" >
                     <img class="img-fluid" src="{% static 'logo/m/logo-name.png' %}"/>
                   </div>
                 </div>
@@ -60,7 +60,7 @@
                 <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
                   {% csrf_token %}
                   <div class="form-label-group">
-                    <input type="text" name="username" id="inputText" class="form-control" placeholder="Username" required autofocus>
+                    <input type="text" name="username" id="inputText" class="form-control" placeholder="Username or Email" required autofocus>
                     <br/>
                   </div>
                   <div class="form-label-group">
