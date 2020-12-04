@@ -6,6 +6,7 @@ from main.models import Profile
 from django.db.models import Q
 from hashids import Hashids
 import math
+from channels.db import database_sync_to_async
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ iojpf909wrwas',min_length=32)
 
@@ -17,11 +18,31 @@ class ChatConsumer(WebsocketConsumer):
         self.room = None
         self.messages_pre_connect_count = None
         self.last_message = None
+        self.page = 1
         self.last_message_id = None
         
-    def fetch_messages(self, data, page=None):
+    def fetch_messages(self, data):
         room = PrivateChat.objects.get(guid=data['room_id'])
         messages = room.get_messages()
+        result = []
+        for message in messages:
+            json_message =  {
+                'id':message.id,
+                'author':message.author.username,
+                'content':message.content,
+                'timestamp':str(message.get_time_sent),
+            }
+            result.append(json_message)
+        content = {
+            'command':'messages',
+            'messages': result
+        }
+        self.send_chat_message(content)
+        
+    def load_messages(self, data):
+        room = PrivateChat.objects.get(guid=data['room_id'])
+        messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
+        self.page+=1
         result = []
         for message in messages:
             json_message =  {
@@ -35,7 +56,7 @@ class ChatConsumer(WebsocketConsumer):
             'command':'messages',
             'messages': result
         }
-        self.send_chat_message(content)
+        self.send_chat_message(content) 
         
     def new_message(self, data):
         author = data['from']
@@ -47,7 +68,6 @@ class ChatConsumer(WebsocketConsumer):
             )
         self.last_message = message
         self.last_message_id = message.id
-        print(self.last_message_id)
         json_message =  {
             'id':message.id,
             'author':message.author.username,
@@ -64,7 +84,8 @@ class ChatConsumer(WebsocketConsumer):
     
     commands = {
         'fetch_messages':fetch_messages,
-        'new_message':new_message
+        'new_message':new_message,
+        'load_messages':load_messages
     }
     
     def connect(self):
@@ -92,7 +113,6 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-        self.room.set_last_message(self.last_message_id)
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name

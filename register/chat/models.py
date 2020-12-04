@@ -69,9 +69,9 @@ class PrivateChat(models.Model):
     
     def get_messages(self, pre_connect_count=None, page=None):
         if page == None:
-            return Message.objects.filter(privatechat=self).order_by('timestamp')
+            return Message.objects.filter(privatechat=self).order_by('timestamp')[:10]
         else:
-            Message.object.filter(privatechat=self).order_by('timestamp')
+            messages, has_messages = Message.object.filter(privatechat=self).order_by('timestamp')[pre_connect_count-page*10:pre_connect_count-(page-1)*10], Message.object.filter(privatechat=self).count() < 
             return None
         
     def set_last_message(self, message):

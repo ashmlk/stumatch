@@ -15,7 +15,7 @@
                 </div>        
             </div>
             <div class="messages" id="chat-log-container">
-                <div id="chat-log" class="px-2 pl-5 pt-3 d-flex flex-column"  style="height: 75vh; overflow-y: auto; padding-bottom: 15px;">
+                <div id="chat-log" class="px-2 pl-5 pt-3 d-flex flex-column"  style="height: 75vh; overflow-y: auto;padding-bottom: 15px;">
                    
                 </div>
             </div>
@@ -35,6 +35,7 @@
     {{ user2.username|json_script:"user2-username" }}
     {{ user2.get_hashid|json_script:"hashiduser2"}}
     <script>
+        const spinner = '<div id="loader-content-spinner" class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
         const hashiduser2 = JSON.parse(document.getElementById('hashiduser2').textContent);
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var username =  JSON.parse(document.getElementById('request-user-username').textContent);
@@ -59,13 +60,21 @@
                             var prot = list[i].indexOf('http://') === 0 || list[i].indexOf('https://') === 0 ? '' : 'http://';
                             x = x.replace( list[i], "<a target='_blank' href='" + prot + list[i] + "'>"+ list[i] + "</a>" );
                         }
-
                     }
                     $(obj).html(x);
                 });
 
             }
         };
+
+        var distance = $('#chat-log').offset().top - 150;
+        $('#chat-log').scroll(function() {
+            if ($(this).scrollTop() <= distance ) {
+                $(this).prepend(spinner);
+            } else {
+                $(this).find('#loader-content-spinner').remove();
+            }
+        });
 
         document.addEventListener("DOMNodeInserted", function(event) {
             $($(event.target).children()[0]).find('p').linkify({
@@ -119,6 +128,10 @@
             chatSocket.send(JSON.stringify({'command':'fetch_messages','room_id':roomName}));
         }
 
+        function fetchMessages() {
+            chatSocket.send(JSON.stringify({'command':'fetch_messages','room_id':roomName}));
+        }
+
         function createMessage(data){
             var author = data['author'];
             if ("last_message_content" in data) {
@@ -140,8 +153,6 @@
             divMainMessageTag.appendChild(pTag);
             msgListTag.appendChild(divMainMessageTag);
             document.querySelector('#chat-log').appendChild(msgListTag);
-            //var elem = document.getElementById('chat-log');
-            //elem.scrollTop = elem.scrollHeight;
             var elem = document.getElementById('chat-log');
             var shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
             scrollToBottom();           
@@ -173,6 +184,5 @@
             background-color: white;
             border: 1px rgb(163, 163, 163) solid;
         }
-
     </style>
 {% endblock %}
