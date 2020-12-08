@@ -6,6 +6,7 @@ from hashids import Hashids
 from django.utils import timezone
 from math import log
 import math
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 
 class MessageManager(models.Manager):
@@ -25,7 +26,7 @@ class PrivateChatManager(models.Manager):
             for c in qs:
                 last_message = c.get_last_message()
                 if last_message != None:
-                    time = last_message.get_time_sent()
+                    time = last_message.get_time_sent_formatted()
                     content = last_message.contet
                 if not c.user1 == user:
                     ids.append(c.user1.id)
@@ -41,7 +42,7 @@ class PrivateChatManager(models.Manager):
             for c in qs:
                 last_message = c.get_last_message()
                 if last_message != None:
-                    time = last_message.get_time_sent()
+                    time = last_message.get_time_sent_formatted()
                     content = last_message.content
                 if not c.user1 == user:
                     ids.append(c.user1.id)
@@ -69,14 +70,26 @@ class PrivateChat(models.Model):
     
     def get_messages(self, pre_connect_count=None, page=None):
         if page == None:
-            return Message.objects.filter(privatechat=self).order_by('timestamp')[:10]
+            messages = Message.objects.filter(privatechat=self).order_by('-timestamp')[:15]
+            has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
+            return messages, has_messages
         else:
-            messages, has_messages = Message.object.filter(privatechat=self).order_by('timestamp')[pre_connect_count-page*10:pre_connect_count-(page-1)*10], Message.object.filter(privatechat=self).count() < 2
-            return None
+            messages_all = Message.objects.filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
+            page = page
+            paginator = Paginator(messages_all, 15)
+            try:
+                messages = paginator.page(page)
+            except PageNotAnInteger:
+                messages = paginator.page(1)
+            except EmptyPage:
+                messages = paginator.page(paginator.num_pages)
+            has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
+            #messages, has_messages = Message.objects.filter(privatechat=self).order_by('timestamp')[pre_connect_count-page*15:pre_connect_count-(page-1)*15], Message.object.filter(privatechat=self).count() > page*15
+            return messages, has_messages
         
     def set_last_message(self, message):
         self.last_message = message
-        #self.save()
+        self.save()
     
     def get_messages_count(self):
         return Message.objects.filter(privatechat=self).count()
@@ -97,6 +110,9 @@ class Message(models.Model):
         return self.author.username
     
     def get_time_sent(self):
+        return str(self.timestamp) + " UTC"
+    
+    def get_time_sent_formatted(self):
         now = timezone.now()
         diff= now - self.timestamp
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:

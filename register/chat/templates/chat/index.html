@@ -23,6 +23,7 @@
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
     <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
     <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link
       href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
@@ -77,7 +78,7 @@
                                                 </div>
                                                 <div class="mx-2">
                                                     <div class="text-dark font-weight-bolder">{{ user.get_full_name }}</div>
-                                                    <span style="font-size: 1rem;" class=" text-muted last-message-holder" id="{{ user2.get_hashid }}__chat__last_msg">
+                                                    <span style="font-size: 1rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
                                                         {% with last_message_content|get_dict_item:user.username as dict %}
                                                         <span class="message">
                                                             {{  dict|get_dict_item:"content" }}
@@ -85,7 +86,7 @@
                                                         <span class="mx-1 button__separator_time">
                                                         {% if dict|get_dict_item:"content" != '' %}•{% endif %}
                                                         </span>                                                 
-                                                        <span class="time">
+                                                        <span id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
                                                            {{ dict|get_dict_item:"time" }}
                                                         </span>
                                                         {% endwith %}

@@ -10,8 +10,7 @@ from channels.db import database_sync_to_async
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ iojpf909wrwas',min_length=32)
 
-class ChatConsumer(WebsocketConsumer):
-        
+class ChatConsumer(WebsocketConsumer):        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
@@ -19,11 +18,12 @@ class ChatConsumer(WebsocketConsumer):
         self.messages_pre_connect_count = None
         self.last_message = None
         self.page = 1
-        self.last_message_id = None
+        self.messages_all_loaded = False
         
     def fetch_messages(self, data):
         room = PrivateChat.objects.get(guid=data['room_id'])
-        messages = room.get_messages()
+        messages, has_messages = room.get_messages()
+        self.messages_all_loaded = not has_messages
         result = []
         for message in messages:
             json_message =  {
@@ -41,21 +41,23 @@ class ChatConsumer(WebsocketConsumer):
         
     def load_messages(self, data):
         room = PrivateChat.objects.get(guid=data['room_id'])
-        messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
+        messages, has_messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
         self.page+=1
         result = []
-        for message in messages:
-            json_message =  {
-            'id':message.id,
-            'author':message.author.username,
-            'content':message.content,
-            'timestamp':str(message.get_time_sent),
-            }
-            result.append(json_message)
+        if not self.messages_all_loaded:
+            for message in messages:
+                json_message =  {
+                'id':message.id,
+                'author':message.author.username,
+                'content':message.content,
+                'timestamp':str(message.get_time_sent),
+                }
+                result.append(json_message)
         content = {
             'command':'messages',
             'messages': result
         }
+        self.messages_all_loaded = not has_messages
         self.send_chat_message(content) 
         
     def new_message(self, data):
@@ -67,14 +69,14 @@ class ChatConsumer(WebsocketConsumer):
                 privatechat = self.room
             )
         self.last_message = message
-        self.last_message_id = message.id
+        self.room.set_last_message(message.id)
         json_message =  {
             'id':message.id,
             'author':message.author.username,
             'content':message.content,
             'timestamp':str(message.get_time_sent),
             'last_message_content':self.last_message.content,
-            'last_message_time':self.last_message.get_time_sent()
+            'last_message_time':self.last_message.get_time_sent_formatted()
             }
         content = {
             'command':'new_message',
@@ -82,10 +84,14 @@ class ChatConsumer(WebsocketConsumer):
         }
         return self.send_chat_message(content)
     
+    def new_message_other(self, data):        
+        pass      
+    
     commands = {
         'fetch_messages':fetch_messages,
         'new_message':new_message,
-        'load_messages':load_messages
+        'load_messages':load_messages,
+        'new_message_other': new_message_other
     }
     
     def connect(self):

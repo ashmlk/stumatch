@@ -40,6 +40,7 @@
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var username =  JSON.parse(document.getElementById('request-user-username').textContent);
         var user2 =  JSON.parse(document.getElementById('user2-username').textContent);
+        var message_time = null;
         const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
@@ -50,27 +51,12 @@
             + '/'
         );
 
-        jQuery.fn.urlize = function() {
-            if (this.length > 0) {
-                this.each(function(i, obj){
-                    var x = $(obj).html();
-                    var list = x.match( /\b(http:\/\/|www\.|http:\/\/www\.)[^ <]{2,200}\b/g );
-                    if (list) {
-                        for ( i = 0; i < list.length; i++ ) {
-                            var prot = list[i].indexOf('http://') === 0 || list[i].indexOf('https://') === 0 ? '' : 'http://';
-                            x = x.replace( list[i], "<a target='_blank' href='" + prot + list[i] + "'>"+ list[i] + "</a>" );
-                        }
-                    }
-                    $(obj).html(x);
-                });
-
-            }
-        };
-
         var distance = $('#chat-log').offset().top - 150;
         $('#chat-log').scroll(function() {
             if ($(this).scrollTop() <= distance ) {
                 $(this).prepend(spinner);
+                chatSocket.send(JSON.stringify({'command':'load_messages','room_id':roomName}));
+                $(this).find('#loader-content-spinner').remove();
             } else {
                 $(this).find('#loader-content-spinner').remove();
             }
@@ -90,10 +76,13 @@
             const data = JSON.parse(e.data);
             if (data['command'] === 'messages') {
                 for (let i=0; i< data['messages'].length; i++){
-                    createMessage(data['messages'][i]);   
+                    createMessage(data['messages'][i]);                    
                 }
+                message_time = data['messages'][data['messages'][i]['timestamp']]
             } else if (data['command'] === 'new_message') {
                 createMessage(data['message'])
+            } else if (data['command'] === 'new_message_other') {
+                // new message from someone out of this room
             }
         };
 
@@ -113,20 +102,6 @@
             messageInputDOM.value = '';
             }
         };       
-        // document.querySelector('#chat-message-submit').onclick = function(e) {
-        //     var messageInputDOM = document.getElementById('chat-message-input');
-        //     var message = messageInputDOM.value;
-        //     chatSocket.send(JSON.stringify({
-        //         'command': 'new_message',
-        //         'message': message,
-        //         'from': username,
-        //     }));
-        //     messageInputDOM.value = '';
-        // };
-
-        function fetchMessages() {
-            chatSocket.send(JSON.stringify({'command':'fetch_messages','room_id':roomName}));
-        }
 
         function fetchMessages() {
             chatSocket.send(JSON.stringify({'command':'fetch_messages','room_id':roomName}));
@@ -152,7 +127,11 @@
             }
             divMainMessageTag.appendChild(pTag);
             msgListTag.appendChild(divMainMessageTag);
-            document.querySelector('#chat-log').appendChild(msgListTag);
+            if ("last_message_content" in data) {
+                document.querySelector('#chat-log').appendChild(msgListTag);
+            } else {
+                document.querySelector('#chat-log').prepend(msgListTag);
+            }           
             var elem = document.getElementById('chat-log');
             var shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
             scrollToBottom();           
@@ -160,6 +139,10 @@
 
         function scrollToBottom() {
             $('#chat-log').scrollTop($('#chat-log').height()*1000);
+        }
+
+        function getDateDifferenceTag(new_time) {
+            // create time difference tag here
         }
 
     </script>
