@@ -27,7 +27,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'live-static', 'media-root')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'e2a&eyvw$gfs=8o)xzru2f@@7iiy-3+da18o#immnl7ln@3xm-'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 AUTH_USER_MODEL = 'main.Profile'
 ACCOUNT_EMAIL_VERIFICATION='mandatory'
@@ -72,7 +72,8 @@ INSTALLED_APPS = [
     'admin_honeypot',
     'whitenoise.runserver_nostatic',
     'storages',
-    'sorl.thumbnail'
+    'sorl.thumbnail',
+    'defender'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -113,9 +114,9 @@ CKEDITOR_CONFIGS = {
 
 #CELERY CONFIG
 
-CELERY_BROKER_URL = os.environ.get('REDISTOGO_URL', 'redis://localhost:6379')
+CELERY_BROKER_URL = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_BROKER_TRANSPORT = 'redis'
-CELERY_RESULT_BACKEND = os.environ.get('REDISTOGO_URL', 'redis://localhost:6379')
+CELERY_RESULT_BACKEND = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -151,7 +152,7 @@ CELERY_BEAT_SCHEDULE = {
 
 CACHES = {
     "default": {
-        "BACKEND": "redis_cache.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -160,6 +161,7 @@ CACHES = {
         "KEY_PREFIX": "redis_one"
     }
 }
+
 
 CACHE_TTL = 60 * 15
 
@@ -173,7 +175,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'main.middleware.WwwRedirectMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'defender.middleware.FailedLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'register.urls'
@@ -261,6 +264,13 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SITE_ID = 3
+
+
+DEFENDER_LOGIN_FAILURE_LIMIT = 5
+DEFENDER_DISABLE_IP_LOCKOUT = True
+DEFENDER_COOLOFF_TIME = 300
+DEFENDER_REDIS_URL = "redis://127.0.0.1:6379/1"
+DEFENDER_LOCKOUT_TEMPLATE = 'user_locked_out.html'
 
 LOGIN_URL = reverse_lazy('main:user_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home:home')

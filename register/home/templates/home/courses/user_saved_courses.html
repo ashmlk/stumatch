@@ -8,9 +8,9 @@
 <div class="card-columns mt-2" style="margin-left: -0.85rem;margin-right: -0.85rem;">
     {% for course in courses %}
     {% bg_rand as bgrnd %}
-    <div class="card mb-2 bg-white" style="border-radius:15px;">
+    <div class="card mb-2 bg-white" style="border-radius:10px;">
         <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
-            style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:15px;border-top-right-radius:15px;"
+            style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:10px;border-top-right-radius:10px;"
                 href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
                 <div class="ml-2">               
                     <h3 class="font-weight-bold">{{ course.course_code }}</h3>                

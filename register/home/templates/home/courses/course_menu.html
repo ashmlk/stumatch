@@ -56,11 +56,11 @@
                                 {% bg_rand as bgrnd %}
                                 {% div_class as veid %}
                                 {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-                                <div class="card my-1" style="border-radius: 15px;">
+                                <div class="card my-1" style="border-radius: 10px;">
                                     <div class="p-0" >
                                         <a style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
                                             <div class="d-flex border align-items-center justify-content-between" 
-                                            style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 15px !important;border-top-right-radius: 15px; min-height:4rem;">
+                                            style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 10px !important;border-top-right-radius: 10px; min-height:4rem;">
                                                 <div class="p-2">
                                                     <div class="ml-1" style="margin-bottom: -0.6rem;">
                                                         <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
@@ -79,7 +79,7 @@
                                                             d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                     </svg>
                                                 </span>
-                                                <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                                <span class="ml-1">{{ course.course_university|capfirst }}</span>
                                             </div>
                                             <div class="c_dis border p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;"
                                                 data-url="{%url 'home:course-instructor' par1 par2 %}">
@@ -92,8 +92,7 @@
                                                         <path fill-rule="evenodd"
                                                             d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
                                                     </svg>
-                                                </span>
-                                                <span class="text-dark">Instructor:</span>
+                                                </span>                                          
                                                 <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                                             </div>
                                             <div class="c_dis border p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
@@ -103,7 +102,7 @@
                                                         <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
                                                   </svg>
                                                 </span>
-                                                <span class="text-dark">Year:</span><span class="text-primary ml-1">{{ course.course_year }}</span>
+                                                <span class="text-primary ml-1">{{ course.course_year }}</span>
                                             </div>
                                         </div>
                                     </div>   
@@ -281,34 +280,40 @@
                         <div class="card mx-3">
                             <ul class="list-group list-group-flush">
                                 {% for list in lists %}
-                                <li class="list-group-item">
-                                    <div class="m-1 row d-flex align-items-center justify-content-between">
+                                <li class="list-group-item">                                 
+                                    <div class="m-1 row d-flex align-items-center ">
                                         <div class="info-all">
                                             <a class="text-dark" class="card-title"
                                                 href="{% url 'home:course-list-obj' hid=list.get_hashid %}">
-                                                <strong>{{ list.title|capfirst }}</strong>
+                                                <strong class="h6" style="color: #375FAD ;">{{ list.title|capfirst }}</strong>
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="pl-1 py-2">
                                         <div class="small text-muted">
-                                            <div class="row d-flex justify-content-between">
-                                                <div>
-                                                    <span class="p-1 border-light"
-                                                        style="border-radius: 10px; background-color: rgb(161, 224, 161);">
-                                                        <span style="color: black;">{{ list.added_courses.count }} courses</span>
-                                                    </span>
+                                            <div class="d-flex">
+                                                <div>           
+                                                    {% with list.added_courses.count as cc %}     
+                                                        <span>
+                                                            {% if cc == 0 %}
+                                                            No Course Added
+                                                            {% elif cc == 1 %}
+                                                            {{cc}} Course
+                                                            {% else %}
+                                                            {{cc}} Courses
+                                                            {% endif %}
+                                                        </span>
+                                                    {% endwith %}
+                                                </div>
+                                                <div class="mx-1">
+                                                    <span>•</span>
                                                 </div>
                                                 <div>
-                                                    <span class="p-1 border-light"
-                                                        style="border-radius: 10px; background-color: rgb(204, 223, 235);">
-                                                        <span style="color: black;">Created on
-                                                            {{ list.created_on|date:"M d, Y" }}</span>
-                                                    </span>
+                                                    <span>Created on {{ list.created_on|date:"M d, Y" }}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>                             
                                 </li>
                                 {% empty %}
                                 <li class="list-group-item">
@@ -347,9 +352,9 @@
                         <div class="mt-2 mx-3">
                             {% for course in saved_courses %}
                             {% bg_rand as bgrnd %}
-                            <div class="card mb-2 bg-white" style="border-radius:15px;">
+                            <div class="card mb-2 bg-white" style="border-radius:10px;">
                                 <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
-                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:15px;border-top-right-radius:15px;"
+                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:10px;border-top-right-radius:10px;"
                                         href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
                                         <div class="ml-2">               
                                             <h3 class="pt-2 font-weight-bold">{{ course.course_code }}</h3>                
@@ -358,10 +363,10 @@
                                 <div class="row p-1">
                                     <div class="col-sm" >
                                         <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                                            <span class="text-dark">University:</span><span class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
+                                            <span class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
                                         </div>       
                                         <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                                            <span class="text-dark">Instructor:</span><span class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
+                                            <span class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
                                         </div>
                                         <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
                                             <span class="text-dark">Total Enrollments: </span><span class=" text-primary mr-1">{{ course.get_user_count_ins }}</span>

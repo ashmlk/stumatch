@@ -8,303 +8,220 @@
 {% register_notify_callbacks api_name='count' callbacks='fill_notification_badge' %}
 <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
-<nav class="navbar navbar-expand-md main-top-nav pl-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
-  <a class="navbar-brand ml-1 mr-3" href="{% url 'home:home' %}">
-    <div class="d-none d-lg-block">
-      <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
-    </div>
-    <div class="d-lg-none">
-      <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
-    </div>
-  </a>
-  <div class="float-left align-dropdown-center text-center">
-    <div class="float-left  nav-item dropdown">
-      <a class="mr-3 nav-link btn-md border btn-circle rounded-circle text-dark" id="navbarDropdown0" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <svg width="24" height="24" style="margin-top: 3px !important;" viewBox="0 0 16 16" class="bi bi-list"
-          fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-        </svg>
-      </a>
-      <div class="dropdown-menu dropdown-menu-center" aria-labelledby="navbarDropdown0">
-        <div style="margin-left: -2px !important;"
-          class="mb-1 rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
-          data-url="{% url 'home:course-menu' %}">
-          <div class="col-1">
-            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
-              <path fill-rule="evenodd"
-                d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
-            </svg>
-          </div>
-          <div class="col-10">
-            <span class="ml-2">Courses</span>
-          </div>
-        </div>
-        <div class="mb-1 rounded-0 d-flex align-items-center font-weight-bold  p-3 mnpglk"
-          data-url="{% url 'home:blog' %}">
-          <div class="col-1">
-            <svg style="margin-top: -2px !important" width="22" height="22" viewBox="0 0 16 16" class="bi bi-justify"
-              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
-            </svg>
-          </div>
-          <div class="col-10  ">
-            <span class="ml-2">Blogs</span>
-          </div>
-        </div>
-        <div class="mb-1 rounded-0 d-flex align-items-center font-weight-bold p-3 mnpglk"
-          data-url="{% url 'home:users-posts' %}">
-          <div class="col-1">
-            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M14.5 13.5h-13A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5zm-13 1A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zM2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1z" />
-            </svg>
-          </div>
-          <div class="col-10 mt-1  ">
-            <span class="ml-2">By You</span>
-          </div>
-        </div>
-        <div class="mb-1 rounded-0 mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk"
-          data-url="{% url 'main:bookmarks' %}">
-          <div class="col-1">
-            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-bookmark" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z" />
-            </svg>
-          </div>
-          <div class="col-10  ">
-            <span class="ml-2 ">Bookmarks</span>
-          </div>
-        </div>
-        <div class="mb-1 rounded-0 mb-2 d-flex align-items-center font-weight-bold p-3  mnpglk"
-          data-url="{% url 'main:usertags' username=request.user.get_username %}">
-          <div class="col-1">
-            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-hash" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8.39 12.648a1.32 1.32 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1.06 1.06 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.512.512 0 0 0-.523-.516.539.539 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532 0 .312.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531 0 .313.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242l-.515 2.492zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z" />
-            </svg>
-          </div>
-          <div class="col-10">
-            <span class="ml-2 ">Tags</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="d-flex justify-content-end">
-    <div class="d-flex justify-content-end d-md-none">
-      <div class=" create-post-btn d-flex create-post-btn align-items-center" data-url="{% url 'home:post-create' %}" data-tooltip="tooltip" data-placement="bottom"
-      title="Add">
-        <div >
-          <button class=" nav-link btn-md border btn-circle mr-1 rounded-circle text-dark" data-tooltip="tooltip"
-            data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
-            <svg width="24" height="24" viewBox="0 0 16 16"  class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-            </svg></button>
-        </div>
-      </div>
-      <div class="mr-1 d-flex align-items-center">
-        <div>
-          <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-            data-placement="bottom" title="Notifications" data-delay='{ "show": 500, "hide": 100 }'
-            href="{% url 'home:home' %}">
-            <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-house-door-fill" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M6.5 10.995V14.5a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5V11c0-.25-.25-.5-.5-.5H7c-.25 0-.5.25-.5.495z" />
-              <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
-            </svg></a>
-        </div>
-      </div>
-      <div class="d-flex align-items-center ">
-        <div>
-            {% live_notify_badge %}
-          <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-            data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
-            <svg style="transform: rotate(30deg)" width="22" height="22" viewBox="0 0 16 16" class="bi bi-bell-fill"
-              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div>
-      <button
-        class="mr-4 no-border no-outline my-auto my-md-auto btn-md border btn-circle rounded-circle text-dark ml-1 navbar-toggler"
-        type="button" data-toggle="collapse" data-target="#navbarMainHeader" aria-controls="navbarMainHeader"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <svg width="25" height="25" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-        </svg>
-      </button>
-    </div>
-  </div>
-  
-  <div class="collapse navbar-collapse mr-4" id="navbarMainHeader">
-    <form autocomplete="xyz" class="my-auto form-inline " action="{% url 'home:search-all' %}" method="GET"
-      style="width: 22%;">
-      <div class="d-flex justify-content-center h-100">
-        <div class="d-flex searchbar">
-          <div>
-            <input id="searchbar_n" autocomplete="off" data-url="{% url 'home:search-get' %}" class="mr-5 search_input"
-              type="search" spellcheck="false" name="q" placeholder="Search" />
-            <div class="p-1 border rounded search-query-result bg-white">
-              <ul class="bg-white list-group list-group-flush">
-                <div class="usrchctr">
-                  <div class="bg-white">
-                    <h6 class="p-2 _rcntrslt bg-white"></h6>
+<div class="nav-container">
+  <nav class="navbar navbar-expand main-top-nav pl-3 pr-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
+    <a class="navbar-brand ml-1 mr-3" href="{% url 'home:home' %}">
+        <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
+    </a> 
+    <div class="collapse navbar-collapse" id="navbarMainHeader">
+      <form autocomplete="xyz" class="d-none d-md-block" action="{% url 'home:search-all' %}" method="GET">
+        <div class="d-flex justify-content-center h-100">
+          <div class="d-flex searchbar">
+            <div>
+              <input id="searchbar_n" autocomplete="off" data-url="{% url 'home:search-get' %}" class="mr-5 search_input" style="margin-top: -4px !important;"
+                type="search" spellcheck="false" autocapitalize="off" name="q" placeholder="Search" />
+              <div class="p-1 border rounded search-query-result bg-white">
+                <ul class="bg-white list-group list-group-flush">
+                  <div class="usrchctr">
+                    <div class="bg-white">
+                      <h6 class="p-2 _rcntrslt bg-white"></h6>
+                    </div>
+                    <div class="_rcntrsltctr"></div>
                   </div>
-                  <div class="_rcntrsltctr"></div>
-                </div>
-                <div class="tpsrchctr">
-                  <div class="bg-white">
-                    <h6 class="p-2 _tprslt bg-white"></h6>
+                  <div class="tpsrchctr">
+                    <div class="bg-white">
+                      <h6 class="p-2 _tprslt bg-white"></h6>
+                    </div>
+                    <div class="_tprsltctr"></div>
                   </div>
-                  <div class="_tprsltctr"></div>
-                </div>
-              </ul>
+                </ul>
+              </div>
+              <input autocomplete="turnitof" type="hidden" value="top" name="o" />
             </div>
-            <input autocomplete="turnitof" type="hidden" value="top" name="o" />
-          </div>
-          <div>
-            <button type="submit" class="search_icon"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-      </div>
-    </form>
-    <ul class="navbar-nav ml-auto mt-lg-0 my-1">
-      <li class="nav-item mr-2 nav-goto-holder" data-url="{{ request.user.get_absolute_url }}">
-        <div class="d-flex align-items-center p-0 border-light" data-tooltip="tooltip" data-placement="bottom"
-          title="Profile">
-          <div>
-            <a href="{{ request.user.get_absolute_url }}" style="text-decoration: none;">
-              {% thumbnail request.user.image "40x40" crop="80% top" as im %}
-                <img class="rounded-circle border-0" id="nv_imgtabgetlsk" style="margin-top: 4px !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-              {% endthumbnail %}    
-            </a>
-          </div>
-          <div class="nav-name-icons ml-3 d-md-none">
-            <span>{{ request.user.first_name }}</span>
+            <div>
+              <button type="submit" class="search_icon"><i class="fas fa-search"></i></button>
+            </div>
           </div>
         </div>
-      </li>
-      <li class="nav-item mt-1 mr-2 d-none d-md-block">
-        <div class=" create-post-btn d-flex align-items-center p-0 border-light" data-url="{% url 'home:post-create' %}" data-tooltip="tooltip" data-placement="bottom"
-        title="Add">
-          <div >
-            <button class=" nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
-              <svg width="24" height="24" viewBox="0 0 16 16"  class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-              </svg></button>
-          </div>
-        </div>
-      </li>
-      <li class="nav-item active mt-1 mr-2 nav-goto-holder" data-url="{% url 'home:home' %}">
-        <div class="d-flex align-items-center">
-          <div>
-            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" title="Home" data-delay='{ "show": 500, "hide": 100 }'
-              href="{% url 'home:home' %}">
-              <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-house-door-fill" fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M6.5 10.995V14.5a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5V11c0-.25-.25-.5-.5-.5H7c-.25 0-.5.25-.5.495z" />
-                <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
-              </svg></a>
-          </div>
-          <div class="nav-name-icons ml-3 d-md-none">
-            <span>Home</span>
-          </div>
-        </div>
-      </li>
-      <li class="nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:friends-main' %}">
-        <div class="d-flex align-items-center">
-          <div>
-            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
-              href="{% url 'main:friends-main' %}">
-              <i class="mt-1 fas fa-2x fa-user-friends"></i><span class="nav-name-icons ml-3 d-md-none"></span></a>
-          </div>
-          <div class="nav-name-icons ml-3 d-md-none">
-            <span>Friends</span>
-          </div>
-        </div>
-      </li>
-      <li class="nav-item mr-2 mt-1 nav-goto-holder d-none d-md-block" data-url="{% url 'main:get-notifications' %}">
-        <div class="d-flex align-items-center">
-          <div>
-            {% live_notify_badge %}      
-            <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
-              <svg style="transform: rotate(30deg)" width="22" height="22" viewBox="0 0 16 16" class="bi bi-bell-fill"
-                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-              </svg>
-            </a>
-          </div>
-          <div class="nav-name-icons ml-3 d-md-none">
-            <span>Notifications</span>
-          </div>
-        </div>
-      </li>
-      <li class="d-md-none nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:settings-edit' %}">
-        <div class="d-flex align-items-center">
-          <div>
-            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
-              href="{% url 'main:settings-edit' %}">
-              <i class="fas fa-2x mt-1 fa-cog" style="margin-top:1.3rem;margin-left: 0.2rem;"></i> <span class="nav-name-icons ml-3 d-md-none"></span></a>
-          </div>
-          <div class="ml-2 nav-name-icons ml-3 d-md-none">
-            <span>Settings</span>
-          </div>
-        </div>
-      </li>
-      <li class="d-md-none nav-item mt-1 mr-2 nav-goto-holder" data-url="{% url 'main:user_logout' %}">
-        <div class="d-flex align-items-center">
-          <div>
-            <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-              data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
-              href="{% url 'main:user_logout' %}">
-              <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
-          </div>
-          <div class="nav-name-icons ml-3 d-md-none">
-            <span>Log out</span>
-          </div>
-        </div>
-      </li>
-      <li class="d-none d-md-block mt-1 nav-item border-left dropdown">
-        <a class="nav-link btn-md border btn-circle rounded-circle text-dark ml-3" id="navbarDropdown"
-          data-tooltip="tooltip" data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Menu"
-          role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd"
-              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+      </form>
+      <div class="float-left d-block d-md-none">
+        <a class="nav-item mt-1" style="color: rgba(39, 39, 39, 0.89);" href="{% url 'home:search-mobile' %}">
+          <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+            <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
           </svg>
         </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'main:settings-edit' %}"><i class="fas mr-1 fa-cog"></i> Settings</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item text-dark" href="{% url 'main:user_logout' %}"><i
-              class="fas mr-1 fa-sign-out-alt"></i> Log out</a>
-        </div>
-      </li>
-    </ul>
-  </div>
-</nav>
+      </div>
+      <ul class="navbar-nav ml-auto mt-lg-0 my-1">
+        <li class="nav-item mt-1  nav-goto-holder" data-url="{% url 'home:home' %}">
+          <div class="d-flex align-items-center">
+            <div>
+              <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+                data-placement="bottom" title="Home" data-delay='{ "show": 500, "hide": 100 }'
+                href="{% url 'home:home' %}">
+                <svg width="22" height="22"  viewBox="0 0 16 16" class="bi bi-house-door" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"  d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
+                  <path fill-rule="evenodd"  d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item mt-1 nav-goto-holder" data-url="{% url 'home:course-menu' %}">
+            <div class="d-flex align-items-center">
+              <div>
+                <a class="nav-link btn-md border btn-circle rounded-circle text-dark d-flex align-items-center" data-tooltip="tooltip"
+                  data-placement="bottom" title="Courses" data-delay='{ "show": 500, "hide": 100 }'
+                  href="{% url 'home:course-menu' %}">
+                  <svg width="21" height="21"  viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
+                    <path fill-rule="evenodd"
+                      d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+        </li>
+        <li class="nav-item mt-1 d-flex align-items-center" style="margin-left: -4px;margin-right: -4px;">
+          <div class=" create-post-btn d-flex align-items-center p-0 border-light" data-url="{% url 'home:post-create' %}" data-tooltip="tooltip" data-placement="bottom"
+          title="Add">
+            <div >
+              <button class=" nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+                data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
+                <svg width="20" height="20" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                  <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg></button>
+            </div>
+          </div>
+        </li>   
+        <li class="nav-item nav-goto-holder" data-url="{% url 'main:get-notifications' %}" style="margin-top: 5px; margin-bottom: -3px;">
+          <div class="d-flex align-items-center">
+            <div>
+                <span id="live-notif-c" style="display: none;">{% live_notify_badge %}</span>   
+              <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+                data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
+                <svg style="transform: rotate(30deg)" width="21" height="21" viewBox="0 0 16 16" class="bi bi-bell" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
+                  <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item ">
+          <div class="d-flex align-items-center p-0 border-light">
+            <div class="dropdown">
+              <button class="nav-link btn-md border btn-circle rounded-circle text-dark" type="button" id="dropdownMenuProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% thumbnail request.user.image "32x32" crop="80% top" as im %}
+                  <img class="rounded-circle border-0" id="nv_imgtabgetlsk" style="margin-top: 2px !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                {% endthumbnail %}    
+              </button>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuProfile" style="font-size: 0.9rem;">
+                <span class="dropdown-menu-arrow"></span>
+                <a class="dropdown-item" href="{{ request.user.get_absolute_url }}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-person-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
+                  <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                  <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+                </svg><span class="m-1 ml-2">Profile</span></a>
+                <a class="dropdown-item" href="{% url 'main:friends-main' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                  </svg>
+                  <span class="m-1">Friends</span></a>
+                <a class="dropdown-item" href="{% url 'main:bookmarks' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-bookmark" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z" />
+                    </svg>
+                    <span class="m-1">Bookmarks</span></a>
+                <a class="dropdown-item" href="{% url 'home:blog' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-justify"
+                      fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                    <span class="m-1">Blogs</span></a>
+                <a class="dropdown-item" href="{% url 'home:users-posts' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-collection" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd"
+                        d="M14.5 13.5h-13A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5zm-13 1A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zM2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1z" />
+                    </svg>
+                    <span class="m-1">By You</span></a>
+                <a class="dropdown-item" href="{% url 'main:usertags' username=request.user.get_username %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-hash" fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M8.39 12.648a1.32 1.32 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1.06 1.06 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.512.512 0 0 0-.523-.516.539.539 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532 0 .312.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531 0 .313.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242l-.515 2.492zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z" />
+                    </svg>
+                    <span class="m-1">Tags</span></a>
+                <div class="dropdown-divider" style="color: rgb(85, 85, 85);"></div>
+                <a class="dropdown-item" href="{% url 'main:settings-edit' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
+                    <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
+                  </svg>
+                  <span class="m-1">Settings</span></a>
+                <a class="dropdown-item" href="{% url 'main:user_logout' %}">
+                  <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-box-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                  </svg>
+                  Logout</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- <li class="d-md-none nav-item mt-1  nav-goto-holder" data-url="{% url 'main:settings-edit' %}">
+          <div class="d-flex align-items-center">
+            <div>
+              <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+                data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+                href="{% url 'main:settings-edit' %}">
+                <i class="fas fa-2x mt-1 fa-cog" style="margin-top:1.3rem;margin-left: 0.2rem;"></i> <span class="nav-name-icons ml-3 d-md-none"></span></a>
+            </div>
+            <div class="ml-2 nav-name-icons ml-3 d-md-none">
+              <span>Settings</span>
+            </div>
+          </div>
+        </li>
+        <li class="d-md-none nav-item mt-1  nav-goto-holder" data-url="{% url 'main:user_logout' %}">
+          <div class="d-flex align-items-center">
+            <div>
+              <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+                data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
+                href="{% url 'main:user_logout' %}">
+                <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
+            </div>
+            <div class="nav-name-icons ml-3 d-md-none">
+              <span>Log out</span>
+            </div>
+          </div>
+        </li>
+        <li class="d-none d-md-block mt-1 nav-item border-left dropdown">
+          <a class="nav-link btn-md border btn-circle rounded-circle text-dark ml-3" id="navbarDropdown"
+            data-tooltip="tooltip" data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Menu"
+            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+            </svg>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'main:settings-edit' %}"><i class="fas mr-1 fa-cog"></i> Settings</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-dark" href="{% url 'main:user_logout' %}"><i
+                class="fas mr-1 fa-sign-out-alt"></i> Log out</a>
+          </div>
+        </li> -->
+      </ul>
+    </div>
+  </nav>
+
+</div>

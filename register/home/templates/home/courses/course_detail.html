@@ -32,7 +32,7 @@
 </div>
 <div>
     <div class="bg-white shadow-sm border" 
-        style="overflow:hidden !important;border-top-left-radius: 20px !important;border-top-right-radius: 20px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+        style="overflow:hidden !important;border-top-left-radius: 10px !important;border-top-right-radius: 10px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
         <div class="c_code align-items-center" style="background-color: {{ bgrnd }} !important; opacity: 0.9 !important;">
             <div class="d-flex justify-content-between pt-4 p-1">
                 <div>
@@ -58,7 +58,7 @@
                                 d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                         </svg>
                     </span>
-                    <span class="text-dark">University:</span>
+                    
                     <span class="ml-1">{{ course.course_university|capfirst }}</span>
                 </a>
                 <hr style="margin: 1px 1px 4px 1px !important;">
@@ -74,7 +74,7 @@
                                 d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
                         </svg>
                     </span>
-                    <span class="text-dark">Instructor:</span><span
+                    <span
                         class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                 </a>
                 <hr style="margin: 1px 1px 4px 1px !important;">

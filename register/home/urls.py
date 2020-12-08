@@ -61,6 +61,7 @@ urlpatterns = [
     path('posts/tag/<slug:slug>/', views.tags_post, name='tag-post'),
     path('blogs/tag/<slug:slug>/', views.tags_blog, name='tag-blog'),
     path('search', views.search, name='search-all'),
+    path('m/search/', views.search_mobile, name='search-mobile'),
     path('search/results/get', views.search_dropdown, name='search-get'),
     path('search/results/user/remove', views.remove_search, name='remove-search-query'),
     path('find/students', views.find_students, name='find-students'),

@@ -39,6 +39,7 @@ from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from allauth.account.utils import *
 import time
+from defender.decorators import watch_login
 
 
 hashids = Hashids(salt='v2ga hoei232q3r prb23lqep weprhza9',min_length=8)
@@ -206,12 +207,11 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'main/signup.html', {'form': form})
 
-#@user_passes_test(lambda user: not user.username, login_url='/home/', redirect_field_name=None)
+@watch_login(status_code=303)
 def user_login(request):
     if request.user.is_authenticated:
         if request.user.is_active:
             return redirect('home:home')   
-    #message = ''
     if request.method == 'POST':
         storage = messages.get_messages(request)
         for _ in storage:
@@ -236,10 +236,11 @@ def user_login(request):
         else:
             messages.error(request,'Sorry, the username or password you entered is not correct')
             if vp == 'md':
-                return redirect('login') 
+                url = reverse('login')
+                return HttpResponseRedirect(url, status=303)
             else:
-                return redirect('main:user_login')
-              
+                url = reverse('main:user_login')
+                return HttpResponseRedirect(url, status=303)    
     return render(request, 'main/user_login.html')
     
 def update_user_email_on_verification(request):

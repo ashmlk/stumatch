@@ -1,0 +1,39 @@
+{% extends 'home/homepage/base.html' %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-12">
+        <form autocomplete="xyz" action="{% url 'home:search-all' %}" method="GET">
+            <div class="d-flex justify-content-center h-100">
+              <div class="d-flex searchbar">
+                <div>
+                  <input id="searchbar_n" autocomplete="off" data-url="{% url 'home:search-get' %}" class="mr-5 search_input"
+                    type="search" spellcheck="false" name="q" placeholder="Search" />
+                  <div class="p-1 border rounded search-query-result bg-white">
+                    <ul class="bg-white list-group list-group-flush">
+                      <div class="usrchctr">
+                        <div class="bg-white">
+                          <h6 class="p-2 _rcntrslt bg-white"></h6>
+                        </div>
+                        <div class="_rcntrsltctr"></div>
+                      </div>
+                      <div class="tpsrchctr">
+                        <div class="bg-white">
+                          <h6 class="p-2 _tprslt bg-white"></h6>
+                        </div>
+                        <div class="_tprsltctr"></div>
+                      </div>
+                    </ul>
+                  </div>
+                  <input autocomplete="turnitof" type="hidden" value="top" name="o" />
+                </div>
+                <div>
+                  <button type="submit" class="search_icon"><i class="fas fa-search"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+    </div>
+</div>
+<script src="{% static 'js/search.js' %}"></script>
+{% endblock %}

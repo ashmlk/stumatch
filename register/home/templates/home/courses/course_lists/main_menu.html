@@ -17,7 +17,11 @@
                     <div>
                         <button type="button" style="border-radius:20px;" class="no-border no-outline btn btn-sm btn-primary create-list-btn"
                             data-url="{% url 'home:course-list-create' %}">
-                            Create List
+                            <span>
+                                <svg width="20" height="20" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                  </svg>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -33,9 +37,9 @@
                         <li class="list-group-item">
                             <div class="m-1 row d-flex align-items-center justify-content-between">
                                 <div class="info-all">
-                                    <a class="text-dark" class="card-title"
+                                    <a class="text-dark" class="card-title" style="text-decoration: none;"
                                         href="{% url 'home:course-list-obj' hid=list.get_hashid %}">
-                                        <strong>{{ list.title|capfirst }}</strong>
+                                        <strong class="h5" style="color: #375FAD ;">{{ list.title|capfirst }}</strong>
                                     </a>
                                 </div>
                                 <div class="dropdown">
@@ -75,14 +79,22 @@
                                 <div class="small text-muted">
                                     <div class="row d-flex justify-content-between">
                                         <div>
-                                            <span class="p-1 border-light"
-                                                style="border-radius: 10px; background-color: rgb(161, 224, 161);">
-                                                <span style="color: black;">{{ list.added_courses.count }} courses</span>
+                                            <span class="border-light text-muted">
+                                                {% with list.added_courses.count as cc %}
+                                                <span style="color: black;">
+                                                    {% if cc == 0 %}
+                                                    No Course Added
+                                                    {% elif cc == 1 %}
+                                                    {{cc}} Course
+                                                    {% else %}
+                                                    {{cc}} Courses
+                                                    {% endif %}
+                                                </span>
+                                                {% endwith %}
                                             </span>
                                         </div>
                                         <div>
-                                            <span class="p-1 border-light"
-                                                style="border-radius: 10px; background-color: rgb(204, 223, 235);">
+                                            <span class="p-1 border-light">
                                                 <span style="color: black;">Created on
                                                     {{ list.created_on|date:"M d, Y" }}</span>
                                             </span>

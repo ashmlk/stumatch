@@ -50,18 +50,26 @@
         <div class="mb-1 p-1">
             <div class="small text-muted">
                 <div class="row d-flex">
-                    <div class="mr-1">
-                        <span class="p-1 border-light"
-                            style="border-radius: 10px; background-color: rgb(161, 224, 161);">
-                            <span style="color: black;">{{ num_items }} courses</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span class="p-1 border-light"
-                            style="border-radius: 10px; background-color: rgb(204, 223, 235);">
-                            <span style="color: black;">Created on
-                                {{ list.created_on|date:"M d, Y" }}</span>
-                        </span>
+                    <div class="d-flex">
+                        <div>           
+                            {% with list.added_courses.count as cc %}     
+                                <span>
+                                    {% if cc == 0 %}
+                                    No Course Added
+                                    {% elif cc == 1 %}
+                                    {{cc}} Course
+                                    {% else %}
+                                    {{cc}} Courses
+                                    {% endif %}
+                                </span>
+                            {% endwith %}
+                        </div>
+                        <div class="mx-1">
+                            <span>•</span>
+                        </div>
+                        <div>
+                            <span>{{ list.created_on|date:"M d, Y" }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 from django.contrib.postgres.search import SearchVector
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from allauth.account.signals import user_signed_up, email_confirmed
+from allauth.account.signals import user_signed_up, email_confirmed, password_reset
 from allauth.account.models import EmailAddress
 from django.template.loader import render_to_string
 from main.models import Profile
@@ -9,6 +9,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from register.settings.production import sg
 import random
+from defender.utils import unblock_username, is_user_already_locked
 
 @receiver(post_save, sender=Profile)
 def update_search_vector_profile(sender, instance, **kwargs):
@@ -61,4 +62,13 @@ def email_confirmed_(request, email_address, **kwargs):
     except Exception as e:
         print(e.__class__)
         
+@receiver(password_reset, dispatch_uid='allauth_user_reset_password_success')
+def user_password_reset(request, user, **kwargs):
+    try:
+        if is_user_already_locked(user.username):
+            unblock_username(user.username)
+    except Exception as e:
+        print(e.__class__)
+        print(e)
+                
 

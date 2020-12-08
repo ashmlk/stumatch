@@ -42,18 +42,14 @@
     <div class="card-body">
         <div class="small text-muted">
             <div class="row d-flex justify-content-between">
-                <div>
-                    <span class="p-1 border-light"
-                        style="border-radius: 10px; background-color: rgb(161, 224, 161);">
-                        <span style="color: black;">{{ list.added_courses.count }} courses</span>
-                    </span>
+                <div>                
+                        <span >{{ list.added_courses.count }} courses</span>
                 </div>
                 <div>
-                    <span class="p-1 border-light"
-                        style="border-radius: 10px; background-color: rgb(204, 223, 235);">
-                        <span style="color: black;">Created on
-                            {{ list.created_on|date:"M d, Y" }}</span>
-                    </span>
+                    <span>•</span>
+                </div>
+                <div>
+                    <span>{{ list.created_on|date:"M d, Y" }}</span>
                 </div>
             </div>
         </div>

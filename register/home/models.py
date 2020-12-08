@@ -984,7 +984,7 @@ class Course(models.Model):
         r_dic = {0:"None",4:"Easy",3:"Medium",2:"Hard",1:"Most Failed"}
         return r_dic[int(self.course_difficulty)]
     
-    def is_liked(self,user):
+    def is_liked(self, user):
         return Course.course_likes.through.objects.filter(course__course_code=self.course_code,course__course_university__iexact=self.course_university,profile_id=user.id).exists()
     
     def not_liked(self,user):
@@ -1352,4 +1352,9 @@ class Professors(models.Model):
         except Exception as e:
             print(e)
             print(e.__class__)
+
+    
+    
+    
+    
     

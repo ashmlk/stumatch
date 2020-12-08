@@ -7,12 +7,12 @@
         {% bg_rand as bgrnd %}
         <div class="my-2 col-md-6 infinite-item">
             <a class="text-dark" style="text-decoration: none !important;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
-                <div class="card my-1" style="border-radius: 15px;">
+                <div class="card my-1" style="border-radius: 10px;">
                     <div class="p-0" >
                         <div class="sub-info">
                             <div class="mt-0 mb-1">
                                 <div class="d-flex border align-items-center justify-content-between" 
-                                style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 15px !important;border-top-right-radius: 15px; min-height:4rem;">
+                                style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 10px !important;border-top-right-radius: 10px; min-height:4rem;">
                                     <div class="p-2">
                                         <div class="ml-1" style="margin-bottom: -0.6rem;">
                                             <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
@@ -31,11 +31,6 @@
                                                     <path fill-rule="evenodd"
                                                         d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
                                                 </svg>
-                                            </span>
-                                            <span class="ccfield-t">
-                                                <strong>
-                                                    Instructor:
-                                                </strong>
                                             </span>
                                             <span class="ccfield-s">
                                                 {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}

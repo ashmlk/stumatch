@@ -577,6 +577,7 @@ $(document).ready(function () {
 	});
 	$('.live_notify_badge').on("DOMSubtreeModified", function (){
 	  if($('.live_notify_badge').first().text() != 0){
+		$('#live-notif-c').show()
 		$('.live_notify_badge').show();
 	  } else {
 		$('.live_notify_badge').hide();

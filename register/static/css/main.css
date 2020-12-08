@@ -41,7 +41,7 @@ box-shadow: none !important;
 background-color:rgb(214, 211, 211) !important;
 border-color: transparent !important;
 color: #000000;
-border-radius:8px;
+border-radius:5px;
 }
 
 .menu-link-active span{
@@ -309,10 +309,10 @@ font-size: 11px;
 text-align: center; 
 } 
 .likeBtn:hover svg{
-color:  rgba(43, 98, 153, 0.678);
+color:  rgb(236, 81, 94);
 }
 .likeBtn:hover .like-count {
-color:  rgba(43, 98, 153, 0.678);
+color:  rgb(236, 81, 94);
 }
 
 .mnpglk-active svg {
@@ -364,7 +364,7 @@ letter-spacing: 1px !important;
 color: rgb(80, 80, 80) !important;
 }
 #_pol3 .menu-link  {
-    border-radius: 8px;
+    border-radius: 5px;
 }
 ._rmvsrtus:hover{
 cursor: pointer !important;
@@ -427,7 +427,7 @@ ol.carousel-indicators {
     color: rgb(80, 80, 80) !important;
   }
   #_pol3 .menu-link  {
-      border-radius: 8px;
+      border-radius: 5px;
     }
   .profile-header-main-links .pro-link-goto {
       margin-right: 1.2rem !important;
@@ -568,7 +568,7 @@ box-shadow:  -9px 9px 18px #949ca1,
   color: rgb(80, 80, 80) !important;
 }
 #_pol3 .menu-link  {
-    border-radius: 8px;
+    border-radius: 5px;
   }
 .profile-header-main-links .pro-link-goto {
     margin-right: 1.2rem !important;
@@ -868,5 +868,12 @@ input[type="text"], input[type="password"] ,input[type="email"], select {
 @media only screen and (max-width: 700px) {
   .main-h1 {
     font-size: 2.55rem;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .post-box .post-list-holder {
+    width: 90%;
+    float: right;
   }
 }

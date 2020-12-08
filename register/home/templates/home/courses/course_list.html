@@ -6,13 +6,13 @@
     <title>Your Courses - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<div class="infinite-container pt-3 mb-4">
+<div class="row infinite-container pt-3 mb-4">
     {% for course in courses %}
     {% div_class as veid %}
     {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-    <div class="infinite-item mb-2" id="_cc_{{ veid }}" >
-        <div class="row border bg-white p-1" style="border-radius: 15px;">
-            <div class="col-sm-12 p-0">
+    <div class="col-md-6 infinite-item p-2" id="_cc_{{ veid }}" >
+        <div class="border bg-white p-1" style="border-radius: 10px;">
+            <div class="w-100 h-100 p-0">
                 <div class="d-flex justify-content-between ml-1 mr-1 border-bottom">
                     <div class="">
                         <div class="ml-1" style="margin-bottom: -0.6rem;">
@@ -73,7 +73,7 @@
                                     d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                             </svg>
                         </span>
-                        <span class="text-dark">University:</span><span class="ml-1">{{ course.course_university|capfirst }}</span>
+                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
                     </div>
                     <div class="c_dis border p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;"
                         data-url="{%url 'home:course-instructor' par1 par2 %}">
@@ -87,7 +87,7 @@
                                     d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
                             </svg>
                         </span>
-                        <span class="text-dark">Instructor:</span>
+                        
                         <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
                     </div>
                     <div class="c_dis border p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
@@ -97,7 +97,7 @@
                                 <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
                           </svg>
                         </span>
-                        <span class="text-dark">Year:</span><span class="text-primary ml-1">{{ course.course_year }}</span>
+                        <span class="text-primary ml-1">{{ course.course_year }}</span>
                     </div>
                     <div class="c_dis border  p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
                         <span class="svg-icon ccs mr-1 text-primary">
@@ -107,10 +107,10 @@
                                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
                           </svg>
                         </span>
-                        <span class="text-dark">Semester:</span><span class="text-primary ml-1">{{ course.sem }}</span>
+                        <span class="text-primary ml-1">{{ course.sem }}</span>
                     </div>
                 </div>
-                <div class="d-flex border-top justify-content-between mb-0 mt-1">
+                <div class="d-flex border-top justify-content-between mb-0 mt-1 float-bottom">
                     <div class="d-flex votes-container ml-1" style="margin-top: -2px !important;">
                         {% include 'home/courses/course_vote.html' with course=course %}
                     </div>

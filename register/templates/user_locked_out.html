@@ -1,5 +1,4 @@
 {% load static %}
-{% load socialaccount %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +9,7 @@
     <meta name=”robots” content="index, follow">
     <meta name=”googlebot” content="index, follow">
     <meta name="description" content="JoinCampus is a platform that students can connect with each other, manage their courses, and find others in their classes and expand their network."/>
-    <title>JoinCampus - Login</title>
+    <title>JoinCampus</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -39,58 +38,23 @@
                 </div>
               </a>
             </div>
-            {% if messages %}
-              <div>
-                  <div class="d-flex align-items-center">
-                      <div>
-                          {% for message in messages %}
-                          <div class="alert alert-light alert-dismissible fade show" role="alert">
-                            <span {% if message.tags %} {% if message.tags == 'error' %} class="text-danger" {% else %} class="text-{{ message.tags }}" {% endif %} {% endif %}> {{ message }} </span><br>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>                
-                          {% endfor %}
-                      </div>
-                  </div>
-              </div>
-          {% endif %}
             <div class="card-signin my-auto">
               <div class="card-body">
-                <form method="POST" action="{% url 'main:user_login' %}" class="form-signin">
-                  {% csrf_token %}
-                  <div class="form-label-group" style="margin-bottom: 7px;">
-                    <input type="text" name="username" id="inputText" class="form-control" placeholder="Username or Email" required>
+                <div class="d-flex align-items-center text-center">
+                  <div>
+                    <p>We have detected an unusual login attempt. Please try again in a few moments or reset your password.</p>
+                    <p class="text-center">
+                      <a class="text-muted" href="{% url 'account_reset_password' %}" id="signup" style="font-size: .9rem;">Forgot Password?</a>
+                    </p>
                   </div>
-                  <div class="form-label-group">
-                   <input type="password"  name="password" id="inputPassword" class="form-control" placeholder="Password" required>   
-                  </div>
-                  <button type="submit" class="btn mt-3 w-100 btn-primary ">
-                    <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-24px;font-weight: 500;">Log in</span>
-                  </button>
-                  <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
-                  <a class="btn mt-2 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
-                    <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span>
-                  </a>
-                  <hr class="my-4">
-                  <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
-                  <a class="text-muted" href="{% url 'account_reset_password' %}" style="font-size: .9rem;">Forgot Password?</a>
-                  <input type="hidden" name="vp" value="md">
-                </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     <div id="footer-main-div">
-      {% include 'footer_main.html' %}
+      {% include 'footer_main_social.html' %}
     </div>
 </body>
-<style>
-  .google-icon {
-    margin-left: 10px;
-    width: 22px;
-    height: 22x;
-  }
-</style>
 </html>

@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.urls import path,include
 from main import views
 from django.contrib.auth import views as auth_views
+from defender.decorators import watch_login
 from .models import BookmarkBlog, BookmarkBuzz, BookmarkPost
 from django.conf.urls import handler400, handler403, handler404, handler500
 from django.contrib.sitemaps.views import sitemap
@@ -24,9 +25,8 @@ urlpatterns=[
     path('about/',views.about_html,name='site-about'),
     path('contact/',views.contact_us,name='contact-us'),
     path('signup/',views.signup,name='signup'),
-    path('update/email/signup/action/',views.update_user_email_on_verification,name='update-user-email-signup'),
-    #path('signup/complete',views.user_completesignup,name='user_completesignup'),
     path('',views.user_login, name='user_login'),
+    path('update/email/signup/action/',views.update_user_email_on_verification,name='update-user-email-signup'),
     path('signout', views.user_logout, name='user_logout'),
     path('report/submit/<str:reporter_id>', views.report_object,name='report-object'),
     path('settings/edit/profile/', views.edit_profile, name='settings-edit'),
@@ -50,7 +50,6 @@ urlpatterns=[
     path('settings/notifications/friends/', views.notifications_friends_all, name='notifications-settings-friends'),
     path('settings/login_info/', views.login_info, name='login-info'),
     path('settings/blocked/', views.get_blocking, name='settings-blocked'),
-    path('', include('django.contrib.auth.urls')),
     path('u/<str:username>/', views.get_user, name='get_user'),
     path('u/friends', views.get_user_friends, name='get_user_friends'),
     path('u/posts', views.get_user_posts, name='get_user_posts'),
@@ -73,4 +72,6 @@ urlpatterns=[
     path('your_notifications/mark_as_read', views.mark_notification_as_read,name='mark-notification-as-read'),
     path('your_notifications/delete', views.delete_notification,name='delete-notification'),
     path('get/user/mentions', views.get_user_mentions,name='get-user-mentions')
+    #path('signup/complete',views.user_completesignup,name='user_completesignup'),
+    #path('', include('django.contrib.auth.urls')),
 ]

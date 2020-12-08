@@ -1,7 +1,7 @@
 from register.settings.common import *
 import os
 from urllib.parse import urlparse
-import django_heroku
+#import django_heroku
 import dj_database_url
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -50,11 +50,11 @@ ALLOWED_HOSTS = ['.herokuapp.com','wwww.joincampus.ca','.joincampus.ca']
 
 CACHES = {
     'default': {
-        'BACKEND': "redis_cache.RedisCache",
+        'BACKEND': "django_redis.cache.RedisCache",
         'LOCATION': os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379'), 
         "OPTIONS": {
             'DB': 0,
-            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
@@ -95,6 +95,3 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_DEFAULT_ACL = None
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400',}
 DEFAULT_FILE_STORAGE = 'register.storage_backends.MediaStorage'
-
-
-

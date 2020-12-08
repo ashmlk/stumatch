@@ -2151,6 +2151,9 @@ def tags_blog(request, slug):
     return render(request, 'home/blog/blog.html', context)
 
 
+@login_required
+def search_mobile(request):
+    return render(request, 'home/search/search_mobile.html')
 
 @login_required
 def search(request):

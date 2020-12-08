@@ -39,7 +39,7 @@ $(document).ready(function () {
         });
     });
 
-    ('mngpl').on('click', function () {
+    $('.mngpl').on('click', function () {
         window.location = $(this).find('a').attr('href');
     })
 })
