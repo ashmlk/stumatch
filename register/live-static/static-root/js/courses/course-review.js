@@ -23,7 +23,7 @@ $(document).ready(function(){
             $("#crsrwalcts").html(data.reviews_all_count)
             $("#crsspecrw").html(data.reviews_count)
 			$('#crwfrmcntr').find(form).remove()
-			$('#crwfrmcntr').html('<p class="text-muted text-center">Your review was successfully submitted. You can write <strong>one</strong> review for every instructor\'s course</p>')
+			$('#crwfrmcntr').html('<p class="text-muted text-center">Your review was successfully submitted. You can only write one review per course for each instructor.</p>')
 		  },
 		  error: function(rs, e){
 					console.log(rs.responeText);
