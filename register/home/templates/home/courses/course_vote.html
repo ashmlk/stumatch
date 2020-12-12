@@ -7,7 +7,7 @@
 {% check_not_liked as disliked %}
 <form method="POST" class="m-0 p-0 course-vote-form">
     {% csrf_token %}
-    <div class="d-flex justify-content-between" style="min-width: 80px !important;">
+    <div class="d-flex justify-content-start" style="min-width: 80px !important;">
         {% if liked %}
         <div>
             <button class="p-0 btn btn-lg no-border rounded-0" style="width: 1.41rem;height: 1.41rem;display: inline-block;pointer-events: none;">

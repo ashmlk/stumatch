@@ -9,7 +9,7 @@
 {% block contentmenu %}
 <div class="container mt-5 p-2">
     {% if incoming %}
-    <div class="jumbotron jumbotron-fluid bg-primary-medium" style="padding:10px 10px 10px 10px !important;">
+    <div class="jumbotron jumbotron-fluid bg-primary-medium" style="padding:8px 8px 8px 8px !important;">
         <p class="lead text-white text-center mt-3">Explore universities and see their courses, instructors, and students.</p>
         <hr class="mb-2">
         <div class="d-flex justify-content-center">
@@ -56,11 +56,11 @@
                                 {% bg_rand as bgrnd %}
                                 {% div_class as veid %}
                                 {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-                                <div class="card my-1" style="border-radius: 10px;">
+                                <div class="card my-1" style="border-radius: 8px;">
                                     <div class="p-0" >
                                         <a style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
                                             <div class="d-flex border align-items-center justify-content-between" 
-                                            style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 10px !important;border-top-right-radius: 10px; min-height:4rem;">
+                                            style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; min-height:4rem;">
                                                 <div class="p-2">
                                                     <div class="ml-1" style="margin-bottom: -0.6rem;">
                                                         <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
@@ -241,7 +241,7 @@
                             </div>
                             <div class="d-flex pl-3">
                                 {% for user in friends_courses %}
-                                <div style="margin-left: -10px;">
+                                <div style="margin-left: -8px;">
                                     {% thumbnail user.image "35x35" crop="90% top" as im %}
                                     <img class="rounded-circle" style="margin:{{ im|margin:'35x35' }}; border:3px solid white !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
                                     {% endthumbnail %}
@@ -249,7 +249,7 @@
                                 {% endfor %}
                                 {% if friends_courses and fwc_count %}
                                 <div class="text-muted small"
-                                 style="background-color:rgb(219, 219, 219);width:36px;height:36px;margin-left: -10px;border:3px solid white !important; border-radius: 50%; text-align: center; padding: 5px 5px 2px 2px;">
+                                 style="background-color:rgb(219, 219, 219);width:36px;height:36px;margin-left: -8px;border:3px solid white !important; border-radius: 50%; text-align: center; padding: 5px 5px 2px 2px;">
                                     <span class="small">+{{ fwc_count }}</span>
                                 </div>
                                 {% elif not no_courses %}
@@ -352,9 +352,9 @@
                         <div class="mt-2 mx-3">
                             {% for course in saved_courses %}
                             {% bg_rand as bgrnd %}
-                            <div class="card mb-2 bg-white" style="border-radius:10px;">
+                            <div class="card mb-2 bg-white" style="border-radius:8px;">
                                 <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
-                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:10px;border-top-right-radius:10px;"
+                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:8px;border-top-right-radius:8px;"
                                         href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
                                         <div class="ml-2">               
                                             <h3 class="pt-2 font-weight-bold">{{ course.course_code }}</h3>                

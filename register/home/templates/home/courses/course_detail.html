@@ -32,8 +32,8 @@
 </div>
 <div>
     <div class="bg-white shadow-sm border" 
-        style="overflow:hidden !important;border-top-left-radius: 10px !important;border-top-right-radius: 10px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-        <div class="c_code align-items-center" style="background-color: {{ bgrnd }} !important; opacity: 0.9 !important;">
+        style="overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+        <div class="c_code align-items-center" style="background-color: {{ bgrnd }} !important;">
             <div class="d-flex justify-content-between pt-4 p-1">
                 <div>
                     <h5 class="mt-1 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
@@ -125,34 +125,36 @@
             </div>
         </div>
     </div>
-    <div>
-        {% if taken %}
-        <button class="v_rebtn col-sm-12 my-1 border-0 btn  small btn-primary" data-text="Show"
-            style="text-decoration: none;" type="button">Write a Review</button>
-        {% else %}
-        <button class="col-sm-12 my-1 btncrsatadd border-0 btn  small btn-primary"
-             type="button" style="text-decoration: none;"
-            data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">Add
-            Course</button>
-        {% endif %}
-    </div>
-    <div>
-        <!-- removed acaffd class -->
-        <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
-            href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">Discover Students</a>
-    </div>
-    <div>
-        <!-- removed acaffd class -->
-        <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
-            href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All
-            Instructors</a>
-    </div>
-    <div>
-        <form method="POST" class="course-save-form">
-            {% csrf_token %}
-            <button class="col-sm-12 border-0 mb-1 btn small btn-primary save-course" type="submit"
-                data-url="{% url 'home:course-save' course.id %}">Save</button>
-        </form>
+    <div class="row">
+        <div class="col-md-12">
+            {% if taken %}
+            <button class="v_rebtn col-sm-12 my-1 border-0 btn  small btn-primary" data-text="Show"
+                style="text-decoration: none;" type="button">Write a Review</button>
+            {% else %}
+            <button class="col-sm-12 my-1 btncrsatadd border-0 btn  small btn-primary"
+                 type="button" style="text-decoration: none;"
+                data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">Add
+                Course</button>
+            {% endif %}
+        </div>
+        <div class="col-md-12">
+            <!-- removed acaffd class -->
+            <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
+                href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">Discover Students</a>
+        </div>
+        <div class="col-md-12">
+            <!-- removed acaffd class -->
+            <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
+                href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All
+                Instructors</a>
+        </div>
+        <div class="col-md-12">
+            <form method="POST" class="course-save-form">
+                {% csrf_token %}
+                <button class="col-sm-12 border-0 mb-1 btn small btn-primary save-course" type="submit"
+                    data-url="{% url 'home:course-save' course.id %}">Save</button>
+            </form>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="modal-save-course">

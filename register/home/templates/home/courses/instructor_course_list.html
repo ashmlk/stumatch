@@ -78,17 +78,17 @@
         {% endif %}
     </div>
     <div>
-        <img class="mb-1" src="{% static 'default/courses/instructors-char-1.png' %}" alt="Course Image" style="margin-top:-10px;height:120px;width: 100px;">
+        <img class="mb-1" src="{% static 'default/courses/instructors-char-1.png' %}" alt="Course Image" style="margin-top:-8px;height:120px;width: 100px;">
     </div>
 </div>
 <div class="infinite-container course-list row mt-1 px-2">
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="infinite-item col-md-6 p-1">
-        <div class="card mb-2 bg-white" style="border-radius: 10px;">
+        <div class="card mb-2 bg-white" style="border-radius: 8px;">
             <a class="text-white" style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
                 <div class="d-flex justify-content-between align-items-center course-title-box"  
-                    style="min-height:6rem; background-color: {{ bgrnd }};border-top-left-radius:10px;border-top-right-radius:10px;">
+                    style="min-height:6rem; background-color: {{ bgrnd }};border-top-left-radius:8px;border-top-right-radius:8px;">
                     <div class="d-flex ml-1"> 
                         <h3 class="mt-1 font-weight-bold">{{ course.course_code }}</h3>
                     </div>
