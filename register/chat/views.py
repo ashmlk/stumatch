@@ -42,6 +42,7 @@ def get_or_create_private_chat(request, id):
     except Exception as e:
         print(e)
         return redirect('chat:index')
+    print(chatroom.guid)
     return redirect(reverse('chat:private-chat', kwargs={'room_id':chatroom.guid}))
     
 

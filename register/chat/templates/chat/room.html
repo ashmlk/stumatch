@@ -40,7 +40,7 @@
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var username =  JSON.parse(document.getElementById('request-user-username').textContent);
         var user2 =  JSON.parse(document.getElementById('user2-username').textContent);
-        var message_time = null;
+        var last_message_time = null;
         const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
@@ -74,11 +74,19 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            var idx = null;
             if (data['command'] === 'messages') {
                 for (let i=0; i< data['messages'].length; i++){
-                    createMessage(data['messages'][i]);                    
+                    createMessage(data['messages'][i]);  
+                    idx = i;                  
                 }
-                message_time = data['messages'][data['messages'][i]['timestamp']]
+                try {
+                    message_time = data['messages'][data['messages'][idx]['timestamp']]
+                }
+                catch(err) {
+                    console.error();
+                }
+                
             } else if (data['command'] === 'new_message') {
                 createMessage(data['message'])
             } else if (data['command'] === 'new_message_other') {
@@ -108,6 +116,7 @@
         }
 
         function createMessage(data){
+            var time_stamp_ctr = false;
             var author = data['author'];
             if ("last_message_content" in data) {
                 $("#"+hashiduser2+"__chat__last_msg").find('.message').html(data['last_message_content']);
@@ -115,35 +124,91 @@
                 $("#"+hashiduser2+"__chat__last_msg").find('.button__separator_time').html("•");             
             }
             var divMainMessageTag = document.createElement('div');
-            divMainMessageTag.className = 'message-container ';
+            divMainMessageTag.className = 'message-container';
             var msgListTag = document.createElement('div');
-            msgListTag.className = 'mb-3 ';
+            msgListTag.className = 'mb-2';
             var pTag = document.createElement('p');
             pTag.textContent = data.content;
+            var msgTimeStamp = document.createElement('div')
+            msgTimeStamp.className = 'msg_time__container_text hidden__time_stamp'
+            var msgTimeStampSpan = document.createElement('span')
+            msgTimeStampSpan.className = 'p-0 small text-muted'
+            msgTimeStamp.textContent = moment.utc(moment(data['timestamp'])).format('HH:mm');
+            msgTimeStamp.appendChild(msgTimeStampSpan)
             if (author === username) {
-                divMainMessageTag.className += 'sent float-right';                
+                divMainMessageTag.className += 'sent float-right';   
+                msgTimeStamp.className += 'float-right align-right'             
             } else {
                 divMainMessageTag.className += 'replies float-left';
+                msgTimeStamp.className += 'float-left align-left'  
             }
             divMainMessageTag.appendChild(pTag);
             msgListTag.appendChild(divMainMessageTag);
+            msgListTag.appendChild(msgTimeStamp)
+            if(last_message_time != null){
+                message_time =  data['timestamp'];
+                time_stamp_ctr = createTimeStamp(message_time);         
+            } else {
+                last_message_time = moment(moment.utc(moment(data['timestamp'])).format('YYYY-MM-DD HH:mm:ss'));
+            }
             if ("last_message_content" in data) {
+                if(time_stamp_ctr != false){
+                    document.querySelector('#chat-log').appendChild(time_stamp_ctr);
+                }               
                 document.querySelector('#chat-log').appendChild(msgListTag);
             } else {
+                 
                 document.querySelector('#chat-log').prepend(msgListTag);
-            }           
-            var elem = document.getElementById('chat-log');
-            var shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
-            scrollToBottom();           
+                if(time_stamp_ctr != false){
+                    document.querySelector('#chat-log').prepend(time_stamp_ctr);
+                } 
+            }
+            if(("last_message_content" in data)||data.is_fetching){
+                var elem = document.getElementById('chat-log');
+                var shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
+                scrollToBottom(); 
+            } else {
+                scrollOffset();
+            }                        
         }
 
         function scrollToBottom() {
             $('#chat-log').scrollTop($('#chat-log').height()*1000);
         }
 
-        function getDateDifferenceTag(new_time) {
-            // create time difference tag here
+        function scrollOffset() {
+            $('#chat-log').scrollTop($('#chat-log').height()*0.2);
         }
+
+        function createTimeStamp(message_time) {
+            var current_time = moment();
+            var msg_time = moment(moment.utc(moment(message_time)).format('YYYY-MM-DD HH:mm:ss'));
+            var diff = moment.duration(last_message_time.diff(msg_time)).asDays();
+            if(diff > 1){
+                if(msg_time.isSame(current_time, 'year')){
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM, D") + '</span>';
+                    var time_stamp_element = document.createElement('div');
+                    time_stamp_element.className = 'w-100 mb-2 text-center '
+                    time_stamp_element.innerHTML = time_stamp;
+                    last_message_time = moment(moment.utc(moment(message_time)).format('YYYY-MM-DD HH:mm:ss'));
+                    return time_stamp_element;
+                } else {
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM, D YYYY") + '</span>';
+                    var time_stamp_element = document.createElement('div');
+                    time_stamp_element.className = 'w-100 mb-2 text-center '
+                    time_stamp_element.innerHTML = time_stamp;
+                    last_message_time = moment(moment.utc(moment(message_time)).format('YYYY-MM-DD HH:mm:ss'));
+                    return time_stamp_element;
+                }
+            }          
+            return false;
+        }
+
+        $(document).ready(function () {
+            $(document).on('click', '.message-container', function () {
+                $(this).find('.msg_time__container_text').toggleClass('hidden__time_stamp')
+            })
+        })
 
     </script>
     <style>

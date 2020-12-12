@@ -7,6 +7,7 @@ from django.utils import timezone
 from math import log
 import math
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 
 class MessageManager(models.Manager):
@@ -96,9 +97,10 @@ class PrivateChat(models.Model):
     
     def get_last_message(self):
         try:
-            return Message.objects.get(id=self.last_message)
+            return Message.objects.filter(privatechat=self).order_by('-timestamp').first()
         except Exception as e:           
-            return None
+            print(e)
+            return ''
     
 class Message(models.Model):
     author = models.ForeignKey(Profile, related_name='author_messages', on_delete=models.CASCADE)
@@ -110,7 +112,7 @@ class Message(models.Model):
         return self.author.username
     
     def get_time_sent(self):
-        return str(self.timestamp) + " UTC"
+        return str(self.timestamp)
     
     def get_time_sent_formatted(self):
         now = timezone.now()

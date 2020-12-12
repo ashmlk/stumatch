@@ -8,7 +8,7 @@ from hashids import Hashids
 import math
 from channels.db import database_sync_to_async
 
-hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ iojpf909wrwas',min_length=32)
+hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 
 class ChatConsumer(WebsocketConsumer):        
     def __init__(self, *args, **kwargs):
@@ -30,7 +30,8 @@ class ChatConsumer(WebsocketConsumer):
                 'id':message.id,
                 'author':message.author.username,
                 'content':message.content,
-                'timestamp':str(message.get_time_sent),
+                'timestamp':message.get_time_sent(),
+                'is_fetching':True,
             }
             result.append(json_message)
         content = {
@@ -39,6 +40,7 @@ class ChatConsumer(WebsocketConsumer):
         }
         self.send_chat_message(content)
         
+    
     def load_messages(self, data):
         room = PrivateChat.objects.get(guid=data['room_id'])
         messages, has_messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
@@ -50,7 +52,7 @@ class ChatConsumer(WebsocketConsumer):
                 'id':message.id,
                 'author':message.author.username,
                 'content':message.content,
-                'timestamp':str(message.get_time_sent),
+                'timestamp':message.get_time_sent(),
                 }
                 result.append(json_message)
         content = {
@@ -69,14 +71,14 @@ class ChatConsumer(WebsocketConsumer):
                 privatechat = self.room
             )
         self.last_message = message
-        self.room.set_last_message(message.id)
+        #self.room.set_last_message(message.id)
         json_message =  {
             'id':message.id,
             'author':message.author.username,
             'content':message.content,
-            'timestamp':str(message.get_time_sent),
-            'last_message_content':self.last_message.content,
-            'last_message_time':self.last_message.get_time_sent_formatted()
+            'timestamp':message.get_time_sent(),
+            'last_message_content':message.content,
+            'last_message_time':message.get_time_sent_formatted()
             }
         content = {
             'command':'new_message',
