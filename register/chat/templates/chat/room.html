@@ -192,8 +192,6 @@
             } else {
                 scrollOffset();
             }  
-            
-          
         }
 
         function scrollToBottom() {
@@ -209,21 +207,16 @@
             var msg_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
             var diff = moment.duration(last_message_time.diff(msg_time)).asDays();
             if(diff > 1){
+                var time_stamp_element = document.createElement('div');
+                time_stamp_element.className = 'w-100 mb-2 text-center '
+                last_message_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
                 if(msg_time.isSame(current_time, 'year')){
                     var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D") + '</span>';
-                    var time_stamp_element = document.createElement('div');
-                    time_stamp_element.className = 'w-100 mb-2 text-center '
-                    time_stamp_element.innerHTML = time_stamp;
-                    last_message_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
-                    return time_stamp_element;
                 } else {
                     var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D, YYYY") + '</span>';
-                    var time_stamp_element = document.createElement('div');
-                    time_stamp_element.className = 'w-100 mb-2 text-center '
-                    time_stamp_element.innerHTML = time_stamp;
-                    last_message_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
-                    return time_stamp_element;
                 }
+                time_stamp_element.innerHTML = time_stamp;
+                return time_stamp_element;
             }          
             return false;
         }
