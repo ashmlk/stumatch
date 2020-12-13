@@ -78,7 +78,7 @@
                                                 </div>
                                                 <div class="mx-2">
                                                     <div class="text-dark font-weight-bolder">{{ user.get_full_name }}</div>
-                                                    <span style="font-size: 1rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
+                                                    <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
                                                         {% with last_message_content|get_dict_item:user.username as dict %}
                                                         <span class="message">
                                                             {{  dict|get_dict_item:"content" }}
@@ -86,7 +86,7 @@
                                                         <span class="mx-1 button__separator_time">
                                                         {% if dict|get_dict_item:"content" != '' %}•{% endif %}
                                                         </span>                                                 
-                                                        <span id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
+                                                        <span style="font-size: 0.95rem;" id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
                                                            {{ dict|get_dict_item:"time" }}
                                                         </span>
                                                         {% endwith %}
@@ -126,8 +126,7 @@
         .last-message-holder .message {   
             white-space: nowrap !important;
             display:inline-block;
-            max-width: 180px !important;    
-            color: red;               /* IE6 needs any width */
+            max-width: 180px !important;                  /* IE6 needs any width */
             overflow: hidden !important;              /* "overflow" value must be different from  visible"*/ 
             -o-text-overflow: ellipsis !important;    /* Opera < 11*/
             text-overflow:    ellipsis !important; 
@@ -135,6 +134,9 @@
         }
         .msg_time__container_text.hidden__time_stamp {
             display: none;
+        }
+        .min-msg-p {
+            min-width: 30px !important;
         }
      </style>
 </body>

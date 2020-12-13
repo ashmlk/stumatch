@@ -71,8 +71,11 @@ class PrivateChat(models.Model):
     
     def get_messages(self, pre_connect_count=None, page=None):
         if page == None:
+            has_messages = False
             messages = Message.objects.filter(privatechat=self).order_by('-timestamp')[:15]
-            has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
+            if messages.count() < 1:
+                has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
+                messages = []
             return messages, has_messages
         else:
             messages_all = Message.objects.filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
@@ -102,6 +105,13 @@ class PrivateChat(models.Model):
             print(e)
             return ''
     
+    def get_first_message_time(self):
+        try:
+            return self.messages.order_by('timestamp').first().get_time_sent()
+        except Exception as e:
+            print(e)
+            return ''
+   
 class Message(models.Model):
     author = models.ForeignKey(Profile, related_name='author_messages', on_delete=models.CASCADE)
     content = models.TextField()

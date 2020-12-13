@@ -21,46 +21,57 @@ class ChatConsumer(WebsocketConsumer):
         self.messages_all_loaded = False
         
     def fetch_messages(self, data):
-        room = PrivateChat.objects.get(guid=data['room_id'])
-        messages, has_messages = room.get_messages()
-        self.messages_all_loaded = not has_messages
-        result = []
-        for message in messages:
-            json_message =  {
-                'id':message.id,
-                'author':message.author.username,
-                'content':message.content,
-                'timestamp':message.get_time_sent(),
-                'is_fetching':True,
+        if data['username'] == self.user.username:
+            room = PrivateChat.objects.get(guid=data['room_id'])
+            messages, has_messages = room.get_messages()
+            self.messages_all_loaded = not has_messages
+            result = []
+            if len(messages) > 0:
+                for message in messages:
+                    json_message =  {
+                        'id':message.id,
+                        'author':message.author.username,
+                        'content':message.content,
+                        'timestamp':message.get_time_sent(),
+                        'is_fetching':True,
+                    }
+                    result.append(json_message)
+            content = {
+                'command':'messages',
+                'messages': result,
+                'requested_by':data['username'],
+                'is_fetching':True
             }
-            result.append(json_message)
-        content = {
-            'command':'messages',
-            'messages': result
-        }
-        self.send_chat_message(content)
+            if self.messages_all_loaded and len(messages) > 0:
+                content['first_message_time'] = room.get_first_message_time()
+            self.send_chat_message(content)
         
     
     def load_messages(self, data):
-        room = PrivateChat.objects.get(guid=data['room_id'])
-        messages, has_messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
-        self.page+=1
-        result = []
-        if not self.messages_all_loaded:
-            for message in messages:
-                json_message =  {
-                'id':message.id,
-                'author':message.author.username,
-                'content':message.content,
-                'timestamp':message.get_time_sent(),
-                }
-                result.append(json_message)
-        content = {
-            'command':'messages',
-            'messages': result
-        }
-        self.messages_all_loaded = not has_messages
-        self.send_chat_message(content) 
+        if data['username'] == self.user.username:
+            room = PrivateChat.objects.get(guid=data['room_id'])
+            messages, has_messages = room.get_messages(pre_connect_count=self.messages_pre_connect_count,page=self.page+1)
+            self.page+=1
+            result = []
+            if not self.messages_all_loaded:
+                for message in messages:
+                    json_message =  {
+                    'id':message.id,
+                    'author':message.author.username,
+                    'content':message.content,
+                    'timestamp':message.get_time_sent(),
+                    }
+                    result.append(json_message)
+            content = {
+                'command':'messages',
+                'messages': result,
+                'requested_by':data['username'],
+                'is_loading':True
+            }
+            self.messages_all_loaded = not has_messages
+            if self.messages_all_loaded:
+                content['first_message_time'] = room.get_first_message_time()
+            self.send_chat_message(content) 
         
     def new_message(self, data):
         author = data['from']
@@ -82,7 +93,8 @@ class ChatConsumer(WebsocketConsumer):
             }
         content = {
             'command':'new_message',
-            'message':json_message
+            'message':json_message,
+            'is_new_message':True
         }
         return self.send_chat_message(content)
     
@@ -98,19 +110,14 @@ class ChatConsumer(WebsocketConsumer):
     
     def connect(self):
         self.user = self.scope['user']
-        self.user2 = self.scope['url_route']['kwargs']['user2']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         user1 = Profile.objects.get(username = self.user.username)
-        user2 = Profile.objects.get(username = self.user2)
-
         if PrivateChat.objects.filter(
-            Q(user1 = user1, user2=user2, guid=self.room_id) | Q(user1=user2, user2=user1, guid=self.room_id)
+            Q(user1 = user1, guid=self.room_id) | Q(user2=user1, guid=self.room_id)
         ).exists():
             self.room = PrivateChat.objects.filter(
-                Q(user1 = user1, user2=user2, guid=self.room_id) | Q(user1=user2, user2=user1, guid=self.room_id)
+                Q(user1 = user1, guid=self.room_id) | Q(user2=user1, guid=self.room_id)
             )[0]
-        else:
-            self.room = PrivateChat.objects.create(user1=user1, user2=user2)
         self.room_group_name = 'chat_%s' % str(self.room.guid)
         self.messages_pre_connect_count = self.room.get_messages_count()
         async_to_sync(self.channel_layer.group_add)(
