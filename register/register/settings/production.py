@@ -80,6 +80,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'JoinCampus Team <no-reply@joincampus.ca>'
 
+DEFENDER_REDIS_URL = os.environ.get('REDISTOGO_URL', 'redis://127.0.0.1:6379')
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ 
     os.path.join(BASE_DIR, 'static')
