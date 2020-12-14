@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core import serializers
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
+hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
 
 class MessageManager(models.Manager):
     pass
@@ -77,7 +78,6 @@ class PrivateChat(models.Model):
             if messages.count() < 1:
                 has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
                 messages = []
-            messages = serializers.serialize("json", messages)
             return messages, has_messages
         else:
             messages_all = Message.objects.filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
@@ -122,6 +122,9 @@ class Message(models.Model):
     
     def __str__(self):
         return self.author.username
+    
+    def get_hashid(self):
+        return hashid_messages.encode(self.id)
     
     def get_time_sent(self):
         return str(self.timestamp)

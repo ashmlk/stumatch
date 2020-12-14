@@ -84,13 +84,7 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             var idx = null;
-            if('is_typing_command' in data){
-                if((data['from'] != username) && (data['is_typing_effect'] == 'start')){
-                    createTypingEffect()
-                } else if(data['is_typing_effect'] == 'stop'){
-                    removeTypingEffect();
-                }
-            } else if(data.requested_by === username && (data.is_fetching || data.is_loading)){
+            if(data.requested_by === username && (data.is_fetching || data.is_loading)){
                 if (data['command'] === 'messages') {
                     for (let i=0; i< data['messages'].length; i++){
                         createMessage(data['messages'][i]);  
@@ -107,7 +101,7 @@
                 if (data['command'] === 'new_message') {
                     createMessage(data['message'])
                 } 
-            } 
+            }
             if ('first_message_time' in data){
                 var first_message_container = createFirstMessageTimeContainer(data['first_message_time']);
                 if(document.getElementById('first_message___container') == null) {
@@ -131,22 +125,7 @@
             }));
             messageInputDOM.value = '';
             }
-        };      
-        
-        document.querySelector('#chat-message-input').addEventListener("keypress", function () {
-            chatSocket.send(JSON.stringify({
-                'command': 'typing_start',
-                'from': username,
-            }));
-        });
-
-        document.querySelector('#chat-message-input').addEventListener("keyup", function () {
-            setTimeout(() => {
-                chatSocket.send(JSON.stringify({
-                    'command': 'typing_stop',
-                }));
-            }, 300);
-        });
+        };       
 
         function fetchMessages() {
             chatSocket.send(JSON.stringify({
@@ -189,7 +168,8 @@
             divMainMessageTag.appendChild(msgTimeStamp)
             msgListTag.appendChild(divMainMessageTag);  
             if(last_message_time != null){
-                message_time =  data['timestamp'];
+               
+                console.log(message_time + "   --->" +  data.content )
                 time_stamp_ctr = createTimeStamp(message_time);         
             } else {
                 last_message_time = moment(moment.utc(moment(data['timestamp'])).local().format('YYYY-M-D HH:mm:ss'));
@@ -232,9 +212,9 @@
                 time_stamp_element.className = 'w-100 mb-2 text-center '
                 last_message_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
                 if(msg_time.isSame(current_time, 'year')){
-                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D") + '</span>';
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + msg_time.format("MMMM D") + '</span>';
                 } else {
-                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D, YYYY") + '</span>';
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + msg_time.format("MMMM D, YYYY") + '</span>';
                 }
                 time_stamp_element.innerHTML = time_stamp;
                 return time_stamp_element;
@@ -254,32 +234,11 @@
             return first_message_time_display
         }
 
-        function createTypingEffect() {
-            var divMainMessageTag = document.createElement('div');
-            divMainMessageTag.className = 'message-container message___typing_effect_holder';        
-            var msgListTag = document.createElement('div');
-            msgListTag.id = 'typing_effect__container'
-            msgListTag.className = 'mb-2 message-holder fixed-bottom';
-            var pTag = document.createElement('p');
-            pTag.className = 'mx-2 min-msg-p';
-            iTag = document.createElement('i');
-            iTag.textContent = "Typing...";
-            pTag.appendChild(iTag);
-            divMainMessageTag.appendChild(pTag);
-            msgListTag.appendChild(divMainMessageTag);  
-            document.querySelector('#chat-log').appendChild(msgListTag);
-        }
-
-        function removeTypingEffect() {
-            document.querySelector('#typing_effect__container').remove();
-        }
-
         $(document).ready(function () {
             $(document).on('click', '.message-container', function () {
                 $(this).find('.msg_time__container_text').toggleClass('hidden__time_stamp')
             })
         })
-
     </script>
     <style>
         #chat-log div div.message-container {
