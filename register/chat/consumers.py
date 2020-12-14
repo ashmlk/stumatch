@@ -97,12 +97,30 @@ class ChatConsumer(WebsocketConsumer):
         }
         # had return statement before
         self.send_chat_message(content)
+    
+    def typing_start(self, data):
+        author = data['from']
+        content = {
+            'command': 'typing_start',
+            'from':author,
+            'is_typing_command':'start'
+        }
+
+        self.send_chat_message(content)
+
+    def typing_stop(self, data):
+        content = {
+            'command': 'typing_stop',
+            'is_typing_command':'stop'
+        }
+        self.send_chat_message(content)
      
     commands = {
         'fetch_messages':fetch_messages,
         'new_message':new_message,
         'load_messages':load_messages,
-        'new_message_other': new_message_other
+        'typing_start':typing_start,
+        'typing_stop':typing_stop
     }
     
     '''
