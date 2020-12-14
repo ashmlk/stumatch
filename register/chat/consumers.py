@@ -82,25 +82,22 @@ class ChatConsumer(WebsocketConsumer):
                 privatechat = self.room
             )
         self.last_message = message
-        #self.room.set_last_message(message.id)
         json_message =  {
             'id':message.id,
             'author':message.author.username,
             'content':message.content,
             'timestamp':message.get_time_sent(),
             'last_message_content':message.content,
-            'last_message_time':message.get_time_sent_formatted()
+            'last_message_time':message.get_time_sent_formatted() #this returns the time 'before'. Does not need to be converted to locale
             }
         content = {
             'command':'new_message',
             'message':json_message,
             'is_new_message':True
         }
-        return self.send_chat_message(content)
-    
-    def new_message_other(self, data):        
-        pass      
-    
+        # had return statement before
+        self.send_chat_message(content)
+     
     commands = {
         'fetch_messages':fetch_messages,
         'new_message':new_message,
@@ -108,24 +105,30 @@ class ChatConsumer(WebsocketConsumer):
         'new_message_other': new_message_other
     }
     
+    '''
+    Initiate websocket connection for user to the private chat. If user is authenticated and is part of the private
+    chat then connect the user to the private chat
+    @param scope['user'] returns the requested user form WebSocket
+    @param scope['url_route']['kwargs']['room_id'] returns the requested room based on room_id
+    '''
     def connect(self):
         self.user = self.scope['user']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        user1 = Profile.objects.get(username = self.user.username)
-        if PrivateChat.objects.filter(
-            Q(user1 = user1, guid=self.room_id) | Q(user2=user1, guid=self.room_id)
-        ).exists():
-            self.room = PrivateChat.objects.filter(
-                Q(user1 = user1, guid=self.room_id) | Q(user2=user1, guid=self.room_id)
-            )[0]
-        self.room_group_name = 'chat_%s' % str(self.room.guid)
-        self.messages_pre_connect_count = self.room.get_messages_count()
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
+        if self.user.is_authenticated:
+            if PrivateChat.objects.filter(
+                Q(user1 = self.user, guid = self.room_id) | Q(user2 = self.user, guid = self.room_id)
+            ).exists():
+                self.room = PrivateChat.objects.filter(
+                    Q(user1 = self.user, guid = self.room_id) | Q(user2 = self.user, guid = self.room_id)
+                )[0]
+                self.room_group_name = 'chat_%s' % str(self.room.guid)
+                self.messages_pre_connect_count = self.room.get_messages_count()
+                async_to_sync(self.channel_layer.group_add)(
+                    self.room_group_name,
+                    self.channel_name
+                )
 
-        self.accept()
+                self.accept()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
