@@ -35,12 +35,14 @@
     {{ user2.username|json_script:"user2-username" }}
     {{ user2.get_hashid|json_script:"hashiduser2"}}
     <script>
+    $(document).ready(function () {
         const spinner = '<div id="loader-content-spinner" class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
         const hashiduser2 = JSON.parse(document.getElementById('hashiduser2').textContent);
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var username =  JSON.parse(document.getElementById('request-user-username').textContent);
         var user2 =  JSON.parse(document.getElementById('user2-username').textContent);
-        var last_message_time = null;
+        var last_message_time, message_time = null;
+        var lm = null;
         var ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
         // const chatNotifySocket = new ReconnectingWebSocket(
         //     ws_scheme
@@ -55,19 +57,30 @@
             + '/'
         );
 
-        var distance = $('#chat-log').offset().top - 150;
+        var distance = $('#chat-log').offset().top - 100;
         $('#chat-log').scroll(function() {
+            var cl = document.getElementById('chat-log');
+            var curScrollPos = cl.scrollTop;
+            var oldScroll = cl.scrollHeight - cl.clientHeight;
             if ($(this).scrollTop() <= distance ) {
                 $(this).prepend(spinner);
-                chatSocket.send(JSON.stringify({
-                        'command':  'load_messages',
-                        'room_id':  roomName,
-                        'username': username
-                    })
-                );
+                setTimeout(
+                        chatSocket.send(JSON.stringify({
+                            'command':  'load_messages',
+                            'room_id':  roomName,
+                            'username': username
+                        })
+                    ),
+                1500
+                )
+                var newScroll = cl.scrollHeight - cl.clientHeight;
+                cl.scrollTop = curScrollPos + (newScroll - oldScroll);
                 $(this).find('#loader-content-spinner').remove();
+                
             } else {
-                $(this).find('#loader-content-spinner').remove();
+                var newScroll = cl.scrollHeight - cl.clientHeight;
+                cl.scrollTop = curScrollPos + (newScroll - oldScroll);
+                $(this).find('#loader-content-spinner').remove();         
             }
         });
 
@@ -87,14 +100,9 @@
             if(data.requested_by === username && (data.is_fetching || data.is_loading)){
                 if (data['command'] === 'messages') {
                     for (let i=0; i< data['messages'].length; i++){
+                        message_time = data['messages'][i]['timestamp'];             
                         createMessage(data['messages'][i]);  
-                        idx = i;                  
-                    }
-                    try {
-                        message_time = data['messages'][data['messages'][idx]['timestamp']]
-                    }
-                    catch(err) {
-                        console.error();
+                        last_message_time = moment(moment.utc(moment(data['messages'][i]['timestamp']))).local();
                     }
                 } 
             } else if(data.is_new_message) {
@@ -117,7 +125,7 @@
         document.querySelector('#chat-message-input').onkeyup = function(e) {
         if (e.keyCode === 13) { 
             var messageInputDOM = document.getElementById('chat-message-input');
-            var message = messageInputDOM.value;
+            var message = $.trim(messageInputDOM.value);
             chatSocket.send(JSON.stringify({
                 'command': 'new_message',
                 'message': message,
@@ -148,7 +156,24 @@
             divMainMessageTag.className = 'message-container';
             var msgListTag = document.createElement('div');
             msgListTag.className = 'mb-2 message-holder';
+            var msgListTagInner = document.createElement('div')
+            msgListTagInner.className = 'self__message'
             var pTag = document.createElement('p');
+            var editButtonTag = document.createElement('div');
+            editButtonTag.className = 'dropup chat-message-menu';
+            var replyButtonTag = document.createElement('div');
+            replyButtonTag.className = 'chat-message-menu';
+            replyButtonTag.innerHTML = '<button class="btn btn-sm p-1"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-90deg-right" viewBox="0 0 16 16">'+
+                                            '<path fill-rule="evenodd" d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.'+
+                                            '793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4z"/>'+
+                                            '</svg></button>'
+            var editButtonTagMenu = document.createElement('div');
+            editButtonTagMenu.className = 'dropdown-menu edit-message-dropdown dropdown-menu-tip-sw';
+            var editButton = document.createElement('button');
+            editButton.className = "btn btn-sm text-muted";
+            editButton.setAttribute("data-toggle","dropdown");
+            editButton.setAttribute("aria-haspopup","true");
+            editButton.setAttribute("aria-expanded","false");
             pTag.className = 'mx-2 min-msg-p'
             pTag.textContent = data.content;
             var msgTimeStamp = document.createElement('div')
@@ -158,29 +183,40 @@
             msgTimeStampSpan.textContent = moment(moment.utc(moment(data['timestamp']))).local().format('HH:mm');
             msgTimeStamp.appendChild(msgTimeStampSpan)
             if (author === username) {
+                editButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots text-muted small" viewBox="0 0 16 16">'+
+                                        '<path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>'+
+                                    '</svg>'
+                var removeDropdownElement = document.createElement('button');
+                removeDropdownElement.className = 'dropdown-item small btn btn-sm p-1 px-2 remove-message-button';
+                var message_delete_url = `/messages/chat/${roomName}/message/${data['hashed_id']}/delete/`;
+                removeDropdownElement.setAttribute("data-url", message_delete_url);
+                removeDropdownElement.innerHTML= '<span>Remove</span>';
+                editButtonTagMenu.appendChild(removeDropdownElement)
+                editButtonTag.appendChild(editButton);      
+                editButtonTag.appendChild(editButtonTagMenu);             
+                msgListTagInner.className += ' d-flex justify-content-end align-items-center';
                 divMainMessageTag.className += ' sent float-right';   
-                msgTimeStamp.className += ' float-right align-right'             
+                msgTimeStamp.className += ' float-right align-right';
+                msgListTagInner.appendChild(replyButtonTag);
+                msgListTagInner.appendChild(editButtonTag);
             } else {
                 divMainMessageTag.className += ' replies float-left';
                 msgTimeStamp.className += ' float-left align-left'  
             }
             divMainMessageTag.appendChild(pTag);
             divMainMessageTag.appendChild(msgTimeStamp)
-            msgListTag.appendChild(divMainMessageTag);  
+            msgListTagInner.appendChild(divMainMessageTag);  
+            msgListTag.appendChild(msgListTagInner);
+
             if(last_message_time != null){
-               
-                console.log(message_time + "   --->" +  data.content )
                 time_stamp_ctr = createTimeStamp(message_time);         
-            } else {
-                last_message_time = moment(moment.utc(moment(data['timestamp'])).local().format('YYYY-M-D HH:mm:ss'));
             }
             if ("last_message_content" in data) {
                 if(time_stamp_ctr != false){
                     document.querySelector('#chat-log').appendChild(time_stamp_ctr);
                 }               
                 document.querySelector('#chat-log').appendChild(msgListTag);
-            } else {         
-                
+            } else {           
                 if(time_stamp_ctr != false){
                     document.querySelector('#chat-log').prepend(time_stamp_ctr);
                 } 
@@ -190,8 +226,6 @@
                 var elem = document.getElementById('chat-log');
                 var shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
                 scrollToBottom(); 
-            } else {
-                scrollOffset();
             }  
         }
 
@@ -205,20 +239,18 @@
 
         function createTimeStamp(message_time) {
             var current_time = moment();
-            var msg_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
-            var diff = moment.duration(last_message_time.diff(msg_time)).asDays();
-            if(diff > 1){
+            var msg_time = moment(moment.utc(moment(message_time))).local();
+            if(!(msg_time.format('L') === last_message_time.format('L'))){            
                 var time_stamp_element = document.createElement('div');
-                time_stamp_element.className = 'w-100 mb-2 text-center '
-                last_message_time = moment(moment.utc(moment(message_time)).local().format('YYYY-M-D HH:mm:ss'));
+                time_stamp_element.className = 'w-100 mb-2 text-center date-div-container'
                 if(msg_time.isSame(current_time, 'year')){
-                    var time_stamp = '<span class="text-muted small my-2 text-center">' + msg_time.format("MMMM D") + '</span>';
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D") + '</span>';
                 } else {
-                    var time_stamp = '<span class="text-muted small my-2 text-center">' + msg_time.format("MMMM D, YYYY") + '</span>';
+                    var time_stamp = '<span class="text-muted small my-2 text-center">' + last_message_time.format("MMMM D, YYYY") + '</span>';
                 }
                 time_stamp_element.innerHTML = time_stamp;
                 return time_stamp_element;
-            }          
+            }         
             return false;
         }
 
@@ -234,11 +266,57 @@
             return first_message_time_display
         }
 
-        $(document).ready(function () {
-            $(document).on('click', '.message-container', function () {
-                $(this).find('.msg_time__container_text').toggleClass('hidden__time_stamp')
-            })
+        function csrftoken() {
+            var cookieValue = null,
+                name = 'csrftoken';
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+
+        $(document).on('click', '.message-container', function () {
+            $(this).find('.msg_time__container_text').toggleClass('hidden__time_stamp')
         })
+
+        $(document).on('click', '.edit-message-dropdown > .remove-message-button', function(){
+            var mrb = $(this);
+            $.ajax({
+                url: $(this).attr('data-url'),
+                type: "POST",
+                headers:{
+                    "X-CSRFToken": csrftoken()
+                },
+                data: {
+                    'csrfmiddlewaretoken': csrftoken()
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(data){
+                    if(data['success']){
+                        var parent = $(mrb).closest('.message-holder');
+                        var dateCtr = $(parent).prev('div.date-div-container');
+                        if(($(dateCtr).length) && (!$(parent).next('div.message-holder').length)){
+                            $(parent).remove();
+                            $(dateCtr).remove();
+                        } else {
+                            $(parent).remove();
+                        }
+                    }
+                         
+                }
+          })
+        })
+    })
     </script>
     <style>
         #chat-log div div.message-container {

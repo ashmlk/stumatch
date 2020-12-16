@@ -1,6 +1,6 @@
 from django.db import models
 from main.models import Profile
-from django.db.models import Q, F, Count, Avg, FloatField
+from django.db.models import Q, F, Count, Avg, FloatField, Max, Min, Case, When
 import uuid, secrets
 from hashids import Hashids
 from django.utils import timezone
@@ -25,7 +25,7 @@ class PrivateChatManager(models.Manager):
         try:
             qlookup = Q(user1=user) | Q(user2=user)
             qlookup2 = Q(user1=user) & Q(user2=user)
-            qs = self.get_queryset().filter(qlookup).exclude(qlookup2).distinct().order_by('messages__timestamp')
+            qs = self.get_queryset().filter(qlookup).exclude(qlookup2).distinct().order_by('-messages__timestamp')
             for c in qs:
                 last_message = c.get_last_message()
                 if last_message != None:
@@ -38,10 +38,11 @@ class PrivateChatManager(models.Manager):
                     ids.append(c.user2.id)
                     last_message_content[c.user1.username] = { 'time':time, 'content':content }
                     last_message_content[c.user2.username] = { 'time':time, 'content':content }
-            return Profile.objects.filter(id__in=ids), last_message_content
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
+            return Profile.objects.filter(id__in=ids).order_by(preserved), last_message_content
         except Exception as e:
             qlookup = Q(user1=user) | Q(user2=user)
-            qs = self.get_queryset().filter(qlookup).distinct().order_by('messages__timestamp')
+            qs = self.get_queryset().filter(qlookup).distinct().order_by('-messages__timestamp')
             for c in qs:
                 last_message = c.get_last_message()
                 if last_message != None:
@@ -53,7 +54,8 @@ class PrivateChatManager(models.Manager):
                 elif not c.user2 == user:
                     ids.append(c.user2.id)
                     last_message_content[c.user2.username] = { 'time':time, 'content':content }
-            return Profile.objects.filter(id__in=ids), last_message_content
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
+            return Profile.objects.filter(id__in=ids).order_by(preserved), last_message_content
             
 class PrivateChat(models.Model):
     guid = models.CharField(max_length=255,unique=True, null=True)
@@ -73,11 +75,10 @@ class PrivateChat(models.Model):
     
     def get_messages(self, pre_connect_count=None, page=None):
         if page == None:
-            has_messages = False
             messages = Message.objects.filter(privatechat=self).order_by('-timestamp')[:15]
             if messages.count() < 1:
-                has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
                 messages = []
+            has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
             return messages, has_messages
         else:
             messages_all = Message.objects.filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
@@ -118,7 +119,8 @@ class Message(models.Model):
     author = models.ForeignKey(Profile, related_name='author_messages', on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    privatechat = models.ForeignKey(PrivateChat, related_name="messages", on_delete=models.DO_NOTHING)     
+    privatechat = models.ForeignKey(PrivateChat, related_name="messages", on_delete=models.DO_NOTHING)  
+    #replied = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")   
     
     def __str__(self):
         return self.author.username

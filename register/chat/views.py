@@ -1,13 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from main.models import Profile
-from .models import PrivateChat
+from .models import PrivateChat, Message
 from hashids import Hashids
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
+hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
 
 @login_required
 def index(request):
@@ -77,3 +79,14 @@ def private_chat(request, room_id):
         'last_message_content':last_message_content
     }
     return render(request, 'chat/room.html', context)
+
+@login_required
+def delete_message(request, room_id, message_hashed_id):
+    data = dict()
+    if request.user.is_authenticated:
+        message = get_object_or_404(Message, id=hashid_messages.decode(message_hashed_id)[0])
+        room = get_object_or_404(PrivateChat, guid=room_id)
+        if message.privatechat == room and message.author == request.user:
+            message.delete()
+            data['success'] = True
+            return JsonResponse(data)
