@@ -9,7 +9,9 @@ import math
 from channels.db import database_sync_to_async
 from .serializers import MessageSerializer
 
+hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
+hashid_user_chat = Hashids(salt='doubn 98354BGVBIWE obwKBN899rb wbIOWORK3',min_length=12)
 
 class ChatConsumer(AsyncWebsocketConsumer):        
     def __init__(self, *args, **kwargs):
@@ -36,6 +38,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'content':message['content'],
                         'timestamp':message['timestamp'],
                         'is_fetching':True,
+                        'replied_message': message['replied_message'],
                     }
                     result.append(json_message)
             content = {
@@ -63,6 +66,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'author':message['author_username'],
                         'content':message['content'],
                         'timestamp':message['timestamp'],
+                        'replied_message': message['replied_message'],
                     }
                     result.append(json_message)
             content = {
@@ -78,14 +82,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
     async def new_message(self, data):
         author = data['from']
+        replyingTo = data['replyingTo']
         author_user = await self.get_user(username=author)
-        message = await self.create_message_object(author=author_user, message=data['message'], room_id=self.room_id)
+        message = await self.create_message_object(author=author_user, message=data['message'], room_id=self.room_id, replyingTo = replyingTo)
         message_json = await self.get_serialized_message(message)
         self.last_message = message
         json_message =  {
                 'hashed_id':message_json['hashed_id'],
                 'author':message_json['author_username'],
                 'content':message_json['content'],
+                'replied_message':message_json['replied_message'],
                 'timestamp':message_json['timestamp'],
                 'last_message_content':message_json['content'],
                 'last_message_time':message_json['formatted_timestamp']
@@ -212,13 +218,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return PrivateChat.objects.get(guid=id)
     
     @database_sync_to_async
-    def create_message_object(self, author, message, room_id):
+    def create_message_object(self, author, message, room_id, replyingTo=None):
         room = PrivateChat.objects.get(guid=room_id)
-        message = Message.objects.create(
-                author = author,
-                content = message,
-                privatechat = room
-            )
+        if replyingTo != None:
+            message_parent = Message.objects.get(id=hashid_messages.decode(replyingTo)[0])
+            message = Message.objects.create(
+                    author = author,
+                    content = message,
+                    privatechat = room,
+                    replied = message_parent
+                )
+        else:
+            message = Message.objects.create(
+                    author = author,
+                    content = message,
+                    privatechat = room,
+                )         
         return message
     
     @database_sync_to_async
@@ -228,3 +243,62 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_serialized_message(self, message):
         return json.loads(json.dumps(MessageSerializer(message).data))
+    
+class UserChatNotificationConsumer(AsyncWebsocketConsumer):        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = None
+        self.hashed_id = None
+
+    async def send_notification(self, data):
+        content = data['content']
+        time = data['formatted_time']
+        author_full_name = data['author_name']
+        author_hashed_id = data['author_hashed_id']
+        await self.send_chat_message(content)
+     
+    commands = {
+        'send_notification':send_notification,
+    }
+    
+    async def connect(self):
+        self.user = self.scope['user']
+        self.hashed_id = self.scope['url_route']['kwargs']['hashed_id']
+        if self.user.is_authenticated:
+            hashedId = await database_sync_to_async(self.user.get_chat_hashid)()
+            if hashedId == self.hashed_id:
+                self.room_group_name = 'server_notification_chat_%s' % str(hashedId)
+                await self.channel_layer.group_add(
+                    self.room_group_name,
+                    self.channel_name
+                )
+
+                await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        await self.commands[data['command']](self, data)
+          
+    async def send_chat_message(self, message):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
+        
+    async def send_message(self, message):
+        await self.send(text_data=json.dumps(message))
+        
+    async def chat_message(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps(message))
+        
+        

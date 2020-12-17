@@ -35,16 +35,15 @@ def get_or_create_private_chat(request, id):
     user1 = request.user
     user2 = Profile.objects.get(id = id)
     try:
-        if PrivateChat.objects.filter(user1=user1, user2=user2):
+        if PrivateChat.objects.filter(user1=user1, user2=user2).exists():
             chatroom = PrivateChat.objects.get(user1=user1, user2=user2)
-        elif PrivateChat.objects.filter(user1=user2, user2=user1):
+        elif PrivateChat.objects.filter(user1=user2, user2=user1).exists():
             chatroom = PrivateChat.objects.get(user1=user2, user2=user1)
         else:
             chatroom = PrivateChat.objects.create(user1=user1, user2=user2)
     except Exception as e:
         print(e)
         return redirect('chat:index')
-    print(chatroom.guid)
     return redirect(reverse('chat:private-chat', kwargs={'room_id':chatroom.guid}))
     
 

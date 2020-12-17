@@ -12,19 +12,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/shortcuts/infinite.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
       integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
       crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
-    <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
     <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link
       href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
       rel="stylesheet">
@@ -43,81 +39,84 @@
 <body class="d-flex flex-column h-100" style="background-color: white !important;">
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper" style="margin-top: 5rem;">
-        <div class="container" style="overflow-y: hidden;">
-            <div class="row " style="min-height: 90vh !important;">
-                <div class="border-top border-left border-bottom rounded col-md-4 p-0 border-right" 
-                    style="border-top-right-radius:0px !important;border-bottom-right-radius:0px !important;overflow-y: auto !important;">
-                    <div class="border-bottom p-2 user-search-box w-100">
-                        <div class="d-flex align-item-center justify-content-between" style="margin-bottom: 4px;">
-                            <div class="d-flex align-items-center font-weight-bold h5" style="margin-top: 19px !important;">
-                                Messages
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <button style="margin-top: 13px !important;" class="nav-link btn-sm border btn-default btn-circle no-border rounded-circle text-dark" data-tooltip="tooltip"
-                                data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
-                                <svg width="16" height="16" viewBox="0 0 16 16"  class="bi bi-plus " fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                  <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg></button>
-                            </div>
-                        </div>
-                        <div id="search-users">
-
-                        </div>              
-                    </div> 
-                    <div class="p-2">
-                        <div id="current-chats">
-                            <ul class="list-group list-group-flush" style="overflow-y: auto !important;">
-                                {% for user in users %}
-                                    <a class="text-dark" href="{% url 'chat:get-or-create-private-chat' id=user.get_hashid %}" style="text-decoration: none;">
-                                        <li class="d-flex align-items-center list-group-item" id="{{ user2.get_hashid }}__chat">
-                                            <div class="d-flex align-items-center">
-                                                <div class="mr-3 user-image">
-                                                    {% thumbnail user.image "60x60" crop="80% top" as im %}
-                                                        <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                                                    {% endthumbnail %}
-                                                </div>
-                                                <div class="mx-2">
-                                                    <div class="text-dark font-weight-bolder">{{ user.get_full_name }}</div>
-                                                    <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
-                                                        {% with last_message_content|get_dict_item:user.username as dict %}
-                                                        <span class="message">
-                                                            {{  dict|get_dict_item:"content" }}
-                                                        </span>                                            
-                                                        <span class="mx-1 button__separator_time">
-                                                        {% if dict|get_dict_item:"content" != '' %}•{% endif %}
-                                                        </span>                                                 
-                                                        <span style="font-size: 0.95rem;" id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
-                                                           {{ dict|get_dict_item:"time" }}
-                                                        </span>
-                                                        {% endwith %}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </a>                                 
-                                {% endfor %}                                                 
-                              </ul>                        
-                        </div>                    
-                    </div>
-                </div>
-                <div class="col-md-7 p-0 border-right border-top border-bottom rounded"  style="border-top-left-radius:0px !important;border-bottom-left-radius:0px !important;overflow-y: auto !important;">
-                    {% block chat %}
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <div class="my-auto">
-                            <div class="p-2 text-center">
-                                <div class="mb-4">
-                                    <i class='fas fa-comments' style="font-size: 102px !important;"></i>
+        <div class="container w-100" style="overflow-y: hidden;">
+            <div class="d-flex w-100 justify-content-center">
+                <div class="w-100 row " style="min-height: 90vh !important;">
+                    <div class="border-top border-left border-bottom rounded col-md-4 p-0 border-right" 
+                        style="border-top-right-radius:0px !important;border-bottom-right-radius:0px !important;overflow-y: auto !important;">
+                        <div class="border-bottom p-2 user-search-box w-100">
+                            <div class="d-flex align-item-center justify-content-between" style="margin-bottom: 4px;">
+                                <div class="d-flex align-items-center font-weight-bold h5" style="margin-top: 16px !important;">
+                                    Messages
                                 </div>
-                                <h3>Messages</h3>
-                                <p class="lead small text-muted" style="font-weight: 450;">
-                                    Send private message to your friends.
-                                </p>
+                                <div class="d-flex align-items-center">
+                                    <button style="margin-top: 13px !important;" class="nav-link btn-sm border btn-default btn-circle no-border rounded-circle text-dark" data-tooltip="tooltip"
+                                    data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
+                                    <svg width="16" height="16" viewBox="0 0 16 16"  class="bi bi-plus " fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                      <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    </svg></button>
+                                </div>
                             </div>
+                            <div id="search-users">
+    
+                            </div>              
+                        </div> 
+                        <div class="p-2" style="padding-right: 0px !important; padding-left: 0px !important;">
+                            <div id="current-chats px-0">
+                                <ul class="list-group list-group-flush" id="user-chat-list" style="overflow-y: auto !important;">
+                                    {% for user in users %}
+                                        <a class="text-dark chat__message__link" href="{% url 'chat:get-or-create-private-chat' id=user.get_hashid %}" style="text-decoration: none;">
+                                            <li class="user-message-contact  d-flex align-items-center list-group-item" id="{{ user.get_hashid }}__chat">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-3 user-image">
+                                                        {% thumbnail user.image "55x55" crop="80% top" as im %}
+                                                            <img class="rounded-circle" style="margin:{{ im|margin:'55x55' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                                        {% endthumbnail %}
+                                                    </div>
+                                                    <div class="user-chat-info">
+                                                        <div class="text-dark" style="font-weight: 500;">{{ user.get_full_name }}</div>
+                                                        <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
+                                                            {% with last_message_content|get_dict_item:user.username as dict %}
+                                                            <span class="message">
+                                                                {{  dict|get_dict_item:"content" }}
+                                                            </span>                                            
+                                                            <span class="mx-1 button__separator_time">
+                                                            {% if dict|get_dict_item:"content" != '' %}•{% endif %}
+                                                            </span>                                                 
+                                                            <span style="font-size: 0.95rem;" id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
+                                                               {{ dict|get_dict_item:"time" }}
+                                                            </span>
+                                                            {% endwith %}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </a>                                 
+                                    {% endfor %}                                                 
+                                  </ul>                        
+                            </div>                    
                         </div>
                     </div>
-                    {% endblock %}
-                </div>
-            </div>         
+                    <div class="col-md-7 p-0 border-right border-top border-bottom rounded"  style="border-top-left-radius:0px !important;border-bottom-left-radius:0px !important;overflow-y: auto !important;">
+                        {% block chat %}
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <div class="my-auto">
+                                <div class="p-2 text-center">
+                                    <div class="mb-4">
+                                        <i class='fas fa-comments' style="font-size: 102px !important;"></i>
+                                    </div>
+                                    <h3>Messages</h3>
+                                    <p class="lead small text-muted" style="font-weight: 450;">
+                                        Send private message to your friends.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endblock %}
+                    </div>
+                </div>   
+            </div>
+                 
         </div>
     </div>
     <script src="{% static 'linkifyjs/linkify.min.js' %}"></script>
@@ -162,6 +161,14 @@
             border-left: none;
         }
 
+        .user-message-contact:hover {
+            background-color: rgba(240, 240, 240, 0.521);
+        }
+
+        .user-message-contact.chat-active {
+            background-color: rgba(240, 240, 240, 0.521);
+        }
+
         .dropdown-menu-tip-n::after {
             top: calc(-.25rem - 1px);
             left: calc(50% - .25rem);
@@ -204,7 +211,37 @@
         .message-holder .self__message:hover .chat-message-menu{
             display: block;
         }
-        
+
+        .reply__message__container .message-reply-box {
+            padding: 5px;
+        }
+
+        .reply__message__container {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .reply__message__container .sent-replied .reply-message-content{
+            padding: 7px;
+            background-color: rgba(226, 226, 226, 0.464);
+            border-radius: 25px;
+        }
+
+        .reply__message__container .replied-replied .reply-message-content{
+            padding: 7px;
+            background-color: white;
+            border: 1px rgb(226, 226, 226) solid;
+            border-radius: 25px;
+        }
+
+        .reply__message__container.border-right-reply .message-reply-box{
+            border-right: 3px solid rgb(212, 212, 212);
+        }
+
+        .reply__message__container.border-left-reply .message-reply-box{
+            border-left: 3px solid rgb(212, 212, 212);
+        }
      </style>
+
 </body>
 </html>

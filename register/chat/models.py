@@ -75,13 +75,13 @@ class PrivateChat(models.Model):
     
     def get_messages(self, pre_connect_count=None, page=None):
         if page == None:
-            messages = Message.objects.filter(privatechat=self).order_by('-timestamp')[:15]
+            messages = Message.objects.prefetch_related('author').filter(privatechat=self).order_by('-timestamp')[:15]
             if messages.count() < 1:
                 messages = []
             has_messages = False if Message.objects.filter(privatechat=self).order_by('timestamp').first().id in [m.id for m in messages] else True
             return messages, has_messages
         else:
-            messages_all = Message.objects.filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
+            messages_all = Message.objects.prefetch_related('author').filter(privatechat=self).order_by('-timestamp')[:pre_connect_count]
             page = page
             paginator = Paginator(messages_all, 15)
             try:
@@ -120,7 +120,7 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     privatechat = models.ForeignKey(PrivateChat, related_name="messages", on_delete=models.DO_NOTHING)  
-    #replied = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")   
+    replied = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")   
     
     def __str__(self):
         return self.author.username
@@ -130,6 +130,13 @@ class Message(models.Model):
     
     def get_time_sent(self):
         return str(self.timestamp)
+    
+    def get_replied_message(self):
+        repliedTo = self.replied
+        if repliedTo != None:
+            return {"replied_content":repliedTo.content, "replied_author":repliedTo.author.username, "replied_author_fn":repliedTo.author.get_full_name()}
+        else: 
+            return None
     
     def get_time_sent_formatted(self):
         now = timezone.now()

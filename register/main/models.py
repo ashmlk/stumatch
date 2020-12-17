@@ -24,6 +24,8 @@ hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
 
 hashids_notify  = Hashids(salt='2vbp W9PHh90H 2389V[H WOoksc',min_length=8)
 
+hashid_user_chat = Hashids(salt='doubn 98354BGVBIWE obwKBN899rb wbIOWORK3',min_length=12)
+
 #CUSTOM MODEL MANAGERS
 class ProfileManager(UserManager):
     
@@ -434,6 +436,10 @@ class Profile(AbstractUser):
 
     def get_hashid(self):
         return hashids_user.encode(self.id)
+    
+    #remember to add back, this id is only for chat notifications
+    def get_chat_hashid(self):
+        return hashid_user_chat.encode(self.id)
 
     def set_image_to_default(self):
         if self.image.url != DEFAULT_IMAGE:
