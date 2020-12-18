@@ -8,6 +8,7 @@ from hashids import Hashids
 import math
 from channels.db import database_sync_to_async
 from .serializers import MessageSerializer
+from channels.layers import get_channel_layer
 
 hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
@@ -17,6 +18,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
+        self.user2_username = None
+        self.user2_notification_layer = None
         self.room = None
         self.messages_pre_connect_count = None
         self.last_message = None
@@ -94,7 +97,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'replied_message':message_json['replied_message'],
                 'timestamp':message_json['timestamp'],
                 'last_message_content':message_json['content'],
-                'last_message_time':message_json['formatted_timestamp']
+                'last_message_time':message_json['formatted_timestamp'],
+                'messageAuthorHashedId':message_json['author_hashed_id'],
+                'messageTo': self.user2_username,
+                'messageAuthorFullName':message_json['author_full_name']
             }
         
         content = {
@@ -102,32 +108,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message':json_message,
             'is_new_message':True
         }
-        # had return statement before
+
         await self.send_chat_message(content)
-    
-    # async def typing_start(self, data):
-    #     author = data['from']
-    #     content = {
-    #         'command': 'typing_start',
-    #         'from':author,
-    #         'is_typing_command':'start'
-    #     }
 
-    #     await self.send_chat_message(content)
+        
+    async def typing_start(self, data):
+        author = data['from']
+        content = {
+            'command': 'typing_start',
+            'from':author,
+            'is_typing':True
+        }
 
-    # async def typing_stop(self, data):
-    #     content = {
-    #         'command': 'typing_stop',
-    #         'is_typing_command':'stop'
-    #     }
-    #     await self.send_chat_message(content)
+        await self.send_chat_message(content)
+
+    async def typing_stop(self, data):
+        content = {
+            'command': 'typing_stop',
+            'remove_typing_effect':True
+        }
+        await self.send_chat_message(content)
      
     commands = {
         'fetch_messages':fetch_messages,
         'new_message':new_message,
         'load_messages':load_messages,
-        # 'typing_start':typing_start,
-        # 'typing_stop':typing_stop
+        'typing_start':typing_start,
+        'typing_stop':typing_stop
     }
     
     '''
@@ -143,6 +150,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat_exists = await self.check_room_exists()
             if chat_exists:
                 self.room, guid = await self.get_privatechat()
+                self.user2_username, self.user2_notification_layer = await self.get_user2_notification_layer()
                 self.room_group_name = 'chat_%s' % str(guid)
                 self.messages_pre_connect_count = await self.get_messages_count()
                 await self.channel_layer.group_add(
@@ -170,6 +178,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
+        # await self.channel_layer.group_send(
+        #     self.user2_notification_layer,
+        #     {
+        #         'type':'chat_message',
+        #         'message':message
+        #     }
+        # )
         
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))
@@ -195,6 +210,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user(self, username):
         return Profile.objects.get(username=username)
+    
+    @database_sync_to_async
+    def get_user2_notification_layer(self):
+        user2 = self.room.user2 if self.room.user2 != self.user else self.room.user1
+        layer_name = 'server_notification_chat_%s' % str(user2.get_chat_hashid())
+        return user2.get_username(), layer_name
     
     @database_sync_to_async
     def get_messages_count(self):
@@ -245,21 +266,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return json.loads(json.dumps(MessageSerializer(message).data))
     
 class UserChatNotificationConsumer(AsyncWebsocketConsumer):        
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
         self.hashed_id = None
-
-    async def send_notification(self, data):
-        content = data['content']
-        time = data['formatted_time']
-        author_full_name = data['author_name']
-        author_hashed_id = data['author_hashed_id']
-        await self.send_chat_message(content)
-     
-    commands = {
-        'send_notification':send_notification,
-    }
     
     async def connect(self):
         self.user = self.scope['user']

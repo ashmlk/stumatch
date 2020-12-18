@@ -39,9 +39,10 @@
 <body class="d-flex flex-column h-100" style="background-color: white !important;">
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper" style="margin-top: 5rem;">
-        <div class="container w-100" style="overflow-y: hidden;">
-            <div class="d-flex w-100 justify-content-center">
-                <div class="w-100 row " style="min-height: 90vh !important;">
+        <div class="container w-100 d-flex justify-content-center" style="overflow-y: hidden;">
+            <div style=" width: 92%;">
+                <div class="row " style="min-height: 90vh !important;">
+                    <div class="col-md-auto"></div>
                     <div class="border-top border-left border-bottom rounded col-md-4 p-0 border-right" 
                         style="border-top-right-radius:0px !important;border-bottom-right-radius:0px !important;overflow-y: auto !important;">
                         <div class="border-bottom p-2 user-search-box w-100">
@@ -61,38 +62,41 @@
     
                             </div>              
                         </div> 
-                        <div class="p-2" style="padding-right: 0px !important; padding-left: 0px !important;">
-                            <div id="current-chats px-0">
-                                <ul class="list-group list-group-flush" id="user-chat-list" style="overflow-y: auto !important;">
+                        <div style="padding-right: 0px !important; padding-left: 0px !important;">
+                            <div id="current-chats p-0">
+                                <ul class="list-group list-group-flush" id="user-chat-list" style="overflow-y: auto !important; height: 82.5vh!important;">
                                     {% for user in users %}
-                                        <a class="text-dark chat__message__link" href="{% url 'chat:get-or-create-private-chat' id=user.get_hashid %}" style="text-decoration: none;">
+                                        <a class="text-dark chat__message__link mb-1" href="{% url 'chat:get-or-create-private-chat' id=user.get_hashid %}" style="text-decoration: none;">
                                             <li class="user-message-contact  d-flex align-items-center list-group-item" id="{{ user.get_hashid }}__chat">
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center w-100">
                                                     <div class="mr-3 user-image">
                                                         {% thumbnail user.image "55x55" crop="80% top" as im %}
                                                             <img class="rounded-circle" style="margin:{{ im|margin:'55x55' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
                                                         {% endthumbnail %}
                                                     </div>
-                                                    <div class="user-chat-info">
-                                                        <div class="text-dark" style="font-weight: 500;">{{ user.get_full_name }}</div>
-                                                        <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" id="{{ user.get_hashid }}__chat__last_msg">
+                                                    <div class="user-chat-info w-100">
+                                                        <div class="text-dark d-flex justify-content-between" style="font-weight: 500;" style="margin-top: 10px;">
+                                                            <div style="font-size: 0.95rem;">{{ user.get_full_name }}</div>
+                                                            <!-- <div class="float-right w-25 font-weight-bolder" style="font-size: 1.1rem;color:#487be0;"><span class="float-right">•</span></div> -->
+                                                        </div>
+                                                        <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" style="margin-top: -10px !important;" id="{{ user.get_hashid }}__chat__last_msg">
                                                             {% with last_message_content|get_dict_item:user.username as dict %}
-                                                            <span class="message">
-                                                                {{  dict|get_dict_item:"content" }}
+                                                            <span class="message" >
+                                                                {{  dict|get_dict_item:"content" }}                                                           
                                                             </span>                                            
                                                             <span class="mx-1 button__separator_time">
-                                                            {% if dict|get_dict_item:"content" != '' %}•{% endif %}
+                                                            {% if dict|get_dict_item:"content" != '' %}·{% endif %}
                                                             </span>                                                 
                                                             <span style="font-size: 0.95rem;" id="{{ user.get_hashid }}__chat__last_msg__time" class="time">
                                                                {{ dict|get_dict_item:"time" }}
                                                             </span>
                                                             {% endwith %}
-                                                        </span>
+                                                        </span>                                                       
                                                     </div>
                                                 </div>
                                             </li>
                                         </a>                                 
-                                    {% endfor %}                                                 
+                                    {% endfor %}    
                                   </ul>                        
                             </div>                    
                         </div>
@@ -115,21 +119,32 @@
                         {% endblock %}
                     </div>
                 </div>   
-            </div>
-                 
+            </div>     
         </div>
     </div>
     <script src="{% static 'linkifyjs/linkify.min.js' %}"></script>
     <script src="{% static 'linkifyjs/linkify-jquery.min.js' %}"></script>
     <style>
+    
+        #chat-log {      
+            height: 75vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding-bottom: 15px;
+            font-size: 0.96rem;
+        }
+
+        #chat-log .message-holder:nth-last-child(1) {
+            margin-bottom: 20px !important;
+        }
         .last-message-holder .message {   
             white-space: nowrap !important;
             display:inline-block;
-            max-width: 180px !important;                  /* IE6 needs any width */
-            overflow: hidden !important;              /* "overflow" value must be different from  visible"*/ 
-            -o-text-overflow: ellipsis !important;    /* Opera < 11*/
+            max-width: 180px !important;             
+            overflow: hidden !important;              
+            -o-text-overflow: ellipsis !important;    
             text-overflow:    ellipsis !important; 
-            float:  left !important;   /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
+            float:  left !important;   
         }
         .msg_time__container_text.hidden__time_stamp {
             display: none;
@@ -210,6 +225,24 @@
         }
         .message-holder .self__message:hover .chat-message-menu{
             display: block;
+        }
+
+        #replyContainer__messages {
+            margin-left: -8px;
+            margin-right: -8px;
+            padding-bottom: 5px;
+            margin-bottom: 6px !important;
+        }
+
+        #replyContainer__messages .reply__message__content {
+            white-space: nowrap !important;
+            display:inline-block;
+            max-width: 90vw !important;             
+            overflow: hidden !important;              
+            -o-text-overflow: ellipsis !important;    
+            text-overflow:    ellipsis !important; 
+            float:  left !important;   
+            margin-bottom: 10px;
         }
 
         .reply__message__container .message-reply-box {

@@ -131,6 +131,12 @@ class Message(models.Model):
     def get_time_sent(self):
         return str(self.timestamp)
     
+    def get_author_hashed_id(self):
+        return self.author.get_hashid()
+    
+    def get_author_full_name(self):
+        return self.author.get_full_name()
+    
     def get_replied_message(self):
         repliedTo = self.replied
         if repliedTo != None:
