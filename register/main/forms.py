@@ -393,15 +393,15 @@ class EditProfileForm(UserChangeForm):
 		model = Profile
 		fields=('username','first_name','last_name','bio',)
 
-	def clean_username(self):
-			username = self.cleaned_data.get('username')
-			username=username.lower()
-			if Profile.objects.filter(username=username).exists():
-					if Profile.objects.filter(username=username, is_active=False).exists():
-						p = Profile.objects.filter(username=username, is_active=False).delete()
-					elif Profile.objects.filter(username=username, is_active=True).exists():
-						raise forms.ValidationError("A user with this username already exists.")
-			return username
+	# def clean_username(self):
+	# 		username = self.cleaned_data.get('username')
+	# 		username=username.lower()
+	# 		if Profile.objects.filter(username=username).exists():
+	# 				if Profile.objects.filter(username=username, is_active=False).exists():
+	# 					p = Profile.objects.filter(username=username, is_active=False).delete()
+	# 				elif Profile.objects.filter(username=username, is_active=True).exists():
+	# 					raise forms.ValidationError("A user with this username already exists.")
+	# 		return username
 
 class SetUniversityForm(forms.ModelForm):
     

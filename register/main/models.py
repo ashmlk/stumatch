@@ -423,7 +423,7 @@ class Profile(AbstractUser):
         ]
     
     def save(self, *args, **kwargs):
-        self.username = self.username.lower()
+        self.username = self.username.strip().lower()
         super(Profile, self).save(*args, **kwargs) 
         
     def __str__(self):
