@@ -1,13 +1,16 @@
 from django.db import models
 from main.models import Profile
 from django.db.models import Q, F, Count, Avg, FloatField, Max, Min, Case, When
-import uuid, secrets
+import uuid, secrets, math, io
 from hashids import Hashids
 from django.utils import timezone
 from math import log
-import math
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core import serializers
+from django_uuid_upload import upload_to_uuid
+import PIL
+from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
@@ -120,7 +123,35 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     privatechat = models.ForeignKey(PrivateChat, related_name="messages", on_delete=models.DO_NOTHING)  
-    replied = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")   
+    replied = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name="replies")  
+    is_image = models.BooleanField(null=True, default=False)
+    photo = models.ImageField(upload_to=upload_to_uuid('messages/images/'), blank=True) 
+    
+    
+    def save(self, *args, **kwargs):
+        if (self.pk is None) and (len(str(self.photo))>0):
+            print(self.photo)
+            MAX_WIDTH = 1080
+            MAX_HEIGHT = 1350
+            img=Image.open(self.photo)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            exif = None
+            if 'exif' in img.info:
+                exif=img.info['exif']
+            ratio = min(MAX_WIDTH/img.size[0], MAX_HEIGHT/img.size[1])
+            if img.size[0] > MAX_WIDTH or img.size[1] > MAX_HEIGHT:
+                img = img.resize((int(img.size[0]*ratio), int(img.size[1]*ratio)), PIL.Image.ANTIALIAS)
+            else:
+                img = img.resize((img.size[0], img.size[1]), PIL.Image.ANTIALIAS)
+            output = io.BytesIO()
+            if exif:
+                img.save(output, format='JPEG', exif=exif, quality=76)
+            else:
+                img.save(output, format='JPEG', quality=76)
+            output.seek(0)
+            self.photo = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.photo.name, 'image/jpeg', output.getbuffer().nbytes, None)
+        super(Message, self).save(*args, **kwargs)
     
     def __str__(self):
         return self.author.username
@@ -140,7 +171,12 @@ class Message(models.Model):
     def get_replied_message(self):
         repliedTo = self.replied
         if repliedTo != None:
-            return {"replied_content":repliedTo.content, "replied_author":repliedTo.author.username, "replied_author_fn":repliedTo.author.get_full_name()}
+            return {
+                "replied_content":repliedTo.content, 
+                "replied_author":repliedTo.author.username, 
+                "replied_author_fn":repliedTo.author.get_full_name(), 
+                "replied_message_parent_author_firstname":repliedTo.author.first_name,
+                }
         else: 
             return None
     
@@ -166,4 +202,13 @@ class Message(models.Model):
             years= math.floor(diff.days/365)
             return str(years) + "y"
     
+    def is_image_message(self):
+        is_image = True if self.is_image == True else False
+        return is_image
     
+    def get_photo_url(self):
+        if self.is_image:
+            return self.photo.url
+        else:
+            return None
+        

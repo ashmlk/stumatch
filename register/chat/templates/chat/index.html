@@ -20,6 +20,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/d3a3fc2f19.js" crossorigin="anonymous"></script>
     <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
     <link
       href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
@@ -75,9 +76,8 @@
                                                         {% endthumbnail %}
                                                     </div>
                                                     <div class="user-chat-info w-100">
-                                                        <div class="text-dark d-flex justify-content-between" style="font-weight: 500;" style="margin-top: 10px;">
+                                                        <div class="text-dark d-flex justify-content-between user-name-container" style="font-weight: 500;" style="margin-top: 10px;">
                                                             <div style="font-size: 0.95rem;">{{ user.get_full_name }}</div>
-                                                            <!-- <div class="float-right w-25 font-weight-bolder" style="font-size: 1.1rem;color:#487be0;"><span class="float-right">•</span></div> -->
                                                         </div>
                                                         <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" style="margin-top: -10px !important;" id="{{ user.get_hashid }}__chat__last_msg">
                                                             {% with last_message_content|get_dict_item:user.username as dict %}
@@ -273,6 +273,10 @@
 
         .reply__message__container.border-left-reply .message-reply-box{
             border-left: 3px solid rgb(212, 212, 212);
+        }
+        .msg-image-container {
+            background-color: rgba(255, 255, 255, 0) !important;
+            padding-right: 0px;
         }
      </style>
 

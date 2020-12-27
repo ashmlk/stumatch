@@ -18,15 +18,36 @@
                 <div id="chat-log" class="px-2 pt-3 d-flex flex-column pb-2"></div>
             </div>
             <div class="mt-2 p-2 bg-white message-input" id="message-input-parent" style="position:absolute!important;bottom: 0 !important; width: 100% !important;">
-                <div class="d-flex align-items-center mb-1 w-100 d-flex border col-12 form-control  no-outline py-0 form-control-md mb-2" style="height:auto; border-radius: 25px;" >
-                    <textarea wrap="hard" class='border-0 form-control no-outline form-control-md m-1'  rows="1" id="chat-message-input" placeholder="Message..." style="resize: none;max-height: 5rem;"></textarea>
-                    <span class="mx-1 message-text-button-wrapper">
-                        <button type="button" class="btn" id="message-image-sender-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                              </svg>
-                        </button>               
-                    </span>
+                <div class="d-flex align-items-center mb-1 w-100 border col-12 form-control  no-outline py-0 form-control-md mb-2" style="height:auto; border-radius: 25px;" >
+                    <div class="w-100">
+                        <div class="image-form" style="height: 0px;">
+                            <form enctype="multipart/form-data" id="message-image-form" method="POST">
+                                <div class="preview p-2" style="max-height: 180px; display: inline-block;position: relative;"></div>
+                                <input accept="image/jpeg,image/png" id="message_image_input" name="photo" type="file">
+                            </form>
+                        </div>
+                        <div class="d-flex align-items-center w-100">
+                            <textarea wrap="hard" class='border-0 form-control no-outline form-control-md m-1' rows="1" id="chat-message-input" placeholder="Message..." style="resize: none;max-height: 5rem;"></textarea>
+                            <div class="dropup emoji-dropup">
+                                <button class="btn btn-sm emoji-menu-button"  aria-haspopup="true" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-emoji-smile" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
+                                      </svg>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-tip-se emoji-dropup-menu">
+                                    <emoji-picker class="light"></emoji-picker>  
+                                </div>
+                            </div> 
+                            <span class="ml-1 message-text-button-wrapper d-flex align-items-center">
+                                <button type="button" class="btn px-0" id="message-image-sender-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                      </svg>
+                                </button>        
+                            </span>         
+                        </div>
+                    </div> 
                 </div>
             </div>
         </div>
@@ -53,10 +74,11 @@
         let messageInputParent = document.getElementById('message-input-parent');
         let last_message_time, message_time = null;
         let lm = null;
-        let sendButton = `<button type="button" class="btn message-submit-button" ><span style="color:#487be0;">Send</span></button> `;
+        let sendButton = `<button type="button" class="btn message-submit-button px-0" ><span style="color:#487be0;">Send</span></button> `;
+        let newMessageBullet = `<div class="float-right w-25 font-weight-bolder new-message-bullet" style="font-size: 1.1rem;color:#487be0;"><span class="float-right">•</span></div>`
         let messageFunctionButtons = 
         `
-        <button type="button" class="btn" id="message-image-sender-button">
+        <button type="button" class="btn px-0" id="message-image-sender-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                 </svg>
@@ -77,6 +99,10 @@
             + usernameChatHashid
             + '/'
         );
+
+        $('.emoji-dropup-menu').on("click", function (e) {
+            e.stopPropagation();
+        })
 
         $(`#${hashiduser2}__chat`).addClass('chat-active');
         $(`#${hashiduser2}__chat__last_msg`).find('.message').removeClass('font-weight-bolder');
@@ -130,11 +156,17 @@
             if(data.requested_by === username && (data.is_fetching || data.is_loading)){
                 if (data['command'] === 'messages') {
                     for (let i=0; i< data['messages'].length; i++){
-                        message_time = data['messages'][i]['timestamp'];             
-                        createMessage(data['messages'][i]);  
+                        message_time = data['messages'][i]['timestamp']; 
+                        if(data['messages'][i]['is_photo']) {
+                            createPhotoMessage(data['messages'][i]);
+                        }  else {
+                            createMessage(data['messages'][i]);  
+                        }        
                         last_message_time = moment(moment.utc(moment(data['messages'][i]['timestamp']))).local();
                     }
                 } 
+            } else if (data.is_new_photo_message){
+                createPhotoMessage(data['message']);
             } else if(data.is_new_message) {
                 if (data['command'] === 'new_message') {
                     $('#typing__effect__container').remove();
@@ -154,6 +186,15 @@
                     document.querySelector('#chat-log').prepend(first_message_container);
                 }
             }
+            
+            if(data.is_new_message){
+                    chatSocket.send(JSON.stringify({
+                        'command':'send_message_notification',
+                        'message':data['message'],
+                    })
+                );
+            }
+
         };
 
         chatNotifySocket.onmessage = function(e) {
@@ -161,10 +202,11 @@
             data = data['message'];
             if((data['author'] != username || data['author'] != user2) && (data['messageTo'] == username)){
                 let messageContent = data['content'];
-                let messageTime = data['formatted_timestamp'];
+                let messageTime = data['last_message_time'];
                 let messageAuthorHashedId = data['messageAuthorHashedId'];
                 if($('#user-chat-list').find(`#${messageAuthorHashedId}__chat`).length){
-                    $("#"+messageAuthorHashedId+"__chat__last_msg").find('.message').addClass('font-weight-bolder');
+                    $("#"+messageAuthorHashedId+"__chat__last_msg").find('.message').addClass('font-weight-bolder text-dark');
+                    $("#"+messageAuthorHashedId+"__chat").find('.user-name-container').append(newMessageBullet);
                     $("#"+messageAuthorHashedId+"__chat__last_msg").find('.message').html(messageContent);
                     $("#"+messageAuthorHashedId+"__chat__last_msg").find('.time').html(messageTime);
                     $("#"+messageAuthorHashedId+"__chat__last_msg").find('.button__separator_time').html("•");  
@@ -183,7 +225,7 @@
                             <div class="user-chat-info w-100">
                                 <div class="text-dark d-flex justify-content-between" style="font-weight: 500;" style="margin-top: 10px;">
                                     <div style="font-size: 0.95rem;">${data['messageAuthorFullName']}</div>
-                                    <div class="float-right w-25 font-weight-bolder new-message-bullet" style="font-size: 1.1rem;color:#487be0;"><span class="float-right">•</span></div>
+                                    ${newMessageBullet}
                                 </div>
                                 <span style="font-size: 0.95rem;" class=" text-muted last-message-holder" style="margin-top: -10px !important;" id="${messageAuthorHashedId}__chat__last_msg">
                                     <span class="message font-weight-bolder text-dark" >
@@ -211,14 +253,30 @@
 
         document.querySelector('#chat-message-input').onkeyup = function(e) {
             if (e.keyCode === 13 && !e.shiftKey) { 
-                sendMessage();    
+                if($('#message_image_input').get(0).files.length > 0){
+                    sendImage();
+                    resetImagePreview();
+                    $('#message-input-parent').find('.message-text-button-wrapper').html(messageFunctionButtons);
+                } 
+                else {
+                    sendMessage();  
+                }
+      
             } else {
                 autosize();
             }
         };  
 
         $(document).on('click', '.message-submit-button', function () {
-            sendMessage();          
+            if($('#message_image_input').get(0).files.length > 0){
+                sendImage();
+                resetImagePreview();
+                $('#message-input-parent').find('.message-text-button-wrapper').html(messageFunctionButtons);                           
+            } 
+            else {
+                sendMessage();
+            }
+                  
         })
         
         function sendMessage() {
@@ -305,7 +363,7 @@
                 removeDropdownElement.className = 'dropdown-item small btn btn-sm p-1 px-2 remove-message-button';
                 let message_delete_url = `/messages/chat/${roomName}/message/${data['hashed_id']}/delete/`;
                 removeDropdownElement.setAttribute("data-url", message_delete_url);
-                removeDropdownElement.innerHTML= '<span>Remove</span>';           
+                removeDropdownElement.innerHTML= '<span>Unsend</span>';           
                 editButtonTagMenu.appendChild(removeDropdownElement);
                 editButtonTag.appendChild(editButton);      
                 editButtonTag.appendChild(editButtonTagMenu);
@@ -360,6 +418,117 @@
             }  
         }
 
+        function createPhotoMessage(data) {
+            let time_stamp_ctr = false;
+            let repliedMessage = null;
+            let author = data['author'];
+            if ("last_message_content" in data) {
+                $("#"+hashiduser2+"__chat__last_msg").find('.message').html(data['last_message_content']);
+                $("#"+hashiduser2+"__chat__last_msg").find('.time').html(data['last_message_time']);
+                $("#"+hashiduser2+"__chat__last_msg").find('.button__separator_time').html("•");  
+                $('#user-chat-list').prepend($("#"+hashiduser2+"__chat").closest('a'));
+            }
+            if(data['replied_message'] != null){
+                repliedMessage = createRepliedMessage(author, data['replied_message']);
+            }
+            let divMainMessageTag = document.createElement('div');
+            divMainMessageTag.className = 'message-container msg-image-container';
+            let msgListTag = document.createElement('div');
+            msgListTag.className = 'mb-2 message-holder';
+            let msgListTagInner = document.createElement('div')
+            msgListTagInner.className = 'self__message'
+            msgListTagInner.setAttribute("data-message-id",data["hashed_id"])
+            let imageContainerTag = document.createElement('div');
+            let imgObject = document.createElement('img');
+            imgObject.className = 'img-fluid rounded message-image-object';
+            imgObject.setAttribute("src", data.photo_url)
+            let editButtonTag = document.createElement('div');
+            editButtonTag.className = 'dropup chat-message-menu';
+            let replyButtonTag = document.createElement('div');
+            replyButtonTag.className = 'chat-message-menu';
+            replyButtonTag.innerHTML = '<button class="btn btn-sm p-1 message-reply-button"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-90deg-right" viewBox="0 0 16 16">'+
+                                            '<path fill-rule="evenodd" d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.'+
+                                            '793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4z"/>'+
+                                            '</svg></button>'
+            let editButtonTagMenu = document.createElement('div');
+            editButtonTagMenu.className = 'dropdown-menu edit-message-dropdown dropdown-menu-tip-sw';
+            let editButton = document.createElement('button');
+            editButton.className = "btn btn-sm text-muted";
+            editButton.setAttribute("data-toggle","dropdown");
+            editButton.setAttribute("aria-haspopup","true");
+            editButton.setAttribute("aria-expanded","false");
+            imageContainerTag.className = 'mx-2 min-msg-p message-content message-image-container'
+            imageContainerTag.appendChild(imgObject)
+            let msgTimeStamp = document.createElement('div')
+            msgTimeStamp.className = 'msg_time__container_text hidden__time_stamp mt-2 p-0'
+            let msgTimeStampSpan = document.createElement('span')
+            msgTimeStampSpan.className = 'p-0 mx-1 mb-1 small text-muted float-right'
+            msgTimeStampSpan.textContent = moment(moment.utc(moment(data['timestamp']))).local().format('HH:mm');
+            msgTimeStamp.appendChild(msgTimeStampSpan)
+            if (author === username) {
+                editButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots text-muted small" viewBox="0 0 16 16">'+
+                                        '<path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>'+
+                                    '</svg>'
+                let removeDropdownElement = document.createElement('button');
+                removeDropdownElement.className = 'dropdown-item small btn btn-sm p-1 px-2 remove-message-button';
+                let message_delete_url = `/messages/chat/${roomName}/message/${data['hashed_id']}/delete/`;
+                removeDropdownElement.setAttribute("data-url", message_delete_url);
+                removeDropdownElement.innerHTML= '<span>Unsend</span>';           
+                editButtonTagMenu.appendChild(removeDropdownElement);
+                editButtonTag.appendChild(editButton);      
+                editButtonTag.appendChild(editButtonTagMenu);
+                if(repliedMessage != null){
+                    repliedMessage.className += ' d-flex justify-content-end align-items-center border-right-reply';
+                    msgListTag.appendChild(repliedMessage);
+                }
+                msgListTagInner.className += ' d-flex justify-content-end align-items-center';
+                divMainMessageTag.className += ' sent float-right';   
+                msgTimeStamp.className += ' float-right align-right';
+                msgListTagInner.appendChild(replyButtonTag);
+                msgListTagInner.appendChild(editButtonTag);
+                divMainMessageTag.appendChild(imageContainerTag);
+                divMainMessageTag.appendChild(msgTimeStamp)
+                msgListTagInner.appendChild(divMainMessageTag);  
+                msgListTag.appendChild(msgListTagInner);
+                
+            } else {
+                msgListTagInner.className += ' d-flex justify-content-start align-items-center';
+                divMainMessageTag.className += ' ml-2 replies float-left';
+                msgTimeStamp.className += ' float-left align-left'     
+                if(repliedMessage != null){
+                    repliedMessage.className += ' d-flex justify-content-start align-items-center border-left-reply';
+                    msgListTag.appendChild(repliedMessage);
+                }            
+                divMainMessageTag.appendChild(imageContainerTag);
+                divMainMessageTag.appendChild(msgTimeStamp)
+                msgListTagInner.appendChild(divMainMessageTag);  
+                msgListTagInner.appendChild(replyButtonTag);
+                msgListTag.appendChild(msgListTagInner);
+            }
+            
+
+            if(last_message_time != null){
+                time_stamp_ctr = createTimeStamp(message_time);         
+            }
+            if ("last_message_content" in data) {
+                if(time_stamp_ctr != false){
+                    document.querySelector('#chat-log').appendChild(time_stamp_ctr);
+                }               
+                document.querySelector('#chat-log').appendChild(msgListTag);
+            } else {           
+                if(time_stamp_ctr != false){
+                    document.querySelector('#chat-log').prepend(time_stamp_ctr);
+                } 
+                document.querySelector('#chat-log').prepend(msgListTag);
+            }
+            if(("last_message_content" in data)||data.is_fetching){
+                let elem = document.getElementById('chat-log');
+                let shouldScroll = elem.scrollTop + elem.clientHeight === elem.scrollHeight;
+                scrollToBottom(); 
+            }  
+        }
+        
+
         function scrollToBottom() {
             $('#chat-log').scrollTop($('#chat-log').height()*1000);
         }
@@ -369,7 +538,6 @@
         }
 
         function createRepliedMessage(author, message){
-            
             let replyMessageContainer = document.createElement('div');
             replyMessageContainer.className = 'reply__message__container px-2';
             let replyMessageBox = document.createElement('div');
@@ -383,7 +551,7 @@
             author===message['replied_author'] ? replyMessageBox.className='message-reply-box sent-replied' : replyMessageBox.className='message-reply-box replied-replied';
             let repliedAuthor = null;
             author===username ? repliedAuthor = 'You' : repliedAuthor = message['replied_author'];
-            author===message['replied_author'] ? replyMessageHeader.innerHTML='<span class="text-muted-small">You replied to yourself</span>' : replyMessageHeader.innerHTML =`<span class="text-muted-small">${repliedAuthor} replied to ${author}</span>`;
+            username===message['replied_author'] ? replyMessageHeader.innerHTML=`<span class="text-muted-small">${repliedAuthor} replied to yourself</span>` : replyMessageHeader.innerHTML =`<span class="text-muted-small">${repliedAuthor} replied to ${author}</span>`;
             replyMessageBox.className += ' small ';
             replyMessageBox.appendChild(replyMessageHeader);
             replyMessageBox.appendChild(replyMessageContent);
@@ -445,6 +613,54 @@
             return cookieValue;
         };
 
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            $('.image-form').css({"height":"auto"})
+            reader.onload = function(e) {
+                let image = document.createElement('img');
+                let removeBtn = `<button type="button" class="message-image-remove"><span>&times;</span></button>`
+                image.className = "rounded img-fluid";
+                $(image).attr('src', e.target.result);
+                $('#message-image-form').find('.preview').append(image);
+                $('#message-image-form').find('.preview').append(removeBtn);
+            }
+            
+            reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        function sendImage() {
+            let form = new FormData(document.getElementById('message-image-form'));
+            let message = null;
+            let tk = csrftoken();
+            form.append('csrfmiddlewaretoken', tk);
+            $.ajax({
+                url: `/messages/send-image/${roomName}/`,
+                type: 'POST',
+                headers:{
+                    "X-CSRFToken": tk
+                },
+                data: form,
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(data){
+                    message = data['message']
+                    chatSocket.send(JSON.stringify({
+                            'command': 'new_photo_message',
+                            'message': message,
+                        })
+                    )
+                },
+                complete: function() {
+                    sendMessage();
+                }
+            })
+            return true;
+        }
+
         function autosize() {
                 setTimeout(function(){
                     let rows = $(ta).val().split("\n");
@@ -460,6 +676,22 @@
             };
         }
 
+        function resetImagePreview() {
+            $('#message_image_input').val('');
+            $('#message-image-form').find('.preview').empty();
+            $('.image-form').css({"height":"0px"})
+        }
+
+        $(document).on('click.bs.dropdown', '.emoji-dropdown', (event) => {
+            console.log("hi")
+            event.stopPropagation();
+        });
+
+        document.querySelector('emoji-picker')
+            .addEventListener('emoji-click', event => {
+                let emoji = event.detail['unicode'];
+                $('#chat-message-input').val($('#chat-message-input').val()+''+emoji);
+            })
 
         document.querySelector('#chat-message-input').addEventListener("keypress", function () {
             chatSocket.send(JSON.stringify({
@@ -467,6 +699,28 @@
                 'from': username,
             }));
         });
+
+        $(document).on("click", "#message-image-sender-button", function (){
+            $('#message_image_input').click();
+        })
+
+        $(document).on('change', '#message_image_input', function () {
+            let fileSize = $('#message_image_input').get(0).files[0]["size"]/1024/1024;
+            if(fileSize <= 64) {
+                readURL(this);
+                if($(this).get(0).files.length > 0){
+                    $('#message-input-parent').find('.message-text-button-wrapper').html(sendButton);
+                }
+            } else {
+                alert("The maximum image size is 8MB please try again")
+            }
+         
+        })
+
+        $(document).on("click", '.message-image-remove', function (){
+            resetImagePreview();
+            $('#message-input-parent').find('.message-text-button-wrapper').html(messageFunctionButtons);
+        })
 
         document.querySelector('#chat-message-input').addEventListener("keyup", debounce( () => {
             chatSocket.send(JSON.stringify({
@@ -561,5 +815,30 @@
             background-color: white;
             border: 1px rgb(226, 226, 226) solid;
         }
+
+        #message_image_input {
+            position: absolute;
+            margin-left: -9999px;
+        }
+
+        .preview > img {
+            width: auto; 
+            height: 120px;
+        }
+
+        .preview .message-image-remove {
+            position: absolute;
+            z-index: 1;
+            right: 0;
+            border-radius: 50%;
+            padding: 8px;
+            padding-top: 1px;
+            padding-bottom: 1px;
+            margin-top: -2px;
+        }
+        emoji-picker {
+            --border-color:rgb(255,255,255,0);
+        }
+
     </style>
 {% endblock %}

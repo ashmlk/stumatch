@@ -12,6 +12,8 @@ class MessageSerializer(serializers.Serializer):
     author_hashed_id = serializers.SerializerMethodField()
     author_full_name = serializers.SerializerMethodField()
     content = serializers.CharField()
+    is_photo = serializers.SerializerMethodField()
+    photo_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
@@ -35,3 +37,10 @@ class MessageSerializer(serializers.Serializer):
     
     def get_author_full_name(self, obj):
         return obj.get_author_full_name()
+    
+    def get_is_photo(self, obj):
+        return obj.is_image_message()
+    
+    def get_photo_url(self, obj):
+        return obj.get_photo_url()
+    

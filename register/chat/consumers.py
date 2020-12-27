@@ -9,6 +9,7 @@ import math
 from channels.db import database_sync_to_async
 from .serializers import MessageSerializer
 from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 hashid_messages = Hashids(salt='18BIOHBubi 23Ubliilb 89sevsdfuv wuboONEO3489',min_length=32)
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
@@ -42,6 +43,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'timestamp':message['timestamp'],
                         'is_fetching':True,
                         'replied_message': message['replied_message'],
+                        'is_photo': message['is_photo'],
+                        'photo_url':message['photo_url']
                     }
                     result.append(json_message)
             content = {
@@ -70,6 +73,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'content':message['content'],
                         'timestamp':message['timestamp'],
                         'replied_message': message['replied_message'],
+                        'is_photo': message['is_photo'],
+                        'photo_url':message['photo_url']
                     }
                     result.append(json_message)
             content = {
@@ -100,7 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'last_message_time':message_json['formatted_timestamp'],
                 'messageAuthorHashedId':message_json['author_hashed_id'],
                 'messageTo': self.user2_username,
-                'messageAuthorFullName':message_json['author_full_name']
+                'messageAuthorFullName':message_json['author_full_name'],
             }
         
         content = {
@@ -110,8 +115,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }
 
         await self.send_chat_message(content)
-
         
+    async def new_photo_message(self, data):
+        json_message = {
+            'hashed_id':data['message']['hashed_id'],
+            'author':data['message']['author_username'],
+            'content':data['message']['content'],
+            'replied_message':data['message']['replied_message'],
+            'timestamp':data['message']['timestamp'],
+            'last_message_content':data['message']['content'],
+            'last_message_time':data['message']['formatted_timestamp'],
+            'messageAuthorHashedId':data['message']['author_hashed_id'],
+            'messageTo': self.user2_username,
+            'messageAuthorFullName':data['message']['author_full_name'],
+            'is_photo':data['message']['is_photo'],
+            'photo_url':data['message']['photo_url']
+        } 
+        
+        content = {
+            'command':'new_photo_message',
+            'message':json_message,
+            'is_new_photo_message':True
+        }
+
+        await self.send_chat_message(content)
+       
     async def typing_start(self, data):
         author = data['from']
         content = {
@@ -128,11 +156,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'remove_typing_effect':True
         }
         await self.send_chat_message(content)
+        
+    async def send_message_notification(self, message):
+        await self.channel_layer.group_send(
+            self.user2_notification_layer,
+            {
+                'type':'chat_message',
+                'message':message
+            }
+        )
      
     commands = {
         'fetch_messages':fetch_messages,
         'new_message':new_message,
+        'new_photo_message':new_photo_message,
         'load_messages':load_messages,
+        'send_message_notification':send_message_notification,
         'typing_start':typing_start,
         'typing_stop':typing_stop
     }
@@ -143,6 +182,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @param scope['user'] returns the requested user form WebSocket
     @param scope['url_route']['kwargs']['room_id'] returns the requested room based on room_id
     '''
+    
     async def connect(self):
         self.user = self.scope['user']
         self.room_id = self.scope['url_route']['kwargs']['room_id']
@@ -177,22 +217,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message
             }
-        )
-        # await self.channel_layer.group_send(
-        #     self.user2_notification_layer,
-        #     {
-        #         'type':'chat_message',
-        #         'message':message
-        #     }
-        # )
-        
+        )    
+            
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))
         
     async def chat_message(self, event):
         message = event['message']
-        await self.send(text_data=json.dumps(message))
-        
+        await self.send(text_data=json.dumps(message))    
         
     @database_sync_to_async
     def check_room_exists(self):
@@ -283,7 +315,6 @@ class UserChatNotificationConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     self.channel_name
                 )
-
                 await self.accept()
 
     async def disconnect(self, close_code):
@@ -291,7 +322,8 @@ class UserChatNotificationConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
+        
+    
     async def receive(self, text_data):
         data = json.loads(text_data)
         await self.commands[data['command']](self, data)

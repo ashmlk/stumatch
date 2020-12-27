@@ -6,6 +6,9 @@ from main.models import Profile
 from .models import PrivateChat, Message
 from hashids import Hashids
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from .forms import MessagePhotoForm
+import json
+from .serializers import MessageSerializer
 
 hashid = Hashids(salt='9ejwb NOPHIqwpH9089h 0H9h130xPHJ io9wr',min_length=32)
 hashids_user = Hashids(salt='wvf935 vnw9py l-itkwnhe 3094',min_length=12)
@@ -51,7 +54,7 @@ def get_or_create_private_chat(request, id):
 def private_chat(request, room_id):
     
     #try:
-    chatroom = PrivateChat.objects.get(guid=room_id)
+    chatroom = get_object_or_404(PrivateChat, guid=room_id)
     # except Exception as e:
     #     print(e)
     #     return redirect('chat:index')
@@ -78,6 +81,28 @@ def private_chat(request, room_id):
         'last_message_content':last_message_content
     }
     return render(request, 'chat/room.html', context)
+
+@login_required
+def create_image(request, room_id):
+    data = dict()
+    privatechat = get_object_or_404(PrivateChat, guid=room_id)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = MessagePhotoForm(request.POST, request.FILES)
+            if form.is_valid():
+                message = form.save(False)
+                message.is_image = True
+                message.author = request.user
+                message.privatechat = privatechat
+                message.content = "Photo"
+                message.save()
+                data['message'] = json.loads(json.dumps(MessageSerializer(message).data))
+                data['successfully_uploaded'] = True
+            else:
+                data['successfully_uploaded'] = False
+        return JsonResponse(data)
+                
+            
 
 @login_required
 def delete_message(request, room_id, message_hashed_id):
