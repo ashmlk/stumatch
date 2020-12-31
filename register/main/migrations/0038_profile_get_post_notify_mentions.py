@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0037_auto_20201018_1943'),
+        ("main", "0037_auto_20201018_1943"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='get_post_notify_mentions',
+            model_name="profile",
+            name="get_post_notify_mentions",
             field=models.BooleanField(blank=True, default=True),
         ),
     ]

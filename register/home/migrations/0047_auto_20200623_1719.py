@@ -9,30 +9,67 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0046_auto_20200615_2236'),
+        ("home", "0046_auto_20200615_2236"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='dislikes',
-            field=models.ManyToManyField(blank=True, related_name='blog_dislikes', to=settings.AUTH_USER_MODEL),
+            model_name="blog",
+            name="dislikes",
+            field=models.ManyToManyField(
+                blank=True, related_name="blog_dislikes", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
-            model_name='blog',
-            name='likes',
-            field=models.ManyToManyField(blank=True, related_name='blog_likes', to=settings.AUTH_USER_MODEL),
+            model_name="blog",
+            name="likes",
+            field=models.ManyToManyField(
+                blank=True, related_name="blog_likes", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.CreateModel(
-            name='BlogReply',
+            name="BlogReply",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content', models.TextField()),
-                ('date_replied', models.DateTimeField(auto_now_add=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('blog', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blog_replies', to='home.Buzz')),
-                ('reply_dislikes', models.ManyToManyField(blank=True, related_name='brdislikes', to=settings.AUTH_USER_MODEL)),
-                ('reply_likes', models.ManyToManyField(blank=True, related_name='brlikes', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("content", models.TextField()),
+                ("date_replied", models.DateTimeField(auto_now_add=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "blog",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blog_replies",
+                        to="home.Buzz",
+                    ),
+                ),
+                (
+                    "reply_dislikes",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="brdislikes",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "reply_likes",
+                    models.ManyToManyField(
+                        blank=True, related_name="brlikes", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
     ]

@@ -4,22 +4,20 @@ from django.forms import ValidationError
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
-
-   
-   def pre_social_login(self, request, sociallogin):
+    def pre_social_login(self, request, sociallogin):
 
         if sociallogin.is_existing:
             return
-        if 'email' not in sociallogin.account.extra_data:
+        if "email" not in sociallogin.account.extra_data:
             return
         try:
-            email = sociallogin.account.extra_data['email'].lower()
+            email = sociallogin.account.extra_data["email"].lower()
             email_address = EmailAddress.objects.get(email__iexact=email)
         except EmailAddress.DoesNotExist:
             return
 
         user = email_address.user
-    
+
         if not user.is_active:
             user.is_active = True
             email_address.verified = True
@@ -31,7 +29,3 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
                 sociallogin.connect(request, user)
             elif email_address.verified == False:
                 return
-                
-        
-            
-            

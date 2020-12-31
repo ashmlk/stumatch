@@ -7,18 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0019_auto_20200406_0615'),
+        ("home", "0019_auto_20200406_0615"),
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='images',
-            old_name='file',
-            new_name='image',
-        ),
+        migrations.RenameField(model_name="images", old_name="file", new_name="image",),
         migrations.AlterField(
-            model_name='post',
-            name='content',
-            field=models.TextField(validators=[django.core.validators.MaxLengthValidator(1200)]),
+            model_name="post",
+            name="content",
+            field=models.TextField(
+                validators=[django.core.validators.MaxLengthValidator(1200)]
+            ),
         ),
     ]

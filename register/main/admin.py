@@ -1,5 +1,19 @@
 from django.contrib import admin
-from .models import Profile, BookmarkBase, BookmarkBlog, BookmarkBuzz, BookmarkPost, ReportBase, ReportBlog, ReportBuzz, ReportBlogReply, ReportBuzzReply, ReportComment, ReportUser, ReportCourseReview
+from .models import (
+    Profile,
+    BookmarkBase,
+    BookmarkBlog,
+    BookmarkBuzz,
+    BookmarkPost,
+    ReportBase,
+    ReportBlog,
+    ReportBuzz,
+    ReportBlogReply,
+    ReportBuzzReply,
+    ReportComment,
+    ReportUser,
+    ReportCourseReview,
+)
 
 # Register your models here.
 admin.site.register(Profile)

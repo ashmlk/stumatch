@@ -6,24 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0003_taggeditem_add_unique_index'),
-        ('main', '0013_profile_favorite_post_tags'),
+        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("main", "0013_profile_favorite_post_tags"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='favorite_blog_tags',
-            field=models.ManyToManyField(related_name='fav_blog_tags', to='taggit.Tag'),
+            model_name="profile",
+            name="favorite_blog_tags",
+            field=models.ManyToManyField(related_name="fav_blog_tags", to="taggit.Tag"),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='favorite_buzz_tags',
-            field=models.ManyToManyField(related_name='fav_buzz_tags', to='taggit.Tag'),
+            model_name="profile",
+            name="favorite_buzz_tags",
+            field=models.ManyToManyField(related_name="fav_buzz_tags", to="taggit.Tag"),
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='favorite_post_tags',
-            field=models.ManyToManyField(related_name='fav_post_tags', to='taggit.Tag'),
+            model_name="profile",
+            name="favorite_post_tags",
+            field=models.ManyToManyField(related_name="fav_post_tags", to="taggit.Tag"),
         ),
     ]

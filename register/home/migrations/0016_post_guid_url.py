@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0015_remove_post_guid_url'),
+        ("home", "0015_remove_post_guid_url"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='guid_url',
+            model_name="post",
+            name="guid_url",
             field=models.CharField(max_length=12, null=True, unique=True),
         ),
     ]

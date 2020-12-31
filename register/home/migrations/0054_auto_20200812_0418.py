@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0053_auto_20200812_0417'),
+        ("home", "0053_auto_20200812_0417"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='course',
-            name='course_difficulty',
-            field=models.CharField(blank=True, choices=[('0', 'TBD'), ('1', 'Easy'), ('2', 'Medium'), ('3', 'Hard'), ('4', 'Failed')], default='0', max_length=2),
+            model_name="course",
+            name="course_difficulty",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("0", "TBD"),
+                    ("1", "Easy"),
+                    ("2", "Medium"),
+                    ("3", "Hard"),
+                    ("4", "Failed"),
+                ],
+                default="0",
+                max_length=2,
+            ),
         ),
     ]

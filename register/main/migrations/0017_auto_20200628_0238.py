@@ -7,16 +7,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0016_profile_sv'),
+        ("main", "0016_profile_sv"),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='profile',
-            options={},
-        ),
+        migrations.AlterModelOptions(name="profile", options={},),
         migrations.AddIndex(
-            model_name='profile',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['sv'], name='search_idx_user'),
+            model_name="profile",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["sv"], name="search_idx_user"
+            ),
         ),
     ]

@@ -7,14 +7,16 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0012_auto_20200402_1743'),
+        ("home", "0012_auto_20200402_1743"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='guid_url',
-            field=models.CharField(default=django.utils.timezone.now, max_length=255, unique=True),
+            model_name="post",
+            name="guid_url",
+            field=models.CharField(
+                default=django.utils.timezone.now, max_length=255, unique=True
+            ),
             preserve_default=False,
         ),
     ]

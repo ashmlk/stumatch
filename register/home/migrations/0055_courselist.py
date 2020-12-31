@@ -10,19 +10,42 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0054_auto_20200812_0418'),
+        ("home", "0054_auto_20200812_0418"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CourseList',
+            name="CourseList",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=1000)),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('year', models.IntegerField(validators=[django.core.validators.MinValueValidator(1984), django.core.validators.MaxValueValidator(2021)], verbose_name='year')),
-                ('guid', models.CharField(max_length=255, null=True, unique=True)),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=1000)),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                (
+                    "year",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1984),
+                            django.core.validators.MaxValueValidator(2021),
+                        ],
+                        verbose_name="year",
+                    ),
+                ),
+                ("guid", models.CharField(max_length=255, null=True, unique=True)),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

@@ -8,13 +8,25 @@ import functools
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0004_auto_20200411_1458'),
+        ("main", "0004_auto_20200411_1458"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='image',
-            field=models.ImageField(blank=True, default='defaults/user/default_u_i.png', upload_to=functools.partial(django_uuid_upload._upload_to_uuid_impl, *(), **{'make_dir': False, 'path': 'profile_image/profiles/', 'remove_qs': True})),
+            model_name="profile",
+            name="image",
+            field=models.ImageField(
+                blank=True,
+                default="defaults/user/default_u_i.png",
+                upload_to=functools.partial(
+                    django_uuid_upload._upload_to_uuid_impl,
+                    *(),
+                    **{
+                        "make_dir": False,
+                        "path": "profile_image/profiles/",
+                        "remove_qs": True,
+                    }
+                ),
+            ),
         ),
     ]

@@ -7,27 +7,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0062_auto_20200924_0233'),
+        ("home", "0062_auto_20200924_0233"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Professors',
+            name="Professors",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.CharField(max_length=255)),
-                ('university', models.CharField(max_length=255)),
-                ('ratings', models.DecimalField(decimal_places=6, max_digits=15, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=255)),
+                ("last_name", models.CharField(max_length=255)),
+                ("university", models.CharField(max_length=255)),
+                (
+                    "ratings",
+                    models.DecimalField(decimal_places=6, max_digits=15, null=True),
+                ),
             ],
         ),
-        migrations.RemoveField(
-            model_name='comment',
-            name='active',
-        ),
+        migrations.RemoveField(model_name="comment", name="active",),
         migrations.AlterField(
-            model_name='post',
-            name='content',
-            field=models.TextField(validators=[django.core.validators.MaxLengthValidator(2100)]),
+            model_name="post",
+            name="content",
+            field=models.TextField(
+                validators=[django.core.validators.MaxLengthValidator(2100)]
+            ),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0026_profile_public'),
+        ("main", "0026_profile_public"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='rank_objects',
+            model_name="profile",
+            name="rank_objects",
             field=models.BooleanField(blank=True, default=True),
         ),
     ]

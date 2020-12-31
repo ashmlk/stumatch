@@ -2,6 +2,7 @@ import datetime
 from functools import wraps
 from django.utils import timezone
 
+
 def confirm_password(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -9,6 +10,8 @@ def confirm_password(view_func):
         timespan = last_login + datetime.timedelta(minutes=2)
         if timezone.now() > timespan:
             from main.views import ConfirmPasswordView
+
             return ConfirmPasswordView.as_view()(request, *args, **kwargs)
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view

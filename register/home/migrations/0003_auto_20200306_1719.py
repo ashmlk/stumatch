@@ -8,17 +8,16 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0002_course'),
+        ("home", "0002_course"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='course',
-            name='course',
-        ),
+        migrations.RemoveField(model_name="course", name="course",),
         migrations.AddField(
-            model_name='course',
-            name='course',
-            field=models.ManyToManyField(related_name='course', to=settings.AUTH_USER_MODEL),
+            model_name="course",
+            name="course",
+            field=models.ManyToManyField(
+                related_name="course", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

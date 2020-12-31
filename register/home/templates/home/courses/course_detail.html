@@ -1,162 +1,264 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load ibuilder %}
 {% block title %}
 <title>{{ course.course_code }} - JoinCampus </title>
 {% endblock %}
-{% block contentright %}
-{% load ibuilder %}
+{% block content %}
 {% bg_rand as bgrnd %}
-<div class="d-none d-md-block">
-    <div class="row">
-        <div class="col-md-12">
-            <div>
-                <div class="mb-1 menu-go-back">
-                    <div class="pb-1 l d-flex align-item-center ">
-                        <button class="no-border no-outline btn mnbtn menu-link-active btn-sm text-dark"
-                            style="border-radius: 20px !important;" data-url="{% url 'home:course-menu' %}">
-                            <div class="clicker float-left">
-                                <svg width="16" height="16" viewBox="0 0 16 16" class="bi bi-chevron-left"
-                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                </svg>
-                            </div>
-                            <span class="mx-2" style="padding-top: 4px !important; font-size: 1.1rem;">Menu</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div>
-    <div class="bg-white shadow-sm border" 
+<div class="mt-3">
+    <div class="bg-white border"
         style="overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
         <div class="c_code align-items-center" style="background-color: {{ bgrnd }} !important;">
-            <div class="d-flex justify-content-between pt-4 p-1">
+            <div class="d-flex justify-content-between pt-4 pb-4 ml-1">
                 <div>
-                    <h5 class="mt-1 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
+                    <h5 class="mt-2 text-white display-4" style="font-weight:500; font-size: 1.9rem;">
                         {{ course.course_code }}
                     </h5>
-                </div>
-                <div class="mr-3" style="margin-top: -15px !important;">
-                    <img class="mb-1" src="{% static 'default/courses/2.png' %}" alt="Course Image"
-                        style="height:75px;width: 75px;">
                 </div>
             </div>
         </div>
         <div class="col-sm mb-2">
             <div class="pt-2" style="min-height: 100px !important;">
-                <a style="border-radius: 20px !important;" 
-                    class="text-left c_dis mb-1 course-goto btn btn-outline-primary" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                    <span class="svg-icon ccs mr-1">
-                        <svg style="margin-top: -3px !important" width="1em" height="1em"
-                            viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                        </svg>
-                    </span>
-                    
-                    <span class="ml-1">{{ course.course_university|capfirst }}</span>
-                </a>
-                <hr style="margin: 1px 1px 4px 1px !important;">
-                <a style="border-radius: 20px !important;" class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
-                    href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                    <span class="svg-icon ccs mr-1">
-                        <svg style="margin-top: -3px !important" width="1em" height="1em"
-                            viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                            <path fill-rule="evenodd"
-                                d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                        </svg>
-                    </span>
-                    <span
-                        class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
-                </a>
-                <hr style="margin: 1px 1px 4px 1px !important;">
-                {% if course.complexity_btn_ins == "None" %}
-                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
-                    <span>Difficulty with this professor:</span><span
-                        class="ml-1">No ratings</span>
+                <div class="row d-flex align-items-center justify-content-start mb-2 px-3">
+                    <div class="mr-1">
+                        <a style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 course-goto btn btn-outline-primary"
+                            href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                            <span class="svg-icon ccs mr-1">
+                                <svg style="margin-top: -3px !important" width="1em" height="1em" viewBox="0 0 16 16"
+                                    class="bi bi-hexagon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                        </a>
+                    </div>
+                    {% if not link_get %}
+                    <div class="mr-1">
+                        <a style="border-radius: 20px !important; "
+                            class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
+                            href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                            <span class="svg-icon ccs mr-1">
+                                <svg style="margin-top: -3px !important" width="1em" height="1em" viewBox="0 0 16 16"
+                                    class="bi bi-layers" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                    <path fill-rule="evenodd"
+                                        d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_instructor_fn|capfirst }}
+                                {{ course.course_instructor|capfirst }}</span>
+                        </a>
+                    </div>
+                    <div class="mr-1">
+                        {% if course.complexity_btn_ins == "None" %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-secondary">
+                            <span>Difficulty with this professor:</span><span class="ml-1">No ratings</span>
+                        </div>
+                        {% else %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                            <span>Difficulty with this professor:</span><span
+                                class="ml-1">{{ course.average_complexity_ins }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="mr-1">
+                        {% if course.complexity_btn == "None" %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-secondary">
+                            <span>Course overall difficulty:</span><span class="ml-1">No ratings</span>
+                        </div>
+                        {% else %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                            <span>Course overall difficulty:</span><span
+                                class="ml-1">{{ course.average_complexity }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% else %}
-                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
-                    <span>Difficulty with this professor:</span><span
-                        class="ml-1">{{ course.average_complexity_ins }}</span>
+                <div class="px-2">
+                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
+                        <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
+                    </div>
+                    {% if not link_get %}
+                    </br>
+                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
+                        <span>Total Students With {{ course.course_instructor_fn|capfirst }}
+                            {{ course.course_instructor|capfirst }}:</span><span
+                            class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
+                    </div>
+                    {% endif %}
+                    {% if taken %}
+                    <div class="ml-1 c_dis mb-1">
+                        <span class="small text-muted">You have taken this course.</span>
+                    </div>
+                    {% else %}
+                    <div class="ml-1 c_dis mb-1">
+                        <span class="small text-muted">You have <span class="text-danger">not </span> taken this
+                            course.</span>
+                        <button class="btn-sm mb-1 btncrsatadd rounded btn  small " type="button"
+                            style="text-decoration: none;border: 1px solid rgba(0, 0, 0, .15) !important;"
+                            data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">
+                            Add
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
-                <hr style="margin: 1px 1px 4px 1px !important;">
-                {% if course.complexity_btn == "None" %}
-                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
-                    <span>Course overall difficulty:</span><span
-                        class="ml-1">No ratings</span>
-                </div>
-                {% else %}
-                <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
-                    <span>Course overall difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
-                </div>
-                {% endif %}
-                <hr style="margin: 1px 1px 1px 1px !important;">
-                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                    <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
-                </div>
-                </br>
-                <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                    <span>Total Students With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:</span><span
-                        class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
-                </div>
-                {% if taken %}
-                <div class="ml-1 c_dis mb-1" >
-                    <span class="small text-muted">You have taken this course.</span>
-                </div>
-                {% else %}
-                <div class="ml-1 c_dis mb-1" >
-                    <span class="small text-muted">You have <span class="text-danger">not </span> taken this
-                        course.</span>
-                </div>
-                {% endif %}
             </div>
-            <div class="border-top votes-container ml-1">
+            <div class="border-top votes-container mx-3">
                 {% include 'home/courses/course_vote.html' with course=course %}
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            {% if taken %}
-            <button class="v_rebtn col-sm-12 my-1 border-0 btn  small btn-primary" data-text="Show"
-                style="text-decoration: none;" type="button">Write a Review</button>
-            {% else %}
-            <button class="col-sm-12 my-1 btncrsatadd border-0 btn  small btn-primary"
-                 type="button" style="text-decoration: none;"
-                data-url="{% url 'home:course-auto-add' course_code=course.course_code course_instructor_slug=course.course_instructor_slug course_university_slug=course.course_university_slug %}">Add
-                Course</button>
-            {% endif %}
+    <div class="row mt-1" style="padding-right: 10px; padding-left: 10px;">
+        <div class="col-sm-3 col-3 px-1">
+            <button class="v_rebtn col-sm-12 mb-1 btn  small border rounded" data-text="Show"
+                style="text-decoration: none; border: 1px solid rgba(0, 0, 0, .15) !important;"
+                type="button">Review</button>
         </div>
-        <div class="col-md-12">
+        <div class="col-sm-3 col-3 px-1">
             <!-- removed acaffd class -->
-            <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
-                href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">Discover Students</a>
+            <a class="col-sm-12 mb-1 rounded btn small  acaffd c"
+                style="text-decoration: none;border: 1px solid rgba(0, 0, 0, .15) !important;"
+                href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">Students</a>
         </div>
-        <div class="col-md-12">
+        <div class="col-sm-3 col-3 px-1">
             <!-- removed acaffd class -->
-            <a class="col-sm-12 mb-1 border-0 btn small btn-primary acaffd c" style="text-decoration: none;"
-                href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">All
-                Instructors</a>
+            <div class="dropdown">
+                <button class="col-sm-12 rounded btn small  get-instructors-btn" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    style="text-decoration: none;border: 1px solid rgba(0, 0, 0, .15) !important;"
+                    data-url="{% url  'home:get-course-instructors-data' course.course_code course.course_university_slug %}"
+                >
+                    Instructors
+                </button>
+                <div class="dropdown-menu dropdown-menu-tip-ne mt-1" aria-labelledby="dropdownMenuLink" id="instructor-list-dropdown" 
+                    style="font-size: 0.92rem !important;max-height: 263px;overflow-y: scroll;">
+                    <a class="dropdown-item" href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
+                        All
+                    </a>
+                    <div class="dropdown-divider"></div>
+
+                </div>
+            </div>
+
         </div>
-        <div class="col-md-12">
+        <div class="col-sm-3 col-3 px-1">
             <form method="POST" class="course-save-form">
                 {% csrf_token %}
-                <button class="col-sm-12 border-0 mb-1 btn small btn-primary save-course" type="submit"
+                <button class="col-sm-12 rounded mb-1 btn small  save-course" type="submit"
+                    style="border: 1px solid rgba(0, 0, 0, .15) !important;"
                     data-url="{% url 'home:course-save' course.id %}">Save</button>
             </form>
         </div>
     </div>
 </div>
+<div class="p-0 mb-4">
+    <div class="w-100 review-textbox pb-1 pt-1 my-2" id="crwfrmcntr" style="display: none;">
+        {% if not cannot_review %}
+        <form class="w-100 course-review-form"
+            data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+            method="POST">
+            {% csrf_token %}
+            <div class="d-flex  flex-column">
+                <div class="d-flex border rounded p-1">
+                    <div class="mr-1">
+                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
+                            src="{{ request.user.image.url }}">
+                    </div>
+                    <div>
+                        {{ form.as_p }}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end my-1">
+                    <div>
+                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
+                            style="border-radius:20px;text-decoration: none;" type="submit" data-value="anon">Submit
+                            Anonymously</button>
+                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
+                            style="border-radius:20px;text-decoration: none;" type="submit"
+                            data-value="pub">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <div class="w-100 card">
+            <div class="card-body">
+                <p class="card-text text-center text-dark">
+                    You have already written a review for <strong class="text-primary">{{ course.course_code }}</strong>
+                    with <strong class="text-primary">{{ course.course_instructor_fn|capfirst }}
+                        {{ course.course_instructor|capfirst }}</strong>.
+                </p>
+                <div class="d-flex justify-content-center">
+                    <div>
+                        <a class="w-100 text-center"
+                            href="{% url 'home:user-course-reviews' %}?course_university={{ course.course_university_slug }}&course_instructor={{ course.course_instructor_slug }}&course_code={{ course.course_code }}">See
+                            Reviews</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div id="reviews" class="mt-1" style="margin-left: -1px !important;">
+        <div class="d-flex justify-content-center mb-3">
+            <div class="w-100 d-flex justify-content-center py-1 mr-1">
+                <div class="nav-item p-2">
+                    <a {% if link_get %}class="d-flex align-items-center"{% else %}class="d-flex align-items-center text-muted"{% endif %}
+                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
+                        All Reviews for {{ course.course_code }}
+                        (<span id="crsrwalcts">{{ reviews_all_count }}</span>)
+                    </a>
+                </div>
+            </div>
+            <div class="w-100 d-flex justify-content-center py-1">
+                <div class="nav-item p-2 ">
+                    <a {% if not link_get %}class="d-flex align-items-center"{% else %}class="d-flex align-items-center text-muted"{% endif %}
+                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
+                        for {{ course.course_instructor_fn }} {{ course.course_instructor }}
+                        (<span id="crsspecrw">{{ reviews_count }}</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="c-review-list ">
+                {% if link_get %}
+                <div class="dropdown">
+                    <button class="btn mb-1 btn-light border btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Sort By: {{ sortby|capfirst }}
+                    </button>
+                    <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
+                        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Latest</a>
+                        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Year</a>
+                    </div>
+                </div>
+                    {% for prof in reviews  %}
+                        <div class="mb-3 mt-1 text-dark" style="font-size: 1.1rem;font-weight: 600;">
+                            {{ prof.1 }} {{ prof.0 }} - {{reviews|get_dict_item:prof|length}} Reviews
+                        </div>                       
+                        {% include 'home/courses/course_reviews.html' with course=course reviews=reviews|get_dict_item:prof all=1 size=reviews|get_dict_item:prof|length %}
+                    {% endfor %}
+                {% else %}
+                    {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=0 %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<input id="autocia" type="hidden" value="{{ course.course_instructor }}" />
+<input id="autocya" type="hidden" value="{{ course.course_year }}" />
+<input id="autocca" type="hidden" value="{{ course.course_code }}" />
 <div class="modal fade" id="modal-save-course">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -173,99 +275,107 @@
         </div>
     </div>
 </div>
-<input id="autocia" type="hidden" value="{{ course.course_instructor }}" />
-<input id="autocya" type="hidden" value="{{ course.course_year }}" />
-<input id="autocca" type="hidden" value="{{ course.course_code }}" />
-{% endblock %}
-{% block content %}
-<div class="p-0 mb-4">
-    <div class="w-100 review-textbox pb-1 pt-1 pl-3 pr-3 my-2" id="crwfrmcntr" style="display: none;">
-        {% if not cannot_review %}
-        <form class="w-100 course-review-form"
-            data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-            method="POST">
-            {% csrf_token %}
-            <div class="d-flex  flex-column">
-                <div class="d-flex border rounded p-1">
-                    <div class="mr-1">
-                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
-                            src="{{ request.user.image.url }}">
-                    </div>
-                    <div>
-                        {{ form|crispy }}
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end my-1">
-                    <div>
-                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
-                        style="border-radius:20px;text-decoration: none;" type="submit" data-value="anon">Submit Anonymously</button>
-                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
-                            style="border-radius:20px;text-decoration: none;" type="submit" data-value="pub">Submit</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-        {% else %}
-        <div class="row w-100 card">
-            <div class="card-body">
-                <p class="card-text text-center text-dark">
-                    You have already written a review for <strong class="text-primary">{{ course.course_code }}</strong> with <strong class="text-primary">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</strong>.
-                </p>
-                <div class="d-flex justify-content-center">
-                    <div>
-                        <a class="w-100 text-center" href="{% url 'home:user-course-reviews' %}?course_university={{ course.course_university_slug }}&course_instructor={{ course.course_instructor_slug }}&course_code={{ course.course_code }}">See Reviews</a>
-                    </div>
-                </div>
-             
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    <div id="reviews" class="p-0  mt-1">
-        <div class=" d-flex justify-content-start  mb-3">
-            <div class="p-1">
-                <div  class="small nav-item border rounded" style="border-radius: 8px !important;">
-                    <a class="menu-link{{ review_a }} nav-link d-flex align-items-center " style="border-radius: 5px !important;"
-                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all">
-                        All Reviews for {{ course.course_code }}
-                        <span class="ml-2 badge badge-primary{{ review_a }}  badge-pill" id="crsrwalcts">{{ reviews_all_count }}</span>
-                    </a>
-                </div>
-            </div>
-            <div class="p-1">
-                <div class="small nav-item  border rounded" style="border-radius: 8px !important;">
-                    <a class="menu-link{{ review_s }} nav-link d-flex align-items-center "  style="border-radius: 5px !important;"
-                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews for {{ course.course_instructor_fn }} {{ course.course_instructor }}
-                        <span class="ml-2 badge badge-primary{{ review_s }}  badge-pill" id="crsspecrw">{{ reviews_count }}</span>
-                     </a>
-                </div>  
-            </div>
-        </div>
-        <div class="m-1">
-            {% if not taken %}
-            <p class="text-center">Add this course to your courses to write a review</p>
-            {% endif %}
-        </div>
-        <div class="tab-content">
-            <div class="c-review-list ">
-                {% if link_get %}
-                {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=1 %}
-                {% else %}
-                {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=0 %}
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
 <div class="modal fade" id="modal-review-delete">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content"></div>
     </div>
 </div>
 <style>
-.btn-primary,textarea{border:0!important;outline:0!important;box-shadow:none!important;-moz-box-shadow:none!important;-webkit-box-shadow:none!important}label[for=id_review_interest]{text-align:right;margin-top:.23rem;clear:both;float:left;margin-right:.288rem;font-size:.88rem!important;margin-left:-1.95rem!important}#id_review_interest{width:35%!important;margin-left:-1.95rem;font-size:.8rem!important}
+    .btn-primary,
+    textarea {
+        border: rgba(255, 255, 255, 0) !important;
+        outline: rgba(255, 255, 255, 0) !important;
+        box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important
+    }
+
+    label[for=id_review_interest] {
+        text-align: right;
+        margin-top: .23rem;
+        clear: both;
+        float: left;
+        margin-right: .288rem;
+        font-size: .88rem !important;
+        margin-left: -1.95rem !important
+    }
+
+    #id_review_interest {
+        width: 35% !important;
+        font-size: .8rem !important
+    }
+    #id_year {
+        display: inline-block !important;
+        width: 35% !important;
+        font-size: .8rem !important
+    }
+    .review-span-count {
+        font-size:13px;
+        font-weight:500;
+        color:#487be0;
+    }
+    a.showMore {
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:#487be0;
+    text-decoration:none;
+    }
+    a.showMore::after {
+        content:'View More';
+    }
+    a.showMore.showLess::after {
+        content:'View Less';
+    }
+    
 </style>
 <script>
-$(document).ready(function () {$('#id_review_interest').addClass('form-control-sm w-50')})
+    $(document).ready(function () {
+        $(document).on("click", ".get-instructors-btn", function (){
+            let btnGetIns = $(this)
+            let url = $(btnGetIns).attr("data-url");
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType:'json',
+                beforeSend: function(){
+                    
+                },
+                success: function(data){
+                    let menu = $("#instructor-list-dropdown");
+                    let universitySlug = data['course_university_slug'];
+                    let courseCode = data['course_code']
+                    for(i in data['instructors']){
+                        let firstName = data['instructors'][i]['course_instructor_fn'];
+                        let lastName = data['instructors'][i]['course_instructor'];
+                        let instructorSlug = data['instructors'][i]['course_instructor_slug']
+                        let insLink = 
+                        `
+                        <a class="dropdown-item" href="/courses/reviews/${universitySlug}/${instructorSlug}/${courseCode}/">${firstName} ${lastName}</a>
+                        `
+                        $(menu).append(insLink);
+                    }
+                }
+            });
+        })
+
+        $('.course-reviews-list').each(function (i){
+            let crsList = $(this)
+            if ($(crsList).find('.course-review-object').length > 2) {
+                $(crsList).append(`<div class="mt-3 d-flex justify-content-center align-items-center"><a href="javascript:;" class="showMore"></a><span class="review-span-count mx-1">(${parseInt($(crsList).attr("data-list-size"))-3})</span></div>`);
+            }
+        })
+
+        $('.course-reviews-list').each(function (i){
+            $(this).find('.course-review-object').slice(0,3).addClass('shown');
+        })
+        $('.course-reviews-list').each(function (i){
+            $(this).find('.course-review-object').not('.shown').hide();
+        })
+        $('.course-reviews-list .showMore').on('click',function(){
+            $(this).closest('.course-reviews-list').find('.course-review-object').not('.shown').toggle(300);
+            $(this).toggleClass('showLess');
+        });
+    })
 </script>
 {% endblock content %}

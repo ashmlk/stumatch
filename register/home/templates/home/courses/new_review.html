@@ -1,7 +1,7 @@
 {% load static %}
 {% load ibuilder %}
 {% div_class as veid %}
-{% with rw_crs_prof=review.get_course_prof rw_sm=review.get_course_sm rw_crs_yr=review.get_course_yr %}
+{% with rw_crs_prof=review.get_course_prof rw_crs_yr=review.year %}
 <div class="infinite-item cntr row bg-white mt-1" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}" data-year="{{ rw_crs_yr }}"
     data-ins="{{ rw_crs_prof }}">
     <div class="col-sm">
@@ -9,11 +9,11 @@
             {% if all == 1 %}
             <div class="border-bottom ">
                 <span class="small m-1 font-weight-bolder">Professor {{ review.course.course_instructor_fn|capfirst }} {{ review.course.course_instructor|capfirst }},
-                    {{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
+                   {{ rw_crs_yr }}</span>
             </div>
             {% else %}
             <div class="border-bottom ">
-                <span class="small m-1 text-muted">{{ rw_sm|capfirst }} {{ rw_crs_yr }}</span>
+                <span class="small m-1 text-muted">{{ rw_crs_yr }}</span>
             </div>
             {% endif %}
             <div class="d-flex justify-content-between">

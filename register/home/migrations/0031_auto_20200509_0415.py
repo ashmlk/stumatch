@@ -6,16 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0030_course_course_reviews'),
+        ("home", "0030_course_course_reviews"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='review',
-            options={'ordering': ['-created_on']},
+            name="review", options={"ordering": ["-created_on"]},
         ),
-        migrations.RemoveField(
-            model_name='course',
-            name='is_shared',
-        ),
+        migrations.RemoveField(model_name="course", name="is_shared",),
     ]

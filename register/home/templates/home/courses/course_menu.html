@@ -4,73 +4,244 @@
 {% load static %}
 {% load thumbnail %}
 {% block title %}
-    <title>Courses - JoinCampus</title>
+<title>Courses - JoinCampus</title>
 {% endblock %}
 {% block contentmenu %}
-<div class="container mt-5 p-2">
-    {% if incoming %}
-    <div class="jumbotron jumbotron-fluid bg-primary-medium" style="padding:8px 8px 8px 8px !important;">
-        <p class="lead text-white text-center mt-3">Explore universities and see their courses, instructors, and students.</p>
-        <hr class="mb-2">
-        <div class="d-flex justify-content-center">
-            <div class="m-2">
-                <a style="border-radius: 20px;" class="btn btn-light d-flex align-items-center mr-1 " href="{% url 'home:university-detail' %}?u={{ request.user.university }}">
-                    <div>
-                        <span class="h6"><span style="white-space: nowrap !important;">Explore Universities</span></span>
-                    </div>
-                </a>
+<div class="row d-flex justify-content-center  mt-2 ">
+    <div class="col-md-8 col-12">
+        {% if incoming %}
+        <div class="jumbotron jumbotron-fluid bg-primary-medium" style="padding:8px 8px 8px 8px !important;">
+            <p class="lead text-white text-center mt-3">Explore universities and see their courses, instructors, and
+                students.</p>
+            <hr class="mb-2">
+            <div class="d-flex justify-content-center">
+                <div class="m-2">
+                    <a style="border-radius: 20px;" class="btn btn-light d-flex align-items-center mr-1 "
+                        href="{% url 'home:university-detail' %}?u={{ request.user.university }}">
+                        <div>
+                            <span class="h6"><span style="white-space: nowrap !important;">Explore
+                                    Universities</span></span>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-    {% endif %}
-    <div class="mb-3">
-        <div class="db fs">
-            <div class="row p-1 mb-2">
-                <div class="col-md-6">
-                    <div class="box-c">
-                        <div class="title mb-1 d-flex justify-content-between">
-                            <a href="{% url 'home:course-dashboard' %}" style="text-decoration: none;">
-                                <div class="h5 font-weight bolder text-dark">
-                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-columns-gap" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z"/>
-                                      </svg>
-                                      <span class="mx-2">Dashboard</span>
-                                </div>
-                            </a>                         
-                            <div>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
-                                      aria-expanded="false">
-                                      <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
-                                        <a class="dropdown-item" href="{% url 'home:course-dashboard' %}">Course Dashboard</a>
-                                        <a class="dropdown-item" href="{% url 'home:courses-add' %}">Add course</a>
+        {% endif %}
+        <div class="mb-3">
+            <div class="db fs">
+                <div class="row p-1 mb-2">
+                    <div class="col-md-6">
+                        <div class="box-c">
+                            <div class="title px-1 mb-1 d-flex justify-content-between">
+                                <a href="{% url 'home:course-dashboard' %}" style="text-decoration: none;">
+                                    <div class="h5 font-weight bolder text-dark">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-columns-gap"
+                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z" />
+                                        </svg>
+                                        <span class="mx-2">Dashboard</span>
                                     </div>
-                                  </div>
+                                </a>
+                                <div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
+                                            <a class="dropdown-item" href="{% url 'home:course-dashboard' %}">Course
+                                                Dashboard</a>
+                                            <a class="dropdown-item" href="{% url 'home:courses-add' %}">Add course</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-md-12">
+                                    {% for course in courses %}
+                                    {% bg_rand as bgrnd %}
+                                    {% div_class as veid %}
+                                    {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
+                                    <div class="card my-1" style="border-radius: 8px;">
+                                        <div class="p-0">
+                                            <a style="text-decoration: none;"
+                                                href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                                                <div class="d-flex border align-items-center justify-content-between"
+                                                    style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; min-height:4rem;">
+                                                    <div class="p-2">
+                                                        <div class="ml-1" style="margin-bottom: -0.6rem;">
+                                                            <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <div class="row mt-1 mx-1">
+                                                <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary text-center"
+                                                    style="border-radius: 20px !important;"
+                                                    data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                                    <span class="svg-icon ccs mr-1">
+                                                        <svg style="margin-top: -3px !important" width="1em"
+                                                            height="1em" viewBox="0 0 16 16" class="bi bi-hexagon"
+                                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                            <path fill-rule="evenodd"
+                                                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                                        </svg>
+                                                    </span>
+                                                    <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                                </div>
+                                                <div class="c_dis border p-2 mr-2 mb-1 course-goto btn-outline-primary text-center"
+                                                    style="border-radius: 20px !important;"
+                                                    data-url="{%url 'home:course-instructor' par1 par2 %}">
+                                                    <span class="svg-icon ccs mr-1">
+                                                        <svg style="margin-top: -3px !important" width="1em"
+                                                            height="1em" viewBox="0 0 16 16" class="bi bi-layers"
+                                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                            <path fill-rule="evenodd"
+                                                                d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                                            <path fill-rule="evenodd"
+                                                                d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                                        </svg>
+                                                    </span>
+                                                    <span class="ml-1">{{ course.course_instructor_fn|capfirst }}
+                                                        {{ course.course_instructor|capfirst }}</span>
+                                                </div>
+                                                <div class="c_dis border p-2 mr-2 mb-1 text-center"
+                                                    style="border-radius: 20px !important;">
+                                                    <span class="svg-icon ccs mr-1 text-primary">
+                                                        <svg style="margin-top: -3px !important" width="1em"
+                                                            height="1em" viewBox="0 0 16 16" class="bi bi-calendar"
+                                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                            <path fill-rule="evenodd"
+                                                                d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                                        </svg>
+                                                    </span>
+                                                    <span class="text-primary ml-1">{{ course.course_year }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endwith %}
+                                    {% empty %}
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="p-1">
+                                                <div class="text-center">
+                                                    <span class="text-muted">You haven't added any courses</span>
+                                                </div>
+                                                <div class="text-center">
+                                                    <span class="text-muted small">Click <a
+                                                            href="{% url 'home:courses-add' %}">here</a> to add
+                                                        courses</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                        <div class="pt-2">
-                            <div class="col-md-12">
-                                {% for course in courses %}
-                                {% bg_rand as bgrnd %}
-                                {% div_class as veid %}
-                                {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-                                <div class="card my-1" style="border-radius: 8px;">
-                                    <div class="p-0" >
-                                        <a style="text-decoration: none;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
-                                            <div class="d-flex border align-items-center justify-content-between" 
-                                            style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; min-height:4rem;">
-                                                <div class="p-2">
-                                                    <div class="ml-1" style="margin-bottom: -0.6rem;">
-                                                        <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
+                    </div>
+                    <div class="col-md-6 p-1">
+                        <div class="box-c">
+                            <div class="px-3 title mb-4">
+                                <a href="{% url 'home:find-students' %}?sl=prgm" style="text-decoration: none;">
+                                    <div class="h5 font-weight bolder text-dark">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people"
+                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                                        </svg>
+                                        <span class="mx-2">Discover People</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="card pt-2 p-1 px-2 mx-3">
+                                <div>
+                                    {% for user in friends %}
+                                    <div class="infinite-item mb-2 card">
+                                        <div class="mx-1 my-2">
+                                            <div class="d-flex justify-content-between m-2">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        {% thumbnail user.image "40x40" crop="80% top" as im %}
+                                                        <img class="rounded-circle"
+                                                            style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}"
+                                                            width="{{ im.x }}" height="{{ im.y }}">
+                                                        {% endthumbnail %}
+                                                    </div>
+                                                    <div class="ml-1">
+                                                        <div>
+                                                            <a href="{{ user.get_absolute_url }}"
+                                                                style="text-decoration: none;"> <span
+                                                                    class="mx-0 text-dark font-weight-bolder">{{ user.get_full_name }}</span></a>
+                                                        </div>
+                                                        <div style="margin-top: -0.35rem;">
+                                                            <a class="small" style="color: rgb(1,119,200)"
+                                                                href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
+                                                            <span class="mx-0 small text-muted">·</span>
+                                                            <span
+                                                                class="text-muted small">{{ user.university|capfirst }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
-                                        <div class="row mt-1 mx-1">
-                                            <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;" 
-                                                data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="p-1">
+                                                <div class="text-center">
+                                                    <a class="small"
+                                                        href="{% url 'home:find-students' %}?sl=prgm">Discover
+                                                        People</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if friends %}
+                                    <a href="{% url 'home:find-students' %}?sl=prgm"
+                                        class="btn col-md-12 w-100 menu-link-active"
+                                        style="border-radius: 5px !important;">
+                                        See All
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-2">
+            <div class="ac sc">
+                <div class="row p-1">
+                    <div class="col-md-4 p-1">
+                        <div class="box-c">
+                            <div class="px-3 title mb-4">
+                                <a href="{% url 'home:courses-add' %}" style="text-decoration: none;">
+                                    <div class="h5 font-weight bolder text-dark">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-file-plus"
+                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z" />
+                                            <path fill-rule="evenodd"
+                                                d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z" />
+                                        </svg>
+                                        <span class="mx-2">Add Courses</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="mt-2 card mx-3">
+                                <div class="p-2">
+                                    <div class="d-flex align-items-center justify-content-left">
+                                        <div class="p-1">
+                                            {% if not no_courses %}
+                                            <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary "
+                                                style="border-radius: 20px !important;"
+                                                data-url="{% url 'home:university-detail' %}?u={{ csc_school }}&obj=std">
                                                 <span class="svg-icon ccs mr-1">
                                                     <svg style="margin-top: -3px !important" width="1em" height="1em"
                                                         viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
@@ -79,221 +250,94 @@
                                                             d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                     </svg>
                                                 </span>
-                                                <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                                <span style="font-size: 0.9rem;" class="text-dark">You have
+                                                    {{ csc_count }} {% if csc_count == 1 %} course {% else %} courses
+                                                    {% endif %} from</span>
+                                                <span style="font-size: 0.9rem;" class="ml-1">{{ csc_school }}</span>
                                             </div>
-                                            <div class="c_dis border p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;"
-                                                data-url="{%url 'home:course-instructor' par1 par2 %}">
-                                                <span class="svg-icon ccs mr-1">
-                                                    <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                                        viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd"
-                                                            d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                                                        <path fill-rule="evenodd"
-                                                            d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                                                    </svg>
-                                                </span>                                          
-                                                <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                                            {% endif %}
+                                            {% if no_courses %}
+                                            <div class="card-body">
+                                                <div class="pl-4 mx-auto">
+                                                    <div class="p-1 mx-auto">
+                                                        <div class="text-center">
+                                                            <span class="text-center text-muted">You haven't added any
+                                                                courses</span>
+                                                        </div>
+                                                        <div class="text-center">
+                                                            <span class="ml-1 mt-1 text-center text-muted small"><a
+                                                                    href="{% url 'home:courses-add' %}">Add
+                                                                    Courses</a></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="c_dis border p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
-                                                <span class="svg-icon ccs mr-1 text-primary">
-                                                    <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                                        viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                                  </svg>
-                                                </span>
-                                                <span class="text-primary ml-1">{{ course.course_year }}</span>
-                                            </div>
-                                        </div>
-                                    </div>   
-                                </div>  
-                                {% endwith %} 
-                                {% empty %}
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="p-1">
-                                            <div class="text-center">
-                                                <span class="text-muted">You haven't added any courses</span>
-                                            </div>
-                                            <div class="text-center">
-                                                <span class="text-muted small">Click <a href="{% url 'home:courses-add' %}">here</a> to add courses</span>
-                                            </div>                                         
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
+                                <div class="d-flex pl-3">
+                                    {% for user in friends_courses %}
+                                    <div style="margin-left: -8px;">
+                                        {% thumbnail user.image "35x35" crop="90% top" as im %}
+                                        <img class="rounded-circle"
+                                            style="margin:{{ im|margin:'35x35' }}; border:3px solid white !important;"
+                                            src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                        {% endthumbnail %}
+                                    </div>
+                                    {% endfor %}
+                                    {% if friends_courses and fwc_count %}
+                                    <div class="text-muted small"
+                                        style="background-color:rgb(219, 219, 219);width:36px;height:36px;margin-left: -8px;border:3px solid white !important; border-radius: 50%; text-align: center; padding: 5px 5px 2px 2px;">
+                                        <span class="small">+{{ fwc_count }}</span>
+                                    </div>
+                                    {% elif not no_courses %}
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="p-1 pl-4">
+                                            <div class="text-center">
+                                                <span class="text-center text-muted small"
+                                                    style="margin-left: 5.7rem;"><a
+                                                        href="{% url 'home:courses-add' %}">Add more</a></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 p-1">
-                    <div class="box-c">
-                        <div class="title mb-4">
-                            <a href="{% url 'home:find-students' %}?sl=prgm" style="text-decoration: none;">
-                                <div class="h5 font-weight bolder text-dark">
-                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                                      </svg>
-                                      <span class="mx-2">Discover People</span>
-                                </div>   
-                            </a>                            
-                        </div>
-                        <div class="card pt-2 p-1 px-2 mx-3">
-                            <div>
-                                {% for user in friends %}
-                                <div class="infinite-item mb-2 card">
-                                    <div class="mx-1 my-2">
-                                        <div class="d-flex justify-content-between m-2">
-                                            <div class="d-flex">
-                                                <div>
-                                                    {% thumbnail user.image "40x40" crop="80% top" as im %}
-                                                    <img class="rounded-circle" style="margin:{{ im|margin:'40x40' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                                                    {% endthumbnail %}
-                                                </div>
-                                                <div class="ml-1">
-                                                    <div>
-                                                        <a href="{{ user.get_absolute_url }}" style="text-decoration: none;"> <span class="mx-0 text-dark font-weight-bolder">{{ user.get_full_name }}</span></a>
-                                                    </div>
-                                                    <div style="margin-top: -0.35rem;">
-                                                        <a class="small" style="color: rgb(1,119,200)" href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
-                                                        <span class="mx-0 small text-muted">·</span>
-                                                        <span class="text-muted small">{{ user.university|capfirst }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <div class="col-md-4 p-1">
+                        <div class="box-c">
+                            <div class="px-3 title mb-4">
+                                <a href="{% url 'home:course-list-manager' %}" style="text-decoration: none;">
+                                    <div class="h5 font-weight bolder text-dark">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested"
+                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z" />
+                                        </svg>
+                                        <span class="mx-2">My Lists</span>
                                     </div>
-                                </div>
-                                {% empty %}
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="p-1">
-                                            <div class="text-center">
-                                                <a class="small" href="{% url 'home:find-students' %}?sl=prgm">Discover People</a>
-                                            </div>                                         
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% if friends %}
-                                <a href="{% url 'home:find-students' %}?sl=prgm" class="btn col-md-12 w-100 menu-link-active" style="border-radius: 5px !important;">
-                                    See All
                                 </a>
-                                {% endif %}
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="mb-2">
-        <div class="ac sc">
-            <div class="row p-1">
-                <div class="col-md-4 p-1">
-                    <div class="box-c">
-                        <div class="title mb-4">
-                            <a href="{% url 'home:courses-add' %}" style="text-decoration: none;">
-                                <div class="h5 font-weight bolder text-dark">
-                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-file-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
-                                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z"/>
-                                      </svg>
-                                      <span class="mx-2">Add Courses</span>
-                                </div>
-                            </a>                                     
-                        </div>
-                        <div class="mt-2 card mx-3">
-                            <div class="p-2">
-                                <div class="d-flex align-items-center justify-content-left">
-                                    <div class="p-1">
-                                        {% if not no_courses %}
-                                        <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary " style="border-radius: 20px !important;" 
-                                            data-url="{% url 'home:university-detail' %}?u={{ csc_school }}&obj=std">
-                                            <span class="svg-icon ccs mr-1">
-                                                <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                                    viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                                                </svg>
-                                            </span>
-                                            <span  style="font-size: 0.9rem;" class="text-dark">You have {{ csc_count }} {% if csc_count == 1 %} course {% else %} courses {% endif %} from</span>
-                                            <span  style="font-size: 0.9rem;" class="ml-1">{{ csc_school }}</span>                                      
-                                        </div>
-                                        {% endif %}
-                                        {% if no_courses %}
-                                        <div class="card-body">
-                                            <div class="pl-4 mx-auto">
-                                                <div class="p-1 mx-auto">
-                                                    <div class="text-center">
-                                                        <span class="text-center text-muted">You haven't added any courses</span>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <span class="ml-1 mt-1 text-center text-muted small"><a href="{% url 'home:courses-add' %}">Add Courses</a></span>
-                                                    </div>                                      
-                                                </div>
+                            <div class="card mx-3">
+                                <ul class="list-group list-group-flush">
+                                    {% for list in lists %}
+                                    <li class="list-group-item">
+                                        <div class="m-1 row d-flex align-items-center ">
+                                            <div class="info-all">
+                                                <a class="text-dark" class="card-title"
+                                                    href="{% url 'home:course-list-obj' hid=list.get_hashid %}">
+                                                    <strong class="h6"
+                                                        style="color: #375FAD ;">{{ list.title|capfirst }}</strong>
+                                                </a>
                                             </div>
                                         </div>
-                                        {% endif %}                                
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex pl-3">
-                                {% for user in friends_courses %}
-                                <div style="margin-left: -8px;">
-                                    {% thumbnail user.image "35x35" crop="90% top" as im %}
-                                    <img class="rounded-circle" style="margin:{{ im|margin:'35x35' }}; border:3px solid white !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                                    {% endthumbnail %}
-                                </div>
-                                {% endfor %}
-                                {% if friends_courses and fwc_count %}
-                                <div class="text-muted small"
-                                 style="background-color:rgb(219, 219, 219);width:36px;height:36px;margin-left: -8px;border:3px solid white !important; border-radius: 50%; text-align: center; padding: 5px 5px 2px 2px;">
-                                    <span class="small">+{{ fwc_count }}</span>
-                                </div>
-                                {% elif not no_courses %}
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <div class="p-1 pl-4">
-                                        <div class="text-center">
-                                            <span class="text-center text-muted small" style="margin-left: 5.7rem;"><a  href="{% url 'home:courses-add' %}">Add more</a></span>
-                                        </div>                                         
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 p-1">
-                    <div class="box-c">
-                        <div class="title mb-4">
-                            <a href="{% url 'home:course-list-manager' %}" style="text-decoration: none;">
-                                <div class="h5 font-weight bolder text-dark">
-                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
-                                      </svg>
-                                      <span class="mx-2">My Lists</span>
-                                </div>  
-                            </a>                
-                        </div>
-                        <div class="card mx-3">
-                            <ul class="list-group list-group-flush">
-                                {% for list in lists %}
-                                <li class="list-group-item">                                 
-                                    <div class="m-1 row d-flex align-items-center ">
-                                        <div class="info-all">
-                                            <a class="text-dark" class="card-title"
-                                                href="{% url 'home:course-list-obj' hid=list.get_hashid %}">
-                                                <strong class="h6" style="color: #375FAD ;">{{ list.title|capfirst }}</strong>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="pl-1 py-2">
-                                        <div class="small text-muted">
-                                            <div class="d-flex">
-                                                <div>           
-                                                    {% with list.added_courses.count as cc %}     
+                                        <div class="pl-1 py-2">
+                                            <div class="small text-muted">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        {% with list.added_courses.count as cc %}
                                                         <span>
                                                             {% if cc == 0 %}
                                                             No Course Added
@@ -303,94 +347,109 @@
                                                             {{cc}} Courses
                                                             {% endif %}
                                                         </span>
-                                                    {% endwith %}
-                                                </div>
-                                                <div class="mx-1">
-                                                    <span>•</span>
-                                                </div>
-                                                <div>
-                                                    <span>Created on {{ list.created_on|date:"M d, Y" }}</span>
+                                                        {% endwith %}
+                                                    </div>
+                                                    <div class="mx-1">
+                                                        <span>•</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Created on {{ list.created_on|date:"M d, Y" }}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>                             
-                                </li>
-                                {% empty %}
-                                <li class="list-group-item">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <div class="p-1">
-                                                <div class="text-center">
-                                                    <span class="text-muted">You haven't created any lists</span>
+                                    </li>
+                                    {% empty %}
+                                    <li class="list-group-item">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <div class="p-1">
+                                                    <div class="text-center">
+                                                        <span class="text-muted">You haven't created any lists</span>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <span class="text-muted small"><a
+                                                                href="{% url 'home:course-list-manager' %}">Create
+                                                                Lists</a></span>
+                                                    </div>
                                                 </div>
-                                                <div class="text-center">
-                                                    <span class="text-muted small"><a href="{% url 'home:course-list-manager' %}">Create Lists</a></span>
-                                                </div>                                         
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 p-1">
-                    <div class="box-c">
-                        <div class="title mb-4">
-                            <a href="{% url 'home:courses-saved' %}" style="text-decoration: none;">
-                                <div class="h5 font-weight bolder text-dark">
-                                    <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
-                                        <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
-                                        <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-                                      </svg>
-                                      <span class="mx-2">Saved Courses</span>
-                                </div>  
-                            </a>                                  
-                        </div>
-                        <div class="mt-2 mx-3">
-                            {% for course in saved_courses %}
-                            {% bg_rand as bgrnd %}
-                            <div class="card mb-2 bg-white" style="border-radius:8px;">
-                                <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
-                                    style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:8px;border-top-right-radius:8px;"
-                                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
-                                        <div class="ml-2">               
-                                            <h3 class="pt-2 font-weight-bold">{{ course.course_code }}</h3>                
-                                        </div>
+                    <div class="col-md-4 p-1">
+                        <div class="box-c">
+                            <div class="px-3 title mb-4">
+                                <a href="{% url 'home:courses-saved' %}" style="text-decoration: none;">
+                                    <div class="h5 font-weight bolder text-dark">
+                                        <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history"
+                                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z" />
+                                            <path fill-rule="evenodd"
+                                                d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z" />
+                                            <path fill-rule="evenodd"
+                                                d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
+                                        </svg>
+                                        <span class="mx-2">Saved Courses</span>
+                                    </div>
                                 </a>
-                                <div class="row p-1">
-                                    <div class="col-sm" >
-                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                                            <span class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
-                                        </div>       
-                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                                            <span class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
-                                        </div>
-                                        <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
-                                            <span class="text-dark">Total Enrollments: </span><span class=" text-primary mr-1">{{ course.get_user_count_ins }}</span>
-                                        </div>
-                                        <div class="my-1  p-1 pb-2">
-                                            <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
-                                        </div>  
-                                    </div>     
-                                </div>
                             </div>
-                            {% empty %}
-                            <div class="card mx-3">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="p-1">
-                                            <div class="text-center">
-                                                <span class="text-muted">You haven't saved any courses</span>
-                                            </div>                                       
+                            <div class="mt-2">
+                                {% for course in saved_courses %}
+                                {% bg_rand as bgrnd %}
+                                <div class="card mb-2 bg-white" style="border-radius:8px;">
+                                    <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"
+                                        style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:8px;border-top-right-radius:8px;"
+                                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                                        <div class="ml-2">
+                                            <h3 class="pt-2 font-weight-bold">{{ course.course_code }}</h3>
+                                        </div>
+                                    </a>
+                                    <div class="row p-1">
+                                        <div class="col-sm">
+                                            <div class="my-1 course-goto border-bottom p-1 pb-2"
+                                                data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                                <span
+                                                    class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
+                                            </div>
+                                            <div class="my-1 course-goto border-bottom p-1 pb-2"
+                                                data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                                                <span
+                                                    class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
+                                            </div>
+                                            <div class="my-1 course-goto border-bottom p-1 pb-2"
+                                                data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
+                                                <span class="text-dark">Total Enrollments: </span><span
+                                                    class=" text-primary mr-1">{{ course.get_user_count_ins }}</span>
+                                            </div>
+                                            <div class="my-1  p-1 pb-2">
+                                                <span class="text-dark">Course Overall Difficulty: </span><span
+                                                    class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% empty %}
+                                <div class="px-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <div class="p-1">
+                                                    <div class="text-center">
+                                                        <span class="text-muted">You haven't saved any courses</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
-                            
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -398,4 +457,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0030_auto_20200824_0043'),
+        ("main", "0030_auto_20200824_0043"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='get_friendrequestaccepted_notify',
+            model_name="profile",
+            name="get_friendrequestaccepted_notify",
             field=models.BooleanField(blank=True, default=True),
         ),
     ]

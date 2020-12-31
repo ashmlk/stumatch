@@ -8,18 +8,22 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0027_auto_20200507_0219'),
+        ("home", "0027_auto_20200507_0219"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='course_comments',
-            field=models.ManyToManyField(blank=True, related_name='course_comments', to='home.Comment'),
+            model_name="course",
+            name="course_comments",
+            field=models.ManyToManyField(
+                blank=True, related_name="course_comments", to="home.Comment"
+            ),
         ),
         migrations.AlterField(
-            model_name='course',
-            name='course_dislikes',
-            field=models.ManyToManyField(blank=True, related_name='course_dislikes', to=settings.AUTH_USER_MODEL),
+            model_name="course",
+            name="course_dislikes",
+            field=models.ManyToManyField(
+                blank=True, related_name="course_dislikes", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

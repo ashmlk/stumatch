@@ -10,24 +10,41 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0041_bookmarks'),
+        ("home", "0041_bookmarks"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Blog',
+            name="Blog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('guid_url', models.CharField(max_length=255, unique=True)),
-                ('content', ckeditor_uploader.fields.RichTextUploadingField(blank=True, null=True)),
-                ('date_posted', models.DateTimeField(auto_now_add=True)),
-                ('last_edited', models.DateTimeField(auto_now=True)),
-                ('slug', models.SlugField(blank=True, null=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("guid_url", models.CharField(max_length=255, unique=True)),
+                (
+                    "content",
+                    ckeditor_uploader.fields.RichTextUploadingField(
+                        blank=True, null=True
+                    ),
+                ),
+                ("date_posted", models.DateTimeField(auto_now_add=True)),
+                ("last_edited", models.DateTimeField(auto_now=True)),
+                ("slug", models.SlugField(blank=True, null=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
-        migrations.DeleteModel(
-            name='Bookmarks',
-        ),
+        migrations.DeleteModel(name="Bookmarks",),
     ]

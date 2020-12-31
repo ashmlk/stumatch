@@ -11,20 +11,44 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0001_initial'),
+        ("home", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('course_code', models.CharField(max_length=12)),
-                ('course_university', models.CharField(max_length=50)),
-                ('course_instructor', models.CharField(max_length=50)),
-                ('course_year', models.IntegerField(validators=[django.core.validators.MinValueValidator(1984), home.models.max_value_current_year], verbose_name='year')),
-                ('course_semester', models.CharField(max_length=6)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("course_code", models.CharField(max_length=12)),
+                ("course_university", models.CharField(max_length=50)),
+                ("course_instructor", models.CharField(max_length=50)),
+                (
+                    "course_year",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1984),
+                            home.models.max_value_current_year,
+                        ],
+                        verbose_name="year",
+                    ),
+                ),
+                ("course_semester", models.CharField(max_length=6)),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="course",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

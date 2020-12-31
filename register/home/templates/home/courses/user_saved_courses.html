@@ -17,38 +17,71 @@
                 </div>
         </a>
         <div class="row p-1">
-            <div class="col-sm" >
-                <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                    <span class="text-dark">University:</span><span class="ml-1 text-primary">{{ course.course_university|capfirst }}</span>
-                </div>       
-                <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                    <span class="text-dark">Instructor:</span><span class="  text-primary ml-1">{{ course.course_instructor|capfirst }}</span>
-                </div>
-                <div class="my-1 course-goto border-bottom p-1 pb-2" data-url="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}">
-                    <span class="text-dark">Total Enrollments: </span><span class=" text-primary mr-1">{{ course.get_user_count_ins }}</span>
-                </div>
-                <div class="my-1  p-1 border-bottom pb-2">
-                    <span class="text-dark">Course Overall Difficulty: </span><span class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">{{ course.average_complexity }}</span>
-                </div>
-                <div class="my-1 border-bottom p-1 pb-2 " style="display: inline-block;">
-                    <span class="text-dark">Difficulty with this instructor: </span>
-                    <span class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">
-                        {% if course.complexity_btn_ins == "None" %}
-                            No reports
-                        {% else %}
-                            {{ course.average_complexity_ins }}
-                        {% endif %}
-                    </span>
-                </div>
-                <div class="d-flex justify-content-between ">
-                    <div class="votes-container ">
-                        {% include 'home/courses/course_vote.html' with course=course %}
+            <div class="col-sm mb-2">
+                <div class="pt-2" style="min-height: 100px !important;">
+                    <a style="border-radius: 20px !important;" 
+                        class="text-left c_dis mb-1 course-goto btn btn-outline-primary" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                        <span class="svg-icon ccs mr-1">
+                            <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                            </svg>
+                        </span>
+                        
+                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                    </a>
+                    <hr style="margin: 1px 1px 4px 1px !important;">
+                    <a style="border-radius: 20px !important;" class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
+                        href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                        <span class="svg-icon ccs mr-1">
+                            <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                <path fill-rule="evenodd"
+                                    d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                            </svg>
+                        </span>
+                        <span
+                            class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                    </a>
+                    <hr style="margin: 1px 1px 4px 1px !important;">
+                    {% if course.complexity_btn_ins == "None" %}
+                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
+                        <span>Difficulty with this professor:</span><span
+                            class="ml-1">No ratings</span>
                     </div>
-                    <div>
-                        <button data-url="{% url 'home:course-save-remove' hid=course.get_hashid %}" type="button" class="btn btn-sm small no-border text-muted scrmvbtn">Remove</button>
+                    {% else %}
+                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                        <span>Difficulty with this professor:</span><span
+                            class="ml-1">{{ course.average_complexity_ins }}</span>
                     </div>
-                </div>    
-            </div>     
+                    {% endif %}
+                    <hr style="margin: 1px 1px 4px 1px !important;">
+                    {% if course.complexity_btn == "None" %}
+                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
+                        <span>Course overall difficulty:</span><span
+                            class="ml-1">No ratings</span>
+                    </div>
+                    {% else %}
+                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                        <span>Course overall difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                    </div>
+                    {% endif %}
+                    <hr style="margin: 1px 1px 1px 1px !important;">
+                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
+                        <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
+                    </div>
+                    </br>
+                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
+                        <span>Total Students With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:</span><span
+                            class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     {% endfor %}

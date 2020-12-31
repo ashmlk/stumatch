@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0037_buzz_nickname'),
+        ("home", "0037_buzz_nickname"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buzz',
-            name='content',
-            field=models.TextField(validators=[django.core.validators.MaxLengthValidator(550)]),
+            model_name="buzz",
+            name="content",
+            field=models.TextField(
+                validators=[django.core.validators.MaxLengthValidator(550)]
+            ),
         ),
     ]

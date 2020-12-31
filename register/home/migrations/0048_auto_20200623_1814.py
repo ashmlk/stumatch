@@ -7,21 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0047_auto_20200623_1719'),
+        ("home", "0047_auto_20200623_1719"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='blog',
-            name='dislikes',
-        ),
-        migrations.RemoveField(
-            model_name='blogreply',
-            name='reply_dislikes',
-        ),
+        migrations.RemoveField(model_name="blog", name="dislikes",),
+        migrations.RemoveField(model_name="blogreply", name="reply_dislikes",),
         migrations.AlterField(
-            model_name='blogreply',
-            name='blog',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blog_replies', to='home.Blog'),
+            model_name="blogreply",
+            name="blog",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blog_replies",
+                to="home.Blog",
+            ),
         ),
     ]

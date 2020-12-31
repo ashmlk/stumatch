@@ -34,26 +34,42 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from defender.decorators import watch_login
 
-handler404 = 'main.views.handle_404'
-#handler500 = 'main.views.handle_500'
-#handler403 = 'main.views.handle_403'
-#handler400 = 'main.views.handle_400'
+handler404 = "main.views.handle_404"
+# handler500 = 'main.views.handle_500'
+# handler403 = 'main.views.handle_403'
+# handler400 = 'main.views.handle_400'
 
 
-
-urlpatterns = [ 
-    path('', include('django.contrib.auth.urls')), 
-    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
-    path('ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/', admin.site.urls),  
-    url(r'^ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/defender/', include('defender.urls')),  
-    url(r'^taggit/', include('taggit_selectize.urls')),
-    url(r'^ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
-    url(r'^ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
-    path('',include('main.urls'),name='main'), 
-    path('accounts/', include('allauth.urls')), 
-    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
-    url(r'',include(('home.urls','home'), namespace='home')),
-    url(r'^friendship/', include('friendship.urls')),
-    #path('',views.user_login,name='user_login'),
-        
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) # + allauth_urlpatterns
+urlpatterns = (
+    [
+        path("", include("django.contrib.auth.urls")),
+        url(r"^admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
+        path("ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/", admin.site.urls),
+        url(
+            r"^ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/defender/",
+            include("defender.urls"),
+        ),
+        url(r"^taggit/", include("taggit_selectize.urls")),
+        url(
+            r"^ckeditor/upload/",
+            login_required(ckeditor_views.upload),
+            name="ckeditor_upload",
+        ),
+        url(
+            r"^ckeditor/browse/",
+            never_cache(login_required(ckeditor_views.browse)),
+            name="ckeditor_browse",
+        ),
+        path("", include("main.urls"), name="main"),
+        path("accounts/", include("allauth.urls")),
+        url(
+            "^inbox/notifications/",
+            include(notifications.urls, namespace="notifications"),
+        ),
+        url(r"", include(("home.urls", "home"), namespace="home")),
+        url(r"^friendship/", include("friendship.urls")),
+        # path('',views.user_login,name='user_login'),
+    ]
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+)  # + allauth_urlpatterns

@@ -8,17 +8,38 @@ import home.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0007_remove_post_slug'),
+        ("home", "0007_remove_post_slug"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Images',
+            name="Images",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.FileField(upload_to=home.models.image_create_uuid_p_u, verbose_name='Image')),
-                ('date_added', models.DateTimeField(auto_now_add=True)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='home.Post')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.FileField(
+                        upload_to=home.models.image_create_uuid_p_u,
+                        verbose_name="Image",
+                    ),
+                ),
+                ("date_added", models.DateTimeField(auto_now_add=True)),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="images",
+                        to="home.Post",
+                    ),
+                ),
             ],
         ),
     ]

@@ -7,28 +7,28 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0049_auto_20200628_0140'),
+        ("home", "0049_auto_20200628_0140"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='sv',
+            model_name="blog",
+            name="sv",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
         migrations.AddField(
-            model_name='buzz',
-            name='sv',
+            model_name="buzz",
+            name="sv",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
         migrations.AddField(
-            model_name='course',
-            name='sv',
+            model_name="course",
+            name="sv",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
         migrations.AddField(
-            model_name='post',
-            name='sv',
+            model_name="post",
+            name="sv",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
     ]

@@ -6,23 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0035_buzz'),
+        ("home", "0035_buzz"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buzz',
-            name='expiry',
+            model_name="buzz",
+            name="expiry",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='buzz',
-            name='guid_url',
+            model_name="buzz",
+            name="guid_url",
             field=models.CharField(max_length=255, unique=True),
         ),
         migrations.AlterField(
-            model_name='buzz',
-            name='title',
-            field=models.CharField(max_length=90),
+            model_name="buzz", name="title", field=models.CharField(max_length=90),
         ),
     ]

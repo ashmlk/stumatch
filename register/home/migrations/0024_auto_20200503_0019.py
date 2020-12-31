@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0023_comment_likes'),
+        ("home", "0023_comment_likes"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='course',
-            name='course_year',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(1984), django.core.validators.MaxValueValidator(2021)], verbose_name='year'),
+            model_name="course",
+            name="course_year",
+            field=models.IntegerField(
+                validators=[
+                    django.core.validators.MinValueValidator(1984),
+                    django.core.validators.MaxValueValidator(2021),
+                ],
+                verbose_name="year",
+            ),
         ),
     ]

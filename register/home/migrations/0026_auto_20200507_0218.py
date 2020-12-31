@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0025_course_is_shared'),
+        ("home", "0025_course_is_shared"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='comment',
-            name='body',
-            field=models.TextField(validators=[django.core.validators.MaxLengthValidator(350)]),
+            model_name="comment",
+            name="body",
+            field=models.TextField(
+                validators=[django.core.validators.MaxLengthValidator(350)]
+            ),
         ),
     ]

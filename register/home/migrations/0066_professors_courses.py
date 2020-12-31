@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0065_review_is_anonymous'),
+        ("home", "0065_review_is_anonymous"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='professors',
-            name='courses',
-            field=models.ManyToManyField(related_name='instructor_courses', to='home.Course'),
+            model_name="professors",
+            name="courses",
+            field=models.ManyToManyField(
+                related_name="instructor_courses", to="home.Course"
+            ),
         ),
     ]

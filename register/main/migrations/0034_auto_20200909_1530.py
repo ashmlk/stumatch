@@ -6,48 +6,200 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0033_auto_20200831_0045'),
+        ("main", "0033_auto_20200831_0045"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reportblog',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportblog",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportblogreply',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportblogreply",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportbuzz',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportbuzz",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportbuzzreply',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportbuzzreply",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportcomment',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportcomment",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportcoursereview',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportcoursereview",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportpost',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportpost",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
         migrations.AlterField(
-            model_name='reportuser',
-            name='reason',
-            field=models.CharField(choices=[('not_interested', 'Not Interested in this content'), ('spam', 'It appears to be spam'), ('sensitive', 'It displays sensitive content'), ('harmful', 'I find it abusive or harmful'), ('self_harm', 'It displays and portrays expression of self-harm or suicide'), ('hate', 'It appears to be inflammatory speech towards a demographic'), ('misleading', 'It appears to share misleading content'), ('threat', 'It is threatening and expressing violent harm')], default='not_interested', max_length=250),
+            model_name="reportuser",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("not_interested", "Not Interested in this content"),
+                    ("spam", "It appears to be spam"),
+                    ("sensitive", "It displays sensitive content"),
+                    ("harmful", "I find it abusive or harmful"),
+                    (
+                        "self_harm",
+                        "It displays and portrays expression of self-harm or suicide",
+                    ),
+                    (
+                        "hate",
+                        "It appears to be inflammatory speech towards a demographic",
+                    ),
+                    ("misleading", "It appears to share misleading content"),
+                    ("threat", "It is threatening and expressing violent harm"),
+                ],
+                default="not_interested",
+                max_length=250,
+            ),
         ),
     ]

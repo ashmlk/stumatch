@@ -8,13 +8,20 @@ import functools
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0011_auto_20200402_1739'),
+        ("home", "0011_auto_20200402_1739"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='images',
-            name='image',
-            field=models.FileField(upload_to=functools.partial(django_uuid_upload._upload_to_uuid_impl, *(), **{'make_dir': True, 'path': 'media/post_images', 'remove_qs': True}), verbose_name='Image'),
+            model_name="images",
+            name="image",
+            field=models.FileField(
+                upload_to=functools.partial(
+                    django_uuid_upload._upload_to_uuid_impl,
+                    *(),
+                    **{"make_dir": True, "path": "media/post_images", "remove_qs": True}
+                ),
+                verbose_name="Image",
+            ),
         ),
     ]

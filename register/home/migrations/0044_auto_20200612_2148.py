@@ -7,14 +7,20 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0003_taggeditem_add_unique_index'),
-        ('home', '0043_auto_20200612_2131'),
+        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("home", "0043_auto_20200612_2131"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buzz',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='Tags', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'),
+            model_name="buzz",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="Tags",
+                through="taggit.TaggedItem",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
     ]

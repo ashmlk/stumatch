@@ -7,9 +7,7 @@ from django.contrib.postgres.operations import UnaccentExtension
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0051_auto_20200628_0238'),
+        ("home", "0051_auto_20200628_0238"),
     ]
 
-    operations = [
-        UnaccentExtension()
-    ]
+    operations = [UnaccentExtension()]

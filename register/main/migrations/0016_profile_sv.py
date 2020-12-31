@@ -7,13 +7,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0015_auto_20200628_0136'),
+        ("main", "0015_auto_20200628_0136"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='sv',
+            model_name="profile",
+            name="sv",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
     ]

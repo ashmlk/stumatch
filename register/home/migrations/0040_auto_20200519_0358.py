@@ -8,13 +8,15 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0039_buzzreply'),
+        ("home", "0039_buzzreply"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buzzreply',
-            name='reply_dislikes',
-            field=models.ManyToManyField(blank=True, related_name='rdislikes', to=settings.AUTH_USER_MODEL),
+            model_name="buzzreply",
+            name="reply_dislikes",
+            field=models.ManyToManyField(
+                blank=True, related_name="rdislikes", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

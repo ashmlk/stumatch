@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0058_courselistobjects_created_on'),
+        ("home", "0058_courselistobjects_created_on"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='course_instructor_fn',
-            field=models.CharField(default='Tom', max_length=100),
+            model_name="course",
+            name="course_instructor_fn",
+            field=models.CharField(default="Tom", max_length=100),
             preserve_default=False,
         ),
     ]

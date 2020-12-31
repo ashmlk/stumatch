@@ -7,24 +7,32 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0050_auto_20200628_0148'),
+        ("home", "0050_auto_20200628_0148"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='blog',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['sv'], name='search_idx_blog'),
+            model_name="blog",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["sv"], name="search_idx_blog"
+            ),
         ),
         migrations.AddIndex(
-            model_name='buzz',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['sv'], name='search_idx_buzz'),
+            model_name="buzz",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["sv"], name="search_idx_buzz"
+            ),
         ),
         migrations.AddIndex(
-            model_name='course',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['sv'], name='search_idx_course'),
+            model_name="course",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["sv"], name="search_idx_course"
+            ),
         ),
         migrations.AddIndex(
-            model_name='post',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['sv'], name='search_idx_post'),
+            model_name="post",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["sv"], name="search_idx_post"
+            ),
         ),
     ]

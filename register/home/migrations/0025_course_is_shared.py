@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0024_auto_20200503_0019'),
+        ("home", "0024_auto_20200503_0019"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='is_shared',
+            model_name="course",
+            name="is_shared",
             field=models.BooleanField(default=False),
         ),
     ]

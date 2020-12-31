@@ -6,13 +6,11 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0013_post_guid_url'),
+        ("home", "0013_post_guid_url"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='guid_url',
-            field=models.CharField(max_length=12),
+            model_name="post", name="guid_url", field=models.CharField(max_length=12),
         ),
     ]

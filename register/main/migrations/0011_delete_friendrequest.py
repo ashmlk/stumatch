@@ -6,11 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0010_bookmarkblog_bookmarkbuzz_bookmarkpost'),
+        ("main", "0010_bookmarkblog_bookmarkbuzz_bookmarkpost"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='FriendRequest',
-        ),
+        migrations.DeleteModel(name="FriendRequest",),
     ]
