@@ -383,7 +383,6 @@ DEFAULT_IMAGE = "defaults/user/default_u_i.png"
 
 
 class Profile(AbstractUser):
-    full_name = models.TextField(validators=[MaxLengthValidator(300)], null=True, blank=False)
     bio = models.TextField()
     university = models.CharField(max_length=50)
     program = models.CharField(null=True, blank=True, max_length=255)
@@ -392,6 +391,7 @@ class Profile(AbstractUser):
         upload_to=upload_to_uuid("profile_image/profiles/"),
         blank=True,
     )
+    full_name = models.TextField(validators=[MaxLengthValidator(300)], null=True, blank=True)
     courses = models.ManyToManyField("home.Course", related_name="profiles")
     public = models.BooleanField(default=True, blank=True)
     rank_objects = models.BooleanField(default=True, blank=True)

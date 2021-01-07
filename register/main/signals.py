@@ -30,7 +30,7 @@ def set_username(sender, instance, **kwargs):
         instance.username = username
         
 
-@receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_set_profile_profile")
+@receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_set_profile")
 def check_set_username(sender, instance, **kwargs):
     if Profile.objects.filter(username=instance.username).exists():
         rand = random.getrandbits(128)

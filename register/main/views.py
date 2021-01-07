@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import auth
@@ -248,7 +249,7 @@ def signup(request):
     return render(request, "main/signup.html", {"form": form})
 
 
-@watch_login(status_code=302)
+
 def user_login(request):
     if request.user.is_authenticated:
         if request.user.is_active:
@@ -270,7 +271,7 @@ def user_login(request):
                     pass
                 for _ in list(storage._loaded_messages):
                     del storage._loaded_messages[0]
-                login(request, user)
+                auth_login(request, user)
                 return redirect("home:home")
             else:
                 return HttpResponse("Account is disabled")

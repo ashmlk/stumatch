@@ -158,6 +158,8 @@ def user_get_or_set_top_school_courses(self, user):
     except Exception as e:
         print(e)
         
+    return True
+        
         
 @shared_task(bind=True)
 def set_course_objects_top_courses(self, university):

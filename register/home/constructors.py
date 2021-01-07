@@ -484,4 +484,4 @@ def test_course_finder():
     l = "Moslemian"
     r = find_courses_and_profs(text=t, university=u, first_name=f, last_name=l)
     print(r)
-    
+    return True
