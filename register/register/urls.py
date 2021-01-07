@@ -43,10 +43,10 @@ handler404 = "main.views.handle_404"
 urlpatterns = (
     [
         path("", include("django.contrib.auth.urls")),
-        url(r"^admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
-        path("ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/", admin.site.urls),
-        url(
-            r"^ad235y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/defender/",
+        path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
+        path("WOIER5y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/", admin.site.urls),
+        path(
+            "WOIER5y9nv3nqb5b-AWRv0av3m-AtROYavm0mraM3RM350V/defender/",
             include("defender.urls"),
         ),
         url(r"^taggit/", include("taggit_selectize.urls")),

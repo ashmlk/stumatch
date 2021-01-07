@@ -1,13 +1,23 @@
 from django.contrib.postgres.search import SearchVector
-from django.db.models.signals import post_save, pre_save, pre_delete, post_delete, m2m_changed
+from django.db.models.signals import (
+    post_save,
+    pre_save,
+    pre_delete,
+    post_delete,
+    m2m_changed,
+)
 from django.dispatch import receiver
-from home.models import Post, Blog, Buzz, Course, Professors, Review
+from home.models import Post, Blog, Buzz, Course, Professors, Review, CourseObject
 from django.template.loader import render_to_string
 from django.db.models import Q, F, Count, Avg, FloatField
 from itertools import chain, groupby
 from operator import attrgetter
 from django.core.cache import cache
+from home.tasks import (
+    set_course_objects_top_courses
+)
 # from .tasks import update_instructor_courses
+
 
 @receiver(post_save, sender=Post)
 def update_search_vector_post(sender, instance, **kwargs):
@@ -34,6 +44,7 @@ def update_search_vector_course(sender, instance, **kwargs):
         )
     )
 
+
 @receiver(post_save, sender=Course)
 def add_course_to_instructor(sender, instance, **kwargs):
     try:
@@ -42,7 +53,12 @@ def add_course_to_instructor(sender, instance, **kwargs):
         print(e)
         print(e.__class__)
 
+
 @receiver(post_save, sender=Professors)
 def update_search_vector_professors(sender, instance, **kwargs):
     search_vector = SearchVector("first_name") + SearchVector("last_name")
     Professors.objects.filter(pk=instance.pk).update(sv=search_vector)
+    
+@receiver(m2m_changed, sender=CourseObject.enrolled.through)
+def update_university_course(sender, instance, **kwargs):
+    set_course_objects_top_courses.delay(university=instance.university_slug)

@@ -84,115 +84,21 @@ from home.tasks import (
     async_send_mention_notifications,
     async_delete_mention_notifications,
     add_user_to_course,
+    add_course_to_prof,
+    adjust_course_average,
+    user_get_or_set_top_school_courses,
+    set_course_objects_top_courses
 )
 from django.templatetags.static import static
 from django.contrib.staticfiles import finders
-from home.cache_handlers import update_course_reviews_cache
-
-# Max number of courses can have in every semester
-MAX_COURSES = 7
+from home.redis_handlers import update_course_reviews_cache
+from assets.assets import UNI_LIST
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
 
 hashid_list = Hashids(salt="e5896e mqwefv0t mvSOUH b90 NS0ds90", min_length=16)
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
-
-UNI_LIST = [
-    "Acadia University",
-    "Alberta University of the Arts",
-    "Algoma University",
-    "Athabasca University",
-    "Atlantic School of Theology",
-    "Bishop's University",
-    "Booth University College",
-    "Brandon University",
-    "Brock University",
-    "Canadian Mennonite University",
-    "Cape Breton University",
-    "Capilano University",
-    "Carleton University",
-    "Concordia University",
-    "Crandall University",
-    "Dalhousie University",
-    "Emily Carr University of Art and Design",
-    "Fairleigh Dickinson University",
-    "Institut national de la recherche scientifique",
-    "Kingswood University",
-    "Kwantlen Polytechnic University",
-    "Lakehead University",
-    "Laurentian University",
-    "MacEwan University",
-    "McGill University",
-    "McMaster University",
-    "Memorial University of Newfoundland",
-    "Mount Allison University",
-    "Mount Royal University",
-    "Mount Saint Vincent University",
-    "New York Institute of Technology",
-    "Niagara University",
-    "Nipissing University",
-    "Nova Scotia College of Art and Design University",
-    "Ontario College of Art and Design University",
-    "Ontario Tech University",
-    "Queen's University at Kingston",
-    "Quest University",
-    "Redeemer University College",
-    "Royal Military College of Canada",
-    "Royal Roads University",
-    "Ryerson University",
-    "Saint Francis Xavier University",
-    "Saint Mary's University",
-    "Simon Fraser University",
-    "St. Stephen's University",
-    "St. Thomas University",
-    "The King's University",
-    "Thompson Rivers University",
-    "Trent University",
-    "Trinity Western University",
-    "Tyndale University",
-    "University Canada West",
-    "University College of the North",
-    "University of Alberta",
-    "University of British Columbia",
-    "University of Calgary",
-    "University of Fredericton",
-    "University of Guelph",
-    "University of King's College",
-    "University of Lethbridge",
-    "University of Manitoba",
-    "University of New Brunswick",
-    "University of Northern British Columbia",
-    "University of Ottawa",
-    "University of Prince Edward Island",
-    "University of Regina",
-    "University of Saskatchewan",
-    "University of Toronto",
-    "University of Victoria",
-    "University of Waterloo",
-    "University of Western Ontario",
-    "University of Windsor",
-    "University of Winnipeg",
-    "University of the Fraser Valley",
-    "Université Laval",
-    "Université Sainte-Anne",
-    "Université de Moncton",
-    "Université de Montréal",
-    "Université de Sherbrooke",
-    "Université de l'Ontario français",
-    "Université du Québec en Abitibi-Témiscamingue",
-    "Université du Québec en Outaouais",
-    "Université du Québec à Chicoutimi",
-    "Université du Québec à Montréal",
-    "Université du Québec à Rimouski",
-    "Université du Québec à Trois-Rivières",
-    "Vancouver Island University",
-    "Wilfrid Laurier University",
-    "York University",
-    "Yukon University",
-    "École de technologie supérieure",
-    "École nationale d'administration publique",
-]
 
 # main page that user see's the hope page
 @login_required
@@ -1081,7 +987,7 @@ def course_list(request):
         courses = paginator.page(1)
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
-    context = {"courses": courses, "ucl": "text-primary", "tt": ": Courses"}
+    context = {"courses": courses, "ucl": "active", "tt": ": Courses"}
     return render(request, "home/courses/course_list.html", context)
 
 
@@ -1090,72 +996,26 @@ def course_dashboard(request):
 
     school_courses = top_school_courses = courses = course_list = top_courses = []
     course_count = 0
-    common_school_course = ""
-    # user courses
-    course_list = request.user.courses.order_by("course_code")
-
-    try:
-        if course_list:
-            common_school_course = cache.get(
-                f"courses__{request.user.get_hashid()}__dashboard__common_school_course"
-            )
-            if common_school_course == None:
-                common_school_course = (
-                    request.user.courses.values("course_university")
-                    .annotate(school_count=Count("course_university"))
-                    .order_by("-school_count")[0]["course_university"]
-                )
-                cache.set(
-                    f"courses__{request.user.get_hashid()}__dashboard__common_school_course",
-                    common_school_course,
-                    43200,
-                )
-        else:
-            common_school_course = request.user.university
-
-        top_school_courses = cache.get(
-            f"courses__{request.user.get_hashid()}__dashboard__top_school_courses_list"
-        )
-        if top_school_courses == None:
-            top_school_courses = (
-                Course.objects.filter(
-                    course_university__unaccent__iexact=common_school_course
-                )
-                .exclude(course_code__in=[c.course_code for c in course_list])
-                .annotate(enrolled_students=Count("profiles__id"))
-                .order_by("-enrolled_students")[:10]
-            )
-            cache.set(
-                f"courses__{request.user.get_hashid()}__dashboard__top_school_courses_list",
-                top_school_courses,
-                43200,
-            )
-
-        if len(top_school_courses) < 7:
-            top_school_courses = None
-            school_courses = cache.get(
-                f"courses__{request.user.get_hashid()}__dashboard__school_courses_list"
-            )
-            if school_courses == None:
-                school_courses = (
-                    CourseObject.objects.filter(
-                        university__unaccent__iexact=common_school_course
-                    )
-                    .annotate(enrolled_students=Count("enrolled"))
-                    .order_by("-enrolled_students")[:12]
-                )
-                cache.set(
-                    f"courses__{request.user.get_hashid()}__dashboard__school_courses_list",
-                    school_courses,
-                    86400,
-                )
-
-    except Exception as e:
-        print(e.__class__)
-        print(e)
+    course_list = request.user.courses.order_by("course_code") # get user's courses6 alphabetically
 
     page = request.GET.get("page", 1)
-    paginator = Paginator(course_list, 7)
+    if page == 1: # only get these object when page is first loaded
+        try: 
+            top_school_courses_id = Course.objects.get_or_set_top_school_courses(user=request.user)[:15] # need to be ran again when user adds/removes/edits a course
+            if len(top_school_courses_id) < 8:
+                top_school_courses = None
+                school_courses = CourseObject.objects.get_school_courses(university=request.user.get_university_slug())[:15]
+            else:
+                top_school_courses_id = [i['id'] for i in top_school_courses_id]
+                preserved = Case(
+                    *[When(pk=pk, then=pos) for pos, pk in enumerate(top_school_courses_id)]
+                )
+                top_school_courses = Course.objects.filter(id__in=top_school_courses_id).order_by(preserved)      
+        except Exception as e:
+            print(e.__class__)
+            print(e)
+
+    paginator = Paginator(course_list, 8)
     try:
         courses = paginator.page(page)
     except PageNotAnInteger:
@@ -1166,9 +1026,9 @@ def course_dashboard(request):
     context = {
         "top_courses": top_courses,
         "top_school_courses": top_school_courses,
-        "top_school": common_school_course,
+        "top_school": request.user.university,
         "courses": courses,
-        "yc": "text-primary",
+        "yc": "active",
         "tt": ": Dashboard",
         "school_courses": school_courses,
     }
@@ -1180,74 +1040,58 @@ def courses_instructor(request, par1, par2):
     course_list = []
     university = instructor = ""
     num_courses = num_students = None
-    # instructor_rating = -1
-    # course_list = Course.objects.filter(course_instructor_slug=par2,course_university_slug=par1).order_by('course_code','course_instructor_slug','course_university_slug').distinct('course_code','course_instructor_slug','course_university_slug')
-    # try:
-    #     instructor_rating = Course.objects.instructor_average_voting(ins=course_list.first().course_instructor, ins_fn=course_list.first().course_instructor_fn, university=course_list.first().course_university)
-    # except:
-    #     message = "Issue with getting instructor rating for: " + course_list.first().course_instructor_fn.capitalize() + " " + course_list.first().course_instructor.capitalize() + " at " + course_list.first().course_university
-    #     print(message)
+    page = request.GET.get("page", 1)
     try:
-        instructor = Professors.objects.filter(
-            name_slug=par2, university_slug=par1
-        ).first()
-        if instructor == None:
-            
+        if page == 1: # only retrieve this content if we are on page 1 (Page is loaded for the first time)
+            instructor = Professors.objects.filter(
+                name_slug=par2, university_slug=par1
+            ).first()
             course_list = (
-                Course.objects.filter(
-                    course_instructor_slug=par2, course_university_slug=par1
-                )
-                .order_by(
-                    "course_code", "course_instructor_slug", "course_university_slug"
-                )
-                .distinct(
-                    "course_code", "course_instructor_slug", "course_university_slug"
-                )
-            )
-            instructor = (
-                course_list.first().course_instructor_fn.capitalize()
-                + " "
-                + course_list.first().course_instructor.capitalize()
-            )
-            university = course_list.first().course_university
-            try:
-                Professors.objects.create(
-                    first_name=course_list.first().course_instructor_fn.capitalize(),
-                    last_name=course_list.first().course_instructor.capitalize(),
-                    university=university
+                    Course.objects.filter(
+                        course_instructor_slug=par2, course_university_slug=par1
                     )
-            except Exception as e:
-                print(e)
-            num_students = (
-                Profile.objects.filter(
-                    courses__course_instructor_fn__iexact=course_list.first().course_instructor_fn,
-                    courses__course_instructor__iexact=course_list.first().course_instructor,
-                    courses__course_university__iexact=university,
+                    .order_by(
+                        "course_code", "course_instructor_slug", "course_university_slug"
+                    )
+                    .distinct(
+                        "course_code", "course_instructor_slug", "course_university_slug"
+                    )
                 )
-                .order_by("username")
-                .distinct("username")
-                .count()
-            )
-            num_courses = None
-        else:
-            course_list = instructor.courses.all().order_by("course_code")
-            university = instructor.university
             num_students = (
-                Profile.objects.filter(
-                    courses__course_instructor_fn__iexact=instructor.first_name,
-                    courses__course_instructor__iexact=instructor.last_name,
-                    courses__course_university__iexact=university,
+                    Profile.objects.prefetch_related('courses').filter(
+                        courses__course_instructor_fn__iexact=course_list.first().course_instructor_fn,
+                        courses__course_instructor__iexact=course_list.first().course_instructor,
+                        courses__course_university__iexact=university,
+                    )
+                    .distinct("id")
+                    .count()
                 )
-                .order_by("username")
-                .distinct("username")
-                .count()
-            )
-            num_courses = instructor.courses.count()
-            instructor = (
-                instructor.first_name.capitalize()
-                + " "
-                + instructor.last_name.capitalize()
-            )
+            if instructor == None:
+                instructor = (
+                    course_list.first().course_instructor_fn.capitalize()
+                    + " "
+                    + course_list.first().course_instructor.capitalize()
+                )
+                university = course_list.first().course_university
+                try:
+                    Professors.objects.create(
+                        first_name=course_list.first().course_instructor_fn.capitalize(),
+                        last_name=course_list.first().course_instructor.capitalize(),
+                        university=university,
+                    )
+                except Exception as e:
+                    print(e)
+                num_courses = Course.objects.filter(
+                    course_instructor_slug=par2, course_university_slug=par1
+                ).distinct("course_code").count()
+            else:
+                university = instructor.university
+                num_courses = instructor.courses.count()
+                instructor = (
+                    instructor.first_name.capitalize()
+                    + " "
+                    + instructor.last_name.capitalize()
+                )
     except Exception as e:
         print(e)
 
@@ -1267,21 +1111,20 @@ def courses_instructor(request, par1, par2):
                 val=num_students
             )
 
-    page = request.GET.get("page", 1)
-    paginator = Paginator(course_list, 8)
+    paginator = Paginator(course_list, 10)
     try:
         courses = paginator.page(page)
     except PageNotAnInteger:
         courses = paginator.page(1)
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
+        
     context = {
         "courses": courses,
         "instructor": instructor,
         "university": university,
         "num_courses": num_courses,
         "num_students": num_students
-        #'instructor_rating':instructor_rating
     }
     return render(request, "home/courses/instructor_course_list.html", context)
 
@@ -1297,13 +1140,18 @@ def course_add(request):
             ins_fn = course.course_instructor_fn.strip().lower()
             ins = course.course_instructor.strip().lower()
             try:
-                prof = Professors.objects.get_or_create(
-                    first_name__iexact=ins_fn, last_name__iexact=ins, university=uni
+                prof, crp = Professors.objects.get_or_create(
+                    first_name__iexact=ins_fn,
+                    last_name__iexact=ins,
+                    university__iexact=course.course_university,
                 )
-                course_obj = CourseObject.object.get_or_create(
-                    code=code, university=uni
+                course_obj, crc = CourseObject.object.get_or_create(
+                    code__iexact=code, university__iexact=course.course_university
                 )
-                prof.add_to_courses(course_obj)
+                # add course_obj to prof course - via tasks
+                add_course_to_prof.delay(
+                    prof, course_obj
+                )  
             except Exception as e:
                 print(e.__class__)
             has_course = request.user.courses.filter(
@@ -1330,9 +1178,13 @@ def course_add(request):
                 }
                 return render(request, "home/courses/course_add.html", context)
             else:
-                # add the student to enrolled students for that course
                 try:
-                    add_user_to_course.delay(request.user, course_object)
+                    add_user_to_course.delay( # add the student to enrolled students for that course - via tasks
+                        request.user, course_object
+                    )
+                    user_get_or_set_top_school_courses.delay(
+                        request.user
+                    )
                 except Exception as e:
                     print(e)
                 if course_exists:
@@ -1348,23 +1200,115 @@ def course_add(request):
                 else:
                     course.save()
                     request.user.courses.add(course)
+                adjust_course_average.delay(course) # adjust the average for the course - after the user has added the course
                 return redirect("home:course-list")
     else:
         form = CourseForm()
         if not request.user.university == None:
             form.fields["course_university"].initial = request.user.university
-    context = {"form": form, "ac": "text-primary", "tt": ": Add a Course"}
+    context = {"form": form, "ac": "active", "tt": ": Add a Course"}
     return render(request, "home/courses/course_add.html", context)
 
+@login_required
+def course_auto_add(
+    request, course_code, course_instructor_slug, course_university_slug
+):
+    if course_instructor_slug == "ALL":
+        course = Course.objects.filter(
+            course_code=course_code,
+            course_university_slug__iexact=course_university_slug,
+        ).first()
+    else:
+        course = Course.objects.filter(
+            course_instructor_slug__iexact=course_instructor_slug,
+            course_code=course_code,
+            course_university_slug__iexact=course_university_slug,
+        ).first()
+
+    course_obj = CourseObject.objects.get_or_create(
+        code=course_code, university=course.course_university,
+    )
+
+    data = dict()
+    if request.method == "POST":
+        form = CourseForm(request.POST or none)
+        if form.is_valid():
+            course = form.save(False)
+            course_exists = Course.objects.filter(
+                course_code=course.course_code,
+                course_instructor_fn__iexact=course.course_instructor_fn,
+                course_instructor__iexact=course.course_instructor,
+                course_year=course.course_year,
+                course_university__iexact=course.course_university,
+                course_difficulty=course.course_difficulty,
+                course_prof_difficulty=course.course_prof_difficulty,
+            ).exists()
+            if course_exists:
+                c = Course.objects.filter(
+                    course_code=course.course_code,
+                    course_instructor_fn__iexact=course.course_instructor_fn,
+                    course_instructor__iexact=course.course_instructor,
+                    course_year=course.course_year,
+                    course_university__iexact=course.course_university,
+                    course_difficulty=course.course_difficulty,
+                    course_prof_difficulty=course.course_prof_difficulty,
+                ).first()
+                request.user.courses.add(c)
+                data["message"] = "Course added successfully"
+            else:
+                course.save()
+                request.user.courses.add(course)
+                data["message"] = "Course added successfully"
+            try:
+                add_user_to_course.delay(request.user, course_object)
+                adjust_course_average.delay(course)
+                user_get_or_set_top_school_courses.delay(
+                        request.user
+                    )
+            except Exception as e:
+                print(e)
+            data["form_is_valid"] = True
+    else:
+
+        if course_instructor_slug == "ALL":
+            form = CourseForm(
+                initial={
+                    "course_code": course.course_code,
+                    "course_university": course.course_university,
+                    "course_year": current_year(),
+                }
+            )
+        else:
+            form = CourseForm(
+                initial={
+                    "course_code": course.course_code,
+                    "course_instructor_fn": course.course_instructor_fn,
+                    "course_instructor": course.course_instructor,
+                    "course_university": course.course_university,
+                    "course_year": current_year(),
+                }
+            )
+
+        form.fields["course_code"].widget.attrs["readonly"] = True
+        form.fields["course_university"].widget.attrs["readonly"] = True
+        form.fields["course_university"].widget.attrs["disabled"] = True
+
+        context = {
+            "form": form,
+            "course": course,
+        }
+        data["html_form"] = render_to_string(
+            "home/courses/course_auto_add.html", context, request=request
+        )
+    return JsonResponse(data)
 
 @login_required
 def course_add_form_get_obj(request):
 
     data = dict()
-
     course_code_list = instructor_list = []
-
     uni = request.GET.get("u", request.user.university)
+    
     if uni == "University":
         if request.user.university != None:
             uni = request.user.university
@@ -1383,33 +1327,14 @@ def course_add_form_get_obj(request):
     obj_text = request.GET.get("q", None)
 
     if obj != None and obj1 == "instructor":  # have the code and want the instructor
-
-        instructor_list = (
-            Course.objects.values(
-                "course_instructor", "course_instructor_fn", "course_university"
-            )
-            .annotate(
-                trigram=TrigramSimilarity("course_instructor", obj_text),
-                trigram_fn=TrigramSimilarity("course_instructor_fn", obj),
-                trigram_course=TrigramSimilarity("course_code", obj),
-            )
-            .filter(
-                Q(course_university__unaccent__iexact=uni),
-                Q(trigram__gte=0.15) | Q(trigram_fn__gte=0.5),
-                Q(trigram_course__gte=0.3),
-            )
-            .order_by("course_instructor", "-trigram")
-            .distinct("course_instructor")[:10]
-        )
-
-        if len(instructor_list) < 11:
-            instructor_list = Professors.objects.search(
-                text=obj_text, university=uni, first_name=is_fn
-            )[:12]
+        instructor_list = Professors.objects.search(
+            text=obj_text, university=uni, first_name=is_fn
+        )[:12]
 
     if (
         obj != None and obj1 == "code"
     ):  # have the instructor and want the code, obj has to be set to value of course instructor field
+
         course_code_list = (
             Course.objects.values_list("course_code", flat=True)
             .annotate(
@@ -1421,10 +1346,15 @@ def course_add_form_get_obj(request):
                 trigram__gte=0.15,
                 trigram_ins__gte=0.3,
             )
-            .order_by("course_code", "-trigram")
-            .distinct("course_code")[:10]
+            .order_by("-trigram")
         )
 
+        course_code_list = list( 
+            dict.fromkeys(
+                list(course_code_list)
+                )
+        )[:12] # remove duplicates from the initial list
+        
         if len(course_code_list) < 11:
             course_code_list = (
                 CourseObject.objects.values_list("code", flat=True)
@@ -1433,10 +1363,8 @@ def course_add_form_get_obj(request):
                     (Q(university__unaccent__iexact=uni) & Q(trigram__gte=0.1))
                     | (Q(trigram__gte=0.5))
                 )
-                .order_by("code", "-trigram")
-                .distinct("code")[:12]
+                .order_by("-trigram", "code")[:12]
             )
-
     elif (
         obj0 == "instructor"
     ):  # if obj0 is instructor no value is provided and user wants list of of instructors
@@ -1453,8 +1381,7 @@ def course_add_form_get_obj(request):
                 (Q(university__unaccent__iexact=uni) & Q(trigram__gte=0.1))
                 | (Q(trigram__gte=0.5))
             )
-            .order_by("code", "-trigram")
-            .distinct("code")[:12]
+            .order_by("-trigram", "code")[:12]
         )
 
     course_code_list = list(course_code_list)
@@ -1477,19 +1404,26 @@ def course_edit(request, hid):
             ins_fn = course.course_instructor_fn.strip().lower()
             ins = course.course_instructor.strip().lower()
             try:
-                prof = Professors.objects.get_or_create(
-                    first_name__iexact=ins_fn, last_name__iexact=ins, university=uni
+                prof, crp = Professors.objects.get_or_create(
+                    first_name__iexact=ins_fn,
+                    last_name__iexact=ins,
+                    university__iexact=course.course_university,
                 )
-                course_obj = CourseObject.object.get_or_create(
-                    code=code, university=uni
+                course_obj, crc = CourseObject.object.get_or_create(
+                    code__iexact=code, university__iexact=course.course_university
                 )
-                prof.add_to_courses(course_obj)
+                add_course_to_prof.delay(
+                    prof, course_obj
+                )  # add course_obj to prof course - via tasks
             except Exception as e:
                 print(e.__class__)
             request.user.courses.add(course)
             request.user.courses.remove(course_init)
             try:
                 add_user_to_course.delay(request.user, course)
+                adjust_course_average.delay(course)
+                adjust_course_average.delay(course_init)
+                user_get_or_set_top_school_courses.delay(request.user)
             except Exception as e:
                 print(e)
             return redirect("home:course-list")
@@ -1497,85 +1431,6 @@ def course_edit(request, hid):
         form = CourseEditForm(instance=course_init)
     context = {"form": form, "course": course_init}
     return render(request, "home/courses/course_edit.html", context)
-
-
-@login_required
-def course_auto_add(
-    request, course_code, course_instructor_slug, course_university_slug
-):
-    course = Course.objects.filter(
-        course_instructor_slug__iexact=course_instructor_slug,
-        course_code=course_code,
-        course_university_slug__iexact=course_university_slug,
-    ).first()
-
-    course_obj = CourseObject.objects.get_or_create(
-        code=course_code, university=course.course_university,
-    )
-
-    data = dict()
-    if request.method == "POST":
-        form = CourseForm(request.POST or none)
-        if form.is_valid():
-            course = form.save(False)
-
-            course_exists = Course.objects.filter(
-                course_code=course.course_code,
-                course_instructor_fn__iexact=course.course_instructor_fn,
-                course_instructor__iexact=course.course_instructor,
-                course_year=course.course_year,
-                course_university__iexact=course.course_university,
-                course_difficulty=course.course_difficulty,
-                course_prof_difficulty=course.course_prof_difficulty,
-            ).exists()
-
-            if course_exists:
-                c = Course.objects.filter(
-                    course_code=course.course_code,
-                    course_instructor_fn__iexact=course.course_instructor_fn,
-                    course_instructor__iexact=course.course_instructor,
-                    course_year=course.course_year,
-                    course_university__iexact=course.course_university,
-                    course_difficulty=course.course_difficulty,
-                    course_prof_difficulty=course.course_prof_difficulty,
-                ).first()
-                request.user.courses.add(c)
-                data["message"] = "Course added successfully"
-            else:
-                course.save()
-                request.user.courses.add(course)
-                data["message"] = "Course added successfully"
-            try:
-                add_user_to_course.delay(request.user, course_object)
-            except Exception as e:
-                print(e)
-            data["form_is_valid"] = True
-    else:
-
-        form = CourseForm(
-            initial={
-                "course_code": course.course_code,
-                "course_instructor_fn": course.course_instructor_fn,
-                "course_instructor": course.course_instructor,
-                "course_university": course.course_university,
-                "course_year": current_year(),
-            }
-        )
-
-        form.fields["course_code"].widget.attrs["readonly"] = True
-        form.fields["course_instructor"].widget.attrs["readonly"] = True
-        form.fields["course_instructor_fn"].widget.attrs["readonly"] = True
-        form.fields["course_university"].widget.attrs["readonly"] = True
-
-        context = {
-            "form": form,
-            "course": course,
-        }
-        data["html_form"] = render_to_string(
-            "home/courses/course_auto_add.html", context, request=request
-        )
-    return JsonResponse(data)
-
 
 @login_required
 def course_remove(request, hid):
@@ -1588,6 +1443,8 @@ def course_remove(request, hid):
         if request.user.courses.count() == 0:
             data["done"] = True
             return redirect("home:courses")
+        adjust_course_average.delay(course)
+        user_get_or_set_top_school_courses.delay(request.user)
     else:
         context = {"course": course}
         data["html_form"] = render_to_string(
@@ -1631,41 +1488,67 @@ def course_vote(request, hid, code, status=None):
 def course_detail(request, course_university_slug, course_instructor_slug, course_code):
     data = dict()
     cannot_review = False
-    course = (
-        Course.objects.filter(
+    sortby = {
+        "latest": "Latest",
+        "cy": "Year",
+    }
+    page = request.GET.get("page", 1)
+    sb = request.GET.get("sb", "latest")
+    o = request.GET.get("rw", "ins")
+    link_get = True if o == "all" else False
+    if page == 1:
+        if course_instructor_slug == "ALL":
+            course = (
+                Course.objects.filter(
+                    course_university_slug=course_university_slug,
+                    course_code=course_code,
+                )
+                .first()
+            )
+        else:
+            course = (
+                Course.objects.filter(
+                    course_university_slug=course_university_slug,
+                    course_instructor_slug=course_instructor_slug,
+                    course_code=course_code,
+                )
+                .first()
+            )
+        taken = request.user.courses.filter(
             course_university_slug=course_university_slug,
-            course_instructor_slug=course_instructor_slug,
             course_code=course_code,
-        )
-        .order_by(
-            "course_university", "course_instructor_slug", "course_code", "course_year"
-        )
-        .distinct("course_university", "course_instructor_slug", "course_code")
-        .first()
-    )
-    taken = request.user.courses.filter(
-        course_university_slug=course_university_slug,
-        course_code=course_code,
-        course_instructor_slug=course_instructor_slug,
-    ).exists()
-    try:
-        cannot_review = Review.objects.select_related('author').filter(
-            author=request.user,
-            course_reviews__course_code=course_code,
-            course_reviews__course_university_slug=course_university_slug,
-            course_reviews__course_instructor_slug=course_instructor_slug,
+            course_instructor_slug=course_instructor_slug,
         ).exists()
-    except Exception as e:
-        print(e)
+        try:
+            cannot_review = (
+                Review.objects.select_related("author")
+                .filter(
+                    author=request.user,
+                    course_reviews__course_code=course_code,
+                    course_reviews__course_university_slug=course_university_slug,
+                    course_reviews__course_instructor_slug=course_instructor_slug,
+                )
+                .exists()
+            )
+        except Exception as e:
+            print(e)
+        
+        reviews_count = course.reviews_count()
+        reviews_all_count = course.reviews_all_count()
+        
     if request.method == "POST":
         form = ReviewForm(request.POST or None)
         if form.is_valid():
-            cr = Review.objects.select_related('author').filter(
-                author=request.user,
-                course_reviews__course_code=course_code,
-                course_reviews__course_university_slug=course_university_slug,
-                course_reviews__course_instructor_slug=course_instructor_slug,
-            ).exists()
+            cr = (
+                Review.objects.select_related("author")
+                .filter(
+                    author=request.user,
+                    course_reviews__course_code=course_code,
+                    course_reviews__course_university_slug=course_university_slug,
+                    course_reviews__course_instructor_slug=course_instructor_slug,
+                )
+                .exists()
+            )
             if not cr:
                 review = form.save(False)
                 review.author = request.user
@@ -1700,19 +1583,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         except Exception as e:
             print(e.__class__)
 
-    sortby = {
-        "latest": "Latest",
-        "cy": "Year",
-    }
     
-    sb = request.GET.get("sb", "latest")
-    o = request.GET.get("rw", "ins")
-    link_get = True if o == "all" else False
-    
-    reviews_list = course.get_reviews_all(order=sb) if o == "all" else course.get_reviews(order=sb)
+    reviews_list = (
+        course.get_reviews_all(order=sb) if o == "all" else course.get_reviews(order=sb)
+    )
 
     if not link_get:
-        page = request.GET.get("page", 1)
         paginator = Paginator(reviews_list, 15)
         try:
             reviews = paginator.page(page)
@@ -1722,9 +1598,6 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
             reviews = paginator.page(paginator.num_pages)
     else:
         reviews = reviews_list
-
-    reviews_count = course.reviews_count()
-    reviews_all_count = course.reviews_all_count()
 
     context = {
         "course": course,
@@ -1747,13 +1620,15 @@ def get_course_instructor_list(request, code, university):
 
     data = dict()
     instructors = list(
-        Course.objects.filter(course_code=code, course_university_slug__iexact=university)
+        Course.objects.filter(
+            course_code=code, course_university_slug__iexact=university
+        )
         .values("course_instructor_fn", "course_instructor", "course_instructor_slug")
         .order_by("course_instructor_fn", "course_instructor")
         .distinct("course_instructor_fn", "course_instructor")
     )
-    data['course_code'] = code
-    data['course_university_slug'] = university
+    data["course_code"] = code
+    data["course_university_slug"] = university
     data["instructors"] = instructors
     return JsonResponse(data)
 
@@ -1827,8 +1702,9 @@ def course_share(request, hid):
 
 @login_required
 def course_instructors(request, course_university_slug, course_code):
+    average_complexity = complexities = None
     num_instructors = "No instructors found"
-    courses = (
+    course_list = (
         Course.objects.filter(
             course_university_slug=course_university_slug, course_code=course_code
         )
@@ -1838,16 +1714,16 @@ def course_instructors(request, course_university_slug, course_code):
     taken = request.user.courses.filter(
         course_university_slug=course_university_slug, course_code=course_code
     ).exists()
-    if courses:
-        num_instructors = courses.count()
+    if course_list:
+        num_instructors = course_list.count()
         num_instructors = (
             str(num_instructors) + " Instructors"
             if num_instructors > 1
-            else str(num_instructors) + " Instructors"
+            else str(num_instructors) + " Instructor"
         )
-
-    if len(courses) > 0:
-        uni = courses.first().course_university
+        average_complexity, complexities = course_list.first().average_complexities()
+    if len(course_list) > 0:
+        uni = course_list.first().course_university
     else:
         uni = (
             Course.objects.filter(course_university_slug=course_university_slug)
@@ -1856,6 +1732,15 @@ def course_instructors(request, course_university_slug, course_code):
         )
     if uni == None:
         uni = request.user.university
+        
+    page = request.GET.get("page", 1)
+    paginator = Paginator(course_list, 10)
+    try:
+        courses = paginator.page(page)
+    except PageNotAnInteger:
+        courses = paginator.page(1)
+    except EmptyPage:
+        courses = paginator.page(paginator.num_pages)
 
     context = {
         "code": course_code,
@@ -1863,6 +1748,8 @@ def course_instructors(request, course_university_slug, course_code):
         "courses": courses,
         "taken": taken,
         "num_instructors": num_instructors,
+        "average_complexity":average_complexity,
+        "complexities":complexities
     }
 
     return render(request, "home/courses/course_instructors.html", context)
@@ -2327,7 +2214,7 @@ def find_students(request):
         "crs_active": crs_active,
         "needs_uni_edit": needs_uni_edit,
         "needs_puni_edit": needs_puni_edit,
-        "fs": "text-primary",
+        "fs": "active",
         "tt": ": Find Students",
     }
 
@@ -2382,7 +2269,7 @@ def course_list_manager(request):
 
     lists = request.user.course_lists.order_by("-created_on")
 
-    context = {"lists": lists, "ml": "text-primary", "tt": ": My Lists"}
+    context = {"lists": lists, "ml": "active", "tt": ": My Lists"}
     return render(request, "home/courses/course_lists/main_menu.html", context)
 
 
@@ -2631,6 +2518,7 @@ def course_list_obj_edit_course(request, hid, hid_item):
 def course_save(request, id):
 
     data = dict()
+    id = hashids.decode(id)[0]
     course = get_object_or_404(Course, id=id)
     if request.method == "POST":
         if request.user.saved_courses.filter(
@@ -2674,7 +2562,7 @@ def saved_courses(request):
     return render(
         request,
         "home/courses/user_saved_courses.html",
-        {"courses": courses, "sc": "text-primary", "tt": ": Saved Courses"},
+        {"courses": courses, "sc": "active", "tt": ": Saved Courses"},
     )
 
 

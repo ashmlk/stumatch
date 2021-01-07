@@ -34,6 +34,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "JoinCampus "
 SOCIALACCOUNT_ADAPTER = "main.adapters.SocialAccountAdapter"
 
+USERNAME_MAX_LENGTH = 30
 
 # Application definition
 
@@ -64,6 +65,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
     "admin_honeypot",
     "whitenoise.runserver_nostatic",
     "storages",
@@ -271,10 +273,14 @@ SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email",],
         "AUTH_PARAMS": {"access_type": "online",},
-    }
+    },
+
 }
 
 SITE_ID = 3
+
+SOCIAL_AUTH_FACEBOOK_KEY = "417653316007672"
+SOCIAL_AUTH_FACEBOOK_SECRET  = "153d26f30864cc7ddf89a6dafd40c982"
 
 
 DEFENDER_LOGIN_FAILURE_LIMIT = 5

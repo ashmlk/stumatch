@@ -2,33 +2,25 @@ from django.db import models
 from django.utils import timezone
 from main.models import Profile, BookmarkPost, BookmarkBlog, BookmarkBuzz
 from django.urls import reverse
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.core.validators import (
     MaxLengthValidator,
     MinValueValidator,
     MaxValueValidator,
 )
-from django.db.models import Q, F, Count, Avg, FloatField
+from django.db.models import Q, F, Count, Avg, FloatField, Case, When
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.functions import Cast
 from django.template.defaultfilters import slugify
-import uuid
-import math
-import secrets
+import uuid, secrets, datetime, pytz, PIL, io, readtime, nltk, json, math
 from django_uuid_upload import upload_to_uuid
-import uuid
-import datetime
 from math import log
-import pytz
 from dateutil import tz
-import PIL
 from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
-import io
 from hashids import Hashids
 from ckeditor_uploader.fields import RichTextUploadingField
-import readtime
 from taggit_selectize.managers import TaggableManager
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -43,12 +35,10 @@ from django.db.models.functions import Greatest
 from collections import Counter
 from itertools import chain, groupby
 from operator import attrgetter
-import nltk
 from nltk.collocations import *
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
-from math import log
 from home.algo import (
     score,
     _commonwords,
@@ -61,8 +51,14 @@ from home.algo import (
 from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
-
 hashid_list = Hashids(salt="e5896e mqwefv0t mvSOUH b90 NS0ds90", min_length=16)
+hashid_course_cache = Hashids(
+    salt="23659 fvbIUBI 98hubs BNWOVubsod 09243", min_length=8
+)
+
+# getting the redis client
+redis_cache = caches["default"]
+redis_client = redis_cache.client.get_client()
 
 
 def max_value_current_year():
@@ -504,11 +500,84 @@ class CourseManager(models.Manager):
         else:
             return -1
 
+    def get_or_set_top_school_courses(self, user):
+        
+        top_courses = redis_client.hget(
+            "user-",
+            "{}-top-school-courses".format(user.get_hashid())
+        )
+        # this count number of students in each course, regardless of how many times
+        # a students was enrolled
+        if top_courses == None:
+            top_courses = list( 
+                self.get_queryset()
+                .prefetch_related('profiles').filter(
+                    course_university__unaccent__iexact=user.university
+                )
+                .exclude(course_code__in=[c.course_code for c in user.courses.all()])
+                .annotate(enrolled_students=Count("profiles__id"))
+                .order_by("-enrolled_students")
+                .values("id")
+            )
+
+            redis_client.hset(
+                "user-",
+                "{}-top-school-courses".format(user.get_hashid()),
+                json.dumps(top_courses)
+            )
+            return top_courses
+        else:
+            return json.loads(top_courses)
 
 class CourseObjectManager(models.Manager):
-    pass
+    
+    def get_school_courses(self, university): # get list of courses based on university_slug
+        try:
+            if university == False: # when university returns false means that user does not have a university set
+                return [False] # return list object -> Compatible with view method
+            if university == True:
+                return ['IS_INCOMING']  # return list object -> Compatible with view method
+            courses_id = redis_client.hget(
+                "cobj-",
+                university
+            )
+            if courses_id == None: # if the courses id is None then set the university courses per user
+                courses_id = list (
+                    CourseObject.objects.filter(
+                        university_slug__unaccent__iexact=university
+                    )
+                    .annotate(enrolled_students=Count("enrolled"))
+                    .order_by("-enrolled_students")
+                    .values("id")
+                )
 
-
+                # save the ids of course object ordering them on number of enrolled students
+                redis_client.hset(
+                    "cobj-",
+                    university,
+                    json.dumps(courses_id)
+                )
+            else:
+                courses_id = json.loads(courses_id) # if course objects were hashed decode them as json
+                
+            courses_id = [i['id'] for i in courses_id] # get list of ids from --> {"id":1, "id":2,...}
+            
+            preserved = Case(
+                *[When(pk=pk, then=pos) for pos, pk in enumerate(courses_id)]
+            )
+            
+            qs = (
+                self.get_queryset()
+                .filter(id__in=courses_id)
+                .order_by(preserved)
+            )
+            
+            return qs
+                
+        except Exception as e:
+            print(e)
+            return ["An Error has occurred"]
+            
 class ProfessorsManager(models.Manager):
     def search(self, text, university=None, first_name=False):
 
@@ -957,25 +1026,35 @@ class Course(models.Model):
         return hashids.encode(self.id)
 
     def get_user_count(self):
-        count = (
-            Profile.objects.select_related('courses').filter(
-                courses__course_code=self.course_code,
-                courses__course_university__iexact=self.course_university,
-            )
-            .distinct("username")
-            .count()
-        )
+
+        count = CourseObject.objects.get(
+            code=self.course_code, university__iexact=self.course_university,
+        ).enrolled.count()
         return count
 
     def get_user_count_ins(self):
         count = (
-            Profile.objects.select_related('courses').filter(
+            Profile.objects.prefetch_related("courses")
+            .filter(
                 courses__course_instructor_fn__iexact=self.course_instructor_fn,
                 courses__course_instructor__iexact=self.course_instructor,
                 courses__course_code=self.course_code,
                 courses__course_university__iexact=self.course_university,
             )
-            .distinct("username")
+            .distinct("id")
+            .count()
+        )
+        return count
+    
+    def get_ins_enrolled_count(self):
+        count = (
+            Profile.objects.prefetch_related("courses")
+            .filter(
+                courses__course_instructor_fn__iexact=self.course_instructor_fn,
+                courses__course_instructor__iexact=self.course_instructor,
+                courses__course_university__iexact=self.course_university,
+            )
+            .distinct("id")
             .count()
         )
         return count
@@ -1013,7 +1092,10 @@ class Course(models.Model):
             "Hard": "danger",
             "Most Failed": "dark",
         }
-        return r_dic[self.average_complexity()]
+        try:
+            return r_dic[self.average_complexity()]
+        except ValueError:
+            return "default"
 
     def complexity_btn_ins(self):
         r_dic = {
@@ -1023,7 +1105,10 @@ class Course(models.Model):
             "Hard": "danger",
             "Most Failed": "dark",
         }
-        return r_dic[self.average_complexity_ins()]
+        try:
+            return r_dic[self.average_complexity_ins()]
+        except ValueError:
+            return "default"
 
     def average_complexity(self):
         r_dic = {
@@ -1031,20 +1116,23 @@ class Course(models.Model):
             3: "Medium",
             2: "Hard",
             1: "Most Failed",
+            0: None
         }
         try:
-            avg_cplx = cache.get(
-                "courses_avg_cplx__{}__{}".format(
+            avg_cplx = redis_client.hget(
+                "cavg_",
+                "{}-{}".format(
                     self.course_code.replace(" ", ""), self.course_university_slug
-                )
+                ),
             )
             if avg_cplx == None:
                 avg = list(
-                    Course.objects.select_related('profiles').exclude(course_difficulty=0)
+                    Course.objects.prefetch_related("profiles")
                     .filter(
                         course_code=self.course_code,
                         course_university__iexact=self.course_university,
                     )
+                    .exclude(course_difficulty=0)
                     .values("course_difficulty")
                     .annotate(count=Count("profiles__id"))
                     .order_by("course_difficulty")
@@ -1054,17 +1142,18 @@ class Course(models.Model):
                 for el in avg:
                     total_users += el["count"]
                     sum_ratings += int(el["course_difficulty"]) * el["count"]
-                avg_cplx = r_dic[round(sum_ratings / total_users)]
-                cache.set(
-                    "courses_avg_cplx__{}__{}".format(
+                avg_cplx = round(sum_ratings / total_users) if total_users != 0 else 0
+                redis_client.hset(
+                    "cavg_",
+                    "{}-{}".format(
                         self.course_code.replace(" ", ""), self.course_university_slug
                     ),
                     avg_cplx,
-                    7200,
                 )
-            return avg_cplx
+            return r_dic[int(avg_cplx)]
         except Exception as e:
             print(e.__class__)
+            print(e)
             return None
 
     def average_complexity_ins(self):
@@ -1073,18 +1162,20 @@ class Course(models.Model):
             3: "Medium",
             2: "Hard",
             1: "Most Failed",
+            0: None
         }  # need to get profiles that have the ratings not the course
         try:
-            avg_cplx = cache.get(
-                "courses_avg_cplx__{}__{}__{}".format(
+            avg_cplx = redis_client.hget(
+                "cavg_",
+                "{}-{}-{}".format(
                     self.course_code.replace(" ", ""),
                     self.course_university_slug,
                     self.course_instructor_slug,
-                )
+                ),
             )
             if avg_cplx == None:
                 avg = list(
-                    Course.objects.select_related('profiles').exclude(course_difficulty=0)
+                    Course.objects.prefetch_related("profiles")
                     .filter(
                         course_code=self.course_code,
                         course_university__iexact=self.course_university,
@@ -1101,42 +1192,90 @@ class Course(models.Model):
                 for el in avg:
                     total_users += el["count"]
                     sum_ratings += int(el["course_difficulty"]) * el["count"]
-                avg_cplx = r_dic[round(sum_ratings / total_users)]
-                cache.set(
-                    "courses_avg_cplx__{}__{}__{}".format(
+                avg_cplx = round(sum_ratings / total_users) if total_users != 0 else 0
+                redis_client.hset(
+                    "cavg_",
+                    "{}-{}-{}".format(
                         self.course_code.replace(" ", ""),
                         self.course_university_slug,
                         self.course_instructor_slug,
                     ),
                     avg_cplx,
-                    10600,
                 )
-            return avg_cplx
+            return r_dic[int(avg_cplx)]
         except Exception as e:
+            print(e)
             print(e.__class__)
             return None
 
+    def average_complexities(self):
+        r_dic = {
+            4: "Easy",
+            3: "Medium",
+            2: "Hard",
+            1: "Most Failed",
+            0: None
+        }
+        avg = list(
+            Course.objects.prefetch_related("profiles")
+                .filter(
+                    course_code=self.course_code,
+                    course_university__iexact=self.course_university,
+                )
+                .exclude(course_difficulty=0)
+                .values("course_difficulty")
+                .annotate(count=Count("profiles__id"))
+                .order_by("course_difficulty")
+        )
+
+        total_users = sum_ratings = 0
+        for el in avg:
+            total_users += el["count"]
+            sum_ratings += int(el["course_difficulty"]) * el["count"]
+        avg_cplx = r_dic[round(sum_ratings / total_users)]
+        
+        n_avg = {}
+        for el in avg:
+            n_avg[r_dic[int(el["course_difficulty"])]] = round((int(el['count'])/total_users) * 100, 2)
+            
+        return avg_cplx, n_avg
+        
+        
     def user_complexity(self):
         r_dic = {0: "none", 4: "easy", 3: "medium", 2: "hard", 1: "a failure"}
-        return r_dic[int(self.course_difficulty)]
+        try:
+            return r_dic[int(self.course_difficulty)]
+        except ValueError:
+            return "none"
 
     def user_complexity_btn(self):
         r_dic = {0: "None", 4: "Easy", 3: "Medium", 2: "Hard", 1: "Most Failed"}
-        return r_dic[int(self.course_difficulty)]
+        try:
+            return r_dic[int(self.course_difficulty)]
+        except ValueError:
+            return "none"
 
     def is_liked(self, user):
-        return Course.course_likes.through.objects.filter(
-            course__course_code=self.course_code,
-            course__course_university__iexact=self.course_university,
-            profile_id=user.id,
-        ).exists()
+        return (
+            Course.course_likes.through.objects.prefetch_related("profiles")
+            .filter(
+                course__course_code=self.course_code,
+                course__course_university__iexact=self.course_university,
+                profile_id=user.id,
+            )
+            .exists()
+        )
 
     def not_liked(self, user):
-        return Course.course_dislikes.through.objects.filter(
-            course__course_code=self.course_code,
-            course__course_university__iexact=self.course_university,
-            profile_id=user.id,
-        ).exists()
+        return (
+            Course.course_dislikes.through.objects.prefetch_related("profiles")
+            .filter(
+                course__course_code=self.course_code,
+                course__course_university__iexact=self.course_university,
+                profile_id=user.id,
+            )
+            .exists()
+        )
 
     def get_reviews(self, order=None):
 
@@ -1146,21 +1285,105 @@ class Course(models.Model):
             "latest": "-created_on",
         }
 
+        cache_index = {
+            None: "",
+            "latest": "",
+            "cy": "_yr",
+        }
+
+        instructor_reviews = []
+
         try:
-            return Review.objects.select_related('author').filter(
-                course_reviews__course_code=self.course_code,
-                course_reviews__course_instructor__iexact=self.course_instructor,
-                course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
-                course_reviews__course_university__iexact=self.course_university,
-            ).order_by(order_by[order])
+            if order == "cy":
+                instructor_reviews = redis_client.hget(
+                    "cr_",
+                    "{}_{}_{}_yr".format(
+                        self.course_code,
+                        self.course_university_slug,
+                        self.course_instructor_slug,
+                    ),
+                )
+            else:
+                instructor_reviews = redis_client.hget(
+                    "cr_",
+                    "{}_{}_{}".format(
+                        self.course_code,
+                        self.course_university_slug,
+                        self.course_instructor_slug,
+                    ),
+                )
+            if instructor_reviews == None:
+                if order == "cy":
+                    instructor_reviews = list(
+                        Review.objects.select_related("author")
+                        .filter(
+                            course_reviews__course_code=self.course_code,
+                            course_reviews__course_instructor__iexact=self.course_instructor,
+                            course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
+                            course_reviews__course_university__iexact=self.course_university,
+                        )
+                        .order_by("-year", "-created_on")
+                        .values("id")
+                    )
+                    redis_client.hset(
+                        "cr_",
+                        "{}_{}_{}_yr".format(
+                            self.course_code,
+                            self.course_university_slug,
+                            self.course_instructor_slug,
+                        ),
+                        json.dumps(instructor_reviews),
+                    )
+                else:
+                    instructor_reviews = list(
+                        Review.objects.select_related("author")
+                        .filter(
+                            course_reviews__course_code=self.course_code,
+                            course_reviews__course_instructor__iexact=self.course_instructor,
+                            course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
+                            course_reviews__course_university__iexact=self.course_university,
+                        )
+                        .order_by("-created_on")
+                        .values("id")
+                    )
+                    redis_client.hset(
+                        "cr_",
+                        "{}_{}_{}".format(
+                            self.course_code,
+                            self.course_university_slug,
+                            self.course_instructor_slug,
+                        ),
+                        json.dumps(instructor_reviews),
+                    )
+            else:
+                instructor_reviews = json.loads(
+                    instructor_reviews
+                )  # if the data is stored in has then it needs to be decoded
+
+            instructor_reviews = [i["id"] for i in instructor_reviews]
+
+            preserved = Case(
+                *[When(pk=pk, then=pos) for pos, pk in enumerate(instructor_reviews)]
+            )
+
+            return (
+                Review.objects.select_related("author")
+                .filter(id__in=instructor_reviews)
+                .order_by(preserved)
+            )
+
         except Exception as e:
             print(e)
-            return Review.objects.select_related('author').filter(
-                course_reviews__course_code=self.course_code,
-                course_reviews__course_instructor__iexact=self.course_instructor,
-                course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
-                course_reviews__course_university__iexact=self.course_university,
-            ).order_by("-created_on")
+            return (
+                Review.objects.select_related("author")
+                .filter(
+                    course_reviews__course_code=self.course_code,
+                    course_reviews__course_instructor__iexact=self.course_instructor,
+                    course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
+                    course_reviews__course_university__iexact=self.course_university,
+                )
+                .order_by("-created_on")
+            )
 
     def get_reviews_all(self, order=None):
 
@@ -1168,56 +1391,123 @@ class Course(models.Model):
             None: "-created_on",
             "cy": "-year",
         }
-        
+
         cache_index = {
             None: "",
-            "latest":"",
-            "cy": "__yr",
+            "latest": "",
+            "cy": "_yr",
         }
 
-        try:          
-            result = cache.get("courses_reviews__{}__{}__all_{}".format(self.course_code, self.course_university_slug, cache_index[order]))
+        instructor_reviews = []
+
+        try:
+            result = redis_client.hget(
+                "cr_",
+                "{}_{}{}".format(
+                    self.course_code, self.course_university_slug, cache_index[order]
+                ),
+            )
             if result == None:
                 if order == "cy":
-                    qs = Review.objects.select_related('author').filter(
-                        course_reviews__course_code=self.course_code,
-                        course_reviews__course_university__iexact=self.course_university,
-                    ).order_by(
-                        "course_reviews__course_instructor","course_reviews__course_instructor_fn","-year", "-created_on",
-                    ).annotate(
-                        instructor_first_name=F('course_reviews__course_instructor_fn'),
-                        instructor_last_name=F('course_reviews__course_instructor'),
+                    qs = (
+                        Review.objects.select_related("author")
+                        .filter(
+                            course_reviews__course_code=self.course_code,
+                            course_reviews__course_university__iexact=self.course_university,
+                        )
+                        .order_by(
+                            "course_reviews__course_instructor",
+                            "course_reviews__course_instructor_fn",
+                            "-year",
+                            "-created_on",
+                        )
+                        .annotate(
+                            instructor_first_name=F(
+                                "course_reviews__course_instructor_fn"
+                            ),
+                            instructor_last_name=F("course_reviews__course_instructor"),
+                        )
                     )
                 else:
-                    qs = Review.objects.select_related('author').filter(
-                        course_reviews__course_code=self.course_code,
-                        course_reviews__course_university__iexact=self.course_university,
-                    ).order_by(
-                        "course_reviews__course_instructor","course_reviews__course_instructor_fn", "-created_on",
-                    ).annotate(
-                        instructor_first_name=F('course_reviews__course_instructor_fn'),
-                        instructor_last_name=F('course_reviews__course_instructor'),
+                    qs = (
+                        Review.objects.select_related("author")
+                        .filter(
+                            course_reviews__course_code=self.course_code,
+                            course_reviews__course_university__iexact=self.course_university,
+                        )
+                        .order_by(
+                            "course_reviews__course_instructor",
+                            "course_reviews__course_instructor_fn",
+                            "-created_on",
+                        )
+                        .annotate(
+                            instructor_first_name=F(
+                                "course_reviews__course_instructor_fn"
+                            ),
+                            instructor_last_name=F("course_reviews__course_instructor"),
+                        )
                     )
-                result = {
-                    k: list(vs)
-                    for k, vs in groupby(qs, attrgetter('instructor_last_name','instructor_first_name'))
-                }
-                cache.set("courses_reviews__{}__{}__all{}".format(self.course_code, self.course_university_slug, cache_index[order]), result)
-            return result      
+
+                result = list(
+                    qs.values("id")
+                )  # save the ids of the new reviews as a dic object
+
+                redis_client.hset(
+                    "cr_",
+                    "{}_{}{}".format(
+                        self.course_code,
+                        self.course_university_slug,
+                        cache_index[order],
+                    ),
+                    json.dumps(result),
+                )
+
+            else:
+                # if the result is retrieved from hash
+                # then the ids should be retrieved from the the json object
+                result = [i["id"] for i in json.loads(result)]
+                preserved = Case(
+                    *[When(pk=pk, then=pos) for pos, pk in enumerate(result)]
+                )
+
+                qs = (
+                    Review.objects.filter(id__in=result)
+                    .order_by(preserved)
+                    .annotate(
+                        instructor_first_name=F("course_reviews__course_instructor_fn"),
+                        instructor_last_name=F("course_reviews__course_instructor"),
+                    )
+                )
+
+            result = {
+                k: list(vs)
+                for k, vs in groupby(
+                    qs, attrgetter("instructor_last_name", "instructor_first_name")
+                )
+            }
+
+            return result
+
         except Exception as e:
             print(e)
-            return []
-        
-        except Exception as e:
-            print(e)
-            return Review.objects.select_related('author').filter(
-                course_reviews__course_code=self.course_code,
-                course_reviews__course_university__iexact=self.course_university,
-            ).order_by("-created_on")
+            return (
+                Review.objects.select_related("author")
+                .filter(
+                    course_reviews__course_code=self.course_code,
+                    course_reviews__course_university__iexact=self.course_university,
+                )
+                .order_by("-created_on")
+            )
 
     def reviews_count(self):
-        
-        count = cache.get("courses_review__count__{}_{}_{}".format(self.course_university_slug, self.course_code, self.course_instructor_slug))
+        count = redis_client.hget(
+            "cr_",
+            "count_{}_{}_{}".format(
+                self.course_code,
+                self.course_university_slug,
+                self.course_instructor_slug,
+            ),
+        )
         if count == None:
             count = Course.course_reviews.through.objects.filter(
                 course__course_code=self.course_code,
@@ -1225,19 +1515,34 @@ class Course(models.Model):
                 course__course_instructor_fn__iexact=self.course_instructor_fn,
                 course__course_instructor__iexact=self.course_instructor,
             ).count()
-            cache.set("courses_review__count__{}_{}_{}".format(self.course_university_slug, self.course_code, self.course_instructor_slug), count)
-        return count
-    
+            redis_client.hset(
+                "cr_",
+                "count_{}_{}_{}".format(
+                    self.course_code,
+                    self.course_university_slug,
+                    self.course_instructor_slug,
+                ),
+                count,
+            )
+        return int(count)
+
     def reviews_all_count(self):
 
-        count = cache.get("courses_review__count__{}_{}__all".format(self.course_university_slug, self.course_code))
+        count = redis_client.hget(
+            "cr_",
+            "count_{}_{}_all".format(self.course_code, self.course_university_slug),
+        )
         if count == None:
             count = Course.course_reviews.through.objects.filter(
                 course__course_code=self.course_code,
                 course__course_university__iexact=self.course_university,
             ).count()
-            cache.set("courses_review__count__{}_{}__all".format(self.course_university_slug, self.course_code), count)
-        return count
+            redis_client.hset(
+                "cr_",
+                "count_{}_{}_all".format(self.course_code, self.course_university_slug),
+                count,
+            )
+        return int(count)
 
 
 class Buzz(models.Model):
@@ -1543,15 +1848,9 @@ class CourseObject(models.Model):
     enrolled = models.ManyToManyField(
         Profile, blank=True, related_name="enrolled_students"
     )
-    # obj_likes = models.ManyToManyField(
-    #     Profile, blank=True, related_name="course_obj_likes"
-    # )
-    # obj_dislikes = models.ManyToManyField(
-    #     Profile, blank=True, related_name="course_obj_dislikes"
-    # )
 
     def __str__(self):
-        return self.course_code
+        return self.code
 
     sv = pg_search.SearchVectorField(null=True)
 
@@ -1566,6 +1865,7 @@ class CourseObject(models.Model):
         self.code = self.code.upper().replace(" ", "").strip()
         self.university_slug = slugify(self.university.strip().lower())
         super(CourseObject, self).save(*args, **kwargs)
+
 
 class Professors(models.Model):
 
@@ -1632,13 +1932,10 @@ class Professors(models.Model):
 
         try:
             if not self.courses.filter(
-                course_code=course.code,
-                course_university=course.university,
+                code=course.code, university=course.university,
             ).exists():
                 self.courses.add(course)
                 self.save()
         except Exception as e:
             print(e)
             print(e.__class__)
-
-

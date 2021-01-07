@@ -28,6 +28,18 @@ def set_username(sender, instance, **kwargs):
             rand = random.getrandbits(64)
             username = "user" + str(rand)
         instance.username = username
+        
+
+@receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_set_profile_profile")
+def check_set_username(sender, instance, **kwargs):
+    if Profile.objects.filter(username=instance.username).exists():
+        rand = random.getrandbits(128)
+        username = "user" + str(rand)
+        while Profile.objects.filter(username=instance.username):
+            rand = random.getrandbits(128)
+            username = "user" + str(rand)
+        instance.username = username
+        instance.save()
 
 
 @receiver(post_save, sender=Profile, dispatch_uid="send_welcome_email_on_user_sign_up")

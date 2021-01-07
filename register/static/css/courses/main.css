@@ -32,6 +32,27 @@
     width: 1.4rem;
 }
 
+.jc-nav-link {
+  border-bottom: 2px solid rgba(255, 255, 255, 0);
+  border-color: rgba(255, 255, 255, 0) !important;
+  
+}
+
+.jc-nav-link.text-muted-active{
+  color: rgba(0, 0, 0, 0.9) !important;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.7);
+  border-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.jc-nav-link:hover {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.jc-nav-link:not(.text-muted-active):hover {
+  text-decoration: none;border-bottom: 2px solid rgba(0, 0, 0, 0.7);border-color: rgba(0, 0, 0, 0.7) !important;
+}
+
 .btn.btn-cplx{
     border:none !important;
     outline:none !important;
@@ -100,6 +121,37 @@
 }
 .cplx.MostFailed {
     color:rgba(0, 0, 0, 0.918);
+}
+
+
+.course-menu-ctr  .list-group-item-action {
+  border: none;
+  border-radius: 0px;
+  margin-left: 2px;
+}
+
+.course-menu-ctr  .list-group-item-action:not(.active):hover{
+  border: none;
+  border-radius: 0px;
+  box-shadow: -2px 0 0 0 rgba(0, 0, 0, 0.192) !important;
+  margin-left: 2px;
+}
+
+.course-menu-ctr  .list-group-item-action.active{
+  border: none;
+  box-shadow: -2px 0 0 0 rgba(0, 0, 0, 0.9);
+  margin-left: 2px;
+}
+
+.course-code-ctr {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px; 
+  min-height:3.5rem;
+  padding-top: 5px;
+}
+
+.course-code-ctr .h5 {
+  font-weight: 600;
 }
 
 @media (min-width: 34em) {

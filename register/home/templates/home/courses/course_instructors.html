@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
-<div class="d-flex border-bottom justify-content-between">
+<div class="d-flex  justify-content-between pt-2">
     <div class="mr-2">
         <div class="d-flex">
             <svg style="margin-top: 5px !important" width="19" height="19" viewBox="0 0 16 16" class="mr-2 bi bi-book"
@@ -43,100 +43,134 @@
         {% endif %}
     </div>
 </div>
-<div class="card-columns mt-1">
-    {% for course in courses %}
-    {% bg_rand as bgrnd %}
-    <div class="card mb-2 bg-white" style="border-radius: 8px;">
-        <a class="my-auto text-white" style="text-decoration: none;"
-            href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}">
-            <div class="d-flex justify-content-between align-items-center course-title-box"
-                data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-                style="min-height: 5rem; background-color: {{ bgrnd }};border-top-left-radius:8px;border-top-right-radius:8px;">
-                <div class="ml-2">
-                    <h3 class="font-weight-bold">{{ course.course_instructor_fn|capfirst }}
-                        {{ course.course_instructor|capfirst }}</h3>
+<div class="complexities-container">
+    <div class="my-2 py-2">
+        <div class="d-flex justify-content-left w-100 course-difficulties-tag">
+            <div class="py-1 pr-1">
+                <div class="btn btn-default btn-md border bg-white">
+                    Average: {{ average_complexity }}
                 </div>
             </div>
-        </a>
-        <div class="row p-0">
-            <div class="col-sm-12">
-                <div class="d-flex flex-column p-1">
-                    <div class="p-1  t-stu m-1 pb-2 border-bottom">
-                        <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins"
-                            style="text-decoration: none;">
-                            <div class="p1 t-stu">
-                                <span class="text-dark">Total enrollments: </span>
-                                <span class="font-weight-bolder mr-1">{{ course.get_user_count_ins }}</span>
-                            </div>
+            <div class="border mx-1"></div>
+            {% if  complexities|get_dict_item:"Easy" != None %}
+            <div class="p-1">
+                <div class="btn btn-success btn-md">
+                   {{ complexities|get_dict_item:"Easy" }}% Easy
+                </div>
+            </div>
+            {% endif %}
+            {% if  complexities|get_dict_item:"Medium" != None %}
+            <div class="p-1">
+                <div class="btn btn-warning btn-md">
+                    {{ complexities|get_dict_item:"Medium" }}% Medium
+                </div>
+            </div>
+            {% endif %}
+            {% if  complexities|get_dict_item:"Hard" != None %}
+            <div class="p-1">
+                <div class="btn btn-danger btn-md">
+                    {{ complexities|get_dict_item:"Hard" }}% Hard
+                </div>
+            </div>
+            {% endif %}
+            {% if  complexities|get_dict_item:"Most Failed" != None %}
+            <div class="p-1">
+                <div class="btn btn-dark btn-md">
+                    {{ complexities|get_dict_item:"Most Failed" }}% Failed
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="row infinite-container px-2 mt-1">
+    {% for course in courses %}
+    {% bg_rand as bgrnd %}
+    <div class="inifinite-item col-md-6 p-1">
+        <div class="card mb-2 bg-white" style="border-radius: 8px;">
+            <a class="my-auto text-white" style="text-decoration: none;"
+                href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}">
+                <div class="d-flex justify-content-between align-items-center course-title-box course-code-ctr"
+                    data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+                    style="background-color: {{ bgrnd }};">
+                    <div class="ml-2">
+                        <span class="h5">{{ course.course_instructor_fn|capfirst }}
+                            {{ course.course_instructor|capfirst }}</span>
+                    </div>
+                </div>
+            </a>
+            <div class="row p-0">
+                <div class="col-sm-12">
+                    <div class="p-1 d-flex">
+                        <a class="t-stu m-1 btn btn-outline-primary" 
+                            href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins"
+                            style="border-radius: 20px !important;">
+                                <div class="p1 t-stu">
+                                    <span>Total enrollments: </span>
+                                    <span>{{ course.get_ins_enrolled_count }}</span>
+                                </div>
                         </a>
-                    </div>
-                    <div class="t-stu p-1 m-1 pb-2 border-bottom" ">
-                        <span class=" text-dark">Average Difficulty: </span><span
-                            class="mr-1 font-weight-bolder cplx {{ course.average_complexity|cut:' ' }}">
-                            {% if course.complexity_btn == "None" %}
-                            No reports
-                            {% else %}
-                            {{ course.average_complexity }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="t-stu mt-1 ">
-                        <div class="p-1" style="display: inline-block;">
-                            <span class="text-dark">Average Difficulty with this instructor: </span><span
-                                class="mr-1 font-weight-bolder cplx {{ course.average_complexity_ins|cut:' ' }}">
-                                {% if course.complexity_btn_ins == "None" %}
-                                No reports
-                                {% else %}
-                                {{ course.average_complexity_ins }}
-                                {% endif %}
+                        {% if course.complexity_btn_ins == "None" %}
+                        <div style="border-radius: 20px !important;" class="text-left c_dis m-1 btn btn-outline-secondary">
+                            <span
+                                class="ml-1">No ratings
                             </span>
+                        </div>
+                        {% else %}
+                        <div style="border-radius: 20px !important;" class="text-left c_dis m-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                            <span >{{ course.average_complexity_ins }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between ">
+                        <div class="votes-container ">
+                            {% include 'home/courses/course_vote.html' with course=course %}
+                        </div>
+                        <div>
+                            <a href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+                                class="btn btn-sm small no-border text-muted ">
+                                Reviews
+                                <span>
+                                    ({{ course.get_reviews.count }})
+                                </span>
+                            </a>
+                        </div>
+                        <div>
+                            <form method="POST" class="course-save-form">
+                                {% csrf_token %}
+                                <button class="small text-muted btn-sm small btn no-border save-course" type="submit"
+                                    data-url="{% url 'home:course-save' course.get_hashid %}">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bookmark-plus"
+                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M4.5 2a.5.5 0 0 0-.5.5v11.066l4-2.667 4 2.667V8.5a.5.5 0 0 1 1 0v6.934l-5-3.333-5 3.333V2.5A1.5 1.5 0 0 1 4.5 1h4a.5.5 0 0 1 0 1h-4zm9-1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V1.5a.5.5 0 0 1 .5-.5z" />
+                                        <path fill-rule="evenodd"
+                                            d="M13 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z" />
+                                    </svg>
+                                    </i>Save</button>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between ">
-                    <div class="votes-container ">
-                        {% include 'home/courses/course_vote.html' with course=course %}
-                    </div>
-                    <div>
-                        <a href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-                            class="btn btn-sm small no-border text-muted ">Reviews</a>
-                    </div>
-                    <div>
-                        <form method="POST" class="course-save-form">
-                            {% csrf_token %}
-                            <button class="small text-muted btn-sm small btn no-border save-course" type="submit"
-                                data-url="{% url 'home:course-save' course.id %}">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bookmark-plus"
-                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M4.5 2a.5.5 0 0 0-.5.5v11.066l4-2.667 4 2.667V8.5a.5.5 0 0 1 1 0v6.934l-5-3.333-5 3.333V2.5A1.5 1.5 0 0 1 4.5 1h4a.5.5 0 0 1 0 1h-4zm9-1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V1.5a.5.5 0 0 1 .5-.5z" />
-                                    <path fill-rule="evenodd"
-                                        d="M13 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z" />
-                                </svg>
-                                </i>Save</button>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modal-save-course">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header border-0  p-1">
-                    <h5 class="modal-title col-12 text-center font-weight-bolder">Save Course</h5>
-                </div>
-                <div class="moda-body text-center border-0 p-2">
-                    <hp class="mt-2 col-8 text-center text-message text-danger">
-                        </p>
-                </div>
-                <div class="modal-footer border-0 p-1">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                        style="border-radius: 20px; width: 100%;">Close</button>
-                </div>
-            </div>
+    {% empty %}
+    <div class="d-flex w-100 justify-content-center">
+        <div class="p-1">
+            <h6> No instructors found.</h6>
         </div>
     </div>
     {% endfor %}
+    {% if courses.has_next %}
+    <a class="infinite-more-link" href="?page={{ courses.next_page_number }}"></a>
+    {% endif %}
+    <div class="mt-2 loading" style="display: none;">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% load static %}
 {% load socialaccount %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +26,26 @@
     <link rel="mask-icon" href="{% static 'favicon_folder/safari-pinned-tab.svg' %}" color="#90c4f5">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
+    <style>
+      .google-icon {
+        margin-left: 10px;
+        width: 22px !important;
+        height: 22px !important;
+      }
+      .pass-eye {
+        margin-left: 19.8rem !important;
+        cursor: pointer;
+        position: absolute;
+        display: inline-block;
+        margin-top: -2px;
+        opacity: 0.8;
+      }
+      .facebook-icon {
+        margin-left: 10px;
+        width: 24px !important;
+        height: 24px !important;
+      }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
   <div class="d-block d-md-none">
@@ -182,11 +203,18 @@
                       <img class="img-fluid float-left" style="height: 1.5rem;" src="{% static 'logo/m/logo-white-nl.png' %}"/><span style="margin-left:-24px;font-weight: 500;">Log in</span>
                     </button>
                     <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
-                    <a class="btn mt-2 w-100 btn-md border rounded" href="{% provider_login_url 'google' %}">
-                      <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span></a>
+                    <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between" href="{% provider_login_url 'google' %}">
+                      <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span>
+                      <div></div>
+                    </a>
+                    <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between"  href="">
+                      <img class="facebook-icon float-left" src="{% static 'logo/fb_logo_58.png' %}"/><span style="margin-left:-11px;font-weight: 500;">Log in with Facebook</span>
+                      <div></div>
+                    </a>
                     <div class="mt-4">
                       <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
                       <a class="text-muted" href="{% url 'account_reset_password' %}" style="font-size: .9rem;">Forgot Password?</a>
+                      <div></div>
                     </div>                               
                   </form>
                 </div>
@@ -211,11 +239,4 @@
       })
     </script>
 </body>
-<style>
-  .google-icon {
-    margin-left: 10px;
-    width: 22px;
-    height: 22x;
-  }
-</style>
 </html>

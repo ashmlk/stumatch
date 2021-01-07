@@ -6,26 +6,29 @@
     <title>Your Courses - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<div class="row infinite-container pt-3 mb-4">
+<div class="row infinite-container pt-1 mb-4">
     {% for course in courses %}
     {% div_class as veid %}
     {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
-    <div class="col-md-6 infinite-item p-2" id="_cc_{{ veid }}" >
-        <div class="border bg-white p-1" style="border-radius: 8px;">
+    <div class="col-md-6 infinite-item p-1" id="_cc_{{ veid }}" >
+        <div class="border bg-white" style="border-radius: 8px;">
             <div class="w-100 h-100 p-0">
-                <div class="d-flex justify-content-between ml-1 mr-1 pb-2 mb-1 border-bottom">
-                    <div class="">
-                        <div class="ml-1" style="margin-bottom: -0.6rem;">
-                            <a class="text-dark" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
-                                <h5 class="pt-1" style="color: rgb(24, 24, 24);">{{ course.course_code }}</h5>
-                            </a>
+                <div class="d-flex justify-content-between align-items-center border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center p-1">
+                            <div class="ml-1 d-flex align-items-center">
+                                <a class="pt-2 text-dark d-flex align-items-center h5" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                                 {{ course.course_code }}
+                                </a>
+                            </div> 
                         </div>
-                        
                     </div>
-                    <div >
+                    <div>
                         <div class="dropdown" style="margin-left: -0.15rem;">
                             <button class="btn btn-sm no-border text-muted" type="button" id="d_l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Edit
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                                  </svg>
                             </button>
                             <div class="dropdown-menu mt-1" aria-labelledby="d_l">
                                 <a class="small dropdown-item"
@@ -63,48 +66,53 @@
                     </div>
                 </div>
                 <div class="row mt-1 mx-1">
-                    <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;" 
-                        data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                        <span class="svg-icon ccs mr-1">
-                            <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                            </svg>
-                        </span>
-                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                    <div>
+                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary text-center" style="border-radius: 20px !important; width: auto !important;" 
+                            data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                            <span class="svg-icon ccs mr-1">
+                                <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                    viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                        </div>
                     </div>
-                    <div class="c_dis border p-2 mr-2 mb-1 course-goto btn-outline-primary text-center" style="border-radius: 20px !important;"
-                        data-url="{%url 'home:course-instructor' par1 par2 %}">
-                        <span class="svg-icon ccs mr-1">
-                            <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                                <path fill-rule="evenodd"
-                                    d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                            </svg>
-                        </span>
-                        
-                        <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                    <div>
+                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary text-center" style="border-radius: 20px !important;"
+                            data-url="{%url 'home:course-instructor' par1 par2 %}">
+                            <span class="svg-icon ccs mr-1">
+                                <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                    viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                    <path fill-rule="evenodd"
+                                        d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                        </div>
                     </div>
-                    <div class="c_dis border p-2 mr-2 mb-1 text-center" style="border-radius: 20px !important;">
-                        <span class="svg-icon ccs mr-1 text-primary">
-                            <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                          </svg>
-                        </span>
-                        <span class="text-primary ml-1">{{ course.course_year }}</span>
+                    <div>
+                        <div class="c_dis p-2 mr-1 mb-1 text-center btn btn-outline-primary" style="border-radius: 20px !important;">
+                            <span class="svg-icon ccs mr-1">
+                                <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                    viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                              </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_year }}</span>
+                        </div>           
                     </div>
                 </div>
-                <div class="d-flex border-top justify-content-between mb-0 mt-1 float-bottom">
+                <div class="border-top mb-0 mt-1 float-bottom" style="font-size: 0.92rem;">
                     <div class="d-flex votes-container ml-1" style="margin-top: -2px !important;">
                         {% include 'home/courses/course_vote.html' with course=course %}
                     </div>
-                    <div class="mb-0">
+                    <div class="px-2">
                         <span class="mr-1 small text-muted"><strong>{{ course.get_user_count }}</strong> {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
                         <span>people have</span>{% endif %} enrolled in {{ course.course_code }}. See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
                     </div>
@@ -135,6 +143,3 @@
     </div>
 </div>
 {% endblock content %}
-{% block item %}
-
-{% endblock %}

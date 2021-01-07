@@ -46,7 +46,7 @@ urlpatterns = [
     ),
     path("courses/saved/", views.saved_courses, name="courses-saved"),
     path("courses/share/<str:hid>/", views.course_share, name="course-share"),
-    path("courses/saved/<int:id>/", views.course_save, name="course-save"),
+    path("courses/saved/<str:id>/", views.course_save, name="course-save"),
     path(
         "courses/saved/remove/<str:hid>/",
         views.remove_saved_course,

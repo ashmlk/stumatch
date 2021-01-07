@@ -5,18 +5,17 @@
     <div class="row infinite-container">
         {% for course in courses %}
         {% bg_rand as bgrnd %}
-        <div class="my-2 col-md-6 infinite-item">
-            <a class="text-dark" style="text-decoration: none !important;" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
-                <div class="card my-1" style="border-radius: 8px;">
+        <div class="col-md-6 p-1 infinite-item">
+            <a class="text-dark" style="text-decoration: none !important;" 
+                href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                <div class="card " style="border-radius: 8px;">
                     <div class="p-0" >
                         <div class="sub-info">
                             <div class="mt-0 mb-1">
-                                <div class="d-flex border align-items-center justify-content-between" 
-                                style="background-color:{{bgrnd}};overflow:hidden !important;border-top-left-radius: 8px !important;border-top-right-radius: 8px; min-height:4rem;">
-                                    <div class="p-2">
-                                        <div class="ml-1" style="margin-bottom: -0.6rem;">
-                                            <h5 class="pt-1 text-white">{{ course.course_code }}</h5>
-                                        </div>
+                                <div class="d-flex border align-items-center justify-content-between course-code-ctr" 
+                                style="background-color:{{bgrnd}};">                                  
+                                    <div class="ml-1">
+                                        <span class="pt-1 text-white h5">{{ course.course_code }}</span>
                                     </div>
                                 </div>
                                 <div class="p-2">
@@ -48,9 +47,7 @@
                                                 </svg>
                                             </span>
                                             <span class="ccfield-t">
-                                                <strong>
-                                                    Enrolled:
-                                                </strong>
+                                                Enrolled:
                                             </span>
                                             <span class="ccfield-s">
                                                 {{ course.get_user_count_ins }}

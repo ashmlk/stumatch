@@ -21,8 +21,10 @@ from django.forms.widgets import ClearableFileInput
 from django.forms import Select
 from django.contrib.auth.hashers import check_password
 from datetime import datetime, timezone
+from django.contrib.auth import password_validation
 from django.utils import timezone
-
+from assets.assets import UNIVERSITY_CHOICES_SIGNUP, UNIVERSITY_CHOICES
+from helper.generate_user_identity import generate_username, get_first_last_name
 
 username_regex = RegexValidator(
     r"^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9._ ]+$",
@@ -31,274 +33,6 @@ username_regex = RegexValidator(
 alphanumeric = RegexValidator(
     r"^(?:[^\W_]|[ '-])+$", "Only alphanumeric characters are allowed."
 )
-
-
-UNIVERSITY_CHOICES = (
-    (
-        "University",
-        (
-            ("", "University"),
-            ("Acadia University", "Acadia University"),
-            ("Alberta University of the Arts", "Alberta University of the Arts"),
-            ("Algoma University", "Algoma University"),
-            ("Athabasca University", "Athabasca University"),
-            ("Atlantic School of Theology", "Atlantic School of Theology"),
-            ("Bishop's University", "Bishop's University"),
-            ("Booth University College", "Booth University College"),
-            ("Brandon University", "Brandon University"),
-            ("Brock University", "Brock University"),
-            ("Canadian Mennonite University", "Canadian Mennonite University"),
-            ("Cape Breton University", "Cape Breton University"),
-            ("Capilano University", "Capilano University"),
-            ("Carleton University", "Carleton University"),
-            ("Concordia University", "Concordia University"),
-            ("Crandall University", "Crandall University"),
-            ("Dalhousie University", "Dalhousie University"),
-            (
-                "Emily Carr University of Art and Design",
-                "Emily Carr University of Art and Design",
-            ),
-            ("Fairleigh Dickinson University", "Fairleigh Dickinson University"),
-            (
-                "Institut national de la recherche scientifique",
-                "Institut national de la recherche scientifique",
-            ),
-            ("Kingswood University", "Kingswood University"),
-            ("Kwantlen Polytechnic University", "Kwantlen Polytechnic University"),
-            ("Lakehead University", "Lakehead University"),
-            ("Laurentian University", "Laurentian University"),
-            ("MacEwan University", "MacEwan University"),
-            ("McGill University", "McGill University"),
-            ("McMaster University", "McMaster University"),
-            (
-                "Memorial University of Newfoundland",
-                "Memorial University of Newfoundland",
-            ),
-            ("Mount Allison University", "Mount Allison University"),
-            ("Mount Royal University", "Mount Royal University"),
-            ("Mount Saint Vincent University", "Mount Saint Vincent University"),
-            ("New York Institute of Technology", "New York Institute of Technology"),
-            ("Niagara University", "Niagara University"),
-            ("Nipissing University", "Nipissing University"),
-            (
-                "Nova Scotia College of Art and Design University",
-                "Nova Scotia College of Art and Design University",
-            ),
-            (
-                "Ontario College of Art and Design University",
-                "Ontario College of Art and Design University",
-            ),
-            ("Ontario Tech University", "Ontario Tech University"),
-            ("Queen's University at Kingston", "Queen's University at Kingston"),
-            ("Quest University", "Quest University"),
-            ("Redeemer University College", "Redeemer University College"),
-            ("Royal Military College of Canada", "Royal Military College of Canada"),
-            ("Royal Roads University", "Royal Roads University"),
-            ("Ryerson University", "Ryerson University"),
-            ("Saint Francis Xavier University", "Saint Francis Xavier University"),
-            ("Saint Mary's University", "Saint Mary's University"),
-            ("Simon Fraser University", "Simon Fraser University"),
-            ("St. Stephen's University", "St. Stephen's University"),
-            ("St. Thomas University", "St. Thomas University"),
-            ("The King's University", "The King's University"),
-            ("Thompson Rivers University", "Thompson Rivers University"),
-            ("Trent University", "Trent University"),
-            ("Trinity Western University", "Trinity Western University"),
-            ("Tyndale University", "Tyndale University"),
-            ("University Canada West", "University Canada West"),
-            ("University College of the North", "University College of the North"),
-            ("University of Alberta", "University of Alberta"),
-            ("University of British Columbia", "University of British Columbia"),
-            ("University of Calgary", "University of Calgary"),
-            ("University of Fredericton", "University of Fredericton"),
-            ("University of Guelph", "University of Guelph"),
-            ("University of King's College", "University of King's College"),
-            ("University of Lethbridge", "University of Lethbridge"),
-            ("University of Manitoba", "University of Manitoba"),
-            ("University of New Brunswick", "University of New Brunswick"),
-            (
-                "University of Northern British Columbia",
-                "University of Northern British Columbia",
-            ),
-            ("University of Ottawa", "University of Ottawa"),
-            (
-                "University of Prince Edward Island",
-                "University of Prince Edward Island",
-            ),
-            ("University of Regina", "University of Regina"),
-            ("University of Saskatchewan", "University of Saskatchewan"),
-            ("University of Toronto", "University of Toronto"),
-            ("University of Victoria", "University of Victoria"),
-            ("University of Waterloo", "University of Waterloo"),
-            ("University of Western Ontario", "University of Western Ontario"),
-            ("University of Windsor", "Universityof Windsor"),
-            ("University of Winnipeg", "University of Winnipeg"),
-            ("University of the Fraser Valley", "University of the Fraser Valley"),
-            ("Université Laval", "Université Laval"),
-            ("Université Sainte-Anne", "Université Sainte-Anne"),
-            ("Université de Moncton", "Université de Moncton"),
-            ("Université de Montréal", "Université de Montréal"),
-            ("Université de Sherbrooke", "Université de Sherbrooke"),
-            ("Université de l'Ontario français", "Université de l'Ontario français"),
-            (
-                "Université du Québec en Abitibi-Témiscamingue",
-                "Université du Québec en Abitibi-Témiscamingue",
-            ),
-            ("Université du Québec en Outaouais", "Université du Québec en Outaouais"),
-            ("Université du Québec à Chicoutimi", "Université du Québec à Chicoutimi"),
-            ("Université du Québec à Montréal", "Université du Québec à Montréal"),
-            ("Université du Québec à Rimouski", "Université du Québec à Rimouski"),
-            (
-                "Université du Québec à Trois-Rivières",
-                "Université du Québec à Trois-Rivières",
-            ),
-            ("Vancouver Island University", "Vancouver Island University"),
-            ("Wilfrid Laurier University", "Wilfrid Laurier University"),
-            ("York University", "York University"),
-            ("Yukon University", "Yukon University"),
-            ("École de technologie supérieure", "École de technologie supérieure"),
-            (
-                "École nationale d'administration publique",
-                "École nationale d'administration publique",
-            ),
-        ),
-    ),
-)
-
-# Add incoming student option only on signup
-UNIVERSITY_CHOICES_SIGNUP = (
-    ("Incoming Student", (("Incoming Student", "Incoming Student"),)),
-    (
-        "University",
-        (
-            ("", "University"),
-            ("Acadia University", "Acadia University"),
-            ("Alberta University of the Arts", "Alberta University of the Arts"),
-            ("Algoma University", "Algoma University"),
-            ("Athabasca University", "Athabasca University"),
-            ("Atlantic School of Theology", "Atlantic School of Theology"),
-            ("Bishop's University", "Bishop's University"),
-            ("Booth University College", "Booth University College"),
-            ("Brandon University", "Brandon University"),
-            ("Brock University", "Brock University"),
-            ("Canadian Mennonite University", "Canadian Mennonite University"),
-            ("Cape Breton University", "Cape Breton University"),
-            ("Capilano University", "Capilano University"),
-            ("Carleton University", "Carleton University"),
-            ("Concordia University", "Concordia University"),
-            ("Crandall University", "Crandall University"),
-            ("Dalhousie University", "Dalhousie University"),
-            (
-                "Emily Carr University of Art and Design",
-                "Emily Carr University of Art and Design",
-            ),
-            ("Fairleigh Dickinson University", "Fairleigh Dickinson University"),
-            (
-                "Institut national de la recherche scientifique",
-                "Institut national de la recherche scientifique",
-            ),
-            ("Kingswood University", "Kingswood University"),
-            ("Kwantlen Polytechnic University", "Kwantlen Polytechnic University"),
-            ("Lakehead University", "Lakehead University"),
-            ("Laurentian University", "Laurentian University"),
-            ("MacEwan University", "MacEwan University"),
-            ("McGill University", "McGill University"),
-            ("McMaster University", "McMaster University"),
-            (
-                "Memorial University of Newfoundland",
-                "Memorial University of Newfoundland",
-            ),
-            ("Mount Allison University", "Mount Allison University"),
-            ("Mount Royal University", "Mount Royal University"),
-            ("Mount Saint Vincent University", "Mount Saint Vincent University"),
-            ("New York Institute of Technology", "New York Institute of Technology"),
-            ("Niagara University", "Niagara University"),
-            ("Nipissing University", "Nipissing University"),
-            (
-                "Nova Scotia College of Art and Design University",
-                "Nova Scotia College of Art and Design University",
-            ),
-            (
-                "Ontario College of Art and Design University",
-                "Ontario College of Art and Design University",
-            ),
-            ("Ontario Tech University", "Ontario Tech University"),
-            ("Queen's University at Kingston", "Queen's University at Kingston"),
-            ("Quest University", "Quest University"),
-            ("Redeemer University College", "Redeemer University College"),
-            ("Royal Military College of Canada", "Royal Military College of Canada"),
-            ("Royal Roads University", "Royal Roads University"),
-            ("Ryerson University", "Ryerson University"),
-            ("Saint Francis Xavier University", "Saint Francis Xavier University"),
-            ("Saint Mary's University", "Saint Mary's University"),
-            ("Simon Fraser University", "Simon Fraser University"),
-            ("St. Stephen's University", "St. Stephen's University"),
-            ("St. Thomas University", "St. Thomas University"),
-            ("The King's University", "The King's University"),
-            ("Thompson Rivers University", "Thompson Rivers University"),
-            ("Trent University", "Trent University"),
-            ("Trinity Western University", "Trinity Western University"),
-            ("Tyndale University", "Tyndale University"),
-            ("University Canada West", "University Canada West"),
-            ("University College of the North", "University College of the North"),
-            ("University of Alberta", "University of Alberta"),
-            ("University of British Columbia", "University of British Columbia"),
-            ("University of Calgary", "University of Calgary"),
-            ("University of Fredericton", "University of Fredericton"),
-            ("University of Guelph", "University of Guelph"),
-            ("University of King's College", "University of King's College"),
-            ("University of Lethbridge", "University of Lethbridge"),
-            ("University of Manitoba", "University of Manitoba"),
-            ("University of New Brunswick", "University of New Brunswick"),
-            (
-                "University of Northern British Columbia",
-                "University of Northern British Columbia",
-            ),
-            ("University of Ottawa", "University of Ottawa"),
-            (
-                "University of Prince Edward Island",
-                "University of Prince Edward Island",
-            ),
-            ("University of Regina", "University of Regina"),
-            ("University of Saskatchewan", "University of Saskatchewan"),
-            ("University of Toronto", "University of Toronto"),
-            ("University of Victoria", "University of Victoria"),
-            ("University of Waterloo", "University of Waterloo"),
-            ("University of Western Ontario", "University of Western Ontario"),
-            ("University of Windsor", "Universityof Windsor"),
-            ("University of Winnipeg", "University of Winnipeg"),
-            ("University of the Fraser Valley", "University of the Fraser Valley"),
-            ("Université Laval", "Université Laval"),
-            ("Université Sainte-Anne", "Université Sainte-Anne"),
-            ("Université de Moncton", "Université de Moncton"),
-            ("Université de Montréal", "Université de Montréal"),
-            ("Université de Sherbrooke", "Université de Sherbrooke"),
-            ("Université de l'Ontario français", "Université de l'Ontario français"),
-            (
-                "Université du Québec en Abitibi-Témiscamingue",
-                "Université du Québec en Abitibi-Témiscamingue",
-            ),
-            ("Université du Québec en Outaouais", "Université du Québec en Outaouais"),
-            ("Université du Québec à Chicoutimi", "Université du Québec à Chicoutimi"),
-            ("Université du Québec à Montréal", "Université du Québec à Montréal"),
-            ("Université du Québec à Rimouski", "Université du Québec à Rimouski"),
-            (
-                "Université du Québec à Trois-Rivières",
-                "Université du Québec à Trois-Rivières",
-            ),
-            ("Vancouver Island University", "Vancouver Island University"),
-            ("Wilfrid Laurier University", "Wilfrid Laurier University"),
-            ("York University", "York University"),
-            ("Yukon University", "Yukon University"),
-            ("École de technologie supérieure", "École de technologie supérieure"),
-            (
-                "École nationale d'administration publique",
-                "École nationale d'administration publique",
-            ),
-        ),
-    ),
-)
-
 
 class MySelect(Select):
     def create_option(self, *args, **kwargs):
@@ -330,6 +64,7 @@ class ContactForm(forms.Form):
 
 class SignUpForm(UserCreationForm):
 
+    """
     username = forms.CharField(
         label="",
         max_length=30,
@@ -339,27 +74,16 @@ class SignUpForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={"placeholder": "Username", "class": "form-control mb-2"}
         ),
-    )
+    ) """
 
-    first_name = forms.CharField(
+    full_name = forms.CharField(
         label="",
-        max_length=50,
+        max_length=300,
         min_length=1,
         required=True,
         validators=[alphanumeric],
         widget=forms.TextInput(
-            attrs={"placeholder": "First name", "class": "form-control mb-2"}
-        ),
-    )
-
-    last_name = forms.CharField(
-        label="",
-        max_length=50,
-        min_length=1,
-        required=True,
-        validators=[alphanumeric],
-        widget=forms.TextInput(
-            attrs={"placeholder": "Last name", "class": "form-control mb-2"}
+            attrs={"placeholder": "Full Name", "class": "form-control "}
         ),
     )
 
@@ -368,7 +92,7 @@ class SignUpForm(UserCreationForm):
         max_length=200,
         required=True,
         widget=forms.EmailInput(
-            attrs={"placeholder": "Email", "class": "form-control mb-2"}
+            attrs={"placeholder": "Email", "class": "form-control "}
         ),
     )
 
@@ -376,7 +100,7 @@ class SignUpForm(UserCreationForm):
         label="",
         required=True,
         choices=UNIVERSITY_CHOICES_SIGNUP,
-        widget=MySelect(attrs={"class": "form-control mb-2"}),
+        widget=MySelect(attrs={"class": "form-control "}),
     )
 
     password1 = forms.CharField(
@@ -385,29 +109,20 @@ class SignUpForm(UserCreationForm):
         min_length=8,
         required=True,
         widget=forms.PasswordInput(
-            attrs={"placeholder": "Password", "class": "form-control mb-2"}
+            attrs={"placeholder": "Password", "class": "form-control ","id":"password-input-field"}
         ),
     )
-
-    password2 = forms.CharField(
-        label="",
-        max_length=30,
-        min_length=8,
-        required=True,
-        widget=forms.PasswordInput(
-            attrs={"placeholder": "Confirm Password", "class": "form-control mb-2"}
-        ),
-    )
-
+    
+    username = None
+    password2 = None
+    
     error_css_class = "error"
 
     class Meta:
         model = Profile
         fields = (
-            "username",
-            "first_name",
-            "last_name",
             "email",
+            "full_name",
             "university",
         )
 
@@ -417,16 +132,27 @@ class SignUpForm(UserCreationForm):
                 self.fields[field].widget.attrs.update(
                     {"class": "form-control", "placeholder": self.fields[field].label}
                 )
-
-    def clean_username(self):
-        username = self.cleaned_data.get("username")
-        username = username.lower()
-        if Profile.objects.filter(username=username).exists():
-            if Profile.objects.filter(username=username, is_active=False).exists():
-                p = Profile.objects.filter(username=username, is_active=False).delete()
-            elif Profile.objects.filter(username=username, is_active=True).exists():
-                raise forms.ValidationError("A user with this username already exists.")
-        return username
+            del self.fields['password2']
+            
+    def save(self, *args, **kwargs):
+        user = self.cleaned_data
+        first, last = get_first_last_name(self.instance.first_name)
+        self.instance.first_name = first
+        self.instance.last_name = last
+        self.instance.username = generate_username(
+            first,
+            last,
+            user['email']
+        )
+        return super().save(*args, **kwargs)
+            
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        try:
+            password_validation.validate_password(password1, self.instance)
+        except forms.ValidationError as error:
+            self.add_error('password1', error)
+        return password1
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -441,7 +167,7 @@ class SignUpForm(UserCreationForm):
 class EditProfileForm(UserChangeForm):
 
     username = forms.CharField(
-        max_length=255,
+        max_length=30,
         min_length=1,
         required=True,
         validators=[username_regex],
@@ -450,23 +176,14 @@ class EditProfileForm(UserChangeForm):
         ),
     )
 
-    first_name = forms.CharField(
-        max_length=255,
+    full_name = forms.CharField(
+        label="",
+        max_length=300,
         min_length=1,
         required=True,
         validators=[alphanumeric],
         widget=forms.TextInput(
-            attrs={"placeholder": "First name", "class": "form-control mb-2",}
-        ),
-    )
-
-    last_name = forms.CharField(
-        max_length=255,
-        min_length=1,
-        required=True,
-        validators=[alphanumeric],
-        widget=forms.TextInput(
-            attrs={"placeholder": "Last name", "class": "form-control mb-2",}
+            attrs={"placeholder": "Full Name", "class": "form-control "}
         ),
     )
 
@@ -493,16 +210,6 @@ class EditProfileForm(UserChangeForm):
             "last_name",
             "bio",
         )
-
-    # def clean_username(self):
-    # 		username = self.cleaned_data.get('username')
-    # 		username=username.lower()
-    # 		if Profile.objects.filter(username=username).exists():
-    # 				if Profile.objects.filter(username=username, is_active=False).exists():
-    # 					p = Profile.objects.filter(username=username, is_active=False).delete()
-    # 				elif Profile.objects.filter(username=username, is_active=True).exists():
-    # 					raise forms.ValidationError("A user with this username already exists.")
-    # 		return username
 
 
 class SetUniversityForm(forms.ModelForm):

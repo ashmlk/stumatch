@@ -20,7 +20,7 @@ from taggit.forms import TagWidget
 from dal import autocomplete
 from taggit.models import Tag
 from main.forms import MySelect
-from main.forms import UNIVERSITY_CHOICES
+from assets.assets import UNIVERSITY_CHOICES
 
 alphanumeric_v2 = RegexValidator(
     r"^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9. ]+$",
@@ -235,8 +235,8 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         labels = {
-            "course_prof_difficulty": "Difficulty with this professor",
-            "course_difficulty": "Course overall difficulty",
+            "course_prof_difficulty": "Difficulty with your instructor",
+            "course_difficulty": "Overall difficulty",
         }
         fields = (
             "course_code",

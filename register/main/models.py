@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.db.models.signals import post_save
+from django.core.cache import cache, caches
+from django.template.defaultfilters import slugify
 from django.dispatch import receiver
 from django_uuid_upload import upload_to_uuid
 from taggit.models import Tag
@@ -10,6 +12,11 @@ from django.contrib.postgres.search import (
     SearchRank,
     SearchVector,
     TrigramSimilarity,
+)
+from django.core.validators import (
+    MaxLengthValidator,
+    MinValueValidator,
+    MaxValueValidator,
 )
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -28,9 +35,12 @@ from django.urls import reverse
 from notifications.base.models import AbstractNotification
 import time
 from datetime import datetime
+from django.apps import apps
+
+redis_cache = caches["default"]
+redis_client = redis_cache.client.get_client()
 
 hashids_user = Hashids(salt="wvf935 vnw9py l-itkwnhe 3094", min_length=12)
-
 hashids_notify = Hashids(salt="2vbp W9PHh90H 2389V[H WOoksc", min_length=8)
 
 # CUSTOM MODEL MANAGERS
@@ -373,6 +383,7 @@ DEFAULT_IMAGE = "defaults/user/default_u_i.png"
 
 
 class Profile(AbstractUser):
+    full_name = models.TextField(validators=[MaxLengthValidator(300)], null=True, blank=False)
     bio = models.TextField()
     university = models.CharField(max_length=50)
     program = models.CharField(null=True, blank=True, max_length=255)
@@ -408,7 +419,8 @@ class Profile(AbstractUser):
     sv = pg_search.SearchVectorField(null=True)
 
     objects = ProfileManager()
-
+    
+    
     class Meta:
         indexes = [
             GinIndex(fields=["sv"], name="search_idx_user"),
@@ -436,6 +448,13 @@ class Profile(AbstractUser):
             self.image = DEFAULT_IMAGE
             self.save()
 
+    def get_university_slug(self):
+        if len(request.user.university) < 1:
+            return False
+        elif request.user.university == "Incoming Student":
+            return True
+        return slugify(self.university.strip().lower())
+        
     def get_last_login_local(self):
 
         epoch = time.mktime(self.last_login.timetuple())
@@ -446,8 +465,8 @@ class Profile(AbstractUser):
 
         epoch = time.mktime(self.date_joined.timetuple())
         offset = datetime.fromtimestamp(epoch) - datetime.utcfromtimestamp(epoch)
-        return self.date_joined + offset
-
+        return self.date_joined + offset    
+                
 
 class BookmarkBase(models.Model):
     class Meta:
