@@ -248,7 +248,7 @@ def signup(request):
     return render(request, "main/signup.html", {"form": form})
 
 
-@watch_login(status_code=303)
+@watch_login(status_code=302)
 def user_login(request):
     if request.user.is_authenticated:
         if request.user.is_active:
@@ -265,12 +265,12 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
-                login(request, user)
                 storage = messages.get_messages(request)
                 for _ in storage:
                     pass
                 for _ in list(storage._loaded_messages):
                     del storage._loaded_messages[0]
+                login(request, user)
                 return redirect("home:home")
             else:
                 return HttpResponse("Account is disabled")
