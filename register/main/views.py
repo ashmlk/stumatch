@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, logout
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import authenticate, logout, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import auth
@@ -54,7 +53,8 @@ from django.contrib.contenttypes.models import ContentType
 from allauth.account.utils import *
 import time
 from defender.decorators import watch_login
-
+from .utils import check_username_acceptable, check_email_acceptable
+from helper.generate_user_identity import generate_username
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
 
@@ -248,8 +248,25 @@ def signup(request):
         form = SignUpForm()
     return render(request, "main/signup.html", {"form": form})
 
-
-
+def validate_and_check_signup(request):
+    
+    data = dict()
+    username = request.GET.get('username', None)
+    email = request.GET.get('email', None)
+    action = request.GET.get('action', None)
+    if username != None:
+        username = username.strip().lower()
+        data = check_username_acceptable(username) 
+        return JsonResponse(dict(data))
+    elif email != None:
+        email = email.strip()
+        data = check_email_acceptable(email)
+        return JsonResponse(dict(data))
+    elif action == 'suggest-username':
+        email = request.GET.get('email_value')
+        data['suggested_username'] = generate_username(email=email)
+        return JsonResponse(dict(data))
+    
 def user_login(request):
     if request.user.is_authenticated:
         if request.user.is_active:
@@ -271,7 +288,7 @@ def user_login(request):
                     pass
                 for _ in list(storage._loaded_messages):
                     del storage._loaded_messages[0]
-                auth_login(request, user)
+                login(request, user)
                 return redirect("home:home")
             else:
                 return HttpResponse("Account is disabled")

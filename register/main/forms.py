@@ -64,18 +64,20 @@ class ContactForm(forms.Form):
 
 class SignUpForm(UserCreationForm):
 
-    """
     username = forms.CharField(
-        label="",
-        max_length=30,
-        min_length=1,
-        required=True,
-        validators=[username_regex],
-        widget=forms.TextInput(
-            attrs={"placeholder": "Username", "class": "form-control mb-2"}
-        ),
-    ) """
-
+		label='',
+		max_length=30,
+		min_length=1,
+		required=True,
+  		validators=[username_regex],
+		widget=forms.TextInput(
+			attrs={
+				"placeholder": "Username",
+                "autofocus":None
+			}
+		)
+	)
+    """
     full_name = forms.CharField(
         label="",
         max_length=300,
@@ -83,16 +85,16 @@ class SignUpForm(UserCreationForm):
         required=True,
         validators=[alphanumeric],
         widget=forms.TextInput(
-            attrs={"placeholder": "Full Name", "class": "form-control "}
+            attrs={"placeholder": "Full Name", }
         ),
     )
-
+    """
     email = forms.EmailField(
         label="",
         max_length=200,
         required=True,
         widget=forms.EmailInput(
-            attrs={"placeholder": "Email", "class": "form-control "}
+            attrs={"placeholder": "Email", }
         ),
     )
 
@@ -100,7 +102,7 @@ class SignUpForm(UserCreationForm):
         label="",
         required=True,
         choices=UNIVERSITY_CHOICES_SIGNUP,
-        widget=MySelect(attrs={"class": "form-control "}),
+        widget=MySelect(attrs={}),
     )
 
     password1 = forms.CharField(
@@ -109,11 +111,9 @@ class SignUpForm(UserCreationForm):
         min_length=8,
         required=True,
         widget=forms.PasswordInput(
-            attrs={"placeholder": "Password", "class": "form-control ","id":"password-input-field"}
+            attrs={"placeholder": "Password", "id":"password-input-field"}
         ),
     )
-    
-    username = None
     password2 = None
     
     error_css_class = "error"
@@ -122,28 +122,20 @@ class SignUpForm(UserCreationForm):
         model = Profile
         fields = (
             "email",
-            "full_name",
+            "username",
             "university",
         )
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            for field in self.fields:
-                self.fields[field].widget.attrs.update(
-                    {"class": "form-control", "placeholder": self.fields[field].label}
-                )
-            del self.fields['password2']
-            
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.pop('autofocus')
+
+          
     def save(self, *args, **kwargs):
         user = self.cleaned_data
-        first, last = get_first_last_name(self.instance.first_name)
+        first, last = get_first_last_name(self.instance.full_name)
         self.instance.first_name = first
         self.instance.last_name = last
-        self.instance.username = generate_username(
-            first,
-            last,
-            user['email']
-        )
         return super().save(*args, **kwargs)
             
     def clean_password1(self):

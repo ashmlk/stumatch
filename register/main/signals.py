@@ -21,6 +21,10 @@ def update_search_vector_profile(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_empty_profile")
 def set_username(sender, instance, **kwargs):
+    """
+    Every time a use is saved, ensures that user has a certain username
+    This method avoids users having username field set to null
+    """
     if not instance.username:
         rand = random.getrandbits(64)
         username = "user" + str(rand)
@@ -30,13 +34,18 @@ def set_username(sender, instance, **kwargs):
         instance.username = username
         
 
-@receiver(pre_save, sender=Profile, dispatch_uid="set_username_of_set_profile")
+@receiver(pre_save, sender=Profile, dispatch_uid="check_username_of_profile")
 def check_set_username(sender, instance, **kwargs):
-    if Profile.objects.filter(username=instance.username).exists():
-        rand = random.getrandbits(128)
+    """
+    Check everytime a use sets a new username
+    to see if username already exists.
+    Method ensures that no username will every be used twice, to avoid any integrity error.
+    """
+    if Profile.objects.filter(username=instance.username).count() > 1:
+        rand = random.getrandbits(64)
         username = "user" + str(rand)
-        while Profile.objects.filter(username=instance.username):
-            rand = random.getrandbits(128)
+        while Profile.objects.filter(username=username):
+            rand = random.getrandbits(64)
             username = "user" + str(rand)
         instance.username = username
         instance.save()

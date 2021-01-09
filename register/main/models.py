@@ -432,7 +432,18 @@ class Profile(AbstractUser):
 
     def __str__(self):
         return self.username
-
+    
+    def get_full_name(self):
+        
+        if self.full_name != None:
+            if len(self.full_name) > 0:
+                return self.full_name.strip()
+        elif len(self.first_name) > 0 or len(self.last_name) > 0:
+            full_name = '%s %s' % (self.first_name, self.last_name)
+            return full_name
+        else:
+            return self.username
+        
     def get_absolute_url(self):
         return reverse("main:get_user", kwargs={"username": self.username})
 

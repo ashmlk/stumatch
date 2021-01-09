@@ -15,35 +15,48 @@ def get_usernames():
     )
     return usernames
 
-def generate_username(first, last, email):
+def get_split_email(val):
+    
+    val = val.lower().strip()  
+    rand = random.randint(0,len(val)-1)
+    email_p1, email_p2 =  val[:rand], val[rand:]
+    
+    return email_p1, email_p2
+    
+def generate_username(email, first=None, last=None):
     
     USERNAMES = get_usernames()
-    accepted_chars = ['_','.']
+    accepted_chars = ['_','.','']
     
-    first = first.replace(' ','').lower()
-    last = last.replace(' ','').lower()
-    
-    last_length = len(last)
-    min_last_length = 2 if last_length > 1 else 1
 
     email_without_domain = email[:email.find("@")]
-    email_without_domain = email_without_domain.replace("-","_").lower().strip()[:get_max_username_length()].replace(' ','')
-    
-    if email_without_domain not in USERNAMES:
-        return email_without_domain
-    
+    email_without_domain = email_without_domain.replace("-","_").lower().strip()[:get_max_username_length()-5].replace(' ','')
+    random_char = random.choice(accepted_chars)
+    random_int = random.randint(1, 9999)
+    username = '%s%s%s' % (email_without_domain, random_char, str(random_int))
+    if username not in USERNAMES:
+        return username
     else:
-        username = email_without_domain
-        counter = 0
+        while username in USERNAMES:
+            random_char = random.choice(accepted_chars)
+            random_int = random.randint(1, 9999)
+            username = '%s%s%s' % (email_without_domain, random_char, str(random_int))
+        return username
+    
+    if first and last:
         
+        first = first.replace(' ','').lower()
+        last = last.replace(' ','').lower()
+        last_length = len(last)
+        min_last_length = 2 if last_length > 1 else 1
+        counter = 0
+
         while username in USERNAMES and counter < 75:
             last_index = random.randint(min_last_length,last_length-1)
             last_name = last[:last_index]
             random_chars = random.choice(accepted_chars)
             l = [last_name, first, random_chars]
-            print(l)
             random.shuffle(l)
-            print(l)
             username = "".join(l).replace(' ','').lower()
             counter += 1
         

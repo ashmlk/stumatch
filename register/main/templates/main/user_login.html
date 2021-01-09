@@ -1,6 +1,6 @@
 {% load static %}
 {% load socialaccount %}
-
+{% providers_media_js %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,24 +27,39 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     <style>
-      .google-icon {
-        margin-left: 10px;
-        width: 22px !important;
-        height: 22px !important;
-      }
-      .pass-eye {
-        margin-left: 19.8rem !important;
-        cursor: pointer;
-        position: absolute;
-        display: inline-block;
-        margin-top: -2px;
-        opacity: 0.8;
-      }
-      .facebook-icon {
-        margin-left: 10px;
-        width: 24px !important;
-        height: 24px !important;
-      }
+          #signup-submit-button:disabled{
+      opacity: 0.5 !important;
+    }
+    .google-icon {
+    margin-left: 10px;
+    width: 22px !important;
+    height: 22px !important;
+    }
+  .pass-eye, .bi-x-circle, .bi-check-circle, .spinner-border, #username-suggester {
+    cursor: pointer;
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    position: relative;
+    margin-left: -28px;
+    z-index: 9999 !important;
+  }
+  .facebook-icon {
+    margin-left: 10px;
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .sign-login-card {
+    width: 350px;
+    padding-left: 2.3rem;
+    padding-right: 2.3rem;
+  }
+  .form-group {
+    height: auto !important;
+    padding-bottom: 0px !important;
+    margin-bottom: 7px !important;
+  }
+  
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -55,7 +70,7 @@
       <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav_una.html' %}</div>
     {% endif %}
   </div>
-  <div class="container">
+  <div class="container main-login-sign">
     <div class="row">
       <div class="col-lg-6 col-md-12 col-sm-12 col-12 " >
         <div class="container">
@@ -88,7 +103,7 @@
                 <div class="w-100 p-4">
                   <div class="row">
                     <div class="mt-2 col-12 w-100">
-                      <a href="{% url 'main:signup' %}" class="btn mt-3 w-100 btn-md btn-primary">
+                      <a href="{% url 'main:signup' %}" class="btn mt-3 w-100 btn-md btn-primary ">
                         <span style="font-weight: 500;">Sign up</span>
                       </a>
                     </div>
@@ -162,10 +177,10 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-md-7 d-none d-lg-block ">
-        <div >
+      <div class="col-lg-6 col-md-10 d-none d-lg-block ">
+        <div>
           <div class="row" style="height: 100vh;">
-            <div class="is-responsive card  col-lg-8 col-md-9 col-11 my-auto mx-auto" style="padding-bottom: 3vh;padding-top: 3vh;">
+            <div class="is-responsive card my-auto mx-auto sign-login-card" style="padding-top: 3vh;">
               <div class="align-items-center d-flex my-2">
                 <a href="{% url 'main:user_login' %}">
                   <div class="d-flex justify-content-center align-items-center">
@@ -190,7 +205,7 @@
                 </div>
             {% endif %}
               <div class="card-signin my-auto">
-                <div class="card-body">
+                <div class="px-0 mt-4">
                   <form method="POST" action="{% url 'main:user_login' %}" class="form-signin" id="signin-form">
                     {% csrf_token %}
                     <div class="form-label-group" style="margin-bottom: 7px;">
@@ -207,12 +222,12 @@
                       <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span>
                       <div></div>
                     </a>
-                    <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between"  href="">
+                    <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between"   href='{% provider_login_url "facebook" method="js_sdk" %}' >
                       <img class="facebook-icon float-left" src="{% static 'logo/fb_logo_58.png' %}"/><span style="margin-left:-11px;font-weight: 500;">Log in with Facebook</span>
                       <div></div>
                     </a>
                     <div class="mt-4">
-                      <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup">Sign up</a></p>
+                      <p>Don't have an account? <a href="{% url 'main:signup' %}" id="signup" class="text-primary">Sign up</a></p>
                       <a class="text-muted" href="{% url 'account_reset_password' %}" style="font-size: .9rem;">Forgot Password?</a>
                       <div></div>
                     </div>                               

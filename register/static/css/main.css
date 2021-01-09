@@ -12,6 +12,10 @@
   border-radius: 5px;
 }
 
+.main-login-sign a.my-link {
+  color: #487be0 !important;
+}
+
 a:active,a:focus, .text-primary, .text-primary:focus, .text-primary:active {
   color: #487be0 !important;
 }
@@ -843,11 +847,11 @@ ol.carousel-indicators {
 
 input[type="text"],
 input[type="password"],
-input[type="email"],
-select {
-  border: 1px solid rgba(255, 255, 255, 0);
-  background-color: rgb(241, 241, 241) !important;
+input[type="email"]{
+  border: 1px solid #dbdbdb!important;
+  background-color: #FAFAFA !important;
 }
+
 .form-control:focus {
   border: solid 1px #487be0f5 !important;
   outline: 0 none;

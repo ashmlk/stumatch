@@ -1,6 +1,6 @@
 {% load static %}
 {% load socialaccount %}
-
+{% providers_media_js %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,7 +94,7 @@
                   <img class="google-icon float-left" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/><span style="margin-left:-11px;font-weight: 500;">Log in with Google</span>
                   <div></div>
                 </a>
-                <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between"  href="">
+                <a class="btn mt-2 w-100 btn-md border rounded  d-flex align-items-center justify-content-between"   href='{% provider_login_url "facebook" method="js_sdk" %}'>
                   <img class="facebook-icon float-left" src="{% static 'logo/fb_logo_58.png' %}"/><span style="margin-left:-11px;font-weight: 500;">Log in with Facebook</span>
                   <div></div>
                 </a>

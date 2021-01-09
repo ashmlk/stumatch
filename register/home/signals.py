@@ -44,7 +44,6 @@ def update_search_vector_course(sender, instance, **kwargs):
         )
     )
 
-
 @receiver(post_save, sender=Course)
 def add_course_to_instructor(sender, instance, **kwargs):
     try:

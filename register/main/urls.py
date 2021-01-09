@@ -28,6 +28,7 @@ urlpatterns = [
     path("about/", views.about_html, name="site-about"),
     path("contact/", views.contact_us, name="contact-us"),
     path("signup/", views.signup, name="signup"),
+    path("validate_signup", views.validate_and_check_signup, name="validate-username"),
     path("", views.user_login, name="user_login"),
     path(
         "update/email/signup/action/",

@@ -27,7 +27,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'live-static', 'media-root')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'e2a&eyvw$gfs=8o)xzru2f@@7iiy-3+da18o#immnl7ln@3xm-'
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 AUTH_USER_MODEL = 'main.Profile'
 ACCOUNT_EMAIL_VERIFICATION='mandatory'
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'admin_honeypot',
     'whitenoise.runserver_nostatic',
     'storages',
@@ -164,7 +165,7 @@ CACHES = {
 
 
 CACHE_TTL = 60 * 15
-
+USERNAME_MAX_LENGTH = 30
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -260,11 +261,29 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         }
-    }
+    },
+    'facebook':
+       {'METHOD': 'oauth2',
+        'SCOPE': ['email','public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'short_name'],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.4'
+        }
 }
 
 SITE_ID = 3
 
+SOCIAL_AUTH_FACEBOOK_KEY = "417653316007672"
+SOCIAL_AUTH_FACEBOOK_SECRET = "153d26f30864cc7ddf89a6dafd40c982"
 
 DEFENDER_LOGIN_FAILURE_LIMIT = 5
 DEFENDER_DISABLE_IP_LOCKOUT = True
