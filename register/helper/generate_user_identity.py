@@ -27,21 +27,23 @@ def generate_username(email, first=None, last=None):
     
     USERNAMES = get_usernames()
     accepted_chars = ['_','.','']
-    
+    suggested_count = 0
+    suggested_usernames = []
 
     email_without_domain = email[:email.find("@")]
     email_without_domain = email_without_domain.replace("-","_").lower().strip()[:get_max_username_length()-5].replace(' ','')
-    random_char = random.choice(accepted_chars)
-    random_int = random.randint(1, 9999)
-    username = '%s%s%s' % (email_without_domain, random_char, str(random_int))
-    if username not in USERNAMES:
-        return username
-    else:
+
+    while suggested_count <= 8:
+        random_char = random.choice(accepted_chars)
+        random_int = random.randint(1, 9999)
+        username = '%s%s%s' % (email_without_domain, random_char, str(random_int))
         while username in USERNAMES:
             random_char = random.choice(accepted_chars)
             random_int = random.randint(1, 9999)
             username = '%s%s%s' % (email_without_domain, random_char, str(random_int))
-        return username
+        suggested_usernames.append(username)
+        suggested_count += 1
+    return suggested_usernames
     
     if first and last:
         

@@ -2,6 +2,14 @@
 {% load crispy_forms_tags %}
 {% block title %}500 - JoinCampus{% endblock %}
 {% block content %}
-<h2 class='text-center'>Sorry, there was an issue from our side.</h2>
-<p class="text-center">Return to <a href="{% url 'home:home' %}">home</a>.</p>
+<div  class="min-vh-100">
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 600px;">
+        <div class="my-auto col-md-7 col-sm-9 col-11">
+            <h4 class='text-center'>Sorry, there was an error processing your request</h4>
+            <p class="text-center text-muted pt-2 px-1 small">
+                Sorry, we had an issue processing your request. Please try again later.
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

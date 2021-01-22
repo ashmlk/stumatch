@@ -2,6 +2,11 @@
 {% load ibuilder %}
 {% block list %}
 <div>
+    <div class="mb-2">
+        <span class="text-muted small">
+            Only instructors with course enrollments are displayed
+        </span>
+    </div>
     <div class="row infinite-container">
         {% for ins in instructors %}
         {% bg_rand as bgrnd %}

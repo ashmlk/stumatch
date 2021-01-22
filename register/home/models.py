@@ -462,6 +462,8 @@ class CourseManager(models.Manager):
         if blocked:
             for b in blocked:
                 n_id.append(int(b.id))
+        
+        n_id = set(n_id)
 
         courses = (
             self.get_queryset()
@@ -1359,20 +1361,21 @@ class Course(models.Model):
                 instructor_reviews = json.loads(
                     instructor_reviews
                 )  # if the data is stored in has then it needs to be decoded
-
-            instructor_reviews = [i["id"] for i in instructor_reviews]
+            try:
+                instructor_reviews = [i["id"] for i in instructor_reviews]
+            except TypeError:
+                print("Got review id from list directly - int list not subscriptable")
 
             preserved = Case(
                 *[When(pk=pk, then=pos) for pos, pk in enumerate(instructor_reviews)]
             )
-
             return (
                 Review.objects.select_related("author")
                 .filter(id__in=instructor_reviews)
                 .order_by(preserved)
             )
-
         except Exception as e:
+            print(e.__class__)
             print(e)
             return (
                 Review.objects.select_related("author")
@@ -1407,6 +1410,7 @@ class Course(models.Model):
                     self.course_code, self.course_university_slug, cache_index[order]
                 ),
             )
+            
             if result == None:
                 if order == "cy":
                     qs = (

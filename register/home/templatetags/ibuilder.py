@@ -56,6 +56,7 @@ def bg_rand():
         "#1F57DB",
         "#2261F5",
         "#1949B8",
+        
     ]
     random.shuffle(bgs)
     return random.choice(bgs)

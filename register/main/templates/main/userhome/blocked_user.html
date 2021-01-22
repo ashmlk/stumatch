@@ -26,13 +26,13 @@
     <div class="row d-flex justify-content-center">
         <div class="col-sm-6 message-private d-flex my-2 justify-content-between p-2">
             <div class="w-100 card status-friend show-message">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <p class="card-text text-muted">You have blocked this user, unblock to view their profile.</p>
                     <div class="unblock-ctr">
                         <form method="POST" class="w-100" action="{% url 'main:unblock-user' hid=user.get_hashid %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn col-12" style="background-color: rgb(226,230,234);">
-                                Unblock {{ user.get_full_name }}
+                            <button type="submit" class="btn btn-default border" >
+                                Unblock
                             </button>
                         </form>
                     </div>

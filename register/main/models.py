@@ -267,60 +267,69 @@ class ProfileManager(UserManager):
 
     def get_students(self, user, code, instructor, instructor_fn, university):
 
-        usernames = []
+        ids = []
         blocked = Block.objects.blocking(user)
-        if blocked:
-            for b in blocked:
-                usernames.append(str(b))
-
-        qs = (
-            self.get_queryset()
-            .filter(
-                is_active=True,
-                courses__course_code=code,
-                courses__course_university__iexact=university,
-                courses__course_instructor__iexact=instructor,
-                courses__course_instructor_fn__iexact=instructor_fn,
+        
+        try:
+            if blocked:
+                for b in blocked:
+                    ids.append(b.id)
+            ids = set(ids)
+            qs = (
+                self.get_queryset()
+                .filter(
+                    is_active=True,
+                    courses__course_code=code,
+                    courses__course_university__iexact=university,
+                    courses__course_instructor__iexact=instructor,
+                    courses__course_instructor_fn__iexact=instructor_fn,
+                )
+                .exclude(id__in=ids)
+                .exclude(is_superuser=True)
+                .order_by("last_name", "first_name", "university")
+                .distinct("last_name", "first_name", "university")
             )
-            .exclude(username__in=usernames)
-            .exclude(is_superuser=True)
-            .order_by("last_name", "first_name", "university")
-            .distinct("last_name", "first_name", "university")
-        )
-
-        return qs
+            return qs
+        
+        except Exception as e:
+            print(f'Error in getting students for a course for {user.username} - ERROR' + str(e))
+            return []
 
     def get_similar_friends(self, user):
 
-        usernames = []
+        ids = []
 
         user_courses = user.courses.all()
         friends = Friend.objects.friends(user)
         blocked = Block.objects.blocking(user)
 
-        if friends:
-            for f in friends:
-                usernames.append(str(f))
-        if blocked:
-            for b in blocked:
-                usernames.append(str(b))
-
-        qs = (
-            self.get_queryset()
-            .filter(
-                (Q(is_active=True))
-                & (
-                    Q(university=user.university)
-                    | Q(courses__course_code__in=[c.course_code for c in user_courses])
+        try:
+            if friends:
+                for f in friends:
+                    ids.append(f.id)
+            if blocked:
+                for b in blocked:
+                    ids.append(str(b))
+            ids = set(ids)
+            qs = (
+                self.get_queryset()
+                .filter(
+                    (Q(is_active=True))
+                    & (
+                        Q(university=user.university)
+                        | Q(courses__course_code__in=[c.course_code for c in user_courses])
+                    )
                 )
+                .exclude(id__in=ids)
+                .exclude(is_superuser=True)
+                .order_by("last_name", "first_name", "university")
+                .distinct("last_name", "first_name", "university")
             )
-            .exclude(username__in=usernames)
-            .exclude(is_superuser=True)
-            .order_by("last_name", "first_name", "university")
-            .distinct("last_name", "first_name", "university")
-        )
 
-        return qs
+            return qs
+        except Exception as e:
+            print(f'Error in getting similar friends for {user.username} - ERROR' + str(e))
+            return []
 
     def friends_with_courses(self, user, university):
 

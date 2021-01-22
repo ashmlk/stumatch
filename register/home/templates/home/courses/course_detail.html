@@ -55,43 +55,60 @@
                         </a>
                     </div>
                     <div class="mr-1">
-                        {% if course.complexity_btn_ins == "None" %}
-                        <div style="border-radius: 20px !important;"
-                            class="text-left c_dis mb-1 btn btn-outline-secondary">
-                            <span>Difficulty with this professor:</span><span class="ml-1">No ratings</span>
-                        </div>
-                        {% else %}
-                        <div style="border-radius: 20px !important;"
-                            class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
-                            <span>Difficulty with this professor:</span><span
-                                class="ml-1">{{ course.average_complexity_ins }}</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    <div class="mr-1">
                         {% if course.complexity_btn == "None" %}
                         <div style="border-radius: 20px !important;"
                             class="text-left c_dis mb-1 btn btn-outline-secondary">
-                            <span>Course overall difficulty:</span><span class="ml-1">No ratings</span>
+                            <span>Overall:</span><span class="ml-1">No ratings</span>
                         </div>
                         {% else %}
                         <div style="border-radius: 20px !important;"
                             class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
-                            <span>Course overall difficulty:</span><span
+                            <span>Overall:</span><span
                                 class="ml-1">{{ course.average_complexity }}</span>
                         </div>
                         {% endif %}
                     </div>
+                    <div class="mr-1">
+                        {% if course.complexity_btn_ins == "None" %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-secondary">
+                            <span>Instructor:</span><span class="ml-1">No ratings</span>
+                        </div>
+                        {% else %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                            <span>Instructor:</span>
+                            <span class="ml-1">
+                                {{ course.average_complexity_ins }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="mr-1">
+                        {% if course.complexity_btn == "None" %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-secondary">
+                            <span>Overall:</span><span class="ml-1">No ratings</span>
+                        </div>
+                        {% else %}
+                        <div style="border-radius: 20px !important;"
+                            class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
+                            <span>Overall:</span><span
+                                class="ml-1">{{ course.average_complexity }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="px-2">
                     <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                        <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
+                        <span>Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
                     </div>
                     {% if not link_get %}
                     </br>
                     <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                        <span>Total Students With {{ course.course_instructor_fn|capfirst }}
+                        <span>Students with {{ course.course_instructor_fn|capfirst }}
                             {{ course.course_instructor|capfirst }}:</span><span
                             class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
                     </div>
@@ -146,7 +163,7 @@
                     Instructors
                 </button>
                 <div class="dropdown-menu bg-white mt-1" aria-labelledby="dropdownMenuLink" id="instructor-list-dropdown" 
-                    style="font-size: 0.92rem !important;max-height: 263px;overflow-y: scroll; width: auto !important;">
+                    style="font-size: 0.92rem !important;text-transform:capitalize;max-height: 263px;overflow-y: scroll; width: auto !important;">
                     <a class="dropdown-item" href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
                         All
                     </a>
@@ -167,79 +184,92 @@
     </div>
 </div>
 <div class="p-0 mb-4">
-    <div class="w-100 review-textbox pb-1 pt-1 my-2" id="crwfrmcntr" style="display: none;">
-        {% if not cannot_review %}
-        <form class="w-100 course-review-form"
-            data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-            method="POST">
-            {% csrf_token %}
-            <div class="d-flex  flex-column">
-                <div class="d-flex border rounded p-1">
-                    <div class="mr-1">
-                        <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
-                            src="{{ request.user.image.url }}">
+    <div class="w-100 review-textbox pb-1 my-2" id="crwfrmcntr" style="display: none;">
+        {% if not link_get %}
+            {% if not cannot_review %}
+                <form class="w-100 course-review-form"
+                    data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
+                    method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex  flex-column">
+                        <div class="d-flex border rounded p-1">
+                            <div class="mr-1">
+                                <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
+                                    src="{{ request.user.image.url }}">
+                            </div>
+                            <div>
+                                {{ form.as_p }}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end my-1">
+                            <div>
+                                <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
+                                    style="border-radius:20px;text-decoration: none;" type="submit" data-value="anon">Submit
+                                    Anonymously</button>
+                                <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
+                                    style="border-radius:20px;text-decoration: none;" type="submit"
+                                    data-value="pub">Submit</button>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        {{ form.as_p }}
+                </form>
+            {% else %}
+            <div class="w-100 card">
+                <div class="card-body">
+                    <p class="card-text text-center text-dark">
+                        You have already written a review for <span class="text-muted">{{ course.course_code }}</span>
+                        with <span class="text-muted">{{ course.course_instructor_fn|capfirst }}
+                            {{ course.course_instructor|capfirst }}</span>.
+                    </p>
+                    <div class="d-flex justify-content-center">
+                        <div>
+                            <a class="w-100 text-center"
+                                href="{% url 'home:user-course-reviews' %}?course_university={{ course.course_university_slug }}&course_instructor={{ course.course_instructor_slug }}&course_code={{ course.course_code }}">
+                                <span class="small">
+                                    See Your Reviews
+                                </span>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="d-flex justify-content-end my-1">
-                    <div>
-                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
-                            style="border-radius:20px;text-decoration: none;" type="submit" data-value="anon">Submit
-                            Anonymously</button>
-                        <button class="border-0 no-border btn btn-sm small btn-primary rw-submit-btn"
-                            style="border-radius:20px;text-decoration: none;" type="submit"
-                            data-value="pub">Submit</button>
-                    </div>
+
                 </div>
             </div>
-        </form>
+            {% endif %}
         {% else %}
         <div class="w-100 card">
             <div class="card-body">
                 <p class="card-text text-center text-dark">
-                    You have already written a review for <span class="text-muted">{{ course.course_code }}</span>
-                    with <span class="text-muted">{{ course.course_instructor_fn|capfirst }}
-                        {{ course.course_instructor|capfirst }}</span>.
+                    Please select an instructor before writing a review
                 </p>
-                <div class="d-flex justify-content-center">
-                    <div>
-                        <a class="w-100 text-center"
-                            href="{% url 'home:user-course-reviews' %}?course_university={{ course.course_university_slug }}&course_instructor={{ course.course_instructor_slug }}&course_code={{ course.course_code }}">
-                            <span class="small">
-                                See Your Reviews
-                            </span>
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </div>
         {% endif %}
     </div>
     <div id="reviews" class="mt-1" style="margin-left: -1px !important;">
-        <div class="d-flex justify-content-center mb-3" style="font-size: 0.92rem;">
-            <div class="w-100 d-flex justify-content-center py-1 mr-1">
-                <div class="nav-item p-2">
-                    <a {% if link_get %}class="card-link"{% else %}class="card-link text-muted"{% endif %}
-                        href="{% url 'home:course-detail' course.course_university_slug 'ALL' course.course_code %}?rw=all">
-                        All Reviews for {{ course.course_code }}
-                        (<span id="crsrwalcts">{{ reviews_all_count }}</span>)
-                    </a>
+        <div class="mt-3 mb-3">
+            <div class="row px-3 d-flex justify-content-center" style="font-size: 0.92rem;">
+                <div class="col-6 p-0">
+                    <div class="card border-0 border-bottom bg-transparent">
+                        <a class="text-center jc-nav-link  text-muted{% if link_get %}-active{% endif %} text-dark"
+                                href="{% url 'home:course-detail' course.course_university_slug 'ALL' course.course_code %}?rw=all">
+                                All Reviews for {{ course.course_code }}
+                                (<span id="crsrwalcts">{{ reviews_all_count }}</span>)
+                        </a>
+                    </div>
                 </div>
-            </div>
-            {% if not link_get %}
-            <div class="w-100 d-flex justify-content-center py-1">
-                <div class="nav-item p-2 ">
-                    <a {% if not link_get %}class="card-link"{% else %}class="card-link text-muted"{% endif %}
-                        href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
-                        with {{ course.course_instructor_fn }} {{ course.course_instructor }}
-                        (<span id="crsspecrw">{{ reviews_count }}</span>)
-                    </a>
+                {% if not link_get %}
+                <div class="col-6 p-0">
+                    <div class="card border-0 border-bottom  bg-transparent">
+                         <a class="text-center jc-nav-link text-muted{% if not link_get %}-active{% endif %} text-dark" 
+                            href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">Reviews
+                            with {{ course.course_instructor_fn|capfirst }}
+                            {{ course.course_instructor|capfirst }}
+                            (<span id="crsspecrw">{{ reviews_count }}</span>)
+                         </a>
+                    </div>
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
         <div class="tab-content">
             <div class="c-review-list ">
@@ -348,53 +378,4 @@
     }
     
 </style>
-<script>
-    $(document).ready(function () {
-        $(document).on("click", ".get-instructors-btn", function (){
-            let btnGetIns = $(this)
-            let url = $(btnGetIns).attr("data-url");
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType:'json',
-                beforeSend: function(){
-                    
-                },
-                success: function(data){
-                    let menu = $("#instructor-list-dropdown");
-                    let universitySlug = data['course_university_slug'];
-                    let courseCode = data['course_code']
-                    for(i in data['instructors']){
-                        let firstName = data['instructors'][i]['course_instructor_fn'];
-                        let lastName = data['instructors'][i]['course_instructor'];
-                        let instructorSlug = data['instructors'][i]['course_instructor_slug']
-                        let insLink = 
-                        `
-                        <a class="dropdown-item" href="/courses/reviews/${universitySlug}/${instructorSlug}/${courseCode}/">${firstName} ${lastName}</a>
-                        `
-                        $(menu).append(insLink);
-                    }
-                }
-            });
-        })
-
-        $('.course-reviews-list').each(function (i){
-            let crsList = $(this)
-            if ($(crsList).find('.course-review-object').length > 2) {
-                $(crsList).append(`<div class="mt-3 d-flex justify-content-center align-items-center"><a href="javascript:;" class="showMore"></a><span class="review-span-count mx-1">(${parseInt($(crsList).attr("data-list-size"))-3})</span></div>`);
-            }
-        })
-
-        $('.course-reviews-list').each(function (i){
-            $(this).find('.course-review-object').slice(0,3).addClass('shown');
-        })
-        $('.course-reviews-list').each(function (i){
-            $(this).find('.course-review-object').not('.shown').hide();
-        })
-        $('.course-reviews-list .showMore').on('click',function(){
-            $(this).closest('.course-reviews-list').find('.course-review-object').not('.shown').toggle(300);
-            $(this).toggleClass('showLess');
-        });
-    })
-</script>
 {% endblock content %}

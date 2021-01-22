@@ -2,12 +2,17 @@
 {% load ibuilder %}
 {% block list %}
 <div>
+    <div class="mb-2">
+        <span class="text-muted small">
+            Only courses with enrollments are displayed
+        </span>
+    </div>
     <div class="row infinite-container">
         {% for course in courses %}
         {% bg_rand as bgrnd %}
         <div class="col-md-6 p-1 infinite-item">
             <a class="text-dark" style="text-decoration: none !important;" 
-                href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                href="{% url 'home:course-detail' course.university_slug 'ALL' course.code %}">
                 <div class="card " style="border-radius: 8px;">
                     <div class="p-0" >
                         <div class="sub-info">
@@ -15,7 +20,7 @@
                                 <div class="d-flex border align-items-center justify-content-between course-code-ctr" 
                                 style="background-color:{{bgrnd}};">                                  
                                     <div class="ml-1">
-                                        <span class="pt-1 text-white h5">{{ course.course_code }}</span>
+                                        <span class="pt-1 text-white h5">{{ course.code }}</span>
                                     </div>
                                 </div>
                                 <div class="p-2">
@@ -32,7 +37,7 @@
                                                 </svg>
                                             </span>
                                             <span class="ccfield-s">
-                                                {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}
+                                                {% with course.instructor_courses.count as ic %}{{ ic }} {% if ic < 2 %}Instructor{% else %}Instructors{% endif %}{% endwith %}
                                             </span>
                                         </div>
                                     </div>
@@ -47,10 +52,10 @@
                                                 </svg>
                                             </span>
                                             <span class="ccfield-t">
-                                                Enrolled:
+                                                {{ course.enrolled.count }}
                                             </span>
                                             <span class="ccfield-s">
-                                                {{ course.get_user_count_ins }}
+                                                enrolled
                                             </span>
                                         </div>
                                     </div>

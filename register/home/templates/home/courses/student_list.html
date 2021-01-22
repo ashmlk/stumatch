@@ -6,13 +6,9 @@
 {% endblock %}
 {% block content %}
 <div class="pb-2 mb-2 course-info">
-    <div class="d-flex border-bottom justify-content-between">
+    <div class="d-flex border-bottom justify-content-between pt-2">
         <div class="mr-2">
             <div class="d-flex">
-                <svg style="margin-top: 5px !important" width="19" height="19" viewBox="0 0 16 16"
-                    class="mr-2 bi bi-book" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
-                </svg>
                 {% if o != 'all' %}
                 <a class="text-dark"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
@@ -20,83 +16,99 @@
                 </a>
                 {% else %}
                 <a class="text-dark"
-                    href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
+                    href="{% url 'home:course-detail' course.course_university_slug 'ALL' course.course_code %}?rw=all">
                     <h4 class="font-weight-bold">{{ course.course_code }}</h4>
                 </a>
                 {% endif %}
             </div>
-            
-            <div class="d-flex align-items-center">
-                <svg style="margin-top:1px !important" width="16" height="16"
-                viewBox="0 0 16 16" class="mr-2 bi bi-hexagon" fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                </svg>
-                <a href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std"><span class="text-muted">{{ course.course_university|capfirst }}</span></a>              
+            <div  style="font-size: 0.93rem;">
+                <div class="d-flex align-items-center">
+                    <svg  width="16" height="16"
+                    viewBox="0 0 16 16" class="mr-2 bi bi-hexagon" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                    </svg>
+                    <a class="text-dark" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                        <span>{{ course.course_university|capfirst }}</span>
+                    </a>              
+                </div>
+                {% if o != 'all' %}
+                <div class="d-flex align-items-center">
+                    <svg width="16" height="16"
+                        viewBox="0 0 16 16" class="mr-2 i bi-layers" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                        <path fill-rule="evenodd"
+                            d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                    </svg>
+                    <a class="text-dark" href="{%url 'home:course-instructor' par2=course.course_instructor_slug par1=course.course_university_slug %}">
+                        <span>{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>         
+            <div class="mt-2">
+                {% if o != 'all' %}
+                <span class="mr-1 small text-muted">{{ course.get_user_count_ins }} 
+                    {% if course.get_user_count == 1 %}
+                        student
+                    {% else %}
+                        students
+                    {% endif %} 
+                    with <strong>{{ course.course_instructor_fn|capfirst }} 
+                        {{ course.course_instructor|capfirst }}</strong>
+                    </span>
+                </br>
+                {% endif %}
+                <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}
+                    <span>students</span>{% else %}
+                    <span>students</span>{% endif %} in total
+                </span>
             </div>
-            {% if o != 'all' %}
-            <div class="d-flex align-items-center">
-                <svg style="margin-top: 1px !important"  width="16" height="16"
-                    viewBox="0 0 16 16" class="mr-2 i bi-layers" fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                    <path fill-rule="evenodd"
-                        d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                </svg>
-                <a href="{%url 'home:course-instructor' par2=course.course_instructor_slug par1=course.course_university_slug %}">
-                    <span class="text-muted">Professor {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span></a>
+        </div>
+    </div>
+</div>
+<div class="mt-2 mb-3">
+    <div class="d-flex justify-content-center row px-3" style="font-size: 0.92rem;">
+        <div class="col-6 p-0">
+            <div class="card border-0 border-bottom bg-transparent">
+                <a class="text-center jc-nav-link  text-muted{% if not o == 'ins' %}-active{% endif %} text-dark"
+                href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=all">
+                    All Students
+                </a>
             </div>
-            {% endif %}
-        <br>
-        {% if o != 'all' %}
-        <span class="mr-1 small text-muted">{{ course.get_user_count_ins }} {% if course.get_user_count == 1 %}<span>person
-            has</span>{% else %}
-        <span>people have</span>{% endif %} enrolled in this course with professor <strong>{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</strong>.</span>
-        </br>
+        </div>
+        {% if o == 'ins' %}
+        <div class="col-6 p-0">
+            <div class="card border-0 border-bottom  bg-transparent">
+                 <a class="text-center jc-nav-link text-muted{% if o == 'ins' %}-active{% endif %} text-dark" 
+                 href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">
+                    With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}
+                 </a>
+            </div>
+        </div>
         {% endif %}
-        <span class="mr-1 small text-muted">{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>person
-                has</span>{% else %}
-            <span>people have</span>{% endif %} enrolled in this course in total.</span>
     </div>
 </div>
-</div>
-<div class="mt-2 mb-2">
-    <div class="d-flex " id="_pol3">
-    {% if o == 'ins' %}
-      <div class="btn flex-fill mr-1 menu-link menu-link{{ post_active }}">
-        <a  href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=all" style="text-decoration: none;">
-            <span class="h6 text-center">Students</span>
-        </a>
-      </div>
-    {% endif %}
-      <div class="btn flex-fill mr-1 menu-link menu-link{{ buzz_active}}">
-        <a  href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}" style="text-decoration: none;">
-            <span class="h6 text-center">Professors</span>
-        </a>
-      </div>
-    </div>
-  </div>
 <div class="infinite-container users-list">
     {% for user in students %}
     <div class="infinite-item mb-2 card">
         <div class="mx-1 my-2">
             <div class="d-flex justify-content-between m-2">
-                <div class="d-flex">
-                    <div>
+                <div class="d-flex align-items-center">
+                    <div class="mr-2">
                         <img class="img-create-post rounded-circle" style="height: 2.5rem;width: 2.5rem;"
                             src="{{ user.image.url }}">
                     </div>
-                    <div class="ml-1">
+                    <div>
                         <div>
-                            <span class="mx-0 text-dark font-weight-bolder">{{ user.first_name }}
-                                {{ user.last_name}}</span>
+                            <a class="text-dark user-username-font"
+                                href="{{ user.get_absolute_url }}">{{ user.get_username }}
+                            </a>
                         </div>
                         <div style="margin-top: -0.35rem;">
-                            <a class="small" style="color: rgb(1,119,200)"
-                                href="{{ user.get_absolute_url }}">@{{ user.get_username }}</a>
-                            <span class="mx-0 small text-muted">·</span>
                             <span class="text-muted small">{{ user.university|capfirst }}</span>
                         </div>
                     </div>

@@ -22,7 +22,7 @@ from home.algo import get_uni_info
 from django.db.models import Q, F, Count, Avg, FloatField
 from itertools import chain, groupby
 from operator import attrgetter
-from home.redis_handlers import adjust_course_avg
+from home.redis_handlers import adjust_course_avg_hash, update_course_reviews_cache
 from assets.assets import UNI_LIST, UNIVERSITY_SLUGS
 
 redis_cache = caches["default"]
@@ -106,58 +106,90 @@ def universities_list_page_items(self):
             universities_list[uni]["data"] = get_uni_info(uni)
         cache.set("university_list_incoming_student_", universities_list, 14400)
     except Exception as e:
-        print(e.__class__)
-        print(e)
+        return e
+    return True
 
-
-@shared_task(bind=True)
-def update_instructor_courses(self,course):
-    try:
-        ins = Professors.objects.get(
-            first_name=course.course_instructor_fn,
-            last_name=course.course_instructor,
-            university=course.course_university,
-        )
-        ins.add_to_courses(course)
-    except Exception as e:
-        print(e)
-        print(e.__class__)
 
 
 @shared_task(bind=True)
-def add_user_to_course(self, user, course):
+def add_user_to_course(self, user_id, course_obj_id):
     try:
+        user = Profile.objects.get(id=user_id)
+        course = CourseObject.objects.get(id=course_obj_id)
         if user not in course.enrolled.all():
             course.enrolled.add(user)
     except Exception as e:
-        print(e)
-    return True
-
-
-@shared_task(bind=True)
-def add_course_to_prof(self, prof, course_obj):
-    try:
-        prof.add_to_courses(course_bj)
-    except Exception as e:
-        print(e)
-    return True
-
-
-@shared_task(bind=True)
-def adjust_course_average(self, course):
-    try:
-        adjust_course_avg(course)
-    except Exception as e:
-        print(e)
+        return e
     return True
 
 @shared_task(bind=True)
-def user_get_or_set_top_school_courses(self, user):
+def remove_user_from_course(self, user_id, course_init_id, course_new_id=None, course_obj_new_id=None, complete=False):
     try:
-        c = Course.objects.get_or_set_top_school_courses(user=user)
+        course_init = Course.objects.get(id=course_init_id)
+        user = Profile.objects.get(id=user_id)
+        if not complete: # if it is not complete removal, remove from old course and add to new
+            if course_new_id != None:
+                course_new = Course.objects.get(id=course_new_id)
+            if course_obj_new_id != None:
+                course_obj_new = CourseObject.objects.get(id=course_obj_new_id)
+            if (course_init.course_university != course_new.course_university) or (course_init.course_code != course_new.course_code):
+                course_obj_old = CourseObject.object.get_or_create(
+                            code__iexact=course_init.course_code, university__iexact=course_init.course_university
+                        )
+                course_obj_old.enrolled.remove(user)
+                course_obj_new.enrolled.add(user)
+        else: # if it is complete removal, remove form course_object
+            course_obj, crc = CourseObject.object.get_or_create(
+                    code__iexact=code, university__iexact=course.course_university
+                )  
+            course_obj.enrolled.remove(user)
     except Exception as e:
-        print(e)
+        return "Error in removing/adding user to edited course - " + str(e)
+    return True
+
+@shared_task(bind=True)
+def add_course_to_prof(self, prof_id, course_obj_id):
+    try:
+        prof = Professors.objects.get(id=prof_id)
+        course_obj = CourseObject.objects.get(id=course_obj_id)
+        prof.add_to_courses(course_obj)
+    except Exception as e:
+        return e
+    return True
+
+@shared_task(bind=True)
+def adjust_course_average(self, course_id):
+    try:
+        course = Course.objects.get(id=course_id)
+        a = adjust_course_avg_hash(course)
+        return a
+    except Exception as e:
+        return e
+    return True
+
+@shared_task(bind=True)
+def user_get_or_set_top_school_courses(self, user_id):
+    try:
+        user = Profile.objects.get(id=user_id)
+        top_courses = list( 
+            Course.objects
+            .prefetch_related('profiles').filter(
+                course_university__unaccent__iexact=user.university
+            )
+            .exclude(course_code__in=[c.course_code for c in user.courses.all()])
+            .annotate(enrolled_students=Count("profiles__id"))
+            .order_by("-enrolled_students")
+            .values("id")
+        )
+
+        redis_client.hset(
+            "user-",
+            "{}-top-school-courses".format(user.get_hashid()),
+            json.dumps(top_courses)
+            )
         
+    except Exception as e:
+        return e
     return True
         
         
@@ -179,7 +211,15 @@ def set_course_objects_top_courses(self, university):
             json.dumps(courses_id)
         )
     except Exception as e:
-        print(e)
-    
+        return e
     return True
         
+@shared_task(bind=True)
+def update_course_reviews(self, course_id, order=None):
+    try:
+        course = Course.objects.get(id=course_id)
+        update_course_reviews_cache(course, order)
+    except Exception as e:
+        return "Error while updating course reviews cache - " + str(e)
+    return True
+    

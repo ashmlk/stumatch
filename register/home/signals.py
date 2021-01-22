@@ -14,7 +14,7 @@ from itertools import chain, groupby
 from operator import attrgetter
 from django.core.cache import cache
 from home.tasks import (
-    set_course_objects_top_courses
+    set_course_objects_top_courses,
 )
 # from .tasks import update_instructor_courses
 
@@ -43,15 +43,6 @@ def update_search_vector_course(sender, instance, **kwargs):
             "course_instructor_slug",
         )
     )
-
-@receiver(post_save, sender=Course)
-def add_course_to_instructor(sender, instance, **kwargs):
-    try:
-        update_instructor_courses.delay(instance)
-    except Exception as e:
-        print(e)
-        print(e.__class__)
-
 
 @receiver(post_save, sender=Professors)
 def update_search_vector_professors(sender, instance, **kwargs):

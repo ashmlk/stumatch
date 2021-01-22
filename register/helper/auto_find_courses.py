@@ -37,7 +37,7 @@ def get_prof_names(university):
 
 def get_instructors(university, instructors, num):
     
-    num_pairs = num # number of pairs means firstname and lastname*
+    num_pairs = num # number of pairs means firstname and lastnames
     p = index = complete_pairs = 0
     instructor_pairs = {}
     professors = Professors.objects.filter(university__iexact=university)
@@ -78,9 +78,6 @@ def get_instructors(university, instructors, num):
     for i, p in enumerate(instructor_pairs):
         instructors[i] = instructor_pairs[p]
     return instructors
-            
-    
-    
 
 def find_courses_and_profs(text, university, first_name=None, last_name=None):
     text = text.replace(first_name,'')
@@ -119,7 +116,7 @@ def find_courses_and_profs(text, university, first_name=None, last_name=None):
             course_pair["code"] = c
             course_pair["instructor_first_name"] = instructors[i]["first"]
             course_pair["instructor_last_name"] =  instructors[i]["last"]
-            result[f'pair_{i}'] = course_pair
+            result[f'course_{i}'] = course_pair
     elif prof_name_order == 'lf':
         for i, c in enumerate(courses):
             course_pair = {}
@@ -129,6 +126,7 @@ def find_courses_and_profs(text, university, first_name=None, last_name=None):
             result[f'pair_{i}'] = course_pair
             
     result = json.dumps(result)
+    print(result)
     return result
     
   

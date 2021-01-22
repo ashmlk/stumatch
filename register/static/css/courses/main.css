@@ -23,9 +23,7 @@
 .course-goto:hover {
     cursor: pointer;
 }
-.course-goto:hover span{
-    color: whitesmoke !important;
-}
+
 
 .btn-cplx {
     height: 1.4rem;

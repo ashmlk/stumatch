@@ -4,7 +4,7 @@
 <head>
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180528762-1"></script>
   <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-180528762-1');</script>
-  <title>Profile - JoinCampus </title>
+  <title>{% block title %}{{user.get_username}} - JoinCampus{% endblock %}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
-<body class="pb-5" style="background-color: white !important;">
+<body class="pb-5 bg-background" >
   <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
   <div class="wrapper">
     <div class="container pt-4 u_pctr">   

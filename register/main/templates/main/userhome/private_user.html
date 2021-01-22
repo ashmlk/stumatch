@@ -4,76 +4,159 @@
 {% load static %}
 {% load thumbnail %}
 {% block content %}
-<div class="mt-5">
-    <div class="mx-auto col-sm-10">
-        <div class="img-user name-user mt-4 p-2">
-            <div class="d-flex justify-content-center">
-                <div>
-                    <div class="ppro-img">
-                        {% thumbnail user.image "150x150" crop="80% top" as im %}
-                            <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                        {% endthumbnail %}    
-                    </div>
-                </div>
-            </div>
-            <div class="f-name mt-3">
-                <div class="content-holder">
-                    <h3 class="font-weight-bolder  text-center text-dark">{{ user.get_full_name }}</h3>
-                </div>
-            </div>
-            <div class="mt-2 p-2 u-bio">
-                <p class="text-center text-muted">{{ user.bio }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="row d-flex justify-content-center">
-        <div class="col-sm-6 message-private d-flex my-2 justify-content-between p-2">
-            <div class="w-100 card status-friend show-message">
-                <div class="card-body">
-                    <div class="row d-flex align-items-center justify-content-between">
-                        <div class="pl-3 pt-1 message-retrieve" style="margin-bottom: -12px !important;">
-                            <p style="font-size: 1rem;">
-                                {{ status_message }}
-                            </p>
-                        </div>
-                        <div class="fb-status mr-2">
-                            {% if sent_request %}
-                            <div class="friend-status-ctr">
-                                {% include 'main/friends/accept_reject_request.html' with user=user %}
-                            </div>
-                            {% else %}
-                            <div class="friend-status-ctr">
-                                {% include 'main/friends/friend_status.html' with user=user pending=pending %}
-                            </div>
-                            {% endif %}
+<div class="row mt-5">
+    <div class="mx-auto col-sm-9">
+        <div class="d-flex justify-content-start">
+            <div class="d-flex img-user name-user w-100 mt-4 p-2">
+                <div class="d-flex justify-content-center mr-5">
+                    <div>
+                        <div class="ppro-img">
+                            {% thumbnail user.image "150x150" crop="80% top" as im %}
+                                <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                            {% endthumbnail %}
                         </div>
                     </div>
                 </div>
+                <div>
+                    <div class="d-flex">
+                        <div class="f-name mt-3">
+                            <div class="content-holder">
+                                <h4 class="text-center text-dark">{{ user.get_username}}</h4>
+                            </div>
+                        </div>
+                        <div class="pt-3 mx-3 editable-al-view">
+                            <div class="row d-flex justify-content-center">
+                                <div class="ml-2">
+                                    {% if sent_request %}
+                                <div class="friend-status-ctr">
+                                    {% include 'main/friends/accept_reject_request.html' with user=user %}
+                                </div>
+                                {% else %}
+                                <div class="friend-status-ctr">
+                                    {% include 'main/friends/friend_status.html' with user=user pending=pending %}
+                                </div>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex w-100 justify-content-between my-2">
+                        <div class="counter-obj">
+                            <div>
+                                <span class="navbarMainHeaderuser-num">
+                                    <span class="h6">
+                                        {{ cnum }} 
+                                    </span>
+                                    <span>
+                                        courses
+                                    </span>
+                                </span>                                                  
+                            </div>
+                        </div>
+                        <div class="counter-obj">
+                            <div>
+                                <span class="navbarMainHeaderuser-num">
+                                    <span class="h6">
+                                        {{ pnum }} 
+                                    </span>
+                                    <span>
+                                        posts
+                                    </span> 
+                                </span>
+                            </div>
+                        </div>
+                        <div class="counter-obj">
+                            <div>
+                                <span>
+                                    <span class="h6">
+                                        {{ num_friends }} 
+                                    </span>
+                                    <span>
+                                        friends
+                                    </span>                                   
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-100">
+                        <div class="f-name mt-1">
+                            <div class="content-holder d-flex align-items-center">
+                                <div class="d-flex align-items-center pt-2">
+                                    <h6 class="text-dark">{{ user.get_full_name }}</h6>
+                                </div>
+                                <div class="mx-1">
+                                    <span>
+                                        ·
+                                    </span>
+                                </div>
+                                <div>
+                                    <div class="info-et-all">
+                                        <div class="d-flex uni-user">
+                                            {% if user.program or user.university %}
+                                            <div class="u_pui">
+                                                {% if user.university == "Incoming Student" %}
+                                                <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                    {{ user.university|capfirst }}
+                                                </a> 
+                                                {% elif user.program %}
+                                                    {% if not user.university == "Incoming Student" %}
+                                                    <span class="text-muted">
+                                                        {{ user.program|capfirst }}
+                                                    </span>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if not user.university == "Incoming Student" %}
+                                                    {% if user.university and user.program %}
+                                                        <span class="text-muted"> at </span>                                          
+                                                        <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                            {{ user.university|capfirst }}
+                                                        </a>                                        
+                                                    {% elif user.university and not user.program %}
+                                       
+                                                        <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                            {{ user.university|capfirst }}
+                                                        </a>                                          
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-holder mt-1">
+                                <p class="text-dark">{{ user.bio }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+        </div>
+        <div class="mt-4 p-2 aler-tl">
+            <div class="d-flex row align-items-center justify-content-center">
+                
+                <div>
+                    <div class="mb-4 rounded p-1 mr-4 d-flex justify-content-center align-items-center">
+                        <div>
+                            <svg style="color:rgb(143, 143, 143);" width="30" height="30" viewBox="0 0 16 16" class="bi bi-lock"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M11.5 8h-7a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zm-7-1a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7zm0-3a3.5 3.5 0 1 1 7 0v3h-1V4a2.5 2.5 0 0 0-5 0v3h-1V4z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="mt-1 text-center text-muted">This User is Private</h5><br />
+                    </div>
+                    <div style="margin-top: -25px;">
+                        <span class="text-center text-muted small">
+                            Add this user to view their profile.
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="mt-2 p-2 aler-tl">
-        <div class="d-flex row align-items-center justify-content-center">
-            <div class="rounded p-1 mr-4 d-flex align-items-center">
-                <div>
-                    <svg style="color:rgb(143, 143, 143);" width="30" height="30" viewBox="0 0 16 16" class="bi bi-lock"
-                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M11.5 8h-7a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zm-7-1a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7zm0-3a3.5 3.5 0 1 1 7 0v3h-1V4a2.5 2.5 0 0 0-5 0v3h-1V4z" />
-                    </svg>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <h5 class="mt-1 text-center text-muted">This User is Private</h5><br />
-                </div>
-                <div style="margin-top: -25px;">
-                    <span class="text-center text-muted small">
-                        Add this user to view their profile.
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 </div>
 {% endblock %}

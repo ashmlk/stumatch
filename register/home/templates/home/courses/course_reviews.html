@@ -25,60 +25,58 @@
                 {% for review in reviews %}
                 {% with rw_crs_prof=review.get_course_prof  rw_crs_yr=review.year %}
                 {% div_class as veid %}
-                <div class="infinite-item cntr row bg-white mt-1 course-review-object" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}"
+                <div class="infinite-item cntr row mt-1 course-review-object" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}"
                     data-year="{{ rw_crs_yr }}" data-ins="{{ rw_crs_prof }}">
                     <div class="col-sm">
-                        <div class="card">
+                        <div class="card bg-white ">
                             <div class="d-flex justify-content-between">
-                                <div class="d-flex">
+                                <div class="d-flex align-items-center">
                                     {% if not review.is_anonymous %}
-                                    <div class="c-n-img p-1 mr-0">
+                                    <div class="c-n-img p-1 mr-1">
                                         <img class="img-create-post rounded-circle"
                                             style="height: 2.5rem;width: 2.5rem;" src="{{ review.author.image.url }}" alt="{{ review.author.get_full_name }}">
                                     </div>
                                     {% else %}
-                                    <div class="c-n-img p-1 mr-0">
+                                    <div class="c-n-img p-1 mr-1">
                                         <img class="img-create-post rounded-circle"
                                             style="height: 2.5rem;width: 2.5rem;" src="{% static 'default/courses/anonymous_reviewer.png' %}" >
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <div class="d-flex mt-1 flex-column">
+                                        <div class="d-flex">
                                             <div class="u_n d-fle">
                                                 <div>
                                                     {% if not review.is_anonymous %}
-                                                    <a href="{{ review.author.get_absolute_url }}" class="text-dark ml-1"
-                                                        style="font-weight: 500; text-decoration: none;">{{ review.author.get_full_name }}</a>
+                                                    <div class="d-flex align-items-center">
+                                                        <div>
+                                                            <a class="text-dark user-username-font"
+                                                                href="{{ user.get_absolute_url }}">{{ user.get_username }}
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                     {% else %}
-                                                    <span class="text-dark ml-1"
-                                                        style="font-weight: 500;">Anonymous Reviewer</span>
+                                                    <span class="user-username-font">Anonymous Reviewer</span>
                                                     {% endif %}
                                                 </div>
-                                            </div>
-                                            <div class="u_un c_da text-muted font-size-smaller"
-                                                style="margin-top: -2px;">
-                                                <div class="ml-1" style="font-size: 0.8rem;">
-                                                    {% if not review.is_anonymous %}
-                                                    <a class="text-muted"
-                                                        href="{{ review.author.get_absolute_url }}">@{{ review.author.get_username }}</a>
-                                                    <span>·</span>
-                                                    {% endif %}
-                                                    
-                                                    <span>{{ review.get_created_on }}</span>
-                                                    <span class="rounded p-1 small mr-1"
-                                                        style="background-color: rgb(238, 238, 238);">
-                                                        <strong style="color: rgba(0, 0, 0, 0.938);">
-                                                            {{ review.get_interest }}
-                                                        </strong>
-                                                    </span>
-                                                    <span class="rounded p-1 small"
+                                                <div class="u_un c_da text-muted ">
+                                                    <div style="font-size: 0.8rem;">                          
+                                                        <span>{{ review.get_created_on }}</span>
+                                                        <span class="rounded p-1 small mr-1"
                                                             style="background-color: rgb(238, 238, 238);">
                                                             <strong style="color: rgba(0, 0, 0, 0.938);">
-                                                                {{ rw_crs_yr }}
+                                                                {{ review.get_interest }}
                                                             </strong>
-                                                    </span>
+                                                        </span>
+                                                        <span class="rounded p-1 small"
+                                                                style="background-color: rgb(238, 238, 238);">
+                                                                <strong style="color: rgba(0, 0, 0, 0.938);">
+                                                                    {{ rw_crs_yr }}
+                                                                </strong>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>

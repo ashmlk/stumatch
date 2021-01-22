@@ -82,7 +82,53 @@ $(document).ready(function () {
                 $('#modal-course-remove').modal('hide');
             }
         })
-    });
+	});
+	
+	$(document).on("click", ".get-instructors-btn", function (){
+		let btnGetIns = $(this)
+		let url = $(btnGetIns).attr("data-url");
+		$.ajax({
+			url: url,
+			type: 'GET',
+			dataType:'json',
+			beforeSend: function(){
+				
+			},
+			success: function(data){
+				let menu = $("#instructor-list-dropdown");
+				let universitySlug = data['course_university_slug'];
+				let courseCode = data['course_code']
+				for(i in data['instructors']){
+					let firstName = data['instructors'][i]['course_instructor_fn'];
+					let lastName = data['instructors'][i]['course_instructor'];
+					let instructorSlug = data['instructors'][i]['course_instructor_slug']
+					let insLink = 
+					`
+					<a class="dropdown-item" href="/courses/reviews/${universitySlug}/${instructorSlug}/${courseCode}/">${firstName} ${lastName}</a>
+					`
+					$(menu).append(insLink);
+				}
+			}
+		});
+	})
+
+	$('.course-reviews-list').each(function (i){
+		let crsList = $(this)
+		if ($(crsList).find('.course-review-object').length > 2) {
+			$(crsList).append(`<div class="mt-3 d-flex justify-content-center align-items-center"><a href="javascript:;" class="showMore"></a><span class="review-span-count mx-1">(${parseInt($(crsList).attr("data-list-size"))-3})</span></div>`);
+		}
+	})
+
+	$('.course-reviews-list').each(function (i){
+		$(this).find('.course-review-object').slice(0,3).addClass('shown');
+	})
+	$('.course-reviews-list').each(function (i){
+		$(this).find('.course-review-object').not('.shown').hide();
+	})
+	$('.course-reviews-list .showMore').on('click',function(){
+		$(this).closest('.course-reviews-list').find('.course-review-object').not('.shown').toggle(300);
+		$(this).toggleClass('showLess');
+	});
 
 });
 

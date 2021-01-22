@@ -6,7 +6,7 @@
 <title>My Lists - JoinCampus</title>
 {% endblock %}
 {% block content %}
-<div class="content lists-all">
+<div class="content lists-all pt-2">
     <div class="row">
         <div class="col-12 set-all-title">
             <div class="d-flex align-items-center justify-content-between">
@@ -83,11 +83,11 @@
                                                 {% with list.added_courses.count as cc %}
                                                 <span style="color: black;">
                                                     {% if cc == 0 %}
-                                                    No Course Added
+                                                    No courses to show
                                                     {% elif cc == 1 %}
-                                                    {{cc}} Course
+                                                    {{cc}} course
                                                     {% else %}
-                                                    {{cc}} Courses
+                                                    {{cc}} courses
                                                     {% endif %}
                                                 </span>
                                                 {% endwith %}

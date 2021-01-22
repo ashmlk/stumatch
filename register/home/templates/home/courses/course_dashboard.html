@@ -36,7 +36,7 @@
                         {% div_class as veid %}
                         {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
                         <div class="infinite-item col-md-12 p-1">
-                            <div class="card " style="border-radius: 8px;">
+                            <div class="card card-r" >
                                 <div class="p-0">
                                     <a style="text-decoration: none;"
                                         href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
@@ -50,8 +50,8 @@
                                         </div>
                                     </a>
                                     <div class="row mt-1 mx-1">
-                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
-                                            style="border-radius: 20px !important;"
+                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary border-r"
+                                            
                                             data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                                             <span class="svg-icon ccs mr-1">
                                                 <svg style="margin-top: -3px !important" width="1em" height="1em"
@@ -61,10 +61,10 @@
                                                         d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                 </svg>
                                             </span>
-                                            <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                            <span >{{ course.course_university|capfirst }}</span>
                                         </div>
-                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
-                                            style="border-radius: 20px !important;"
+                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary border-r"
+                                            
                                             data-url="{%url 'home:course-instructor' par1 par2 %}">
                                             <span class="svg-icon ccs mr-1">
                                                 <svg style="margin-top: -3px !important" width="1em" height="1em"
@@ -77,11 +77,11 @@
                                                 </svg>
                                             </span>
 
-                                            <span class="ml-1">{{ course.course_instructor_fn|capfirst }}
+                                            <span >{{ course.course_instructor_fn|capfirst }}
                                                 {{ course.course_instructor|capfirst }}</span>
                                         </div>
-                                        <div class="c_dis p-2 mr-1 mb-1 text-center btn btn-outline-primary"
-                                            style="border-radius: 20px !important;">
+                                        <div class="c_dis p-2 mr-1 mb-1 text-center btn btn-outline-primary border-r"
+                                            >
                                             <span class="svg-icon ccs mr-1 ">
                                                 <svg style="margin-top: -3px !important" width="1em" height="1em"
                                                     viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor"
@@ -90,7 +90,7 @@
                                                         d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
                                                 </svg>
                                             </span>
-                                            <span class="ml-1">{{ course.course_year }}</span>
+                                            <span >{{ course.course_year }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -100,10 +100,9 @@
                                     </div>
                                     <div class="pl-2 mb-0" style="font-size: 0.92rem;">
                                         <span class="mr-1 small text-muted"><strong>{{ course.get_user_count }}</strong>
-                                            {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
-                                            <span>people have</span>{% endif %} enrolled in {{ course.course_code }}.
-                                            See them <a
-                                                href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
+                                            {% if course.get_user_count == 1 %}<span>student</span>{% else %}
+                                            <span>students</span>{% endif %} enrolled.
+                                            See them <a href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
                                     </div>
                                 </div>
                             </div>
@@ -153,7 +152,7 @@
                         {% div_class as veid %}
                         {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
                         <div class="col-md-12 p-1">
-                            <div class="card " style="border-radius: 8px;">
+                            <div class="card card-r" >
                                 <div class="p-0">
                                     <a style="text-decoration: none;"
                                         href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
@@ -167,8 +166,8 @@
                                         </div>
                                     </a>
                                     <div class="row mt-1 mx-1">
-                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
-                                            style="border-radius: 20px !important;"
+                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary border-r"
+                                            
                                             data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                                             <span class="svg-icon ccs mr-1">
                                                 <svg style="margin-top: -3px !important" width="1em" height="1em"
@@ -178,10 +177,10 @@
                                                         d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                 </svg>
                                             </span>
-                                            <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                            <span >{{ course.course_university|capfirst }}</span>
                                         </div>
-                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
-                                            style="border-radius: 20px !important;"
+                                        <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary border-r"
+                                            
                                             data-url="{%url 'home:course-instructor' par1 par2 %}">
                                             <span class="svg-icon ccs mr-1">
                                                 <svg style="margin-top: -3px !important" width="1em" height="1em"
@@ -194,7 +193,7 @@
                                                 </svg>
                                             </span>
 
-                                            <span class="ml-1">{{ course.course_instructor_fn|capfirst }}
+                                            <span >{{ course.course_instructor_fn|capfirst }}
                                                 {{ course.course_instructor|capfirst }}</span>
                                         </div>
                                     </div>
@@ -232,7 +231,7 @@
                                 {% for course in school_courses %}
                                 {% bg_rand as bgrnd %}
                                 <div class="col-md-12 p-1">
-                                    <div class="card " style="border-radius: 8px;">
+                                    <div class="card card-r" >
                                         <div class="p-0">
                                             <a style="text-decoration: none;"
                                                 href="{% url 'home:course-instructors' course.university_slug course.code %}">
@@ -247,7 +246,7 @@
                                             </a>
                                             <div class="row mt-1 mx-1">
                                                 <div class="c_dis p-2 mr-1 mb-1 course-goto btn-outline-primary"
-                                                    style="border-radius: 20px !important;"
+                                                    
                                                     data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
                                                     <span class="svg-icon ccs mr-1">
                                                         <svg style="margin-top: -3px !important" width="1em" height="1em"
@@ -257,7 +256,7 @@
                                                                 d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
                                                         </svg>
                                                     </span>
-                                                    <span class="ml-1">{{ course.university|capfirst }}</span>
+                                                    <span >{{ course.university|capfirst }}</span>
                                                 </div>
                                             </div>
                                             {% with course.enrolled.count as enrolled %}

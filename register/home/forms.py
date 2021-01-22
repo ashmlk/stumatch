@@ -227,16 +227,10 @@ class CourseForm(forms.ModelForm):
             del worker_choices[0]
             self.fields["course_difficulty"].choices = worker_choices
 
-        if self.fields["course_prof_difficulty"].choices[0][0] == "":
-            worker_choices = self.fields["course_prof_difficulty"].choices
-            del worker_choices[0]
-            self.fields["course_prof_difficulty"].choices = worker_choices
-
     class Meta:
         model = Course
         labels = {
-            "course_prof_difficulty": "Difficulty with your instructor",
-            "course_difficulty": "Overall difficulty",
+            "course_difficulty": "Rating",
         }
         fields = (
             "course_code",
@@ -245,7 +239,6 @@ class CourseForm(forms.ModelForm):
             "course_instructor",
             "course_year",
             "course_difficulty",
-            "course_prof_difficulty",
         )
 
 
@@ -309,10 +302,6 @@ class CourseEditForm(forms.ModelForm):
             del worker_choices[0]
             self.fields["course_difficulty"].choices = worker_choices
 
-        if self.fields["course_prof_difficulty"].choices[0][0] == "":
-            worker_choices = self.fields["course_prof_difficulty"].choices
-            del worker_choices[0]
-            self.fields["course_prof_difficulty"].choices = worker_choices
 
     class Meta:
         model = Course
@@ -327,7 +316,6 @@ class CourseEditForm(forms.ModelForm):
             "course_instructor",
             "course_year",
             "course_difficulty",
-            "course_prof_difficulty",
         )
 
 

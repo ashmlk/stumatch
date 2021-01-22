@@ -292,5 +292,5 @@ DEFENDER_REDIS_URL = "redis://127.0.0.1:6379/1"
 DEFENDER_LOCKOUT_TEMPLATE = 'user_locked_out.html'
 
 LOGIN_URL = reverse_lazy('main:user_login')
-LOGIN_REDIRECT_URL = reverse_lazy('home:home')
+LOGIN_REDIRECT_URL = reverse_lazy('home:course-dashboard')
 LOGOUT_REDIRECT_URL = reverse_lazy('main:user_login')

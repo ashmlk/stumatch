@@ -43,7 +43,7 @@ def update_course_reviews_cache(course, order=None):
 
     # set hash for objects based on creation date
     result = list(main_qs2.order_by("-created_on",).values("id"))
-
+    
     redis_client.hset(
         "cr_",
         "{}_{}".format(course.course_code, course.course_university_slug),
@@ -127,8 +127,9 @@ def update_course_reviews_cache(course, order=None):
         count,
     )
 
+    return True
 
-def adjust_course_avg(course):
+def adjust_course_avg_hash(course):
     r_dic = {
         4: "Easy",
         3: "Medium",
@@ -168,8 +169,9 @@ def adjust_course_avg(course):
         .annotate(count=Count("profiles__id"))
         .order_by("course_difficulty")
     )
-
-    for el in avg:
+    
+    total_users = sum_ratings = 0
+    for el in avg_ins:
         total_users += el["count"]
         sum_ratings += int(el["course_difficulty"]) * el["count"]
     avg_cplx_ins = round(sum_ratings / total_users) if total_users != 0 else 0
@@ -190,3 +192,5 @@ def adjust_course_avg(course):
         ),
         avg_cplx_ins,
     )
+    
+    return True

@@ -1,12 +1,15 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
 {% load ibuilder %}
+{% block title %}
+<title>Your {{ course_code }} Reviews - JoinCampus</title>
+{% endblock %}
 {% block content %}
 {% bg_rand as bgrnd %}
 {% if not is_error %}
 <div  id="s">
     {% if course_code != '' and course_instructor != '' %}
-    <div class="card border-0 mb-2">
+    <div class="card bg-transparent border-0 mb-2">
         <div class="card-body">
             <p class="card-text text-center h5 text-dark">
                     Your Reviews for {{ course_code }}
@@ -17,9 +20,9 @@
     <div class="c-review-list" id="dvmcs">
         {% for review in reviews %}
         {% div_class as veid %}
-        <div class="row bg-white mt-1" id="_rc_{{ veid }}">
+        <div class="row mt-1" id="_rc_{{ veid }}">
             <div class="col-sm">
-                <div class="card">
+                <div class="bg-white card">
                     <div class="d-flex justify-content-between">
                         <div class="d-flex mt-1 flex-column">
                             <div class="u_un c_da text-muted" style="margin-top: -2px;">

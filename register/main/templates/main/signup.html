@@ -73,6 +73,47 @@
     margin-bottom: 7px !important;
   }
 
+  .div-form-control {
+    position: relative;
+  }
+.div-form-control .input-label-span {
+  pointer-events: none;
+  position:absolute;
+  left:12px;
+  top:7px;
+  transition: 0.2s;
+  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  opacity:0.5;
+}
+
+.div-form-control input:focus ~ .input-label-span, input:not(:placeholder-shown) ~ .input-label-span{
+  opacity:1;
+  font-size: 11px;
+  top:-8px;
+  font-weight: 500;
+  background-color: white !important;
+  color: #487be0;
+}
+
+.div-form-control input[type="text"]:focus ~ .input-label-span,input[type="password"]:focus ~ .input-label-span, input:not(:placeholder-shown) ~ .input-label-span{
+  opacity:1;
+  font-size: 11px;
+  top:-8px;
+  font-weight: 500;
+  background-color: white !important;
+  color: #487be0;
+}
+
+
+/* For IE Browsers*/
+.div-form-control input:focus ~ .input-label-span, input:not(:-ms-input-placeholder) ~ .input-label-span {
+  opacity:1;
+  font-size: 11px;
+  background-color: white !important;
+  color: #487be0;
+}
+
 </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-background">
@@ -101,27 +142,31 @@
                           <form enctype="multipart/form-data" method="POST" action="{% url 'main:signup' %}">
                             {% csrf_token %}
                             <div class="form-fields">
-                                <div id="div_id_email" class="form-group"> 
-                                  <div class="d-flex align-items-center email-flex input-fields"> 
-                                    <input type="email" name="email" placeholder="Email" maxlength="200" class="emailinput form-control" required="" id="id_email"> 
+                                <div id="div_id_email" class="form-group" > 
+                                  <div class="d-flex align-items-center email-flex input-fields div-form-control"> 
+                                    <input type="email" name="email" placeholder=" " maxlength="200" class="emailinput form-control" required id="id_email" style="z-index: 2 !important;"> 
+                                    <span class="input-label-span"style="z-index: 3 !important;">Email</span>
                                   </div> 
                                 </div> 
-                                <div id="div_id_username" class="form-group"> 
-                                  <div class="d-flex align-items-center username-flex input-fields"> 
-                                    <input type="text" name="username" placeholder="Username" maxlength="30" minlength="1" class="textinput textInput form-control" required="" id="id_username"> 
+                                <div id="div_id_username" class="form-group"style="z-index: 1 !important;"> 
+                                  <div class="d-flex align-items-center username-flex input-fields div-form-control"> 
+                                    <input type="text" name="username"  placeholder=" " maxlength="30" minlength="1" class="textinput textInput form-control" required id="id_username"> 
+                                    <span class="input-label-span" style="z-index: 1 !important;">Username</span>
                                   </div> 
                                 </div> 
-                                <div id="div_id_university" class="form-group"> 
-                                  <div class=""> 
-                                    <select name="university" class="myselect form-control" id="id_university"> 
+                                <div id="div_id_university" class="form-group" id="id_university" > 
+                                  <div class=""  id="id_university"> 
+                                    <select name="university" class="myselect form-control" id="id_university"  style="position: relative;z-index: 2 !important;"> 
                                       <optgroup label="Incoming Student"> 
                                         <option value="Incoming Student">Incoming Student</option> </optgroup> <optgroup label="University"> <option value="" selected="" disabled="disabled">University</option> <option value="Acadia University">Acadia University</option> <option value="Alberta University of the Arts">Alberta University of the Arts</option> <option value="Algoma University">Algoma University</option> <option value="Athabasca University">Athabasca University</option> <option value="Atlantic School of Theology">Atlantic School of Theology</option> <option value="Bishop's University">Bishop's University</option> <option value="Booth University College">Booth University College</option> <option value="Brandon University">Brandon University</option> <option value="Brock University">Brock University</option> <option value="Canadian Mennonite University">Canadian Mennonite University</option> <option value="Cape Breton University">Cape Breton University</option> <option value="Capilano University">Capilano University</option> <option value="Carleton University">Carleton University</option> <option value="Concordia University">Concordia University</option> <option value="Crandall University">Crandall University</option> <option value="Dalhousie University">Dalhousie University</option> <option value="Emily Carr University of Art and Design">Emily Carr University of Art and Design</option> <option value="Fairleigh Dickinson University">Fairleigh Dickinson University</option> <option value="Institut national de la recherche scientifique">Institut national de la recherche scientifique</option> <option value="Kingswood University">Kingswood University</option> <option value="Kwantlen Polytechnic University">Kwantlen Polytechnic University</option> <option value="Lakehead University">Lakehead University</option> <option value="Laurentian University">Laurentian University</option> <option value="MacEwan University">MacEwan University</option> <option value="McGill University">McGill University</option> <option value="McMaster University">McMaster University</option> <option value="Memorial University of Newfoundland">Memorial University of Newfoundland</option> <option value="Mount Allison University">Mount Allison University</option> <option value="Mount Royal University">Mount Royal University</option> <option value="Mount Saint Vincent University">Mount Saint Vincent University</option> <option value="New York Institute of Technology">New York Institute of Technology</option> <option value="Niagara University">Niagara University</option> <option value="Nipissing University">Nipissing University</option> <option value="Nova Scotia College of Art and Design University">Nova Scotia College of Art and Design University</option> <option value="Ontario College of Art and Design University">Ontario College of Art and Design University</option> <option value="Ontario Tech University">Ontario Tech University</option> <option value="Queen's University at Kingston">Queen's University at Kingston</option> <option value="Quest University">Quest University</option> <option value="Redeemer University College">Redeemer University College</option> <option value="Royal Military College of Canada">Royal Military College of Canada</option> <option value="Royal Roads University">Royal Roads University</option> <option value="Ryerson University">Ryerson University</option> <option value="Saint Francis Xavier University">Saint Francis Xavier University</option> <option value="Saint Mary's University">Saint Mary's University</option> <option value="Simon Fraser University">Simon Fraser University</option> <option value="St. Stephen's University">St. Stephen's University</option> <option value="St. Thomas University">St. Thomas University</option> <option value="The King's University">The King's University</option> <option value="Thompson Rivers University">Thompson Rivers University</option> <option value="Trent University">Trent University</option> <option value="Trinity Western University">Trinity Western University</option> <option value="Tyndale University">Tyndale University</option> <option value="University Canada West">University Canada West</option> <option value="University College of the North">University College of the North</option> <option value="University of Alberta">University of Alberta</option> <option value="University of British Columbia">University of British Columbia</option> <option value="University of Calgary">University of Calgary</option> <option value="University of Fredericton">University of Fredericton</option> <option value="University of Guelph">University of Guelph</option> <option value="University of King's College">University of King's College</option> <option value="University of Lethbridge">University of Lethbridge</option> <option value="University of Manitoba">University of Manitoba</option> <option value="University of New Brunswick">University of New Brunswick</option> <option value="University of Northern British Columbia">University of Northern British Columbia</option> <option value="University of Ottawa">University of Ottawa</option> <option value="University of Prince Edward Island">University of Prince Edward Island</option> <option value="University of Regina">University of Regina</option> <option value="University of Saskatchewan">University of Saskatchewan</option> <option value="University of Toronto">University of Toronto</option> <option value="University of Victoria">University of Victoria</option> <option value="University of Waterloo">University of Waterloo</option> <option value="University of Western Ontario">University of Western Ontario</option> <option value="University of Windsor">Universityof Windsor</option> <option value="University of Winnipeg">University of Winnipeg</option> <option value="University of the Fraser Valley">University of the Fraser Valley</option> <option value="Université Laval">Université Laval</option> <option value="Université Sainte-Anne">Université Sainte-Anne</option> <option value="Université de Moncton">Université de Moncton</option> <option value="Université de Montréal">Université de Montréal</option> <option value="Université de Sherbrooke">Université de Sherbrooke</option> <option value="Université de l'Ontario français">Université de l'Ontario français</option> <option value="Université du Québec en Abitibi-Témiscamingue">Université du Québec en Abitibi-Témiscamingue</option> <option value="Université du Québec en Outaouais">Université du Québec en Outaouais</option> <option value="Université du Québec à Chicoutimi">Université du Québec à Chicoutimi</option> <option value="Université du Québec à Montréal">Université du Québec à Montréal</option> <option value="Université du Québec à Rimouski">Université du Québec à Rimouski</option> <option value="Université du Québec à Trois-Rivières">Université du Québec à Trois-Rivières</option> <option value="Vancouver Island University">Vancouver Island University</option> <option value="Wilfrid Laurier University">Wilfrid Laurier University</option> <option value="York University">York University</option> <option value="Yukon University">Yukon University</option> <option value="École de technologie supérieure">École de technologie supérieure</option> <option value="École nationale d'administration publique">École nationale d'administration publique</option> </optgroup>
-                                </select> 
-                              </div> 
+                                    </select> 
+                                  </div> 
                             </div> 
-                            <div id="div_id_password1" class="form-group"> 
-                              <div class="d-flex align-items-center password-flex input-fields"> 
-                                <input type="password" name="password1" placeholder="Password" id="password-input-field" maxlength="30" minlength="8" class="textinput textInput form-control" required style="position: relative;">
+                            <div id="div_id_password1" class="form-group" style="z-index: -11 !important;"> 
+                              <div class="d-flex align-items-center password-flex input-fields div-form-control"> 
+                                <input type="password" name="password1" placeholder=" " id="password-input-field" maxlength="30" minlength="8" class="textinput textInput form-control" required 
+                                style="position: relative;">
+                                <span class="input-label-span" style="z-index: 1;">Password</span>
                                 <i class="far fa-eye pass-eye text-muted" id="togglePassword" aria-hidden="true"></i> 
                               </div> 
                             </div>                    
@@ -129,7 +174,7 @@
                             <div class="mt-2">
                               <div class="small text-danger" id="validation-messages"></div>
                               <div class="small text-danger" id="validation-messages-email"></div>
-                              <div class=" w-100">
+                              <div class="mt-3  w-100">
                                 <button type="submit" id="signup-submit-button" class="w-100 btn btn-primary"><span style="font-weight: 500;" >Sign up</span></button>
                               </div>
                               <div class="mt-2 separator-line" style="color: rgb(182, 184, 185);">or</div>
@@ -203,7 +248,8 @@
       </svg>
       </span>`
 
-
+    let suggestedUsernames = null;
+    let suggestedUsernamesCount = 0;
     let password_input = $('#password-input-field');
     $(password_input).css({"position":"relative"})
     //$('#div_id_password1 div').addClass('d-flex align-items-center password-flex input-fields ');
@@ -357,12 +403,29 @@
 
     $(document).on('click','#username-suggester', function (e){
       let emailInputValue = $('#id_email').val();
-      $.ajax({
+      if(suggestedUsernamesCount < 8 && suggestedUsernames != null){
+        $('#id_username').val(suggestedUsernames[suggestedUsernamesCount]);
+        suggestedUsernamesCount++;
+        $('#id_username').attr("data-suggested-server", true);
+        $('#validation-messages').html('');
+        if($('#id_username').attr('data-suggested-server') == "true"){
+            $('#div_id_username').find($('.validator-icons')).remove();
+            let i = $('#div_id_username').find($('#username-suggester'))
+            $(successTick).insertAfter($(i));
+        }
+      }
+      else {
+        $.ajax({
               url: `/validate_signup?action=suggest-username&email_value=${emailInputValue}`,
               type: 'GET',
               dataType: 'json',
+              beforeSend: function(e){
+                suggestedUsernamesCount = 0;
+              },
               success: function(data){
-                $('#id_username').val(data.suggested_username);
+                suggestedUsernames = data.suggested_usernames;
+                $('#id_username').val(suggestedUsernames[0]);
+                suggestedUsernamesCount++;
                 $('#id_username').attr("data-suggested-server", true);
                 $('#validation-messages').html('');
                 if($('#id_username').attr('data-suggested-server') == "true"){
@@ -372,6 +435,8 @@
                 }
               }
           })
+      }
+   
     })
 
     function suggestUsername(action=null){

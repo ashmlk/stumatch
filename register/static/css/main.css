@@ -1,11 +1,15 @@
 .bg-background {
-  background-color: rgba(248, 248, 248, 0.473);
+  background-color: rgba(248, 248, 248, 0.473) !important;
 }
 .nav-header-main {
   background-color: rgb(129, 193, 242);
 }
 .card-link-title-bg {
   background-color: rgba(129, 193, 242, 0.548);
+}
+
+.card.card-r {
+  border-radius: 8px;
 }
 
 .p-radius {
@@ -16,7 +20,7 @@
   color: #487be0 !important;
 }
 
-a:active,a:focus, .text-primary, .text-primary:focus, .text-primary:active {
+.text-primary, .text-primary:focus, .text-primary:active {
   color: #487be0 !important;
 }
 
@@ -32,7 +36,12 @@ a:active,a:focus, .text-primary, .text-primary:focus, .text-primary:active {
   font-variant: normal;
   text-transform: none;
 }
-
+.border-r {
+  border-radius: 20px;
+}
+.btn.border-r{
+  border-radius: 20px !important;
+}
 .btn-primary,
 .btn-primary:active,
 .btn-primary:visited {
@@ -443,49 +452,46 @@ ol.carousel-indicators {
 }
 .profile-header-main-links .pro-link-goto {
   margin-right: 1.2rem !important;
-  font-weight: 500 !important;
-  font-size: 1rem !important;
   padding-top: 10px !important;
   border-radius: 4px !important;
+  text-decoration: none;
 }
 
 .profile-header-main-links .pro-link-goto .pro-link-goto-text {
   margin-bottom: -4px !important;
 }
-.profile-header-main-links .pro-link-goto:hover {
-  background-color: rgb(207, 205, 205);
+.profile-header-main-links .pro-link-goto:hover .pro-link-goto-text{
+  color: rgb(0,0,0,0.6) !important;
   cursor: pointer;
 }
 .profile-header-main-links .pro-link-goto-active {
-  border-bottom: solid 3px rgb(72, 123, 224);
+  border-bottom: solid 2px rgb(0,0,0,0.8) !important;
   margin-right: 1.2rem !important;
-  font-weight: 500 !important;
-  font-size: 1rem !important;
   padding-top: 10px !important;
   border-radius: none !important;
+  text-decoration: none;
 }
+
 .profile-header-main-links .pro-link-goto-active:hover {
   cursor: pointer;
+  border-bottom: solid 2px rgb(0,0,0,0.8) !important;
 }
+
 .profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
-  color: rgb(72, 123, 224) !important;
+  color: rgb(0,0,0,0.8) !important;
   padding-top: 3px !important;
   margin-bottom: -4px !important;
 }
 .profile-header-main-links .pro-menu-link {
   background-color: rgb(226, 230, 234);
 }
+
 .profile-header-main-links .pro-menu-link:hover {
   cursor: pointer;
-  opacity: 0.8;
-}
-.pro-menu-link a {
-  color: rgb(17, 17, 17);
   text-decoration: none !important;
+  opacity: 1;
 }
-.pro-menu-link a:hover {
-  color: rgb(17, 17, 17);
-}
+
 .u_pui {
   font-size: 0.9rem;
 }
@@ -577,51 +583,7 @@ ol.carousel-indicators {
 #_pol3 .menu-link {
   border-radius: 5px;
 }
-.profile-header-main-links .pro-link-goto {
-  margin-right: 1.2rem !important;
-  font-weight: 500 !important;
-  font-size: 1rem !important;
-  padding-top: 10px !important;
-  border-radius: 4px !important;
-}
 
-.profile-header-main-links .pro-link-goto .pro-link-goto-text {
-  margin-bottom: -4px !important;
-}
-.profile-header-main-links .pro-link-goto:hover {
-  background-color: rgb(207, 205, 205);
-  cursor: pointer;
-}
-.profile-header-main-links .pro-link-goto-active {
-  border-bottom: solid 3px rgb(72, 123, 224);
-  margin-right: 1.2rem !important;
-  font-weight: 500 !important;
-  font-size: 1rem !important;
-  padding-top: 10px !important;
-  border-radius: none !important;
-}
-.profile-header-main-links .pro-link-goto-active:hover {
-  cursor: pointer;
-}
-.profile-header-main-links .pro-link-goto-active .pro-link-goto-text {
-  color: rgb(72, 123, 224);
-  padding-top: 3px !important;
-  margin-bottom: -4px !important;
-}
-.profile-header-main-links .pro-menu-link {
-  background-color: rgb(226, 230, 234);
-}
-.profile-header-main-links .pro-menu-link:hover {
-  cursor: pointer;
-  opacity: 0.8;
-}
-.pro-menu-link a {
-  color: rgb(17, 17, 17);
-  text-decoration: none !important;
-}
-.pro-menu-link a:hover {
-  color: rgb(17, 17, 17);
-}
 .u_pui {
   font-size: 0.9rem;
 }
@@ -858,6 +820,7 @@ input[type="email"]{
   box-shadow: none;
   box-sizing: border-box;
 }
+
 .icon-neo {
   border-radius: 50%;
   padding: 10px;
@@ -868,7 +831,6 @@ input[type="email"]{
 .main-h1 {
   font-size: 3.6rem;
   background: -webkit-linear-gradient(-20deg, #326ada 5%, #b251caad 100%);
-
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -981,4 +943,32 @@ input[type="email"]{
 
 .course-menu-ctr > div > a > svg {
 
+}
+
+.course-code-ctr {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px; 
+  min-height:3.5rem;
+  padding-top: 5px;
+}
+
+.add-course-explanation ul li {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.add-course .add-course-ctr {
+  margin-top: 10px;
+}
+
+.add-course input[name='course_instructor_fn'] {
+  text-transform: capitalize;
+}
+
+.add-course input[name='course_instructor'] {
+  text-transform: capitalize;
+}
+
+.user-username-font {
+  font-weight: 500;
 }

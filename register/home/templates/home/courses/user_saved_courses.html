@@ -5,94 +5,97 @@
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
-<div class="card-columns mt-2" style="margin-left: -0.85rem;margin-right: -0.85rem;">
+<div class="row infinite-container mt-2">
     {% for course in courses %}
     {% bg_rand as bgrnd %}
-    <div class="card mb-2 bg-white" style="border-radius:8px;">
-        <a class="d-flex justify-content-between align-items-center course-title-box my-auto text-white"  
-            style="text-decoration: none;  min-height:5rem; background-color: {{ bgrnd }}; border-top-left-radius:8px;border-top-right-radius:8px;"
-                href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
-                <div class="ml-2">               
-                    <h3 class="font-weight-bold">{{ course.course_code }}</h3>                
-                </div>
-        </a>
-        <div class="row p-1">
-            <div class="col-sm mb-2">
-                <div class="pt-2" style="min-height: 100px !important;">
-                    <a style="border-radius: 20px !important;" 
-                        class="text-left c_dis mb-1 course-goto btn btn-outline-primary" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                        <span class="svg-icon ccs mr-1">
-                            <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                            </svg>
-                        </span>
+    <div class="infinite-item p-1 col-md-6">
+        <div class="card card-r mb-2 bg-white infinite-item">
+            <a class="d-flex justify-content-between align-items-center course-title-box my-auto course-code-ctr"  
+                style="background-color: {{ bgrnd }}; "
+                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">  
+                    <div class="ml-2" >
+                        <span class=" h5 text-white">{{ course.course_code }}</span>
+                    </div>
+            </a>
+            <div class="row p-1">
+                <div class="col-sm mb-2">
+                    <div class="pt-2" style="min-height: 100px !important;">
+                        <a  
+                            class="text-left c_dis mb-1 course-goto btn border-r btn-outline-primary" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                            <span class="svg-icon ccs mr-1">
+                                <svg  width="1em" height="1em"
+                                    viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                </svg>
+                            </span>
+                            <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                        </a>
                         
-                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
-                    </a>
-                    <hr style="margin: 1px 1px 4px 1px !important;">
-                    <a style="border-radius: 20px !important;" class="text-left c_dis mb-1 course-goto btn btn-outline-primary "
-                        href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
-                        <span class="svg-icon ccs mr-1">
-                            <svg style="margin-top: -3px !important" width="1em" height="1em"
-                                viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                                <path fill-rule="evenodd"
-                                    d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                            </svg>
-                        </span>
-                        <span
-                            class="ml-1">{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
-                    </a>
-                    <hr style="margin: 1px 1px 4px 1px !important;">
-                    {% if course.complexity_btn_ins == "None" %}
-                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
-                        <span>Difficulty with this professor:</span><span
-                            class="ml-1">No ratings</span>
-                    </div>
-                    {% else %}
-                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn_ins }}">
-                        <span>Difficulty with this professor:</span><span
-                            class="ml-1">{{ course.average_complexity_ins }}</span>
-                    </div>
-                    {% endif %}
-                    <hr style="margin: 1px 1px 4px 1px !important;">
-                    {% if course.complexity_btn == "None" %}
-                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-secondary">
-                        <span>Course overall difficulty:</span><span
-                            class="ml-1">No ratings</span>
-                    </div>
-                    {% else %}
-                    <div style="border-radius: 20px !important;" class="text-left c_dis mb-1 btn btn-outline-{{ course.complexity_btn }} ">
-                        <span>Course overall difficulty:</span><span class="ml-1">{{ course.average_complexity }}</span>
-                    </div>
-                    {% endif %}
-                    <hr style="margin: 1px 1px 1px 1px !important;">
-                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                        <span>Total Students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
-                    </div>
-                    </br>
-                    <div class="ml-1 c_dis mb-1" style="display: inline-block;">
-                        <span>Total Students With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:</span><span
-                            class="ml-1"><strong>{{ course.get_user_count_ins }}</strong></span>
+                        <a  class="text-left c_dis mb-1 course-goto btn border-r btn-outline-primary "
+                            href="{%url 'home:course-instructor' course.course_university_slug course.course_instructor_slug %}">
+                            <span class="svg-icon ccs mr-1">
+                                <svg  width="1em" height="1em"
+                                    viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                    <path fill-rule="evenodd"
+                                        d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                </svg>
+                            </span>
+                            <span>{{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}</span>
+                        </a>
+                                            
+                        {% if course.complexity_btn == "None" %}
+                        <div  class="text-left c_dis mb-1 btn border-r btn-outline-secondary">
+                            <span>Overall:</span><span>No ratings</span>
+                        </div>
+                        {% else %}
+                        <div  class="text-left c_dis mb-1 btn border-r btn-outline-{{ course.complexity_btn }} ">
+                            <span>Overall:</span><span class="ml-1">{{ course.average_complexity }}</span>
+                        </div>
+                        {% endif %}
+                        {% if course.complexity_btn_ins == "None" %}
+                        <div  class="text-left c_dis mb-1 btn border-r btn-outline-secondary">
+                            <span>Instructor:</span><span> No ratings</span>
+                        </div>
+                        {% else %}
+                        <div  class="text-left c_dis mb-1 btn border-r btn-outline-{{ course.complexity_btn_ins }}">
+                            <span>Instructor:</span><span> {{ course.average_complexity_ins }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="ml-1 c_dis mb-1" >
+                            <span>Total students:</span><span class="ml-1"><strong>{{ course.get_user_count }}</strong></span>
+                        </div>
+                        <div class="ml-1 c_dis mb-1">
+                            <span>Total students with {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}:
+                            </span><span><strong>{{ course.get_user_count_ins }}</strong></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% empty %}
+    <div class="card" style="margin-left: -0.85rem !important;">
+        <div class="card-body">
+            <div class="d-flex justify-content-center">
+                <h4 class="text-muted">You haven't saved any courses.</h4>
+            </div>
+        </div>
+    </div>
     {% endfor %}
 </div>
-{% if not courses %}
-<div class="card" style="margin-left: -0.85rem !important;">
-    <div class="card-body">
-        <div class="d-flex justify-content-center">
-            <h4 class="text-muted">You haven't saved any courses.</h4>
+{% if courses.has_next %}
+<a class="infinite-more-link" href="?page={{ courses.next_page_number }}"></a>
+{% endif %}
+<div class="mt-2 loading" style="display: none;">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}

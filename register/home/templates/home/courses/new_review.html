@@ -2,72 +2,74 @@
 {% load ibuilder %}
 {% div_class as veid %}
 {% with rw_crs_prof=review.get_course_prof rw_crs_yr=review.year %}
-<div class="infinite-item cntr row bg-white mt-1" id="_rc_{{ veid }}" data-new="{{ forloop.counter }}" data-year="{{ rw_crs_yr }}"
-    data-ins="{{ rw_crs_prof }}">
+<div class="infinite-item cntr row mt-1 course-review-object" id="_rc_{{ veid }}"
+    data-year="{{ rw_crs_yr }}" data-ins="{{ rw_crs_prof }}">
     <div class="col-sm">
-        <div class="card">
-            {% if all == 1 %}
-            <div class="border-bottom ">
-                <span class="small m-1 font-weight-bolder">Professor {{ review.course.course_instructor_fn|capfirst }} {{ review.course.course_instructor|capfirst }},
-                   {{ rw_crs_yr }}</span>
-            </div>
-            {% else %}
-            <div class="border-bottom ">
-                <span class="small m-1 text-muted">{{ rw_crs_yr }}</span>
-            </div>
-            {% endif %}
+        <div class="card bg-white ">
             <div class="d-flex justify-content-between">
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     {% if not review.is_anonymous %}
-                    <div class="c-n-img p-1 mr-0">
+                    <div class="c-n-img p-1 mr-1">
                         <img class="img-create-post rounded-circle"
                             style="height: 2.5rem;width: 2.5rem;" src="{{ review.author.image.url }}" alt="{{ review.author.get_full_name }}">
                     </div>
                     {% else %}
-                    <div class="c-n-img p-1 mr-0">
+                    <div class="c-n-img p-1 mr-1">
                         <img class="img-create-post rounded-circle"
                             style="height: 2.5rem;width: 2.5rem;" src="{% static 'default/courses/anonymous_reviewer.png' %}" >
                     </div>
                     {% endif %}
                     <div>
-                        <div class="d-flex mt-1 flex-column">
+                        <div class="d-flex">
                             <div class="u_n d-fle">
                                 <div>
                                     {% if not review.is_anonymous %}
-                                    <a href="{{ review.author.get_absolute_url }}" class="text-dark ml-1"
-                                        style="font-weight: 500; text-decoration: none;">{{ review.author.get_full_name }}</a>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <a class="text-dark user-username-font"
+                                                href="{{ user.get_absolute_url }}">{{ user.get_username }}
+                                            </a>
+                                        </div>
+                                    </div>
                                     {% else %}
-                                    <span class="text-dark ml-1"
-                                        style="font-weight: 500;">Anonymous Reviewer</span>
+                                    <span class="user-username-font">Anonymous Reviewer</span>
                                     {% endif %}
                                 </div>
-                            </div>
-                            <div class="u_un c_da text-muted font-size-smaller" style="margin-top: -2px;">
-                                <div class="ml-1" style="font-size: 0.8rem;">
-                                    {% if not review.is_anonymous %}
-                                    <a class="text-muted"
-                                        href="{{ review.author.get_absolute_url }}">@{{ review.author.get_username }}</a>
-                                        <span>·</span>
-                                    {% endif %}                                 
-                                    <span>{{ review.get_created_on }}</span>
-                                    <span class="rounded p-1 small" style="background-color: rgb(209, 209, 209);"><strong style="color: black;">{{ review.get_interest }}</strong></span>
+                                <div class="u_un c_da text-muted ">
+                                    <div style="font-size: 0.8rem;">                          
+                                        <span>{{ review.get_created_on }}</span>
+                                        <span class="rounded p-1 small mr-1"
+                                            style="background-color: rgb(238, 238, 238);">
+                                            <strong style="color: rgba(0, 0, 0, 0.938);">
+                                                {{ review.get_interest }}
+                                            </strong>
+                                        </span>
+                                        <span class="rounded p-1 small"
+                                                style="background-color: rgb(238, 238, 238);">
+                                                <strong style="color: rgba(0, 0, 0, 0.938);">
+                                                    {{ rw_crs_yr }}
+                                                </strong>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
                 <div>
                     <div class="dropdown">
-                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
+                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right mt-1" aria-labelledby="d_li">
                             {% if review.author == request.user %}
                             <button class="small dropdown-item show-form-delete" data-veid="{{ veid }}"
-                                data-url="{% url 'home:review-delete' hidc=course.get_hashid hid=review.get_hashid  %}">
-                                <svg class="mr-1" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash"
-                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                data-url="{% url 'home:review-delete' hidc=course.get_hashid hid=review.get_hashid %}">
+                                <svg class="mr-1" width="1em" height="1em" viewBox="0 0 16 16"
+                                    class="bi bi-trash" fill="currentColor"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
                                     <path fill-rule="evenodd"
@@ -79,8 +81,8 @@
                                 viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
                                 <path fill-rule="evenodd"
-                                  d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
-                              </svg>Report</button>
+                                    d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                                </svg>Report</button>
                             {% endif %}
                         </div>
                     </div>
@@ -89,7 +91,7 @@
             <div class="card-body m-0">
                 <p class="card-text">{{ review.body }}</p>
             </div>
-            <div class="review-likes-container">
+            <div class="review-likes-container pl-1 pb-1">
                 {% include 'home/courses/review_like.html' with review=review %}
             </div>
         </div>

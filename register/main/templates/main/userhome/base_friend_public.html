@@ -1,11 +1,12 @@
 {% load static %}
 {% load thumbnail %}
+{% load ibuilder %}
 <!DOCTYPE html>
 <html>
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180528762-1"></script>
     <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-180528762-1');</script>
-    <title>{{ user.get_full_name }} - JoinCampus</title>
+    <title>{% block title %}{{user.get_username}} - JoinCampus{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,110 +36,337 @@
     <script src="{% static 'EasyAutoComplete/jquery.easy-autocomplete.min.js' %}"></script>
 </head>
 
-<body class="pb-5" style="background-color: white !important;">
+<body class="pb-5 bg-background" >
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper">
         <div class="container pt-4 u_pctr">
-            <div class="row d-flex justify-content-center mt-5">
-                <div class="mx-auto col-sm-12">
-                    <div class="img-user name-user mt-4 p-2">
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <div class="pro-img">             
-                                    {% thumbnail user.image "150x150" crop="80% top" as im %}
-                                        <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
-                                    {% endthumbnail %}                               
+            <div class="row mt-5">
+                <div class="mx-auto col-sm-9">
+                    <div class="d-flex justify-content-start">
+                        <div class="d-flex img-user name-user w-100 mt-4 p-2">
+                            <div class="d-flex justify-content-center mr-5">
+                                <div>
+                                    <div class="ppro-img">
+                                        {% thumbnail user.image "150x150" crop="80% top" as im %}
+                                            <img class="rounded-circle" style="margin:{{ im|margin:'150x150' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                        {% endthumbnail %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="f-name mt-3">
-                            <div class="content-holder">
-                                <h3 class="font-weight-bolder text-center text-dark">{{ user.get_full_name }}</h3>
+                            <div>
+                                <div class="d-flex">
+                                    <div class="f-name mt-3">
+                                        <div class="content-holder">
+                                            <h4 class="text-center text-dark">{{ user.get_username}}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="mx-3 mt-2 pt-1 editable-al-view">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="editable-al-view">
+                                                <div class="d-flex justify-content-center">
+                                                    <div class="mb-2 btn btn-sm d-flex align-items-center mr-1">
+                                                        {% if not requested %}
+                                                        <div class="friend-status-ctr">
+                                                            {% include 'main/friends/friend_status.html' with user=user %}
+                                                        </div>
+                                                        {% elif requested %}
+                                                        <div class="friend-status-ctr">
+                                                            {% include 'main/friends/accept_reject_request.html' with user=user %}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <div class="dropdown">
+                                                            <button class="mt-1 btn btn-sm no-outline no-border"
+                                                                type="button"
+                                                                id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-h"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu" aria-labelledby="d_li">
+                                                                {% if user != request.user %}
+                                                                <button class="block-user-btn small dropdown-item"
+                                                                    data-url="{% url 'main:block-user' hid=user.get_hashid %}"><svg
+                                                                        width="1em" height="1em" viewBox="0 0 16 16"
+                                                                        class="bi mr-1 bi-dash-circle" fill="currentColor"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M3.5 8a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.5-.5z" />
+                                                                    </svg>Block</button>
+                                                                <button class="small dropdown-item show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=u&hid={{ user.get_hashid }}"><svg
+                                                                        width="1em" height="1em" viewBox="0 0 16 16" class="bi mr-1 bi-flag"
+                                                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
+                                                                    </svg>Report</button>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex w-100 justify-content-between my-2">
+                                    <div class="counter-obj">
+                                        <div>
+                                            <span class="navbarMainHeaderuser-num">
+                                                <span class="h6">
+                                                    {{ cnum }} 
+                                                </span>
+                                                <span>
+                                                    courses
+                                                </span>
+                                            </span>                                                  
+                                        </div>
+                                    </div>
+                                    <div class="counter-obj">
+                                        <div>
+                                            <span class="navbarMainHeaderuser-num">
+                                                <span class="h6">
+                                                    {{ pnum }} 
+                                                </span>
+                                                <span>
+                                                    posts
+                                                </span> 
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="counter-obj">
+                                        <div>
+                                            <span>
+                                                <span class="h6">
+                                                    {{ num_friends }} 
+                                                </span>
+                                                <span>
+                                                    friends
+                                                </span>                                   
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-100">
+                                    <div class="f-name mt-1">
+                                        <div class="content-holder d-flex align-items-center">
+                                            <div class="d-flex align-items-center pt-2">
+                                                <h6 class="text-dark">{{ user.get_full_name }}</h6>
+                                            </div>
+                                            <div class="mx-1">
+                                                <span>
+                                                    ·
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="info-et-all">
+                                                    <div class="d-flex uni-user">
+                                                        {% if user.program or user.university %}
+                                                        <div class="u_pui">
+                                                            {% if user.university == "Incoming Student" %}
+                                                            <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                                {{ user.university|capfirst }}
+                                                            </a> 
+                                                            {% elif user.program %}
+                                                                {% if not user.university == "Incoming Student" %}
+                                                                <span class="text-muted">
+                                                                    {{ user.program|capfirst }}
+                                                                </span>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {% if not user.university == "Incoming Student" %}
+                                                                {% if user.university and user.program %}
+                                                                    <span class="text-muted"> at </span>                                          
+                                                                    <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                                        {{ user.university|capfirst }}
+                                                                    </a>                                        
+                                                                {% elif user.university and not user.program %}                                         
+                                                                    <a class="text-primary" href="{% url 'home:university-detail' %}?u={{ user.university }}&obj=std" style="text-decoration: none;">
+                                                                        {{ user.university|capfirst }}
+                                                                    </a>                                          
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="content-holder mt-1">
+                                            <p class="text-dark">{{ user.bio }}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mt-2 p-2 u-bio">
-                            <p class="text-center text-muted">{{ user.bio }}</p>
+                        </div>       
+                    </div>
+                    <div class="my-2 border-bottom w-100 mb-3 profile-header-main-links d-flex justify-content-center">
+                        <div class="options-user-r">
+                            <div class="d-flex justify-content-start">
+                                <a class=" rounded-0 p-2 text-dark pro-link-goto{{ obj_None_active }}" href="{% url 'main:get_user' user.get_username %}">
+                                    <span class="pro-link-goto-text text-muted">
+                                        Courses
+                                    </span>
+                                </a>
+                                <a class=" rounded-0 p-2 text-dark pro-link-goto{{ obj_posts_active }}"
+                                    href="{% url 'main:get_user' user.get_username 'posts' %}">
+                                    <span class="text-center pro-link-goto-text text-muted">
+                                        Posts
+                                    </span>
+                                </a>
+                                <a class=" rounded-0 p-2 text-dark pro-link-goto{{ obj_friends_active }}" href="{% url 'main:get_user' user.get_username 'friends' %}">
+                                    <span class="pro-link-goto-text text-muted">
+                                        Friends
+                                    </span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <div class="editable-al-view mt-2">
-                            <div class="d-flex justify-content-center">
-                                <div class="mb-2 btn btn-sm d-flex align-items-center mr-1">
-                                    {% if not requested %}
-                                    <div class="friend-status-ctr">
-                                        {% include 'main/friends/friend_status.html' with user=user %}
+                    <div class="my-2  content-boxes info-user-all">
+                        <div class="row p-2">
+                            <div class="col-12 pt-2">
+                                {% if obj_None_active %}
+                                <div class="row infinite-container">
+                                    {% for course in objects %}
+                                    {% bg_rand as bgrnd %}
+                                    {% div_class as veid %}
+                                    {% with par2=course.course_instructor_slug par1=course.course_university_slug %}
+                                    <div class="infinite-item col-md-4 p-1">
+                                        <div class="card " style="border-radius: 8px!important;">
+                                            <div class="p-0">
+                                                <a style="text-decoration: none;"
+                                                    href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
+                                                    <div class="d-flex align-items-center justify-content-between course-code-ctr"
+                                                        style="background-color:{{bgrnd}};overflow:hidden !important;">
+                                                        <div>
+                                                            <div class="ml-2" >
+                                                                <span class=" h5 text-white">{{ course.course_code }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <div class="row mt-1 mx-1">
+                                                    <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
+                                                        style="border-radius: 20px !important;"
+                                                        data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
+                                                        <span class="svg-icon ccs mr-1">
+                                                            <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                                                viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                                            </svg>
+                                                        </span>
+                                                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                                    </div>
+                                                    <div class="c_dis p-2 mr-1 mb-1 course-goto btn btn-outline-primary"
+                                                        style="border-radius: 20px !important;"
+                                                        data-url="{%url 'home:course-instructor' par1 par2 %}">
+                                                        <span class="svg-icon ccs mr-1">
+                                                            <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                                                viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                                                <path fill-rule="evenodd"
+                                                                    d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                                            </svg>
+                                                        </span>
+            
+                                                        <span class="ml-1">{{ course.course_instructor_fn|capfirst }}
+                                                            {{ course.course_instructor|capfirst }}</span>
+                                                    </div>
+                                                    <div class="c_dis p-2 mr-1 mb-1 text-center btn btn-outline-primary"
+                                                        style="border-radius: 20px !important;">
+                                                        <span class="svg-icon ccs mr-1 ">
+                                                            <svg style="margin-top: -3px !important" width="1em" height="1em"
+                                                                viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                                            </svg>
+                                                        </span>
+                                                        <span class="ml-1">{{ course.course_year }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="p-1 border-top justify-content-between mb-0 mt-1">
+                                                <div class="d-flex votes-container ml-1" style="margin-top: -2px !important;">
+                                                    <!-- rating -->
+                                                </div>
+                                                <div class="pl-2 mb-0" style="font-size: 0.92rem;">
+                                                    <span class="mr-1 small text-muted"><strong>{{ course.get_user_count }}</strong>
+                                                        {% if course.get_user_count == 1 %}<span>person has</span>{% else %}
+                                                        <span>people have</span>{% endif %} enrolled in {{ course.course_code }}.
+                                                        See them <a
+                                                            href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">here</a>.</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    {% elif requested %}
-                                    <div class="friend-status-ctr">
-                                        {% include 'main/friends/accept_reject_request.html' with user=user %}
+                                    {% endwith %}
+                                    {% empty %}
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="p-1">
+                                                <div class="text-center">
+                                                    <span class="text-muted">No courses to show.</span>
+                                                </div>    
+                                            </div>
+                                        </div>
                                     </div>
-                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                <div>
-                                    <div class="dropup">
-                                        <button class="mt-1 btn btn-sm no-outline no-border"
-                                            style="background-color: rgb(226,230,234) !important;" type="button"
-                                            id="d_li" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-up" aria-labelledby="d_li">
-                                            {% if user != request.user %}
-                                            <button class="block-user-btn small dropdown-item"
-                                                data-url="{% url 'main:block-user' hid=user.get_hashid %}"><svg
-                                                    width="1em" height="1em" viewBox="0 0 16 16"
-                                                    class="bi mr-1 bi-dash-circle" fill="currentColor"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M3.5 8a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.5-.5z" />
-                                                </svg>Block</button>
-                                            <button class="small dropdown-item show-report-form" data-url="{% url 'main:report-object' request.user.get_hashid %}?t=u&hid={{ user.get_hashid }}"><svg
-                                                    width="1em" height="1em" viewBox="0 0 16 16" class="bi mr-1 bi-flag"
-                                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd"
-                                                        d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
-                                                </svg>Report</button>
-                                            {% endif %}
+                                {% elif obj_posts_active %}
+                                    {% include 'home/posts/home_post.html' with posts=objects id_required=True user=user %}
+                                {% elif obj_friends_active %}
+                                <div class="row  infinite-container">
+                                    {% for friend in objects %}
+                                    <div class="col-md-3 infinite-item">
+                                        <div class="card d-flex justify-content-center">
+                                            <div>
+                                                <div class="d-flex justify-content-center p-1">
+                                                    {% thumbnail friend.image "110x110" crop="80% top" as im %}
+                                                    <img class="mt-2 rounded-circle" style="margin:{{ im|margin:'110x110' }}" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
+                                                    {% endthumbnail %}
+                                                </div>
+                                                <div class="d-flex justify-content-center p-1 mt-2">
+                                                    <div class="card-friend-name-holder">
+                                                        <a class="text-dark text-dark text-center"
+                                                            href="{{ friend.get_absolute_url }}" style="white-space: nowrap;">{{ friend.get_full_name }}</a>
+                                                    </div>
+                                                </div>
+                                                <div class="px-4 pb-2 d-flex text-muted justify-content-center user-info">
+                                                    {% if friend.university %}
+                                                        <div class="text-center u_pui">
+                                                            <span style="white-space: nowrap !important;">
+                                                                {{ friend.university|capfirst }}
+                                                            </span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>       
+                                    {% endfor %}
+                                </div>  
+                                {% endif %}
+                                {% if objects.has_next %}
+                                <a class="infinite-more-link" href="?page={{ objects.next_page_number }}"></a>
+                                {% endif %}
+                                <div class="mt-2 loading" style="display: none;">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="sr-only">Loading...</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="border-bottom bg-white sticky-top -2 px-2 pt-2 mb-3 profile-header-main-links d-flex justify-content-between"
-                        style="top:54px !important;overflow-y: auto !important;">
-                        
-                        <div class="options-user-r" style="margin-left: -8px;">
-                            <div class="d-flex justify-content-start">
-                                <a class="rounded-0 p-2 text-dark pro-link-goto{{ pro_active }}"
-                                    href="{% url 'main:get_user' user.username %}">
-                                        <span class="pro-link-goto-text">Profile</span>
-                                </a>
-                                <a class="rounded-0 p-2 text-dark pro-link-goto-text  pro-link-goto{{ friends_active }}"
-                                    href="{% url 'main:get_user_friends' %}?id={{ user.get_hashid }}">
-                                    <span class="pro-link-goto-text">Friends</span>
-                                </a>
-                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ courses_active }}"
-                                    href="{% url 'main:get_user_courses' %}?id={{ user.get_hashid }}">
-                                    <span class="pro-link-goto-text">Courses</span>
-                                </a>
-                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ posts_active }}"
-                                    href="{% url 'main:get_user_posts' %}?id={{ user.get_hashid }}">
-                                    <span class="pro-link-goto-text">Posts</span>
-                                </a>
-                                <a class="rounded-0 p-2 text-dark pro-link-goto-text pro-link-goto{{ blogs_active }}"
-                                    href="{% url 'main:get_user_blogs' %}?id={{ user.get_hashid }}">
-                                    <span class="pro-link-goto-text">Blogs</span>
-                                </a>
-                                
-                            </div>
-                           
-                        </div>
-                    </div>
-                    {% block profilecontent %}{% endblock %}
                 </div>
             </div>
         </div>

@@ -17,21 +17,6 @@
         </div>
       </div>
 </div>
-<div class="mb-2 p-1 ml-1 ">
-    <div class="d-flex justify-content-start" id="_pol3">
-      <div class="btn d-flex flex-fill justify-content-center mr-1 menu-link menu-link{{ post_active }}">
-        <a  href="{% url 'main:usertags' username=request.user.get_username %}?o=post" style="text-decoration: none;">
-            <span class="h6">Posts</span>
-        </a>
-      </div>
-      <div class="btn d-flex flex-fill justify-content-center mr-1 menu-link menu-link{{ blog_active }}"
-        data-url="{% url 'main:usertags' username=request.user.get_username %}?o=blog" >
-        <a class="text-center" href="{% url 'main:usertags' username=request.user.get_username %}?o=blog" style="text-decoration: none;">
-            <span class="h6">Blogs</span>
-        </a>
-      </div>
-    </div>
-  </div>
   <div class="pt-1 content" >
     <div >
         {% for tag in tags %}
@@ -59,7 +44,7 @@
         </div>
         {% empty %}
         <div class="d-flex justify-content-center">
-            <h5 class="h5 font-weight-lighter my-3 text-muted">No tags to show.</h5>
+            <h6 class="h5 my-3 text-muted">No tags to show.</h6>
         </div>
         {% endfor %}
     </div>

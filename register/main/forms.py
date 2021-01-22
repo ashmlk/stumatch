@@ -169,7 +169,7 @@ class EditProfileForm(UserChangeForm):
     )
 
     full_name = forms.CharField(
-        label="",
+        label="Full Name",
         max_length=300,
         min_length=1,
         required=True,
@@ -198,11 +198,9 @@ class EditProfileForm(UserChangeForm):
         model = Profile
         fields = (
             "username",
-            "first_name",
-            "last_name",
+            "full_name",
             "bio",
         )
-
 
 class SetUniversityForm(forms.ModelForm):
 
