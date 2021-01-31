@@ -39,8 +39,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/courses/main.css' %}">
 </head>
-
-<body class="d-flex flex-column min-vh-100 bg-background">
+<body class="d-flex flex-column min-vh-100 bg-background" id="body_home_page">
     <div id="#navPlaceholder" class="fixed-top mb-4">{% include 'home/nav.html' %}</div>
     <div class="wrapper mb-5">
         <div class="container" style="margin-top: 64px !important;">
@@ -49,8 +48,7 @@
                     <div class="d-flex" style="overflow-x:auto !important;">
                         <div class="mx-1">
                             <a href="{% url 'home:course-dashboard' %}" id="user-courses"
-                                class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                class="mb-4 btn btn-md border d-flex align-items-center list-group-item-action">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="{{ yc }} bi bi-columns-gap"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -58,27 +56,23 @@
                                             d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z" />
                                     </svg>
                                 </span>
-                                <span class="{{ yc }}"
-                                    style="white-space:nowrap !important;margin-top: 2px !important;">Dashboard</span>
+                                <span class="{{ yc }}">Dashboard</span>
                             </a>
                         </div>
                         <div class="mx-1">
                             <a href="{% url 'home:courses-add' %}" id="your-courses"
-                                class="mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                class="mx-1 btn btn-md border  d-flex align-items-center list-group-item-action">
                                 <span class="mr-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-view-stacked" viewBox="0 0 16 16">
                                         <path d="M3 0h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3zm0 8h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3z"/>
                                     </svg>
                                 </span>
-                                <span class="{{ ucl }}" style="white-space:nowrap !important;margin-top: 2px !important;">Courses
-                                    </span>
+                                <span class="{{ ucl }}">Courses</span>
                             </a>
                         </div>
                         <div class="mx-1">
                             <a href="{% url 'home:courses-add' %}" id="course-add"
-                                class="mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                class="mx-1 btn btn-md border  d-flex align-items-center list-group-item-action">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="{{ ac }} bi bi-file-plus"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -88,14 +82,12 @@
                                             d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z" />
                                     </svg>
                                 </span>
-                                <span class="{{ ac }}" style="white-space:nowrap !important;margin-top: 2px !important;">Add
-                                    </span>
+                                <span class="{{ ac }}">Add</span>
                             </a>
                         </div>
                         <div class="mx-1">
                             <a href="{% url 'home:find-students' %}?sl=prgm"
-                                class="{{ fs }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                class="{{ fs }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people" fill="currentColor"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -103,14 +95,12 @@
                                             d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
                                     </svg>
                                 </span>
-                                <span class="{{ fs }}"
-                                    style="white-space:nowrap !important;margin-top: 2px !important;">Discover</span>
+                                <span class="{{ fs }}">Discover</span>
                             </a>
                         </div>
                         <div class="mx-1">
                             <a href="{% url 'home:course-list' %}"
-                                class="{{ sc }} mx-1 btn btn-md border d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;">
+                                class="{{ sc }} mx-1 btn btn-md border d-flex align-items-center list-group-item-action">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -122,22 +112,20 @@
                                             d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
                                     </svg>
                                 </span>
-                                <span class="{{ sc }}"
-                                    style="white-space:nowrap !important;margin-top: 2px !important;">Saved</span>
+                                <span class="{{ sc }}">Saved</span>
                             </a>
                         </div>
                         <div class="mx-1">
                             <a href="{% url 'home:course-list-manager' %}"
-                                class="{{ ml }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action"
-                                style="border-radius: 25px;border: 1px solid rgb(218, 218, 218) !important;"><span
-                                    class="mr-2">
+                                class="{{ ml }} mx-1 btn btn-md border  d-flex align-items-center list-group-item-action">
+                                <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd"
                                             d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z" />
                                     </svg>
-                                </span><span class="{{ ml }}"
-                                    style="white-space:nowrap !important;margin-top: 2px !important;">Lists</span></a>
+                                </span>
+                                <span class="{{ ml }}">Lists</span></a>
                         </div>
                     </div>
                 </div>
@@ -159,8 +147,7 @@
                                 <span style="margin-top: 2px !important;">Dashboard</span>
                             </a>
                             <a href="{% url 'home:course-list' %}" id="your-courses"
-                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ ucl }}"
-                                >
+                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ ucl }}">
                                 <div class="border"></div>
                                 <span class="mr-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-view-stacked {{ ucl }}" viewBox="0 0 16 16">
@@ -170,8 +157,7 @@
                                 <span  style="margin-top: 2px !important;">Courses</span>
                             </a>
                             <a href="{% url 'home:courses-add' %}" id="course-add"
-                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ ac }}"
-                                >
+                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ ac }}">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="text-dark bi bi-file-plus"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -184,8 +170,7 @@
                                 <span  style="margin-top: 2px !important;">Add</span>
                             </a>
                             <a href="{% url 'home:find-students' %}?sl=prgm"
-                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ fs }}"
-                                >
+                                class="mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action {{ fs }}">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-people"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -196,8 +181,7 @@
                                 <span  style="margin-top: 2px !important;">Discover</span>
                             </a>
                             <a href="{% url 'home:courses-saved' %}"
-                                class="{{ sc }} mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action"
-                                >
+                                class="{{ sc }} mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action">
                                 <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-clock-history"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -212,14 +196,16 @@
                                 <span style="margin-top: 2px !important;">Saved</span>
                             </a>
                             <a href="{% url 'home:course-list-manager' %}"
-                                class="{{ ml }} mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action"
-                                ><span class="mr-2">
+                                class="{{ ml }} mb-4 btn btn-md  d-flex align-items-center text-dark list-group-item-action">
+                                <span class="mr-2">
                                     <svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-list-nested"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd"
                                             d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z" />
                                     </svg>
-                                </span><span  style="margin-top: 2px !important;">Lists</span></a>
+                                </span>
+                                <span style="margin-top: 2px !important;">Lists</span>
+                            </a>
                         </div>
                     </div>
                     <div class="d-none d-md-block pl-3 sticky-top" style="top: 455px;" id="#footerPlaceholder">
@@ -285,19 +271,109 @@
         </div>
     </div>
     <style>
-        .card .course-goto-button{
+         .card .course-goto-button{
             color: rgba(0, 0, 0, 0.747) !important;
         }
         .course-difficulties-tag .btn {
             border-radius: 20px;
         }
+        .svg-icon {
+            border: 1px solid transparent;
+            background-color: #dce8ff7a;
+            padding: 5px;
+            font-size: 16px;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+        .custom-bold {
+            font-weight: 500;
+        }
+        .course-card{
+            padding-left: 3px;
+        }
+        .course-card:not(.shown-dropdown):hover {
+            cursor: pointer;
+            box-shadow: rgba(0, 0, 0, 0.22) 0px 11px 23px;
+            transform: translate3d(0px, -1px, 0px);
+        }
+        .course-card:hover .dropdown.show button[aria-expanded="true"]  {
+            transform: none !important;
+        }
+        .btn-outline-primary:hover .btn-text-dark {
+            color:white !important;
+        }
+        .svg-icon-overlay {
+            border: 2px solid white;
+            background-color: rgb(240, 240, 240);
+            color: rgb(145, 145, 145);
+        }
+        .text-primary-dark {
+        color: #2b4a87 !important;
+        }
+        .rating-ctr span {
+            font-size: 0.85rem;
+        }
+        .no-wrap {
+            white-space: nowrap !important;
+        }
+        .course-review-form #id_year {
+            width: auto !important;
+        }
+        .font-auto-sm {
+            font-size: 0.92rem;
+        }
     </style>
+    <script>
+        $(function () {
+            let userCoursesUniversityInput = $('#user-courses-uni-input');
+            $.initialize('.university-data-ctr', function () {
+                let ctr = $(this);
+                let uni = $(this).attr("data-university"); 
+                if($(userCoursesUniversityInput).val() === ""){
+                    $(userCoursesUniversityInput).val(uni);
+                    let uniLink = `<div class="col-sm-6 my-1 p-1 mx-1"><a class="h6 text-primary no-wrap" href='${$(this).attr("data-university-url")}'>
+                        <span class="mr-1 text-primary">
+                            <i class="fas fa-university"></i>
+                        </span>
+                        ${uni}</a>
+                        </div>`
+                    $(uniLink).insertBefore($(ctr));
+                } else if ($(userCoursesUniversityInput).val() != uni){
+                    $(userCoursesUniversityInput).val(uni);
+                    let uniLink = `<div class="col-sm-6 my-1 p-1 mx-1"><a class="h6 text-primary  no-wrap" href='${$(this).attr("data-university-url")}'>
+                        <span class="mr-1 text-primary">
+                            <i class="fas fa-university"></i>
+                        </span>
+                        ${uni}</a>
+                        </div>`
+                    $(uniLink).insertBefore($(ctr));
+                }
+            });
+    
+            $(document).on('click','.course-card', function () {
+                let link = $(this).find('.course-detail-link').attr('href');
+                if(link != undefined){
+                    location.href = link;
+                }
+            })
+            $(document).on('show.bs.dropdown','.course-card .dropdown', function() {
+                $(this).closest('.course-card').addClass('shown-dropdown')
+            })
+            $(document).on('hide.bs.dropdown','.course-card .dropdown', function() {
+                $(this).closest('.course-card').removeClass('shown-dropdown')
+            })
+        })
+    </script>
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/courses/courses.js' %}"></script>
     <script src="{% static 'js/courses/vote_course.js' %}"></script>
     <script src="{% static 'js/courses/course-detail.js' %}"></script>
     <script src="{% static 'js/courses/save-course.js' %}"></script>
     <script src="{% static 'js/courses/course-review.js' %}"></script>
+    <script src="{% static 'js/jquery.initialize.min.js' %}"></script>
     <script>$(document).ready(function () { $('.mnbtn').on('click', function () { window.location = $(this).attr('data-url') }) })</script>
 </body>
 </html>

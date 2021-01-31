@@ -95,6 +95,7 @@ $(document).ready(function () {
 				
 			},
 			success: function(data){
+				let insLink = null;
 				let menu = $("#instructor-list-dropdown");
 				let universitySlug = data['course_university_slug'];
 				let courseCode = data['course_code']
@@ -102,10 +103,19 @@ $(document).ready(function () {
 					let firstName = data['instructors'][i]['course_instructor_fn'];
 					let lastName = data['instructors'][i]['course_instructor'];
 					let instructorSlug = data['instructors'][i]['course_instructor_slug']
-					let insLink = 
-					`
-					<a class="dropdown-item" href="/courses/reviews/${universitySlug}/${instructorSlug}/${courseCode}/">${firstName} ${lastName}</a>
-					`
+					let universitySlug = data['instructors'][i]['course_university_slug']
+					if($(btnGetIns).hasClass("get-students")){
+						let courseId = data['instructors'][i]['id'];
+						insLink = 
+						`
+						<a class="dropdown-item" href="/courses/see_students?id=${courseId}&o=ins">${firstName} ${lastName}</a>
+						`
+					} else {				
+						insLink = 
+						`
+						<a class="dropdown-item" href="/courses/reviews/${universitySlug}/${instructorSlug}/${courseCode}/">${firstName} ${lastName}</a>
+						`
+					}
 					$(menu).append(insLink);
 				}
 			}

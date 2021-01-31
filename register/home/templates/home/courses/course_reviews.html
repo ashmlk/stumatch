@@ -6,7 +6,7 @@
 <div class="dropdown">
     <button class="btn mb-1 border btn-light btn-sm dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
-        Sort By: {{ sortby|capfirst }}
+        {{ sortby|capfirst }}
     </button>
     <div class="dropdown-menu mt-1" aria-labelledby="d_li">
         <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?sb=latest">Latest</a>
@@ -61,12 +61,6 @@
                                                 <div class="u_un c_da text-muted ">
                                                     <div style="font-size: 0.8rem;">                          
                                                         <span>{{ review.get_created_on }}</span>
-                                                        <span class="rounded p-1 small mr-1"
-                                                            style="background-color: rgb(238, 238, 238);">
-                                                            <strong style="color: rgba(0, 0, 0, 0.938);">
-                                                                {{ review.get_interest }}
-                                                            </strong>
-                                                        </span>
                                                         <span class="rounded p-1 small"
                                                                 style="background-color: rgb(238, 238, 238);">
                                                                 <strong style="color: rgba(0, 0, 0, 0.938);">

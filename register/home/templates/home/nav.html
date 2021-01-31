@@ -4,12 +4,10 @@
 <script src="{% static 'js/search.js' %}"></script>
 <script src="{% static 'js/notify.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/post/posts.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 {% register_notify_callbacks api_name='count' callbacks='fill_notification_badge' %}
-<link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/nav/styles.css' %}">
 <div class="nav-container">
-  <nav class="navbar navbar-expand main-top-nav pl-3 pr-3 border-bottom p-0" style="background-color: rgba(255, 255, 255);">
+  <nav class="navbar navbar-expand main-top-nav pl-3 pr-3 border-bottom p-0 bg-white">
     <a class="navbar-brand ml-1 mr-3" href="{% url 'home:home' %}">
         <img class="img-fluid" src="{% static 'logo/m/logo-main.svg' %}" style="height: 2.7rem;">
     </a> 
@@ -45,50 +43,55 @@
         </div>
       </form>
       <div class="float-left d-block d-md-none">
-        <a class="nav-item mt-1" style="color: rgba(39, 39, 39, 0.89);" href="{% url 'home:search-mobile' %}">
+        <a class="nav-item mt-1"  href="{% url 'home:search-mobile' %}">
           <svg width="18" height="18" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
             <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
           </svg>
         </a>
       </div>
-      <ul class="navbar-nav ml-auto mt-lg-0 my-1">
-        <li class="nav-item mt-1  nav-goto-holder" data-url="{% url 'home:home' %}">
+      <ul class="navbar-nav ml-auto mt-lg-0 my-1" style="padding-top: 3px;">
+        <li class="nav-item nav-goto-holder nav-home-link" data-url="{% url 'home:course-dashboard' %}"  style="margin-top:1px;margin-left: -4px;margin-right: -6px;">
+            <div class="d-flex align-items-center">
+              <div>
+                <a class="nav-link btn-md border btn-circle rounded-circle d-flex align-items-center" data-tooltip="tooltip"
+                  data-placement="bottom" title="Courses" data-delay='{ "show": 500, "hide": 100 }'
+                  href="{% url 'home:course-dashboard' %}">
+                  <svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" class="bi bi-house-door">
+                    <g>
+                     <rect fill="none" id="canvas_background" height="26" width="24" y="-1" x="-1"/>
+                    </g>
+                    <g>
+                     <path stroke="null" stroke-width="1" id="svg_1" d="m11.52819,2.61371a0.74604,0.68478 0 0 0 -1.05639,0l-8.95246,8.2173a0.74604,0.68478 0 0 0 
+                      -0.21784,0.48482l0,9.58685a0.74604,0.68478 0 0 0 0.74604,0.68478l6.71434,0a0.74604,0.68478 0 0 0 0.74604,-0.68478l0,-5.4782l2.98415,0l0,5.4782a0.74604,0.68478 
+                      0 0 0 0.74604,0.68478l6.71434,0a0.74604,0.68478 0 0 0 0.74604,-0.68478l0,-9.58685a0.74604,0.68478 0 0 0 -0.21784,-0.48482l-2.02027,-1.853l-2.98415,
+                      -2.7391l-3.94803,-3.6252zm-8.73461,17.6042l0,-8.61858l8.20642,-7.53253l8.20642,7.53253l0,8.61858l-5.22227,0l0,-5.4782a0.74604,0.68478 0 0 0 -0.74604,
+                      -0.68478l-4.47623,0a0.74604,0.68478 0 0 0 -0.74604,0.68478l0,5.4782l-5.22227,0z"/>
+                    </g>
+                   </svg>
+                </a>
+              </div>
+            </div>
+        </li>
+        <li class="mt-1 nav-item nav-goto-holder nav-post-link" data-url="{% url 'home:home' %}" >
           <div class="d-flex align-items-center">
             <div>
               <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
                 data-placement="bottom" title="Home" data-delay='{ "show": 500, "hide": 100 }'
                 href="{% url 'home:home' %}">
-                <svg width="22" height="22"  viewBox="0 0 16 16" class="bi bi-house-door" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd"  d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
-                  <path fill-rule="evenodd"  d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                <svg width="21" height="21"  viewBox="0 0 16 16"  class="bi bi-compass" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="M6.94 7.44l4.95-2.83-2.83 4.95-4.949 2.83 2.828-4.95z"/>
                 </svg>
               </a>
             </div>
           </div>
         </li>
-        <li class="nav-item mt-1 nav-goto-holder" data-url="{% url 'home:course-dashboard' %}">
-            <div class="d-flex align-items-center">
-              <div>
-                <a class="nav-link btn-md border btn-circle rounded-circle text-dark d-flex align-items-center" data-tooltip="tooltip"
-                  data-placement="bottom" title="Courses" data-delay='{ "show": 500, "hide": 100 }'
-                  href="{% url 'home:course-dashboard' %}">
-                  <svg width="21" height="21"  viewBox="0 0 16 16" class="bi bi-book" fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                      d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" />
-                    <path fill-rule="evenodd"
-                      d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609zM15 2.82v9.908c-.846-.343-1.944-.672-3.074-.788-1.143-.118-2.387-.023-3.426.56V2.718c1.063-.929 2.631-.956 4.09-.664A11.956 11.956 0 0 1 15 2.82z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-        </li>
-        <li class="nav-item mt-1 d-flex align-items-center" style="margin-left: -4px;margin-right: -4px;">
-          <div class=" create-post-btn d-flex align-items-center p-0 border-light" data-url="{% url 'home:post-create' %}" data-tooltip="tooltip" data-placement="bottom"
+        <li class="nav-item d-flex align-items-center" style="margin-left: -4px;margin-right: -4px;">
+          <div class=" create-post-d-flex align-items-center p-0 border-light  create-post-btn" data-url="{% url 'home:post-create' %}" data-tooltip="tooltip" data-placement="bottom"
           title="Add">
             <div >
-              <button class=" nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              <button class="nav-link btn-md border btn-circle rounded-circle" data-tooltip="tooltip"
                 data-placement="bottom" title="Add" data-delay='{ "show": 500, "hide": 100 }'>
                 <svg width="20" height="20" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
@@ -101,7 +104,7 @@
           <div class="d-flex align-items-center">
             <div>
                 <span id="live-notif-c" style="display: none;">{% live_notify_badge %}</span>   
-              <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
+              <a href="{% url 'main:get-notifications' %}" class="nav-link btn-md border btn-circle rounded-circle " data-tooltip="tooltip"
                 data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Notifications">
                 <svg style="transform: rotate(30deg)" width="21" height="21" viewBox="0 0 16 16" class="bi bi-bell" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
@@ -114,7 +117,7 @@
         <li class="nav-item ">
           <div class="d-flex align-items-center p-0 border-light">
             <div class="dropdown">
-              <button class="nav-link btn-md border btn-circle rounded-circle text-dark" type="button" id="dropdownMenuProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button class="nav-link btn-md border btn-circle rounded-circle" type="button" id="dropdownMenuProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% thumbnail request.user.image "32x32" crop="80% top" as im %}
                   <img class="rounded-circle border-0" id="nv_imgtabgetlsk" style="margin-top: 2px !important;" src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}">
                 {% endthumbnail %}    
@@ -163,51 +166,7 @@
             </div>
           </div>
         </li>
-        <!-- <li class="d-md-none nav-item mt-1  nav-goto-holder" data-url="{% url 'main:settings-edit' %}">
-          <div class="d-flex align-items-center">
-            <div>
-              <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-                data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
-                href="{% url 'main:settings-edit' %}">
-                <i class="fas fa-2x mt-1 fa-cog" style="margin-top:1.3rem;margin-left: 0.2rem;"></i> <span class="nav-name-icons ml-3 d-md-none"></span></a>
-            </div>
-            <div class="ml-2 nav-name-icons ml-3 d-md-none">
-              <span>Settings</span>
-            </div>
-          </div>
-        </li>
-        <li class="d-md-none nav-item mt-1  nav-goto-holder" data-url="{% url 'main:user_logout' %}">
-          <div class="d-flex align-items-center">
-            <div>
-              <a class="nav-link btn-md border btn-circle rounded-circle text-dark" data-tooltip="tooltip"
-                data-placement="bottom" title="Friends" data-delay='{ "show": 500, "hide": 100 }'
-                href="{% url 'main:user_logout' %}">
-                <i class="fas fa-2x mt-1 fa-sign-out-alt" style="margin-top:1.2rem;margin-left: 0.3rem;"> </i><span class="nav-name-icons ml-3 d-md-none"></span></a>
-            </div>
-            <div class="nav-name-icons ml-3 d-md-none">
-              <span>Log out</span>
-            </div>
-          </div>
-        </li>
-        <li class="d-none d-md-block mt-1 nav-item border-left dropdown">
-          <a class="nav-link btn-md border btn-circle rounded-circle text-dark ml-3" id="navbarDropdown"
-            data-tooltip="tooltip" data-placement="bottom" data-delay='{ "show": 500, "hide": 100 }' title="Menu"
-            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <svg width="24" height="24" viewBox="0 0 16 16" class="bi bi-three-dots" fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-            </svg>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'main:settings-edit' %}"><i class="fas mr-1 fa-cog"></i> Settings</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-dark" href="{% url 'main:user_logout' %}"><i
-                class="fas mr-1 fa-sign-out-alt"></i> Log out</a>
-          </div>
-        </li> -->
       </ul>
     </div>
   </nav>
-
 </div>

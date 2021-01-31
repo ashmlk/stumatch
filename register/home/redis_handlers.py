@@ -32,13 +32,13 @@ def update_course_reviews_cache(course, order=None):
     }
 
     main_qs = Review.objects.select_related("author").filter(
-        course_reviews__course_code=course.course_code,
-        course_reviews__course_university__iexact=course.course_university,
+        course__course_code=course.course_code,
+        course__course_university__iexact=course.course_university,
     )
 
     # order_by instructor for all review objects
     main_qs2 = main_qs.order_by(
-        "course_reviews__course_instructor", "course_reviews__course_instructor_fn",
+        "course__course_instructor", "course__course_instructor_fn",
     )
 
     # set hash for objects based on creation date
@@ -62,8 +62,8 @@ def update_course_reviews_cache(course, order=None):
     # save data for instructor reviews
     instructor_reviews = list(
         main_qs.filter(
-            course_reviews__course_instructor_fn=course.course_instructor_fn,
-            course_reviews__course_instructor=course.course_instructor,
+            course__course_instructor_fn=course.course_instructor_fn,
+            course__course_instructor=course.course_instructor,
         )
         .order_by("-created_on")
         .values("id")
@@ -82,8 +82,8 @@ def update_course_reviews_cache(course, order=None):
     # instructor reviews based on year and date of creation
     instructor_reviews = list(
         main_qs.filter(
-            course_reviews__course_instructor_fn=course.course_instructor_fn,
-            course_reviews__course_instructor=course.course_instructor,
+            course__course_instructor_fn=course.course_instructor_fn,
+            course__course_instructor=course.course_instructor,
         )
         .order_by("-year", "-created_on")
         .values("id")
@@ -100,7 +100,7 @@ def update_course_reviews_cache(course, order=None):
     )
 
     # set the total review count for this specific course and instructor
-    count = Course.course_reviews.through.objects.filter(
+    count = Review.objects.select_related("course").filter(
         course__course_code=course.course_code,
         course__course_university__iexact=course.course_university,
         course__course_instructor_fn__iexact=course.course_instructor_fn,
@@ -117,7 +117,7 @@ def update_course_reviews_cache(course, order=None):
     )
 
     # set the total reviews count for courses with the same code and university
-    count = Course.course_reviews.through.objects.filter(
+    count = Review.objects.select_related("course").filter(
         course__course_code=course.course_code,
         course__course_university__iexact=course.course_university,
     ).count()

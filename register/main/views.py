@@ -1671,7 +1671,7 @@ def get_user(request, username, obj=None):
             
     if request.user == user or Friend.objects.are_friends(request.user, user) or user.public:
         if obj == None:
-            obj_list = user.courses.all().order_by('-course_year','course_code')
+            obj_list = user.courses.all().order_by('course_university','-course_year','course_code')
 
         elif obj == "friends":
             obj_list = Friend.objects.friends(user)

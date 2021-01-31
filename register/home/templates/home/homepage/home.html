@@ -45,57 +45,57 @@
 <div class="pl-1 pr-1">
     <div class="w-100 d-flex m-1" >
       <div class="mt-2">
-        <img class="rounded-circle"  src="{{ request.user.image.url }}" width="60px" height="60px">
+        <img class="rounded-circle"  src="{{ request.user.image.url }}" width="50px" height="50px">
       </div>
       <div class="w-100 d-flex align-items-center">
         <div class="ml-1 mt-2 w-100">
-          <input type="text" style="border-radius: 25px;" readonly="readonly"
-            class="bg-transparent form-control bg-transparent create-post-btn input-no-border"
+          <input type="text" style="border-radius: 25px; background-color: white !important;" readonly="readonly"
+            class="form-control create-post-btn input-no-border "
             placeholder="What's new?" data-url="{% url 'home:post-create' %}">
         </div>
       </div>
     </div>
 </div>
 <div class="mt-3 mb-2 p-1 ml-1">
-  <div class="d-flex justify-content-start" id="_pol3">
-    <div class="btn d-flex p-1 px-2 align-items-center mr-1 menu-link menu-link{{home_active}}">
-      <a class="text-dark"  href="{% url 'home:home' %}" style="text-decoration: none;">
+  <div class="d-flex justify-content-start">
+    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white cbtn-dark{{home_active}}" href="{% url 'home:home' %}">
+      <span class="text-dark" style="text-decoration: none;">
         <div>
           <span  style="font-size: 0.93rem !important;"><span >Feed</span></span>
         </div>
-      </a>
-    </div>
-    <div class="btn d-flex p-1 px-2 align-items-center mr-1 menu-link menu-link{{ top_active }}"
-      data-url="{% url 'home:top-posts' %}" >
-      <a class="text-dark" href="{% url 'home:top-posts' %}" style="text-decoration: none;">
+      </span>
+    </a>
+    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white cbtn-dark{{ top_active }}"
+      href="{% url 'home:top-posts' %}" >
+      <span class="text-dark" style="text-decoration: none;">
         <div>
           <span  style="font-size: 0.93rem !important;">
             <span >Top</span></span>
         </div>
-      </a>
-    </div>
-    <div class="btn d-flex p-1 px-2 align-items-center mr-1 menu-link menu-link{{ hot_active }}"
-      data-url="{% url 'home:hot-posts' %}" >
-      <a class="text-dark" href="{% url 'home:hot-posts' %}" style="text-decoration: none;">
+      </span>
+    </a>
+    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white cbtn-dark{{ hot_active }}"
+      href="{% url 'home:hot-posts' %}" >
+      <span class="text-dark" style="text-decoration: none;">
         <div>
           <span  style="font-size: 0.93rem !important;"><span >Hot</span></span>
         </div>
-      </a>
-    </div>
+      </span>
+    </a>
     {% if request.session.no_university %}
-    <button class="btn d-flex p-1 px-2 align-items-center mr-1 add-uni-btn text-dark" data-url="{% url 'main:update-university' %}?success_url=home">
+    <button class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white add-uni-btn text-dark" data-url="{% url 'main:update-university' %}?success_url=home">
         <div>
           <span  style="font-size: 0.93rem !important;"><span style="white-space: nowrap !important;">Add University</span></span>
         </div>
     </button>
     {% else %}
-    <div class="btn d-flex p-1 px-2 align-items-center mr-1 menu-link menu-link{{ uni_active }}" data-url="{% url 'home:uni-posts' %}">
-      <a class="text-dark" href="{% url 'home:uni-posts' %}" style="text-decoration: none;">
+    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white" href="{% url 'home:uni-posts' %}">
+      <span class="text-dark" style="text-decoration: none;">
         <div>
           <span  style="font-size: 0.93rem !important;"><span >{{ request.user.university }}</span></span>
         </div>
-      </a>
-    </div>
+      </span>
+    </a>
     {% endif %}
   </div>
 </div>

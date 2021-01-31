@@ -132,10 +132,10 @@ class ReviewForm(forms.ModelForm):
         label="",
         widget=forms.Textarea(
             attrs={
-                "style": "resize:none; outline:none;width:100% !important; height:100% !important;",
-                "class": "form-control",
+                "style": "resize:none; outline:none !important;border:none !important; width:100% !important; height:100% !important;overflow:auto;-webkit-box-shadow: none;-moz-box-shadow: none;box-shadow: none;",
+                "class": "form-control border-transparent no-outline",
                 "placeholder": "Write a review",
-                "rows": 2,
+                "rows": 3,
                 "cols": 80,
             }
         ),
@@ -152,19 +152,13 @@ class ReviewForm(forms.ModelForm):
         super(ReviewForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"] = "form-control"
-        self.fields["review_interest"].widget.attrs[
-            "class"
-        ] = "form-control input-sm form-control-sm"
         self.fields["year"].widget.attrs[
             "class"
         ] = "form-control input-sm form-control-sm"
 
     class Meta:
         model = Review
-        labels = {
-            "review_interest": "",
-        }
-        fields = ("body", "review_interest", "year")
+        fields = ("body", "year")
 
 
 class CourseForm(forms.ModelForm):

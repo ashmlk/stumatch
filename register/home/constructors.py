@@ -182,6 +182,11 @@ def create_prof_names_json(university=None):
         
     return 'success'
 
+def fix_course_reviews():
+    for r in Review.objects.all():
+        r.course = r.course_reviews.first()
+        r.save()
+
 
 def test_course_finder():
     t = """

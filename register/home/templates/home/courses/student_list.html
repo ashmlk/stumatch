@@ -2,11 +2,11 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block title %}
-<title>{{ course.course_code }} Students - JoinCampus</title>
+<title>{{ course.course_code }} Students </title>
 {% endblock %}
 {% block content %}
 <div class="pb-2 mb-2 course-info">
-    <div class="d-flex border-bottom justify-content-between pt-2">
+    <div class="d-flex border-bottom justify-content-between pt-3">
         <div class="mr-2">
             <div class="d-flex">
                 {% if o != 'all' %}
@@ -21,17 +21,15 @@
                 </a>
                 {% endif %}
             </div>
-            <div  style="font-size: 0.93rem;">
-                <div class="d-flex align-items-center">
-                    <svg  width="16" height="16"
-                    viewBox="0 0 16 16" class="mr-2 bi bi-hexagon" fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                    </svg>
-                    <a class="text-dark" href="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                        <span>{{ course.course_university|capfirst }}</span>
-                    </a>              
+            <div>
+                <div class="mt-2 my-1">
+                    <a href="{% url 'home:university-detail' %}?u={{ university }}&obj=std">
+                        <span class="text-primary">
+                            <span>
+                                <i class="fas fa-university mr-1"></i>
+                            </span>{{ course.course_university }}
+                        </span>
+                    </a> 
                 </div>
                 {% if o != 'all' %}
                 <div class="d-flex align-items-center">
@@ -86,6 +84,37 @@
                  <a class="text-center jc-nav-link text-muted{% if o == 'ins' %}-active{% endif %} text-dark" 
                  href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins">
                     With {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}
+                 </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-6 p-0">
+            <div class="card border-0 border-bottom  bg-transparent">
+                    <span>
+                        <div class="dropdown">
+                            <div class="card border-0 border-bottom get-instructors-btn get-students bg-transparent hover-cursor"
+                                role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                data-url="{% url  'home:get-course-instructors-data' course.course_code course.course_university_slug %}">
+                                <span class="text-center jc-nav-link text-muted{% if o == 'ins' %}-active{% endif %} text-dark"                       
+                                    style="text-decoration: none;"
+                                    >
+                                   Instructors <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                      </svg>
+                                   </span>
+                                </span>
+                           </div>
+                            <div class="dropdown-menu bg-white mt-1" aria-labelledby="dropdownMenuLink" id="instructor-list-dropdown" 
+                                style="font-size: 0.92rem !important;text-transform:capitalize;max-height: 263px;overflow-y: scroll; width: auto !important;">
+                                <a class="dropdown-item" href="{% url 'home:course-instructors' course.course_university_slug course.course_code %}">
+                                    All
+                                </a>
+                                <div class="dropdown-divider"></div>
+            
+                            </div>
+                        </div>
+                    </span>
                  </a>
             </div>
         </div>

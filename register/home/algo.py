@@ -250,7 +250,10 @@ def top_buzz(likes, dislikes, wots, comments):
 
 def get_similar_university(name):
 
-    return difflib.get_close_matches(name, UNI_LIST)[0]
+    try:
+        return difflib.get_close_matches(name, UNI_LIST)[0]
+    except Exception as e:
+        return ''
 
 
 def similar_string_ratio(a, b):

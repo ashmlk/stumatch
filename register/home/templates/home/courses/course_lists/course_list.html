@@ -3,7 +3,7 @@
 {% load ibuilder %}
 {% load static %}
 {% block title %}
-<title>{{ list.title|capfirst }} - JoinCampus</title>
+<title>{{ list.title|capfirst }} </title>
 {% endblock %}
 {% block content %}
 <div class="px-2 content">
@@ -97,20 +97,18 @@
     </div>
     <div class="list-items">
         <div class="pt-2 border-top course-list-content-holder">
-            <div class="row">
+            <div class="row infinite-container">
                 {% for course in courses %}
-                {% bg_rand as bgrnd %}
-                <div class="col-md-6 item-list my-1 mb-4">
-                    <div class="card my-1">
+                <div class="col-md-6 infinite-item p-1">
+                    <div class="card course-card card-r">
                         <div class="p-0" >
-                            <div class="d-flex p-3 border align-items-center justify-content-between course-code-ctr" 
-                            style="background-color:{{bgrnd}};">
+                            <div class="d-flex align-items-center justify-content-between course-code-ctr p-0">
                                 <div class="w-100 d-flex text-white align-items-center justify-content-between">
-                                    <div class="mt-2 item-title">
-                                        <h5 class="font-weight-bolder">{{ course.course_code }}</h5>
+                                    <div class="ml-2 item-title">
+                                        <span class="h5 font-weight-bold text-dark">{{ course.course_code }}</span>
                                     </div>
                                     <div class="dropdown" >
-                                        <button class="text-white btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
+                                        <button class="btn btn-sm " type="button" id="d_li" data-toggle="dropdown"
                                             aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-ellipsis-h"></i>
                                         </button>
@@ -144,53 +142,61 @@
                                     </div>
                                 </div>
                             </div>                    
-                            <div class="row mt-1 mx-1 " >
-                                <div class="c_dis border  p-2 mr-2 mb-1 course-goto btn border-r btn-outline-primary"  
+                            <div class="row d-flex flex-column mx-1 pb-1" >
+                                <div>
+                                    <div class="d-flex align-items-center c_dis border p-1 mr-1 course-goto btn border-r btn-outline-primary no-border"  
                                     data-url="{% url 'home:university-detail' %}?u={{ course.course_university}}&obj=std">
-                                    <span class="svg-icon ccs mr-1">
-                                        <svg  width="1em" height="1em"
-                                            viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                        <span class="svg-icon ccs mr-1">
+                                            <svg  width="1em" height="1em"
+                                                viewBox="0 0 16 16" class="bi bi-hexagon" fill="currentColor"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
+                                            </svg>
+                                        </span>
+                                        <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center c_dis border p-1 mr-2 btn border-r  btn-outline-primary no-border" >
+                                        <span class="svg-icon ccs mr-1">
+                                            <svg  width="1em" height="1em"
+                                                viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
+                                            </svg>
+                                        </span>
+                                        <span class="ml-1" style="text-transform: capitalize;">{{ course.course_instructor }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center c_dis p-1 mr-1 text-center">
+                                        <span class="svg-icon ccs mr-1 text-primary">
+                                            <svg  width="1em" height="1em"
+                                                viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
                                         </svg>
-                                    </span>
-                                    <span class="ml-1">{{ course.course_university|capfirst }}</span>
+                                        </span>
+                                        <span class="ml-1 text-muted">
+                                            {{ course.get_created_on }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="c_dis border p-2 mr-2 mb-1 btn border-r  btn-outline-primary" >
-                                    <span class="svg-icon ccs mr-1">
-                                        <svg  width="1em" height="1em"
-                                            viewBox="0 0 16 16" class="bi bi-layers" fill="currentColor"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M3.188 8L.264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l-1.063.567L14.438 10 8 13.433 1.562 10 4.25 8.567 3.187 8z" />
-                                            <path fill-rule="evenodd"
-                                                d="M7.765 1.559a.5.5 0 0 1 .47 0l7.5 4a.5.5 0 0 1 0 .882l-7.5 4a.5.5 0 0 1-.47 0l-7.5-4a.5.5 0 0 1 0-.882l7.5-4zM1.563 6L8 9.433 14.438 6 8 2.567 1.562 6z" />
-                                        </svg>
-                                    </span>
-                                    <span class="ml-1">{{ course.course_instructor }}</span>
-                                </div>
-                                <div class="c_dis border p-2 mr-2 mb-1 text-center border-r">
-                                    <span class="svg-icon ccs mr-1 text-primary">
-                                        <svg  width="1em" height="1em"
-                                            viewBox="0 0 16 16" class="bi bi-calendar" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                      </svg>
-                                    </span>
-                                    Added {{ course.get_created_on }}
-                                </div>
+                                
                             </div>
                         </div>   
                     </div>    
                 </div>
                 {% empty %}
-                <div class="mx-2 text-center">
-                    No course added
+                <div class="no-review-box w-100">
+                    <div class="d-flex justify-content-center pt-2 my-2">
+                        <div>
+                            <h6>No course to show</h6>
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

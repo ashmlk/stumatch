@@ -52,3 +52,18 @@ def update_search_vector_professors(sender, instance, **kwargs):
 @receiver(m2m_changed, sender=CourseObject.enrolled.through)
 def update_university_course(sender, instance, **kwargs):
     set_course_objects_top_courses.delay(university=instance.university_slug)
+
+@receiver(post_delete, sender=Review)
+@receiver(post_save, sender=Review)
+def update_instructor_review_count(sender, instance, **kwargs):
+    try:
+        prof = (
+            Professors.objects.filter(
+                name_slug=instance.course.course_instructor_slug,
+                university_slug=instance.course.course_university_slug
+                ).first()
+        )
+        prof.set_reviews_count()
+        
+    except Exception as e:
+        print("ERROR IN SIGNALS -- COULD NOT UPDATE INSTRUCTOR REVIEW COUNT " + str(e))

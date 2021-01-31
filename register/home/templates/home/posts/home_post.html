@@ -1,7 +1,6 @@
 {% load static %}
 {% load thumbnail %}
 {% load ibuilder %}
-<link rel="stylesheet" href="{% static 'css/post/style.css' %}">
 <div id="_np2u"></div>
 <div class="infinite-container px-1">
   {% for post in posts %}
@@ -10,9 +9,9 @@
     <div class="row">
       <div class="col-sm-12 col-12">
         {% if  is_upage %}
-        <div class="ml-1 mb-2 mt-2 pb-3 card" style="padding-bottom: 0px !important;">
+        <div class="ml-1 mb-2 mt-2 pb-3 card bg-white border" style="padding-bottom: 0px !important;">
           {% else %}
-          <div class="ml-1 mb-2 mt-2 pb-3 card" >
+          <div class="ml-1 mb-2 mt-2 pb-3 card bg-white border">
             {% endif %}
             <div class="d-flex justify-content-between ml-1">
               <div class="d-flex m-2">
@@ -22,7 +21,7 @@
                 </div>
                 <div class="ml-2">
                   <a href="{{ post.author.get_absolute_url }}" style="text-decoration: none;" class="text-dark">
-                    <span style="font-weight: 500;" class="mx-0">{{ post.author.get_username }}</span>
+                    <span class="user-username-font mx-0">{{ post.author.get_username }}</span>
                   </a>
                   <div style="margin-top: -0.35rem;">
                     <span class="text-muted small">{% if post.edited %}Edited

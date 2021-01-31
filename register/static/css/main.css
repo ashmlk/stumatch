@@ -274,7 +274,14 @@ mark {
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
 }
+.cbtn-dark-active {
+  background-color: #e2e2e2 !important;
+  border-color:  #e2e2e2 !important;
+}
 
+.hover-cursor:hover {
+  cursor: pointer;
+}
 .selectize-dropdown {
   border-top: 1px !important;
   margin-top: 0.65rem !important;
@@ -444,12 +451,7 @@ ol.carousel-indicators {
 .t {
   letter-spacing: 1px !important;
 }
-#_pol3 .h6 {
-  color: rgb(80, 80, 80) !important;
-}
-#_pol3 .menu-link {
-  border-radius: 5px;
-}
+
 .profile-header-main-links .pro-link-goto {
   margin-right: 1.2rem !important;
   padding-top: 10px !important;
@@ -971,4 +973,8 @@ input[type="email"]{
 
 .user-username-font {
   font-weight: 500;
+}
+
+.text-primary-dark {
+  color: #2b4a87 !important;
 }

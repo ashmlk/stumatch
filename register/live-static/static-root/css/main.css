@@ -1,22 +1,11 @@
-
+.bg-background {
+  background-color: #fbfbfb !important;
+}
 .nav-header-main {
 background-color: rgb(129,193,242);
 }
 .card-link-title-bg {
 background-color: rgba(129, 193, 242, 0.548);
-}
-
-.brand-home-header {
-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-font-size: 20cpx;
-letter-spacing: 1px;
-word-spacing: 1.2px;
-color: #000000;
-font-weight: normal;
-text-decoration: none;
-font-style: normal;
-font-variant: normal;
-text-transform: none;
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:visited {
@@ -28,7 +17,6 @@ border-color: rgba(255, 255, 255, 0) !important;
 opacity: 0.85;
 }
 
-
 .input-no-border {
 border: 0;
 outline:none !important;
@@ -37,30 +25,11 @@ box-shadow: none !important;
 -webkit-box-shadow:none !important;
 }
 
-.menu-link-active {
-background-color:rgb(214, 211, 211) !important;
-border-color: transparent !important;
-color: #000000;
-border-radius:5px;
+.cbtn-dark-active {
+  background-color: #0a0a0a !important;
+  color: #fff !important;
 }
 
-.menu-link-active span{
-color: #000000;
-}
-
-.menu-link-active svg{
-color: #000000;
-}
-
-.menu-link:hover {
-cursor: pointer;
-background-color:rgb(207, 205, 205);
-border-color: transparent !important;
-}
-
-.menu-link:hover  i{
-color:rgb(18, 20, 22) ;
-}
 .btn-b-circle {
 border: none !important;
 width: 40px;
@@ -72,9 +41,7 @@ line-height: 0.8;
 border-radius: 25px;
 
 }
-.menu-link:hover  a{
-color:rgb(18, 20, 22) ;
-}
+
 .btn-f-circle {
 border: none;
 width: 50px;
@@ -107,6 +74,7 @@ padding-bottom: 1rem;
 overflow-y: auto;
 /*min-height: 11rem;*/
 }
+
 .bookmarked-link:hover {
     cursor: pointer;
     background-color: rgb(241, 241, 241) !important;
@@ -308,6 +276,7 @@ border-radius: 30px;
 font-size: 11px; 
 text-align: center; 
 } 
+
 .likeBtn:hover svg{
 color:  rgb(236, 81, 94);
 }
@@ -360,15 +329,11 @@ font-size: 0.7rem !important;
 .t {
 letter-spacing: 1px !important;
 }
-#_pol3 .h6 {
-color: rgb(80, 80, 80) !important;
-}
-#_pol3 .menu-link  {
-    border-radius: 5px;
-}
+
 ._rmvsrtus:hover{
 cursor: pointer !important;
 }
+
 .searchable-selectable:hover{
 cursor: pointer;
 background-color:rgb(207, 205, 205);
@@ -423,12 +388,7 @@ ol.carousel-indicators {
   .t {
     letter-spacing: 1px !important;
   }
-  #_pol3 .h6 {
-    color: rgb(80, 80, 80) !important;
-  }
-  #_pol3 .menu-link  {
-      border-radius: 5px;
-    }
+
   .profile-header-main-links .pro-link-goto {
       margin-right: 1.2rem !important;
       font-weight: 500 !important;
@@ -564,12 +524,7 @@ box-shadow:  -9px 9px 18px #949ca1,
 .t {
   letter-spacing: 1px !important;
 }
-#_pol3 .h6 {
-  color: rgb(80, 80, 80) !important;
-}
-#_pol3 .menu-link  {
-    border-radius: 5px;
-  }
+
 .profile-header-main-links .pro-link-goto {
     margin-right: 1.2rem !important;
     font-weight: 500 !important;
@@ -834,13 +789,11 @@ background-color: #009924;
   text-decoration: none;
 }
 
-
 @media only screen and (max-width: 600px) {
   .about-responsive-h1 {
     font-size: 4vh !important;
   }
 }
-
 input[type="text"], input[type="password"] ,input[type="email"], select {
   border: 1px solid rgba(255, 255, 255, 0);
   background-color: rgb(241, 241, 241) !important;
@@ -861,7 +814,6 @@ input[type="text"], input[type="password"] ,input[type="email"], select {
 .main-h1 {
   font-size: 3.6rem;
   background: -webkit-linear-gradient(-20deg, #326ada 5%,#b251caad 100%);
-  
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -870,10 +822,14 @@ input[type="text"], input[type="password"] ,input[type="email"], select {
     font-size: 2.55rem;
   }
 }
-
 @media only screen and (min-width: 768px) {
   .post-box .post-list-holder {
     width: 90%;
     float: right;
   }
+}
+
+.cbtn-dark-active {
+  background-color: #e2e2e2 !important;
+  border-color:  #e2e2e2 !important;
 }

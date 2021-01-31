@@ -1,0 +1,63 @@
+<style>
+    .darkmode--activated h1, 
+    .darkmode--activated h2, 
+    .darkmode--activated h3, 
+    .darkmode--activated h4, 
+    .darkmode--activated h5, 
+    .darkmode--activated h6, 
+    .darkmode--activated p, 
+    .darkmode--activated li,
+    .darkmode--activated .text-dark,
+    .darkmode--activated .user-username-font {
+      color: #f7f7f7 !important;
+    }
+    .darkmode--activated .text-white {
+      color: #000000 !important;
+    }
+    .darkmode--activated .bg-white,
+    .darkmode--activated nav.navbar,
+    .darkmode--activated .dropdown-menu {
+      background-color: #0a0a0a !important;
+    }
+    .darkmode--activated .dropdown-menu, .darkmode--activated .card{
+      border-color: rgb(43, 43, 43) !important;
+    }
+    .darkmode--activated nav .bi,
+    .darkmode--activated nav button,
+    .darkmode--activated nav .text-dark,
+    .darkmode--activated nav svg,
+    .darkmode--activated .dropdown-menu a {
+      color: #f7f7f7 !important;
+    }
+    .darkmode--activated .dropdown-menu button {
+      color: #f7f7f7 !important;
+    }
+    .darkmode--activated .post-details-view:hover {
+      background-color: #0a0a0a  !important;
+      opacity: 0.7 !important;
+    }
+    .darkmode--activated input, .darkmode--activated textarea,
+    .darkmode--activated .form-control,
+    .darkmode--activated .selectize-control,
+    .darkmode--activated .selectize-input{
+      background-color: #0a0a0a  !important;
+    }
+    .darkmode--activated .modal-content {
+      background-color: #0a0a0a  !important;
+      
+    }
+    .darkmode--activated .modal-dialog {
+      border-color: #0a0a0a  !important;
+    }
+  </style>
+    <style>
+        .darkmode--activated .search_input,
+        .darkmode--activated .main-top-nav .nav-link svg,
+        .darkmode--activated .main-top-nav .nav-link i{
+            color: #f7f7f7 !important;
+        }
+        .darkmode--activated .search_input,
+        .darkmode--activated .searchbar{
+            background-color:  rgb(43,43,43)!important;
+        }
+      </style>

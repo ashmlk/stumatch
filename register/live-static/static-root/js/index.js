@@ -17,10 +17,12 @@ $(document).ready(function () {
             var full_bell = '<svg style="transform: rotate(30deg)" width="21" height="21"  viewBox="0 0 16 16" class="bi bi-bell-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'+
                             '<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/></svg>'
             $(this).html(full_bell)
+            console.log("siushdvs");
           }
-          else if($(icon).hasClass("bi-book")){
-            var full_course = '<svg width="22" height="22" viewBox="0 0 16 16" class="bi bi-book-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'+
-                              '<path fill-rule="evenodd" d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0.707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/></svg>'
+          else if($(icon).hasClass("bi-compass")){
+              var full_course = `<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" class="bi bi-compass-fill" viewBox="0 0 16 16">
+              <path d="M15.5 8.516a7.5 7.5 0 1 1-9.462-7.24A1 1 0 0 1 7 0h2a1 1 0 0 1 .962 1.276 7.503 7.503 0 0 1 5.538 7.24zm-3.61-3.905L6.94 7.439 4.11 12.39l4.95-2.828 2.828-4.95z"/>
+            </svg>`
             $(this).html(full_course);            
           }
         }
@@ -33,11 +35,6 @@ $(document).ready(function () {
       $(this).find("button").addClass('no-border')
     })
 
-    $('#_pol3 a').each(function() {
-      if (this.href === path) {
-      $(this).closest('div').addClass('menu-link-active');
-      }
-    });
 
     $(".menu-link").on("click", function() {
       location.href = $(this).children("a").attr("href");

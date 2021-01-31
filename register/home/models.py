@@ -402,7 +402,7 @@ class CourseManager(models.Manager):
 
         search_vectors = (
             SearchVector("course_code", weight="A", config="english")
-            + SearchVector("course_instructor", deweight="C", config="english")
+            + SearchVector("course_instructor", weight="C", config="english")
             + SearchVector(
                 StringAgg("course_university", delimiter=" "),
                 weight="C",
@@ -865,11 +865,6 @@ class Comment(models.Model):
 
 
 class Review(models.Model):
-    class Interesting(models.TextChoices):
-        INTERESTING = "1", "Interesting"
-        RELATIVELY = "2", "Relatively Interesting"
-        NOT = "3", "Not Interesting"
-        NO_OPINION = "4", "No opinion"
 
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     body = models.TextField(validators=[MaxLengthValidator(400)])
@@ -879,9 +874,6 @@ class Review(models.Model):
     dislikes = models.ManyToManyField(
         Profile, blank=True, related_name="review_dislikes"
     )
-    review_interest = models.CharField(
-        max_length=2, choices=Interesting.choices, default=Interesting.NO_OPINION
-    )
     year = models.IntegerField(
         ("year"),
         validators=[
@@ -890,6 +882,7 @@ class Review(models.Model):
         ],
         null=True,
     )
+    course = models.ForeignKey('home.Course', on_delete=models.CASCADE, related_name="review_course_obj", null=True)
 
     class Meta:
         ordering = ["-created_on"]
@@ -902,19 +895,7 @@ class Review(models.Model):
 
     def get_author(self):
 
-        if self.is_anonymous:
-            return "Anonymous Student"
-        else:
-            return self.author.get_full_name()
-
-    def get_interest(self):
-        interest = {
-            "1": "Interesting",
-            "2": "Relatively Interesting",
-            "3": "Not Interesting",
-            "4": "No Opinion",
-        }
-        return interest[self.review_interest]
+        return "Anonymous Student" if self.is_anonymous else self.author.get_full_name()
 
     def get_created_on(self):
         now = timezone.now()
@@ -940,27 +921,17 @@ class Review(models.Model):
 
     def get_course_prof(self):
         return (
-            Course.objects.get(course_reviews__id=self.id).course_instructor_fn
+            self.course.course_instructor_fn
             + " "
-            + Course.objects.get(course_reviews__id=self.id).course_instructor
+            + self.course.course_instructor
         )
 
     def get_course_yr(self):
-        return Course.objects.get(course_reviews__id=self.id).course_year
-
-    def get_course_sm(self):
-        return Course.objects.get(course_reviews__id=self.id).sem()
+        return self.course.course_year
 
 
 class Course(models.Model):
     class Difficulty(models.TextChoices):
-        NONE = "0", "TBD"
-        EASY = "4", "Easy"
-        MEDIUM = "3", "Medium"
-        HARD = "2", "Hard"
-        FAILED = "1", "Failed"
-
-    class ProfDifficulty(models.TextChoices):
         NONE = "0", "TBD"
         EASY = "4", "Easy"
         MEDIUM = "3", "Medium"
@@ -986,17 +957,8 @@ class Course(models.Model):
     course_dislikes = models.ManyToManyField(
         Profile, blank=True, related_name="course_dislikes"
     )
-    course_reviews = models.ManyToManyField(
-        Review, blank=True, related_name="course_reviews"
-    )
     course_difficulty = models.CharField(
         max_length=2, choices=Difficulty.choices, default=Difficulty.NONE, blank=True
-    )
-    course_prof_difficulty = models.CharField(
-        max_length=2,
-        choices=ProfDifficulty.choices,
-        default=ProfDifficulty.NONE,
-        blank=True,
     )
 
     sv = pg_search.SearchVectorField(null=True)
@@ -1111,7 +1073,7 @@ class Course(models.Model):
             return r_dic[self.average_complexity_ins()]
         except ValueError:
             return "default"
-
+    
     def average_complexity(self):
         r_dic = {
             4: "Easy",
@@ -1234,7 +1196,8 @@ class Course(models.Model):
         for el in avg:
             total_users += el["count"]
             sum_ratings += int(el["course_difficulty"]) * el["count"]
-        avg_cplx = r_dic[round(sum_ratings / total_users)]
+        avg_cplx = round(sum_ratings / total_users) if total_users != 0 else 0
+        avg_cplx = r_dic[int(avg_cplx)]
         
         n_avg = {}
         for el in avg:
@@ -1317,12 +1280,12 @@ class Course(models.Model):
             if instructor_reviews == None:
                 if order == "cy":
                     instructor_reviews = list(
-                        Review.objects.select_related("author")
+                        Review.objects.select_related("course")
                         .filter(
-                            course_reviews__course_code=self.course_code,
-                            course_reviews__course_instructor__iexact=self.course_instructor,
-                            course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
-                            course_reviews__course_university__iexact=self.course_university,
+                            course__course_code=self.course_code,
+                            course__course_instructor__iexact=self.course_instructor,
+                            course__course_instructor_fn__iexact=self.course_instructor_fn,
+                            course__course_university__iexact=self.course_university,
                         )
                         .order_by("-year", "-created_on")
                         .values("id")
@@ -1338,12 +1301,12 @@ class Course(models.Model):
                     )
                 else:
                     instructor_reviews = list(
-                        Review.objects.select_related("author")
+                        Review.objects.select_related("course")
                         .filter(
-                            course_reviews__course_code=self.course_code,
-                            course_reviews__course_instructor__iexact=self.course_instructor,
-                            course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
-                            course_reviews__course_university__iexact=self.course_university,
+                            course__course_code=self.course_code,
+                            course__course_instructor__iexact=self.course_instructor,
+                            course__course_instructor_fn__iexact=self.course_instructor_fn,
+                            course__course_university__iexact=self.course_university,
                         )
                         .order_by("-created_on")
                         .values("id")
@@ -1370,7 +1333,7 @@ class Course(models.Model):
                 *[When(pk=pk, then=pos) for pos, pk in enumerate(instructor_reviews)]
             )
             return (
-                Review.objects.select_related("author")
+                Review.objects.select_related("course")
                 .filter(id__in=instructor_reviews)
                 .order_by(preserved)
             )
@@ -1378,12 +1341,12 @@ class Course(models.Model):
             print(e.__class__)
             print(e)
             return (
-                Review.objects.select_related("author")
+                Review.objects.select_related("course")
                 .filter(
-                    course_reviews__course_code=self.course_code,
-                    course_reviews__course_instructor__iexact=self.course_instructor,
-                    course_reviews__course_instructor_fn__iexact=self.course_instructor_fn,
-                    course_reviews__course_university__iexact=self.course_university,
+                    course__course_code=self.course_code,
+                    course__course_instructor__iexact=self.course_instructor,
+                    course__course_instructor_fn__iexact=self.course_instructor_fn,
+                    course__course_university__iexact=self.course_university,
                 )
                 .order_by("-created_on")
             )
@@ -1414,41 +1377,41 @@ class Course(models.Model):
             if result == None:
                 if order == "cy":
                     qs = (
-                        Review.objects.select_related("author")
+                        Review.objects.select_related("course")
                         .filter(
-                            course_reviews__course_code=self.course_code,
-                            course_reviews__course_university__iexact=self.course_university,
+                            course__course_code=self.course_code,
+                            course__course_university__iexact=self.course_university,
                         )
                         .order_by(
-                            "course_reviews__course_instructor",
-                            "course_reviews__course_instructor_fn",
+                            "course__course_instructor",
+                            "course__course_instructor_fn",
                             "-year",
                             "-created_on",
                         )
                         .annotate(
                             instructor_first_name=F(
-                                "course_reviews__course_instructor_fn"
+                                "course__course_instructor_fn"
                             ),
-                            instructor_last_name=F("course_reviews__course_instructor"),
+                            instructor_last_name=F("course__course_instructor"),
                         )
                     )
                 else:
                     qs = (
-                        Review.objects.select_related("author")
+                        Review.objects.select_related("course")
                         .filter(
-                            course_reviews__course_code=self.course_code,
-                            course_reviews__course_university__iexact=self.course_university,
+                            course__course_code=self.course_code,
+                            course__course_university__iexact=self.course_university,
                         )
                         .order_by(
-                            "course_reviews__course_instructor",
-                            "course_reviews__course_instructor_fn",
+                            "course__course_instructor",
+                            "course__course_instructor_fn",
                             "-created_on",
                         )
                         .annotate(
                             instructor_first_name=F(
-                                "course_reviews__course_instructor_fn"
+                                "course__course_instructor_fn"
                             ),
-                            instructor_last_name=F("course_reviews__course_instructor"),
+                            instructor_last_name=F("course__course_instructor"),
                         )
                     )
 
@@ -1478,8 +1441,8 @@ class Course(models.Model):
                     Review.objects.filter(id__in=result)
                     .order_by(preserved)
                     .annotate(
-                        instructor_first_name=F("course_reviews__course_instructor_fn"),
-                        instructor_last_name=F("course_reviews__course_instructor"),
+                        instructor_first_name=F("course__course_instructor_fn"),
+                        instructor_last_name=F("course__course_instructor"),
                     )
                 )
 
@@ -1495,10 +1458,10 @@ class Course(models.Model):
         except Exception as e:
             print(e)
             return (
-                Review.objects.select_related("author")
+                Review.objects.select_related("course")
                 .filter(
-                    course_reviews__course_code=self.course_code,
-                    course_reviews__course_university__iexact=self.course_university,
+                    course__course_code=self.course_code,
+                    course__course_university__iexact=self.course_university,
                 )
                 .order_by("-created_on")
             )
@@ -1513,7 +1476,7 @@ class Course(models.Model):
             ),
         )
         if count == None:
-            count = Course.course_reviews.through.objects.filter(
+            count = Review.objects.select_related("course").filter(
                 course__course_code=self.course_code,
                 course__course_university__iexact=self.course_university,
                 course__course_instructor_fn__iexact=self.course_instructor_fn,
@@ -1537,7 +1500,7 @@ class Course(models.Model):
             "count_{}_{}_all".format(self.course_code, self.course_university_slug),
         )
         if count == None:
-            count = Course.course_reviews.through.objects.filter(
+            count = Review.objects.select_related("course").filter(
                 course__course_code=self.course_code,
                 course__course_university__iexact=self.course_university,
             ).count()
@@ -1548,6 +1511,15 @@ class Course(models.Model):
             )
         return int(count)
 
+    def get_prof_count(self):
+        
+        try:
+            crs = CourseObject.objects.get(code=self.course_code, university__iexact=self.course_university)
+            return crs.instructor_courses.count() - 1 # subtract self prof from number of profs, returns in form of +n
+        except Exception as e:
+            print(e)
+            return None
+        
 
 class Buzz(models.Model):
     nickname = models.CharField(max_length=30, blank=True, null=True)
@@ -1902,6 +1874,12 @@ class Professors(models.Model):
         )
         super(Professors, self).save(*args, **kwargs)
 
+    def get_full_name(self):
+        
+        return (
+            "%s %s" % (self.first_name.capitalize(), self.last_name.capitalize())
+        )
+        
     def get_instructor_page_url(self):
 
         try:
@@ -1927,10 +1905,52 @@ class Professors(models.Model):
                 .distinct("username")
                 .count()
             )
+            if count == 0:
+                return "No students"
             return count
         except Exception as e:
             print(e)
             return 0
+        
+    def get_course_count(self):
+        c = self.courses.count()
+        if c == 0 or c == None:
+            return "No courses"
+        return c
+        
+    def get_reviews_count(self):
+        
+        key = "prof-rc-%s" % (str(self.id))
+        try:
+            review_count = cache.get(key)
+            if review_count == None:
+                review_count = (
+                    Review.objects.select_related("course").filter(
+                        course__course_instructor_slug__iexact=self.name_slug,
+                        course_university_slug__iexact=self.university_slug,
+                    ).count()
+                )
+                cache.set(key, review_count)
+            return review_count
+        except Exception as e:
+            print(e)
+            return None
+    
+    def set_reviews_count(self):
+        
+        key = "prof-rc-%s" % (str(self.id))
+        try:
+            review_count = cache.get(key)
+            review_count = (
+                Review.objects.filter(
+                    course__course_instructor_slug__iexact=self.name_slug,
+                    course__course_university__iexact=self.university,
+                ).count()
+            )
+            cache.set(key, review_count)
+        except Exception as e:
+            print(e)
+            return None
 
     def add_to_courses(self, course):
 

@@ -125,7 +125,7 @@ def home(request):
         try:
             if request.session.get("blockers") == None:
                 blockers_list = Block.objects.blocked(request.user)
-                request.session["blockers"] = set([u.id for u in blockers_list])
+                request.session["blockers"] = [u.id for u in blockers_list]
         except Exception as e:
             print(e)
             request.session["blockers"] = []
@@ -984,10 +984,10 @@ def post_comment_list(request, guid_url):
 
 @login_required
 def course_list(request):
-    course_list = request.user.courses.order_by("course_code")
+    course_list = request.user.courses.order_by("course_university", "course_code")
 
     page = request.GET.get("page", 1)
-    paginator = Paginator(course_list, 7)
+    paginator = Paginator(course_list, 3)
     try:
         courses = paginator.page(page)
     except PageNotAnInteger:
@@ -1003,17 +1003,19 @@ def course_dashboard(request):
 
     school_courses = top_school_courses = courses = course_list = top_courses = []
     course_count = 0
-    course_list = request.user.courses.order_by("course_code") # get user's courses6 alphabetically
+    course_list = request.user.courses.order_by("course_university","course_code") # get user's courses6 alphabetically
     
     """ get a list of users that user has blocked and save it to request.session """
     try:
         if request.session.get("blockers") == None:
             blockers_list = Block.objects.blocked(request.user)
-            request.session["blockers"] = set([u.id for u in blockers_list])
+            request.session["blockers"] = [u.id for u in blockers_list]
     except Exception as e:
         print(e)
         request.session["blockers"] = []
-
+    finally:
+        pass
+    
     page = request.GET.get("page", 1)
     if page == 1: # only get these object when page is first loaded
         try: 
@@ -1031,7 +1033,7 @@ def course_dashboard(request):
             print(e.__class__)
             print(e)
 
-    paginator = Paginator(course_list, 8)
+    paginator = Paginator(course_list, 10)
     try:
         courses = paginator.page(page)
     except PageNotAnInteger:
@@ -1054,8 +1056,7 @@ def course_dashboard(request):
 @login_required
 def courses_instructor(request, par1, par2):
     course_list = []
-    university = instructor = None
-    num_courses = num_students = None
+    university = instructor = num_courses = num_students = num_reviews = None
     page = request.GET.get("page", 1)
     try:
         if page == 1: # only retrieve this content if we are on page 1 (Page is loaded for the first time)
@@ -1079,13 +1080,13 @@ def courses_instructor(request, par1, par2):
             course_object = course_list.first()
             num_students = (
                     Profile.objects.prefetch_related('courses').filter(
-                        courses__course_instructor_fn__iexact=course_object.course_instructor_fn,
-                        courses__course_instructor__iexact=course_object.course_instructor,
-                        courses__course_university__iexact=university,
+                        courses__course_university_slug__iexact=par1,
+                        courses__course_instructor_slug__iexact=par2,
                     )
                     .distinct("id")
                     .count()
                 )
+
             if instructor == None:
                 instructor = (
                     course_object.course_instructor_fn.capitalize()
@@ -1107,6 +1108,7 @@ def courses_instructor(request, par1, par2):
             else: 
                 university = instructor.university
                 num_courses = instructor.courses.count()
+                num_reviews = instructor.get_reviews_count()
                 instructor = (
                     instructor.first_name.capitalize()
                     + " "
@@ -1118,15 +1120,6 @@ def courses_instructor(request, par1, par2):
                     if num_courses > 1
                     else str(num_courses) + " course"
                 )
-            if num_students:
-                if num_students > 1:
-                    num_students = "{val:,} students took a course with this instructor".format(
-                        val=num_students
-                    )
-                else:
-                    num_students = "{val:,} student took a course with this instructor".format(
-                        val=num_students
-                    )
                     
     except Exception as e:
         print(e)
@@ -1138,13 +1131,14 @@ def courses_instructor(request, par1, par2):
         courses = paginator.page(1)
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
-        
+    
     context = {
         "courses": courses,
         "instructor": instructor,
         "university": university,
         "num_courses": num_courses,
-        "num_students": num_students
+        "num_students": num_students,
+        "num_reviews": num_reviews
     }
     return render(request, "home/courses/instructor_course_list.html", context)
 
@@ -1409,7 +1403,11 @@ def course_add_form_get_obj(request):
 
 @login_required
 def course_edit(request, hid):
-    id = hashids.decode(hid)[0]
+    try:
+        id = hashids.decode(hid)[0]
+    except Exception as e:
+        print("ERROR - retrieving id for course edit -- " + e)
+        id = -1
     course_init = get_object_or_404(Course, id=id)
     if request.method == "POST":
         form = CourseEditForm(request.POST)
@@ -1451,7 +1449,11 @@ def course_edit(request, hid):
 @login_required
 def course_remove(request, hid):
     data = dict()
-    id = hashids.decode(hid)[0]
+    try:
+        id = hashids.decode(hid)[0]
+    except Exception as e:
+        print("ERROR - retrieving id for course remove -- " + e)
+        id = -1
     course = get_object_or_404(Course, id=id)
     if request.method == "POST":
         request.user.courses.remove(course)
@@ -1476,7 +1478,11 @@ def course_remove(request, hid):
 @login_required
 def course_vote(request, hid, code, status=None):
     data = dict()
-    id = hashids.decode(hid)[0]
+    try:
+        id = hashids.decode(hid)[0]
+    except Exception as e:
+        print("ERROR - retrieving id for course edit -- " + e)
+        id = -1
     course = get_object_or_404(Course, id=id)
     code = code
     if request.method == "POST":
@@ -1512,8 +1518,11 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
     }
     page = request.GET.get("page", 1)
     sb = request.GET.get("sb", "latest")
-    o = request.GET.get("rw", "ins")
-    link_get = True if o == "all" else False
+    o = request.GET.get("rw", None)
+    if o == "all" or course_instructor_slug == "ALL":
+        link_get = True 
+    else:
+        link_get = False
     if page == 1:
         if course_instructor_slug == "ALL":
             course = (
@@ -1539,12 +1548,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         ).exists()
         try:
             cannot_review = (
-                Review.objects.select_related("author")
+                Review.objects.select_related("author","course")
                 .filter(
                     author=request.user,
-                    course_reviews__course_code=course_code,
-                    course_reviews__course_university_slug=course_university_slug,
-                    course_reviews__course_instructor_slug=course_instructor_slug,
+                    course__course_code=course_code,
+                    course__course_university_slug=course_university_slug,
+                    course__course_instructor_slug=course_instructor_slug,
                 )
                 .exists()
             )
@@ -1556,12 +1565,12 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         form = ReviewForm(request.POST or None)
         if form.is_valid():
             cr = (
-                Review.objects.select_related("author")
+                Review.objects.select_related("author","course")
                 .filter(
                     author=request.user,
-                    course_reviews__course_code=course_code,
-                    course_reviews__course_university_slug=course_university_slug,
-                    course_reviews__course_instructor_slug=course_instructor_slug,
+                    course__course_code=course_code,
+                    course__course_university_slug=course_university_slug,
+                    course__course_instructor_slug=course_instructor_slug,
                 )
                 .exists()
             )
@@ -1573,7 +1582,6 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
                     review.is_anonymous = True
                 review.course = course
                 review.save()
-                course.course_reviews.add(review)
                 update_course_reviews_cache(course)
             else:
                 pass
@@ -1603,16 +1611,20 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         course.get_reviews_all(order=sb) if o == "all" else course.get_reviews(order=sb)
     )
 
-    if not link_get:
-        paginator = Paginator(reviews_list, 15)
-        try:
-            reviews = paginator.page(page)
-        except PageNotAnInteger:
-            reviews = paginator.page(1)
-        except EmptyPage:
-            reviews = paginator.page(paginator.num_pages)
-    else:
-        reviews = reviews_list
+    try:
+        if not link_get:
+            paginator = Paginator(reviews_list, 15)
+            try:
+                reviews = paginator.page(page)
+            except PageNotAnInteger:
+                reviews = paginator.page(1)
+            except EmptyPage:
+                reviews = paginator.page(paginator.num_pages)
+        else:
+            reviews = reviews_list
+    except Exception as e:
+        reviews = None
+        print(e)
 
     context = {
         "course": course,
@@ -1637,10 +1649,12 @@ def get_course_instructor_list(request, code, university):
         Course.objects.filter(
             course_code=code, course_university_slug__iexact=university
         )
-        .values("course_instructor_fn", "course_instructor", "course_instructor_slug")
+        .values("id", "course_instructor_fn", "course_instructor", "course_instructor_slug", "course_university_slug")
         .order_by("course_instructor_fn", "course_instructor")
         .distinct("course_instructor_fn", "course_instructor")
     )
+    for i in instructors:
+        i["id"] = hashids.encode(i["id"])
     data["course_code"] = code
     data["course_university_slug"] = university
     data["instructors"] = instructors
@@ -1655,8 +1669,8 @@ def user_course_reviews(request):
         course_university_slug = request.GET.get("course_university", None)
         course_instructor_slug = request.GET.get("course_instructor", None)
         course_code = request.GET.get("course_code", None)
-        reviews = Review.objects.filter(
-            author=request.user, course_reviews__course_code=course_code, course_reviews__course_university_slug=course_university_slug
+        reviews = Review.objects.select_related("author","course").filter(
+            author=request.user, course__course_code=course_code, course__course_university_slug=course_university_slug
         )
         course = Course.objects.filter(
             course_code=course_code,
@@ -1691,7 +1705,11 @@ def user_course_reviews(request):
 @login_required
 def course_share(request, hid):
     data = dict()
-    id = hashids.decode(hid)[0]
+    try:
+        id = hashids.decode(hid)[0]
+    except Exception as e:
+        print("ERROR - retrieving id for course edit -- " + e)
+        id = -1
     course = get_object_or_404(Course, id=id)
     if request.method == "POST":
         title = "Started taking a new course!"
@@ -1887,9 +1905,9 @@ def review_delete(request, hidc, hid):
             update_course_reviews_cache(course)
             cr = Review.objects.filter(
                 author=request.user,
-                course_reviews__course_code=course.course_code,
-                course_reviews__course_university_slug=course.course_university_slug,
-                course_reviews__course_instructor_slug=course.course_instructor_slug,
+                course__course_code=course.course_code,
+                course__course_university_slug=course.course_university_slug,
+                course__course_instructor_slug=course.course_instructor_slug,
             ).exists()
             data["form_is_valid"] = True
             data["reviews_count"] = course.reviews_count()
@@ -1930,7 +1948,15 @@ def university_detail(request):
         )
 
     uni = get_similar_university(uni)
-
+    
+    if len(uni) < 1:
+        add_uni = True if len(request.user.university) < 1 else False
+        return render(
+            request,
+            "home/courses/university_detail.html",
+            {"is_empty": True, "add_uni": add_uni},
+        )
+        
     data = get_uni_info(uni)
     logo_path = None
 
@@ -2139,7 +2165,6 @@ def university_detail(request):
 """ Method to show users that user may interact with based specifically on users courses and university + instructors
     Method to be executed and result to cached - receive query set from cache - method constructed on daily basis """
 
-
 @login_required
 def find_students(request):
 
@@ -2216,8 +2241,11 @@ def get_course_mutual_students(request):
 
     hid = request.GET.get("id", None)
     obj = request.GET.get("o", "all")
-    id = hashids.decode(hid)[0]
-
+    try:
+        id = hashids.decode(hid)[0]
+    except Exception as e:
+        print("ERROR - retrieving id for course edit -- " + e)
+        id = -1
     course = get_object_or_404(Course, id=id)
 
     if obj == "ins":
@@ -2544,7 +2572,7 @@ def remove_saved_course(request, hid):
 
 @login_required
 def saved_courses(request):
-    course_list = request.user.saved_courses.all().order_by("course_code")
+    course_list = request.user.saved_courses.all().order_by("course_university","course_code")
     page = request.GET.get("page", 1)
     paginator = Paginator(course_list, 10)
     try:

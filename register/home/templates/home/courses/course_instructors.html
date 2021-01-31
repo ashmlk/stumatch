@@ -1,30 +1,26 @@
 {% extends 'home/courses/base.html' %}
 {% load static %}
 {% block title %}
-<title>{{ code }} {{ university|capfirst }} - JoinCampus</title>
+<title>{{ code }} {{ university|capfirst }} </title>
 {% endblock %}
 {% block content %}
 {% load ibuilder %}
 <div class="d-flex justify-content-between pt-3">
     <div>
         <div class="d-flex">
-            <h4 class="font-weight-bold">{{ code }}</h4>
+            <h3 class="font-weight-bold">{{ code }}</h3>
         </div>
-        <div style="font-size: 0.92rem !important;">
-            <a class="text-dark" href="{% url 'home:university-detail' %}?u={{ university }}&obj=std">
-                <span>
+        <div class="mt-2 my-1">
+            <a href="{% url 'home:university-detail' %}?u={{ university }}&obj=std">
+                <span class="text-primary">
                     <span>
-                        <svg width="16" height="16" viewBox="0 0 16 16"
-                            class="mr-1 bi bi-hexagon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M14 4.577L8 1 2 4.577v6.846L8 15l6-3.577V4.577zM8.5.134a1 1 0 0 0-1 0l-6 3.577a1 1 0 0 0-.5.866v6.846a1 1 0 0 0 .5.866l6 3.577a1 1 0 0 0 1 0l6-3.577a1 1 0 0 0 .5-.866V4.577a1 1 0 0 0-.5-.866L8.5.134z" />
-                        </svg>
+                        <i class="fas fa-university mr-1"></i>
                     </span>
                     {{ university|capfirst }}
                 </span>
-            </a>
+            </a> 
         </div>
-        <div class="d-flex mt-1 align-items-center" style="font-size: 0.92rem !important;">
+        <div class="d-flex mt-1 align-items-center font-auto-sm">
             <div>
                 <svg width="16" height="16" viewBox="0 0 16 16" class="mr-2 bi bi-layers"
                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,16 +34,14 @@
                 <span>{{ num_instructors }}</span>
             </div>    
         </div>
-        <div class="d-flex mt-1 align-items-center" style="font-size: 0.92rem !important;">
-            <div>
-                <svg width="16" height="16" viewBox="0 0 16 16" class="mr-2 bi bi-people" viewBox="0 0 16 16">
-                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg>
+        <div class="d-flex mt-1 align-items-center font-auto-sm">
+            <div style="margin-right: 11px;">
+                <i class="fas fa-user-graduate"></i>
             </div>
             <div class="d-flex align-items-center">
-                <span>{{ total_enrollments }} Students</span>
+                <span>{{ total_enrollments }} {% if total_enrollments == 1 %} Student {% else %} Students {% endif %}</span>
                 <span style="margin-left: 5px;">
-                    <button type="button" class="btn btn-sm p-0" 
+                    <button type="button" class="btn btn-sm p-0" style="margin-top: -2px;"
                         data-placement="right"
                         data-toggle="tooltip" 
                         data-title="This count excludes duplicates. Students who enrolled twice will only be counted once.">
@@ -66,7 +60,11 @@
         <div class="d-flex justify-content-left w-100 course-difficulties-tag">
             <div class="py-1 pr-1">
                 <div class="btn btn-default btn-sm border bg-white">
-                    Average: {{ average_complexity }}
+                    {% if average_complexity != None %}
+                        Average: {{ average_complexity }}
+                    {% else %}
+                        Average: No ratings
+                    {% endif %}
                 </div>
             </div>
             <div class="border mx-1"></div>
@@ -105,37 +103,43 @@
     {% for course in courses %}
     {% bg_rand as bgrnd %}
     <div class="infinite-item col-md-6 p-1">
-        <div class="card mb-2 bg-white" style="border-radius: 8px;">
-            <a class="my-auto text-white" style="text-decoration: none;"
-                href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}">
-                <div class="d-flex justify-content-between align-items-center course-title-box course-code-ctr"
-                    data-url="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}"
-                    style="background-color: {{ bgrnd }};">
-                    <div class="ml-2">
-                        <span class="h5">{{ course.course_instructor_fn|capfirst }}
-                            {{ course.course_instructor|capfirst }}</span>
+        <div class="card mb-2 card-r course-card">
+            <div class="my-auto" style="text-decoration: none;">
+                <div class="d-flex justify-content-between align-items-center course-title-box course-code-ctr">
+                    <div class="d-flex align-items-center course-code-ctr">
+                        <div class="my-1 ">
+                            <div class="ml-2" >
+                                <a class="course-detail-link" style="text-decoration: none;" href="{%url 'home:course-instructor' par1=course.course_university_slug par2=course.course_instructor_slug %}">
+                                    <span class="h5 font-weight-bold pt-1 text-dark">
+                                        {{ course.course_instructor_fn|capfirst }} {{ course.course_instructor|capfirst }}
+                                    </span>
+                                </a>
+                                <div>
+                                    <a class="c_dis p-1 mr-1 mb-1 text-center crs-btn p-0 small text-primary-dark" href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins" >
+                                        <span class="small" >
+                                            <span class="ccs mr-1">
+                                                <i class="fas fa-user-graduate icon-opac"></i>
+                                            </span>{{ course.get_user_count }} {% if course.get_user_count == 1 %}<span>student</span>{% else %}
+                                            <span>students</span>{% endif %}
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>                              
                     </div>
                 </div>
-            </a>
+            </div>
             <div class="row p-0">
                 <div class="col-sm-12">
-                    <div class="p-1 d-flex">
-                        <a class="t-stu m-1 btn btn-outline-primary" 
-                            href="{% url 'home:course-mutual-students' %}?id={{ course.get_hashid }}&o=ins"
-                            style="border-radius: 20px !important;">
-                                <div class="p1 t-stu">
-                                    <span>Enrollments: </span>
-                                    <span>{{ course.get_user_count_ins }}</span>
-                                </div>
-                        </a>
+                    <div class="p-1 pl-2 d-flex">
                         {% if course.complexity_btn_ins == "None" %}
-                        <div style="border-radius: 20px !important;" class="d-flex align-items-center c_dis m-1 btn btn-outline-secondary">
+                        <div class="d-flex align-items-center c_dis m-1 text-muted">
                             <span
                                 class="ml-1">No ratings
                             </span>
                         </div>
                         {% else %}
-                        <div style="border-radius: 20px !important;" class="d-flex align-items-center  c_dis m-1 btn btn-outline-{{ course.complexity_btn_ins }}">
+                        <div class="d-flex align-items-center  c_dis m-1 border-r text-{{ course.complexity_btn_ins }}">
                             <span >{{ course.average_complexity_ins }}</span>
                         </div>
                         {% endif %}
