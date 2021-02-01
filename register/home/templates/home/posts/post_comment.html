@@ -191,9 +191,13 @@
     </div>
     {% endwith %}
     {% empty %}
-    <div class="d-flex justify-content-center">
-      <p class="font-weight-lighter text-muted">No comments to show</p>
-    </div>
+    <div class="no-review-box">
+      <div class="d-flex justify-content-center pt-2 my-2">
+          <div>
+              <h6>No comments to show</h6>
+          </div>
+      </div>
+  </div>
     {% endfor %}
   </div>
   {% if comments.has_next %}

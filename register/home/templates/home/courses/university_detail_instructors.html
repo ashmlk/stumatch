@@ -3,11 +3,11 @@
 {% block list %}
 <div>
     <div class="mb-2">
-        <span class="text-muted small">
+        <span class="ml-2 text-muted small">
             Only instructors with course enrollments are displayed
         </span>
     </div>
-    <div class="row infinite-container">
+    <div class="row px-3 infinite-container">
         {% for ins in instructors %}
         {% bg_rand as bgrnd %}
         <div class="col-md-6 p-1 infinite-item">
@@ -22,7 +22,7 @@
                         </div>                              
                     </div>
                 </a>
-                <div class="mx-1" style="font-size: 0.92rem;">
+                <div class="mx-1 font-auto-sm">
                     <div class="course-details-holder my-2">
                         <div class="detail-text citext">
                             <span class="svg-icon ccs mr-2">

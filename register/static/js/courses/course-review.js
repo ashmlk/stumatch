@@ -66,6 +66,7 @@ $(document).ready(function (e) {
 			contentType: false,
 			dataType: 'json',
 			success: function(data){
+				let parent_ctr = $('#_rc_'+veid).closest('.course-reviews-list')
 				if(data.form_is_valid){
 					$('#modal-review-delete').modal('hide');
 					$('body').removeClass('modal-open');
@@ -75,6 +76,23 @@ $(document).ready(function (e) {
 					$("#crsspecrw").html(data.reviews_count)
 					if(data.can_review){
 						$('#crwfrmcntr').html(data.review_form);
+					}
+					if($('#course-all-reviews-shown').length){
+						if(!$(parent_ctr).find('.course-review-object').length){
+							$(parent_ctr).closest('.review-group-container').remove();
+							if(!$(document).find('.review-group-container').length){
+								let emptyMessage = `
+								<div class="no-review-box">
+									<div class="d-flex justify-content-center pt-2 my-2">
+										<div>
+											<h6>No reviews to show</h6>
+										</div>
+									</div>
+								</div>
+								`
+								$('.c-review-list').html(emptyMessage)
+							}
+						}
 					}
                 }
                 else{

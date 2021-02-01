@@ -12,18 +12,18 @@
                 {% if o != 'all' %}
                 <a class="text-dark"
                     href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}">
-                    <h4 class="font-weight-bold">{{ course.course_code }}</h4>
+                    <h3 class="font-weight-bold">{{ course.course_code }}</h3>
                 </a>
                 {% else %}
                 <a class="text-dark"
                     href="{% url 'home:course-detail' course.course_university_slug 'ALL' course.course_code %}?rw=all">
-                    <h4 class="font-weight-bold">{{ course.course_code }}</h4>
+                    <h3 class="font-weight-bold">{{ course.course_code }}</h3>
                 </a>
                 {% endif %}
             </div>
             <div>
                 <div class="mt-2 my-1">
-                    <a href="{% url 'home:university-detail' %}?u={{ university }}&obj=std">
+                    <a href="{% url 'home:university-detail' %}?u={{ course.course_university }}&obj=std">
                         <span class="text-primary">
                             <span>
                                 <i class="fas fa-university mr-1"></i>
@@ -150,8 +150,12 @@
         </div>
     </div>
     {% empty %}
-    <div class="d-flex justify-content-center">
-        <h5 class="h5 font-weight-lighter my-3 text-muted">No users found.</h5>
+    <div class="no-review-box">
+        <div class="d-flex justify-content-center pt-2 my-2">
+            <div>
+                <h6>No students to show</h6>
+            </div>
+        </div>
     </div>
     {% endfor %}
 </div>

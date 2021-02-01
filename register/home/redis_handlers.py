@@ -38,11 +38,11 @@ def update_course_reviews_cache(course, order=None):
 
     # order_by instructor for all review objects
     main_qs2 = main_qs.order_by(
-        "course__course_instructor", "course__course_instructor_fn",
+        "course__course_instructor", "course__course_instructor_fn", "-created_on"
     )
 
     # set hash for objects based on creation date
-    result = list(main_qs2.order_by("-created_on",).values("id"))
+    result = list(main_qs2.values("id"))
     
     redis_client.hset(
         "cr_",
@@ -51,7 +51,10 @@ def update_course_reviews_cache(course, order=None):
     )
 
     # hash the id of review objects based on course year
-    result = list(main_qs2.order_by("-year", "-created_on",).values("id"))
+    main_qs2 = main_qs.order_by(
+        "course__course_instructor", "course__course_instructor_fn", "-created_on","-year", "-created_on"
+        )
+    result = list(main_qs2.values("id"))
 
     redis_client.hset(
         "cr_",

@@ -39,7 +39,7 @@
                                 <div class="info-all">
                                     <a class="text-dark" class="card-title" style="text-decoration: none;"
                                         href="{% url 'home:course-list-obj' hid=list.get_hashid %}">
-                                        <strong class="h5" style="color: #375FAD ;">{{ list.title|capfirst }}</strong>
+                                        <strong class="h5">{{ list.title|capfirst }}</strong>
                                     </a>
                                 </div>
                                 <div class="dropdown">
@@ -95,7 +95,7 @@
                                         </div>
                                         <div>
                                             <span class="p-1 border-light">
-                                                <span style="color: black;">Created on
+                                                <span class="text-muted">Created on
                                                     {{ list.created_on|date:"M d, Y" }}</span>
                                             </span>
                                         </div>

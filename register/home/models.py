@@ -13,7 +13,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.functions import Cast
 from django.template.defaultfilters import slugify
-import uuid, secrets, datetime, pytz, PIL, io, readtime, nltk, json, math
+import uuid, secrets, datetime, pytz, PIL, io, readtime, nltk, json, math, collections
 from django_uuid_upload import upload_to_uuid
 from math import log
 from dateutil import tz
@@ -1445,15 +1445,14 @@ class Course(models.Model):
                         instructor_last_name=F("course__course_instructor"),
                     )
                 )
+               
+            result = collections.defaultdict(list)
+            for k, vs in groupby(
+                qs, attrgetter("instructor_last_name", "instructor_first_name")
+            ):
+                result[k].extend(list(vs))
 
-            result = {
-                k: list(vs)
-                for k, vs in groupby(
-                    qs, attrgetter("instructor_last_name", "instructor_first_name")
-                )
-            }
-
-            return result
+            return dict(result)
 
         except Exception as e:
             print(e)
@@ -1927,7 +1926,7 @@ class Professors(models.Model):
                 review_count = (
                     Review.objects.select_related("course").filter(
                         course__course_instructor_slug__iexact=self.name_slug,
-                        course_university_slug__iexact=self.university_slug,
+                        course__course_university_slug__iexact=self.university_slug,
                     ).count()
                 )
                 cache.set(key, review_count)

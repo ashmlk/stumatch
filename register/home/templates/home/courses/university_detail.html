@@ -28,7 +28,7 @@
 {% else %}
 <div class="content">
     <div class="uni-info">
-        <div class="m-0 mb-2 border-bottom pb-1 p-0">
+        <div class="m-0 border-bottom p-0">
             <div class="d-flex align-items-center py-2">
                 <div class="logo-all mr-2">
                     {% if logo_path %}
@@ -125,7 +125,7 @@
                         <div class="weblist">
                             {% for web in data.web_pages %}
                             <div class="ewb-u">
-                                <a href="{{ web }}" class="card-link">{{ web }}</a>
+                                <a href="{{ web }}" class="card-link" target="_blank">{{ web }}</a>
                             </div>
                             {% endfor %}
                         </div>
@@ -135,33 +135,36 @@
 
         </div>      
     </div>
-    <div class="link-picker my-3">
-        <div class="row py-1 pb-2 px-3 links">
-            <div class="col-4 p-0">
-                <div class="card border-0 border-bottom bg-transparent">
-                    <a class="text-center jc-nav-link  text-muted{{ sa }} text-dark"
-                        href="{% url 'home:university-detail' %}?u={{ uni }}&obj=std">
-                        Students
-                    </a>
+    <div class="sticky-top link-picker my-3 bg-background pt-3" style="top: 54px;">
+        <div>
+            <div class="row py-1 pb-2 px-3 links">
+                <div class="col-4 p-0">
+                    <div class="card border-0 border-bottom bg-transparent">
+                        <a class="text-center jc-nav-link  text-muted{{ sa }} text-dark"
+                            href="{% url 'home:university-detail' %}?u={{ uni }}&obj=std">
+                            Students
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-4 p-0">
-                <div class="card border-0 border-bottom bg-transparent">
-                    <a class="text-center jc-nav-link  text-muted{{ ca }} text-dark"
-                        href="{% url 'home:university-detail' %}?u={{ uni }}&obj=crs">
-                        Courses
-                    </a>
+                <div class="col-4 p-0">
+                    <div class="card border-0 border-bottom bg-transparent">
+                        <a class="text-center jc-nav-link  text-muted{{ ca }} text-dark"
+                            href="{% url 'home:university-detail' %}?u={{ uni }}&obj=crs">
+                            Courses
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-4 p-0">
-                <div class="card border-0 border-bottom  bg-transparent">
-                     <a class="text-center jc-nav-link text-muted{{ ia }} text-dark" 
-                        href="{% url 'home:university-detail' %}?u={{ uni }}&obj=ins">
-                       Instructors
-                     </a>
+                <div class="col-4 p-0">
+                    <div class="card border-0 border-bottom  bg-transparent">
+                         <a class="text-center jc-nav-link text-muted{{ ia }} text-dark" 
+                            href="{% url 'home:university-detail' %}?u={{ uni }}&obj=ins">
+                           Instructors
+                         </a>
+                    </div>
                 </div>
             </div>
         </div>
+        
     </div>
     <div class="item-list">
         <div class="list-objects">

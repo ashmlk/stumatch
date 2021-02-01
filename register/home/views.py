@@ -1523,44 +1523,45 @@ def course_detail(request, course_university_slug, course_instructor_slug, cours
         link_get = True 
     else:
         link_get = False
-    if page == 1:
-        if course_instructor_slug == "ALL":
-            course = (
+    
+    if course_instructor_slug == "ALL":
+        course = (
                 Course.objects.filter(
                     course_university_slug=course_university_slug,
                     course_code=course_code,
                 )
                 .first()
             )
-        else:
-            course = (
-                Course.objects.filter(
-                    course_university_slug=course_university_slug,
-                    course_instructor_slug=course_instructor_slug,
-                    course_code=course_code,
-                )
-                .first()
+    else:
+        course = (
+            Course.objects.filter(
+                course_university_slug=course_university_slug,
+                course_instructor_slug=course_instructor_slug,
+                course_code=course_code,
             )
-        taken = request.user.courses.filter(
-            course_university_slug=course_university_slug,
-            course_code=course_code,
-            course_instructor_slug=course_instructor_slug,
-        ).exists()
-        try:
-            cannot_review = (
-                Review.objects.select_related("author","course")
-                .filter(
-                    author=request.user,
-                    course__course_code=course_code,
-                    course__course_university_slug=course_university_slug,
-                    course__course_instructor_slug=course_instructor_slug,
-                )
-                .exists()
+            .first()
+        )
+        
+    taken = request.user.courses.filter(
+        course_university_slug=course_university_slug,
+        course_code=course_code,
+        course_instructor_slug=course_instructor_slug,
+    ).exists()
+    try:
+        cannot_review = (
+            Review.objects.select_related("author","course")
+            .filter(
+                author=request.user,
+                course__course_code=course_code,
+                course__course_university_slug=course_university_slug,
+                course__course_instructor_slug=course_instructor_slug,
             )
-        except Exception as e:
-            print(e)
-        reviews_count = course.reviews_count()
-        reviews_all_count = course.reviews_all_count()
+            .exists()
+        )
+    except Exception as e:
+        print(e)
+    reviews_count = course.reviews_count()
+    reviews_all_count = course.reviews_all_count()
     if request.method == "POST":
         form = ReviewForm(request.POST or None)
         if form.is_valid():

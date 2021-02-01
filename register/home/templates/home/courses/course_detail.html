@@ -297,21 +297,25 @@
         <div class="tab-content">
             <div class="c-review-list ">
                 {% if link_get %}
-                <div class="dropdown">
-                    <button class="btn mb-1 btn-light border btn-sm border dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        {{ sortby|capfirst }}
-                    </button>
-                    <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
-                        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Latest</a>
-                        <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Year</a>
+                    <div class="dropdown">
+                        <button class="btn mb-1 btn-light border btn-sm border dropdown-toggle" type="button" id="d_li" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            {{ sortby|capfirst }}
+                        </button>
+                        <div class="srbtnmenu dropdown-menu mt-1" aria-labelledby="d_li">
+                            <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=latest">Latest</a>
+                            <a class="small dropdown-item" href="{% url 'home:course-detail' course.course_university_slug course.course_instructor_slug course.course_code %}?rw=all&sb=cy">Year</a>
+                        </div>
                     </div>
-                </div>
                     {% for prof in reviews  %}
-                        <div class="mb-3 mt-1 text-dark" style="font-size: 1.1rem;font-weight: 600;text-transform: capitalize;">
+                    <div class="review-group-container">
+                        <div class="mb-3 mt-1 text-dark review-prof-title" style="font-size: 1.1rem;font-weight: 600;text-transform: capitalize;">
                             {{ prof.1 }} {{ prof.0 }} - {{reviews|get_dict_item:prof|length}} Reviews
                         </div>                       
-                        {% include 'home/courses/course_reviews.html' with course=course reviews=reviews|get_dict_item:prof all=1 size=reviews|get_dict_item:prof|length %}
+                        <div class="review-instructor-all-ctr">
+                            {% include 'home/courses/course_reviews.html' with course=course reviews=reviews|get_dict_item:prof all=1 size=reviews|get_dict_item:prof|length %}
+                        </div>
+                    </div>    
                     {% empty %}
                     <div class="no-review-box">
                         <div class="d-flex justify-content-center pt-2 my-2">
@@ -321,6 +325,7 @@
                         </div>
                     </div>
                     {% endfor %}
+                    <span id="course-all-reviews-shown"></span>
                 {% else %}
                     {% include 'home/courses/course_reviews.html' with course=course reviews=reviews all=0 %}
                 {% endif %}

@@ -161,15 +161,13 @@
   {% empty %}
   {% if not no_friends_and_university %}
     {% if not discover_students %}
-    <div class="card-body">
-      <div class="d-flex justify-content-center align-items-center">
-          <div class="p-1">
-              <div class="text-center">
-                  <span class="text-muted">No posts to show.</span>
-              </div>    
+    <div class="no-review-box">
+      <div class="d-flex justify-content-center pt-2 my-2">
+          <div>
+              <h6>No posts to show</h6>
           </div>
       </div>
-    </div>
+  </div>
     {% endif %}
   {% endif %}
   {% endfor %}
