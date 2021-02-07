@@ -49,6 +49,7 @@ from home.algo import (
     top_buzz,
 )
 from friendship.models import Friend, Follow, Block, FriendshipRequest
+from register import tags
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
 hashid_list = Hashids(salt="e5896e mqwefv0t mvSOUH b90 NS0ds90", min_length=16)
@@ -656,6 +657,7 @@ class Post(models.Model):
     tags = TaggableManager(help_text="Tags", blank=True)
     likes = models.ManyToManyField(Profile, blank=True, related_name="post_likes")
     sv = pg_search.SearchVectorField(null=True)
+    mentions = models.ManyToManyField(Profile, blank=True, related_name="mentions")
 
     objects = PostManager()
 
@@ -763,7 +765,14 @@ class Post(models.Model):
     def get_comments(self, ids):
 
         comments = self.comments.select_related("name").order_by("-created_on")
-
+        
+    def add_tags(self):
+      tags.assign_tags(self)
+      
+    def update_tags(self, old_content):
+        tags.update_tags(self, old_content)
+        
+        
 
 def image_create_uuid_p_u(instance, filename):
     return "/".join(["post_images", str(uuid.uuid4().hex + ".png")])
@@ -815,13 +824,13 @@ class Images(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     name = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    body = models.TextField(validators=[MaxLengthValidator(350)])
+    body = models.TextField(validators=[MaxLengthValidator(2000)])
     created_on = models.DateTimeField(auto_now_add=True)
     reply = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, related_name="replies"
     )
     likes = models.ManyToManyField(Profile, blank=True, related_name="comment_likes")
-
+    
     class Meta:
         ordering = ["created_on"]
 
@@ -1518,6 +1527,10 @@ class Course(models.Model):
         except Exception as e:
             print(e)
             return None
+    
+    def get_instructor_fullname(self):
+        
+        return "%s %s" % (self.course_instructor_fn.capitalize(), self.course_instructor.capitalize())
         
 
 class Buzz(models.Model):

@@ -1,16 +1,17 @@
 Dropzone.autoDiscover = false;
 $(document).ready (function () {
+    let maxFilesExceededAlert = false;
     var myDropzone = new Dropzone("#my-dropzone" , {
         dictDefaultMessage: '',
         addRemoveLinks: true,
-        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        acceptedFiles: ".jpeg,.jpg,.png",
         uploadMultiple: true,
         url: "/post/create/",
         autoProcessQueue: false,
         paramName: "images",
         maxFiles: 4,
         thumbnailWidth: 230,
-        dictRemoveFile : 'Remove',
+        dictRemoveFile : '&times',
         thumbnailHeight: 250,
         parallelUploads: 10,
         previewTemplate: document.getElementById('preview-template').innerHTML,
@@ -26,6 +27,14 @@ $(document).ready (function () {
                 } else {                     
                     myDropzone.uploadFiles([]); //send empty 
                 }                                    
+            });
+
+            this.on("maxfilesexceeded", function(file){
+                if(maxFilesExceededAlert === false){
+                    alert("You can upload up to 4 images only.")
+                }
+                maxFilesExceededAlert = true;
+                this.removeFile(file);
             });
 
             this.on('sendingmultiple', function(files, xhr, formData) {

@@ -54,15 +54,16 @@ class PostForm(forms.ModelForm):
     title = forms.CharField(
         max_length=2000,
         label="",
-        widget=forms.TextInput(attrs={"placeholder": "What's your post about?"}),
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Title (Optional)"}),
     )
     content = forms.CharField(
         label="",
         widget=forms.Textarea(
             attrs={
-                "placeholder": "Write what you want to share...",
+                "placeholder": "Aa",
                 "style": "resize:none",
-                "rows": 7,
+                "rows": 2,
                 "cols": 40,
             }
         ),
@@ -70,24 +71,11 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        labels = {
-            "tags": "",
-        }
-        help_texts = {
-            "tags": " ",
-        }
         fields = (
             "title",
             "content",
-            "tags",
         )
 
-    def __init__(self, *args, **kwargs):
-        super(PostForm, self).__init__(*args, **kwargs)
-        instance = getattr(self, "instance", None)
-        if instance and instance.pk:
-            self.fields["title"].disabled = True
-        self.fields["tags"].widget.attrs["placeholder"] = "Add tags"
 
 
 class ImageForm(forms.ModelForm):
@@ -180,7 +168,7 @@ class CourseForm(forms.ModelForm):
         required=True,
         validators=[alphabetical],
         widget=forms.TextInput(
-            attrs={"placeholder": "Instructor Firstname", "class": "form-control"}
+            attrs={"placeholder": "Instructor's First Name", "class": "form-control"}
         ),
     )
 
@@ -191,7 +179,7 @@ class CourseForm(forms.ModelForm):
         required=True,
         validators=[alphabetical],
         widget=forms.TextInput(
-            attrs={"placeholder": "Instructor Lastname", "class": "form-control"}
+            attrs={"placeholder": "Instructor's Last Name", "class": "form-control"}
         ),
     )
 

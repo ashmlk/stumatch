@@ -1,5 +1,8 @@
-.bg-background {
+.bg-background:not(.darkmode-activated) {
   background-color: rgb(253, 253, 253) !important;
+}
+.bg-background.darkmode-activated{
+ background-color: #121212 !important;
 }
 .nav-header-main {
   background-color: rgb(129, 193, 242);
@@ -42,6 +45,11 @@
 .btn.border-r{
   border-radius: 20px !important;
 }
+.btn[disabled]:hover{
+  cursor: default !important;
+  opacity: 0.65;
+  
+}
 .btn-primary,
 .btn-primary:active,
 .btn-primary:visited {
@@ -49,7 +57,7 @@
   border-color: rgba(255, 255, 255, 0) !important;
 }
 
-.btn-primary:hover {
+.btn-primary:not(disabled):hover {
   opacity: 0.85;
 }
 
@@ -119,20 +127,30 @@
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
 }
+.update-form input[type="text"],
+.post-comment-textarea,
 .post-create-form textarea {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
-  padding-bottom: 1rem;
   overflow-y: auto;
+  resize: none;
   /*min-height: 11rem;*/
+}
+.comment-box:not(.post-details-single-view){
+  display: none;
+}
+.post-comment-textarea {
+  font-size: 14px;
+  overflow-y: auto !important;
 }
 .bookmarked-link:hover {
   cursor: pointer;
   background-color: rgb(241, 241, 241) !important;
 }
+.update-form input[type="text"],
 .post-create-form input[type="text"] {
   border-radius: 0;
   border-left: none !important;
@@ -142,16 +160,6 @@
   box-shadow: none !important;
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
-}
-.post-update-form textarea {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  padding-bottom: 1rem;
-  overflow-y: auto;
-  min-height: 11rem;
 }
 .search-btn:hover {
   background-color: rgb(207, 205, 205);
@@ -173,20 +181,6 @@ mark {
 .search-ctr .highlight {
   font-weight: 600 !important;
   background: rgba(196, 214, 247, 0.767);
-}
-.post-create-form #add-images {
-  border: 1px solid rgb(207, 205, 205);
-  background-color: rgba(210, 230, 248, 0.63);
-}
-.post-create-form #add-images:hover {
-  opacity: 0.875;
-}
-.post-create-form #add-tagstp {
-  border: 1px solid rgb(207, 205, 205);
-  background-color: rgba(199, 248, 184, 0.63);
-}
-.post-create-form #add-tagstp:hover {
-  opacity: 0.875;
 }
 
 .buzz-create-form textarea {
@@ -252,9 +246,6 @@ mark {
   -webkit-box-shadow: none !important;
 }
 
-#div_id_tags {
-  margin-bottom: -1rem !important;
-}
 
 .blog-form-container input[type="text"] {
   outline: none !important;
@@ -282,12 +273,18 @@ mark {
 .hover-cursor:hover {
   cursor: pointer;
 }
+
 .selectize-dropdown {
   border-top: 1px !important;
   margin-top: 0.65rem !important;
   height: auto !important;
 }
-
+.post-ctr .comment-button-ctr > span {
+  color:  rgb(158, 158, 158);
+}
+.post-ctr .comment-button-ctr:hover > span {
+  color: #487be0;
+}
 .post-ctr-detail .like-count {
   display: none;
 }
@@ -959,8 +956,8 @@ input[type="email"]{
   margin-bottom: 8px;
 }
 
-.add-course .add-course-ctr {
-  margin-top: 10px;
+.add-course  {
+  padding-top: 11px;
 }
 
 .add-course input[name='course_instructor_fn'] {
@@ -974,7 +971,58 @@ input[type="email"]{
 .user-username-font {
   font-weight: 500;
 }
+.commenter-username-font {
+  font-size: 0.93rem !important;
+  font-weight: 500 !important;
+}
 
 .text-primary-dark {
   color: #2b4a87 !important;
+}
+
+.font-auto-sm {
+  font-size: 14px !important;
+}
+
+.font-auto-xl {
+  font-size: 12px !important;
+}
+
+.text-muted-jc {
+  color: rgb(158, 158, 158);
+}
+
+.text-red-jc {
+  color:  rgb(236, 81, 94) !important;
+}
+
+.font-weight-bold-jc {
+  font-weight: 500;
+}
+
+.like-count-ctr .like-count::after{
+  content: "·";
+  margin: 0px 2px 0px 2px;
+}
+
+.underline-text:hover{
+  text-decoration: underline;
+}
+.horizontal-line-sm {
+  width: 12px;
+  height: 2px;
+  margin-right: 5px;
+}
+
+.fade-text:hover {
+  opacity: 0.7;
+}
+
+.post-ctr .comment-object .comment-options-ctr {
+  visibility: hidden;
+  display: inline-block !important;
+}
+
+.post-ctr .comment-object:hover .comment-options-ctr{
+  visibility: visible;
 }

@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
@@ -36,7 +37,7 @@ from .models import (
     Professors,
     CourseObject,
 )
-from main.models import Profile, SearchLog
+from main.models import Profile, SearchLog, BookmarkPost
 from .forms import (
     PostForm,
     CommentForm,
@@ -83,18 +84,19 @@ from home.forms import current_year
 from home.tasks import (
     async_send_mention_notifications,
     async_delete_mention_notifications,
+    async_update_mention_notifications,
     add_user_to_course,
     remove_user_from_course,
     add_course_to_prof,
-    adjust_course_average,
     user_get_or_set_top_school_courses,
     set_course_objects_top_courses,
-    update_course_reviews
 )
 from django.templatetags.static import static
 from django.contrib.staticfiles import finders
 from home.redis_handlers import update_course_reviews_cache, adjust_course_avg_hash
 from assets.assets import UNI_LIST
+from django.core import serializers
+from .serializers import CommentSerializer
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
 
@@ -486,7 +488,6 @@ def post_create(request):
             post = form.save(False)
             post.author = request.user
             post.save()
-            form.save_m2m()
             if request.FILES is not None:
                 images = [
                     request.FILES.get("images[%d]" % i)
@@ -499,6 +500,7 @@ def post_create(request):
             data["post"] = render_to_string(
                 "home/posts/new_post.html", {"post": post}, request=request
             )
+            post.add_tags()
             try:
                 async_send_mention_notifications.delay(post.author.id, post.id)
             except Exception as e:
@@ -523,17 +525,20 @@ def post_update(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
     if post.author == request.user:
+        old_content = post.content
         if request.method == "POST":
             form = PostForm(request.POST, instance=post)
             form.instance.author = request.user
             if form.is_valid():
-                form.save()
+                post = form.save()
+                post.update_tags(old_content)
+                post.update_mentions(old_content)
                 data["form_is_valid"] = True
                 data["post"] = render_to_string(
                     "home/posts/new_post.html", {"post": post}, request=request
                 )
                 try:
-                    async_send_mention_notifications.delay(post.author.id, post.id)
+                    async_update_mention_notifications.delay(post.id, old_content)
                 except Exception as e:
                     print(e.__class__)
                     print(e)
@@ -574,117 +579,85 @@ def post_detail(request, guid_url):
 
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    comment_list = post.comments.filter(reply=None)
-    if request.method == "POST":
-        is_reply = None
-        form = CommentForm(request.POST or None)
-        if form.is_valid():
-            comment = form.save(False)
-            reply_id = request.POST.get("comment_id")
-            comment_qs = None
-            if reply_id:  # if reply_id exists it means the comment is a reply
-                comment_qs = Comment.objects.get(id=reply_id)
-                is_reply = True
-                data["is_reply"] = is_reply
-                description = "Reply: " + comment_qs.body
-                if request.user != comment_qs.name:
-                    if (
-                        comment_qs.name.get_notify
-                        and comment_qs.name.get_post_notify_all
-                        and comment_qs.name.get_post_notify_comments
-                    ):
-                        message_comment = (
-                            "CON_POST"
-                            + " replied to your comment on "
-                            + post.author.get_full_name()
-                            + "'s post."
-                        )  # message comment is sent to the parent comment
-                        notify.send(
-                            sender=request.user,
-                            recipient=comment_qs.name,
-                            verb=message_comment,
-                            description=description,
-                            target=post,
-                            action_object=comment_qs,
-                        )
-                if comment_qs.name != post.author:
-                    if (
-                        post.author.get_notify
-                        and post.author.get_post_notify_all
-                        and post.author.get_post_notify_comments
-                    ):
-                        message_post = (
-                            "CON_POST" + " replied to a comment on your post."
-                        )  # message_post is sent to the post author of the reply's parent comment
-                        notify.send(
-                            sender=request.user,
-                            recipient=post.author,
-                            verb=message_post,
-                            description=description,
-                            target=post,
-                            action_object=comment_qs,
-                        )
+    context = {
+        "post":post,
+    }
+    return render(request, "home/posts/post_detail.html", context)
 
-            comment.name = request.user
-            comment.post = post
-            comment.reply = comment_qs
-            comment.save()
-            if comment.name != post.author:
-                if (
-                    post.author.get_notify
-                    and post.author.get_post_notify_all
-                    and post.author.get_post_notify_comments
-                ):
-                    message = (
-                        "CON_POST" + " commented on your post."
-                    )  # message to send to post author when user comments on their post
-                    description = "Comment: " + comment.body
-                    notify.send(
-                        sender=request.user,
-                        recipient=post.author,
-                        verb=message,
-                        description=description,
-                        target=post,
-                        action_object=comment,
-                    )
-        else:
-            data["is_valid"] = False
-        if is_reply:
-            form = CommentForm()
-            context = {"guid_url": post.guid_url, "reply": comment, "form": form}
-            data["reply"] = render_to_string(
-                "home/posts/post_comment_reply_new.html", context, request=request
-            )
-        else:
-            form = CommentForm()
-            context = {"guid_url": post.guid_url, "comment": comment, "form": form}
-            data["comment"] = render_to_string(
-                "home/posts/post_comment_new.html", context, request=request
-            )
-        return JsonResponse(data)
 
-    else:
-        form = CommentForm()
-    guid_url = post.guid_url
-    comment_count = post.comment_count()
+@login_required
+def post_comments(request, guid_url):
+    
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    comments_list = post.comments.select_related('name').filter(reply=None)
     page = request.GET.get("page", 1)
-    paginator = Paginator(comment_list, 10)
+    paginator = Paginator(comments_list, 10)
     try:
         comments = paginator.page(page)
     except PageNotAnInteger:
         comments = paginator.page(1)
     except EmptyPage:
         comments = paginator.page(paginator.num_pages)
-    context = {
-        "post": post,
-        "form": form,
-        "comments": comments,
-        "comment_count": comment_count,
-        "guid_url": guid_url,
-    }
+    liked_by_viewer = set(Profile.objects.prefetch_related('comment_likes').get(id=request.user.id).comment_likes.values_list('id', flat=True))
+    data['comments'] = json.loads(json.dumps(CommentSerializer(comments,context={'liked_by_viewer': liked_by_viewer}, many=True).data))
+    data['has_next'] = comments.has_next() 
+    data['page_number'] = page
+    return JsonResponse(data, safe=False)
+    
+    
+@login_required
+def comment_replies(request, hid):
+    
+    data = dict()
+    id = hashids.decode(hid)[0]
+    comment = get_object_or_404(Comment, id=id)
+    comment_list = comment.replies.select_related('name').order_by('created_on')
+    page = request.GET.get("page", 1)
+    paginator = Paginator(comment_list, 4)
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        comments = paginator.page(1)
+    except EmptyPage:
+        comments = paginator.page(paginator.num_pages)
+    liked_by_viewer = set(Profile.objects.prefetch_related('comment_likes').get(id=request.user.id).comment_likes.values_list('id', flat=True))
+    data['comments'] = json.loads(json.dumps(CommentSerializer(comments,context={'liked_by_viewer': liked_by_viewer}, many=True).data))
+    data['has_next'] = comments.has_next() 
+    data['parent_hashed_id'] = hid
+    data['page_number'] = page
+    return JsonResponse(data)
 
-    return render(request, "home/posts/post_detail.html", context)
-
+@login_required
+def post_comment(request, guid_url):
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    user = request.user
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(False)
+            parent_comment = None
+            parent_comment_id = request.POST.get("parent_comment_id", None)
+            is_reply = request.POST.get("isReply", "false")
+            print(is_reply)
+            if parent_comment_id and is_reply == "true":
+                id = hashids.decode(parent_comment_id)[0]
+                parent_comment = get_object_or_404(Comment, id=id)
+                # send reply notification
+            comment.name = user
+            comment.post = post
+            comment.reply = parent_comment
+            comment.save()
+            c = comment.likes.count() 
+            like_count = c if c > 0 else ''
+            data['comment'] = json.loads(json.dumps(CommentSerializer(comment).data))
+            data['post_comment_count'] = post.comments.filter(reply=None).count()
+            # send comment notification 
+        else:
+            data['error'] = True
+            data['error_message'] = "There was an issue posting your comment, please try again"
+    return JsonResponse(data)
 
 @login_required
 def post_like(request, guid_url):
@@ -724,22 +697,59 @@ def post_like(request, guid_url):
                     )
 
         data["likescount"] = post.likes.count()
-        data["post_likes"] = render_to_string(
-            "home/posts/likes.html", {"post": post}, request=request
-        )
         return JsonResponse(data)
 
+@login_required
+def post_bookmark(request, guid_url):
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    user = request.user
+    return JsonResponse(data)
 
 @login_required
-def comment_like(request, guid_url, hid):
+def post_dropdown(request, guid_url):
     data = dict()
-    guid_url = guid_url
+    post = get_object_or_404(Post, guid_url=guid_url)
+    user = request.user
+    if user.is_authenticated:
+        if request.user == post.author:
+            data['user_is_author'] = True
+            data['post_edit_url'] = reverse("home:post-update", kwargs={"guid_url":post.guid_url})
+            data['post_delete_url'] = reverse("home:post-delete", kwargs={"guid_url":post.guid_url})
+        else:
+            data['report_by_user_url'] = reverse("main:report-object", kwargs={"reporter_id":user.get_hashid()})
+        data['post_hashid'] = post.get_hashid()
+        data['has_bookmarked'] = True if BookmarkPost.objects.filter(user=user, obj_id=post.id).exists() else False
+        return JsonResponse(data)
+        
+@login_required
+def comment_options(request, hid):
+    data = dict()
+    id = hashids.decode(hid)[0]
+    comment = get_object_or_404(Comment, id=id)
+    if (request.user == comment.name) or (request.user == comment.post.author):
+        data['viewer_can_delete'] = True
+        data['comment_delete_url'] = reverse("home:comment-delete", kwargs={"hid":hid})
+    else:
+        data['viewer_can_delete'] = False
+    if request.user != comment.name:
+        data['viewer_can_report'] = True
+        data['report_by_user_url'] = reverse("main:report-object", kwargs={"reporter_id":request.user.get_hashid()})
+    else:
+        data['viewer_can_report'] = True
+    data['comment_hashed_id'] = hid
+    return JsonResponse(data)
+
+@login_required
+def comment_like(request, hid):
+    data = dict()
     id = hashids.decode(hid)[0]
     comment = get_object_or_404(Comment, id=id)
     user = request.user
     if request.method == "POST":
         if comment.likes.filter(id=user.id).exists():
             comment.likes.remove(user)
+            data['is_liked'] = False
             try:
                 message = (
                     "CON_POST"
@@ -779,6 +789,7 @@ def comment_like(request, guid_url, hid):
                 print("Error removing notification from liked comment")
         else:
             comment.likes.add(user)
+            data['is_liked'] = True
             try:
                 if user != comment.name:
                     if (
@@ -823,12 +834,8 @@ def comment_like(request, guid_url, hid):
                     + str(comment.name.id)
                     + str(comment.post.author)
                 )
-
-        data["comment"] = render_to_string(
-            "home/posts/comment_like.html",
-            {"comment": comment, "guid_url": guid_url},
-            request=request,
-        )
+        c = comment.likes.count()
+        data['like_count'] = c if c > 0 else ''
         return JsonResponse(data)
 
 
@@ -911,6 +918,8 @@ def comment_delete(request, hid):
 
             comment.delete()
             data["form_is_valid"] = True
+            data['post_comment_count'] = comment.post.comments.filter(reply=None).count()
+            data['comment_reply_count'] = comment.reply.replies.count()
     else:
         context = {"comment": comment}
         data["html_form"] = render_to_string(
@@ -1186,12 +1195,13 @@ def course_add(request):
             )
             if has_course:
                 form = CourseForm
-                message = "You have already added this course. Please try again."
-                context = {
-                    "form": form,
-                    "message": message,
-                }
-                return render(request, "home/courses/course_add.html", context)
+                storage = messages.get_messages(request)
+                for _ in storage:
+                    pass
+                for _ in list(storage._loaded_messages):
+                    del storage._loaded_messages[0]
+                messages.error(request, "You have already added this course.")
+                return redirect("home:courses-add")
             else:
                 try:
                     add_user_to_course.delay( # add the student to enrolled students for that course - via tasks
@@ -1210,7 +1220,14 @@ def course_add(request):
                     course.save()
                     request.user.courses.add(course)
                 adjust_course_avg_hash(course) # adjust the average for the course - after the user has added the course
-                return redirect("home:course-list")
+                # clear previous messages before showing new mesage
+                storage = messages.get_messages(request)
+                for _ in storage:
+                    pass
+                for _ in list(storage._loaded_messages):
+                    del storage._loaded_messages[0]
+                messages.success(request, "{} with {} was successfully added to your courses.".format(course.course_code, course.get_instructor_fullname()))
+                return redirect("home:courses-add")
     else:
         form = CourseForm()
         if len(request.user.university) > 1:
@@ -1409,6 +1426,7 @@ def course_edit(request, hid):
         print("ERROR - retrieving id for course edit -- " + e)
         id = -1
     course_init = get_object_or_404(Course, id=id)
+    callback = request.GET.get("callback",None)
     if request.method == "POST":
         form = CourseEditForm(request.POST)
         if form.is_valid():
@@ -1440,7 +1458,7 @@ def course_edit(request, hid):
                 remove_user_from_course.delay(request.user.id, course_init.id, course.id, course_obj.id)
             except Exception as e:
                 print(e)
-            return redirect("home:course-list")
+            return redirect("home:course-list") if callback == "dashboard" else redirect("home:course-dashboard")
     else:
         form = CourseEditForm(instance=course_init)
     context = {"form": form, "course": course_init}

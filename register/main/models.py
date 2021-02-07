@@ -124,9 +124,9 @@ class ProfileManager(UserManager):
 
             search_vectors = (
                 SearchVector("last_name", weight="B", config="english")
-                + SearchVector("username", delimiter=" ", weight="A", config="english")
+                + SearchVector("username", weight="A", config="english")
                 + SearchVector(
-                    "first_name", delimiter=" ", weight="C", config="english"
+                    "first_name", weight="C", config="english"
                 )
             )
 
@@ -214,8 +214,8 @@ class ProfileManager(UserManager):
 
         search_vectors = (
             SearchVector("last_name", weight="B", config="english")
-            + SearchVector("username", delimiter=" ", weight="A", config="english")
-            + SearchVector("first_name", delimiter=" ", weight="C", config="english")
+            + SearchVector("username", weight="A", config="english")
+            + SearchVector("first_name", weight="C", config="english")
         )
 
         search_query = SearchQuery(search_text, config="english")

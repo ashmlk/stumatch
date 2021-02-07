@@ -1,5 +1,5 @@
 {% load ibuilder %}
-<form   data-url="{% url 'home:comment-like' guid_url comment.get_hashid %}" class="post-comment-like-form"  method="POST">
+<form   data-url="{% url 'home:comment-like' comment.get_hashid %}" class="post-comment-like-form"  method="POST">
 {% csrf_token %}
 {% if request.user in comment.likes.all %}
 <button  class="bg-transparent btn btn-sm small p-0 small text-muted comment-like-btn button-hide-outline" type="submit" 

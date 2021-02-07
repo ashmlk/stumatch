@@ -27,7 +27,7 @@ from assets.assets import UNIVERSITY_CHOICES_SIGNUP, UNIVERSITY_CHOICES
 from helper.generate_user_identity import generate_username, get_first_last_name
 
 username_regex = RegexValidator(
-    r"^(?!\.)(?!.*\.$)(?!.*?\.\.)[a-zA-Z0-9._ ]+$",
+    r"(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)",
     "You may only use alphanumeric characters and/or dots and hyphen (Consecutive dots are not allowed)",
 )
 alphanumeric = RegexValidator(

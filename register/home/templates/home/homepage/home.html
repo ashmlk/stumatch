@@ -2,11 +2,12 @@
 {% load crispy_forms_tags %}
 {% load ibuilder %}
 {% load static %}
-{% block title %}
 {% load thumbnail %}
-<title>Home - JoinCampus</title>
+{% block title %}
+<title>Explore</title>
 {% endblock %}
 {% block content %}
+
 {% if is_tag %}
 <div class="rounded-0 ml-1 card">
   <div class="card-body">
@@ -49,7 +50,7 @@
       </div>
       <div class="w-100 d-flex align-items-center">
         <div class="ml-1 mt-2 w-100">
-          <input type="text" style="border-radius: 25px; background-color: white !important;" readonly="readonly"
+          <input type="text" style="border-radius: 25px;" readonly="readonly"
             class="form-control create-post-btn input-no-border "
             placeholder="What's new?" data-url="{% url 'home:post-create' %}">
         </div>
@@ -89,7 +90,7 @@
         </div>
     </button>
     {% else %}
-    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white" href="{% url 'home:uni-posts' %}">
+    <a class="btn d-flex p-1 px-2 align-items-center mr-1 border bg-white cbtn-dark " href="{% url 'home:uni-posts' %}">
       <span class="text-dark" style="text-decoration: none;">
         <div>
           <span  style="font-size: 0.93rem !important;"><span >{{ request.user.university }}</span></span>

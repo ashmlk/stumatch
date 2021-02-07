@@ -8,14 +8,13 @@ $(document).ready(function () {
         document.location.href = url 
 		});
 	
-	// removing acourse form your courses
-    var veid = null;
+	// removing a course form your courses
+    var userCourseRemoveButton = null;
 	$(document).on("click",".sh-rmv-c", function (e) {
 		e.stopImmediatePropagation();
-        var btn = $(this);
-        veid = $(this).data("veid");
+        userCourseRemoveButton = $(this);
 		$.ajax({
-			url: btn.attr("data-url"),
+			url: userCourseRemoveButton.attr("data-url"),
 			type: 'get',
 			dataType:'json',
 			beforeSend: function(){
@@ -44,19 +43,18 @@ $(document).ready(function () {
                 }
 				if(data.is_valid){
                     $('#modal-course-remove').modal('hide');
-					$('#_cc_'+veid).remove();
+					$(userCourseRemoveButton).closest('.infinite-item').remove();
 				} 
 			}
 		})
 	});
 
-	var sbtn=null;
+	let userSavedCourseRemoveButton = null;
     $(document).on("click",".scrmvbtn", function (e) {
-        sbtn = $(this);
+        userSavedCourseRemoveButton = $(this);
         e.stopImmediatePropagation();
-        var btn = $(this);
         $.ajax({
-            url: btn.attr("data-url"),
+            url: userSavedCourseRemoveButton.attr("data-url"),
             type: 'get',
             dataType:'json',
             beforeSend: function(){
@@ -78,7 +76,7 @@ $(document).ready(function () {
             data: form,
             dataType: 'json',
             success: function(data){
-                $(sbtn).closest('.card').remove();
+                $(userSavedCourseRemoveButton).closest('.infinite-item').remove();
                 $('#modal-course-remove').modal('hide');
             }
         })

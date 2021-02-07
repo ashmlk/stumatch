@@ -10,9 +10,12 @@
 
   .post-details-view:hover {
     cursor: pointer;
-    background-color: rgba(226, 224, 224, 0.979);
+    background-color: rgba(247,247,247,255) !important;
   }
 
+  .post-details-view .post-content-text {
+    font-size: 14px !important;
+  }
   .modal-content {
     min-height: (100vh - 210px);
   }

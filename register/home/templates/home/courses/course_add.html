@@ -6,6 +6,35 @@
 {% endblock %}
 {% block content %}
 <div class="container px-md-2 px-sm-1 add-course">
+    {% if messages %}
+    <div class="row px-0">
+        {% for message in messages %}
+        <div class="col-12 px-0">
+            {% if message.tags %}
+            {% if message.tags != "error" %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                    <span> {{ message }} </span>
+                    {% endfor %}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% else %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                    <span> {{ message }} </span>
+                    {% endfor %}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="add-course-ctr d-flex row bg-white border rounded ">
         <div class="col-md-7 col-sm-11 col-11">
             <div class="mt-3 header">
@@ -43,17 +72,6 @@
                     </span>
                 </div>
             </div>
-            {% if message %}
-            <div class="my-2">
-                <div class="card border-light error-box">
-                    <div class="card-body text-dark d-flex justify-content-center">
-                        <div>
-                            <p class="card-text">{{ message }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
             {{ form.non_field_errors }}
             <div class="py-2">
                 <form method="POST" action="{% url 'home:courses-add' %}" autocomplete="off">

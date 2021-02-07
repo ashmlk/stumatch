@@ -1,17 +1,267 @@
-{% load crispy_forms_tags %}
-<form method="post" data-url="{% url 'home:post-update' form.instance.guid_url %}" class="update-form">
-	{% csrf_token %}
-		<div class="modal-header">
-		<h5 class="modal-title" >Edit Post</h5>
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		<span aria-hidden="true">&times;</span>
-		</button>
-		</div>
-		<div class="modal-body">
-		{{form|crispy}}
-		</div>
-		<div class="modal-footer">
-		<button type="button" class="btn btn-secondary" style="border-radius: 20px;" data-dismiss="modal">Close</button>
-		<button type="submit" class="btn btn-primary" style="border-radius: 20px;">Save Changes</button>
-		</div>
+{% load crispy_forms_tags %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'highlight-textarea/jquery.highlight-within-textarea.css' %}"
+/>
+<form
+  method="POST"
+  data-url="{% url 'home:post-update' form.instance.guid_url %}"
+  class="update-form"
+  enctype="multipart/form-data"
+>
+  {% csrf_token %}
+  <div class="modal-header text-center">
+    <h5 class="modal-title col-12 text-center">
+      <span> Edit Post </span>
+      <button
+        type="button"
+        class="close no-outline"
+        data-dismiss="modal"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </h5>
+  </div>
+  <div class="modal-body" style="height: auto;max-height: 600px !important; overflow-y: auto; margin: 0">
+    {{ form|crispy }} {{ form.media }}
+  </div>
+  <div class="modal-footer col-12 d-flex justify-content-between border-0">
+    <div class="bg-white d-flex p-1 post-action-buttons">
+      <div class="dropup emoji-dropup">
+        <button
+          class="btn btn-md text-primary emoji-menu-button no-outline"
+          aria-haspopup="true"
+          data-toggle="dropdown"
+          aria-expanded="false"
+          data-tooltip="tooltip"
+          data-placement="bottom" title="Emoji"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="bi bi-emoji-smile"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+            />
+            <path
+              d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"
+            />
+          </svg>
+        </button>
+        <div
+          class="dropdown-menu dropdown-menu-tip-se emoji-dropup-menu bg-white"
+        >
+          <emoji-picker class="light"></emoji-picker>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary border-r">
+      Save
+    </button>
+  </div>
 </form>
+<link rel="stylesheet" href="{% static 'tribute/tribute.css' %}" />
+<script src="{% static 'tribute/tribute.js' %}"></script>
+<script src="{% static 'highlight-textarea/jquery.highlight-within-textarea.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    
+    $("#id_content").keyup(function() {
+      if(this.value.length > 0 && this.value != "Default value") {
+        $(postSubmitButton).attr("disabled", false);
+        $(postSubmitButton).prop('disabled', false);
+      } else {
+        $(postSubmitButton).attr("disabled", true);
+        $(postSubmitButton).prop('disabled', true);
+      }
+    });
+
+    if ($(".darkmode--activated").length) {
+      $("emoji-picker").removeClass("light").addClass("dark");
+    }
+
+    document
+      .querySelector("emoji-picker")
+      .addEventListener("emoji-click", (e) => {
+        let emoji = e.detail["unicode"];
+        $("#id_content").val($("#id_content").val() + "" + emoji);
+      });
+
+    var tribute = new Tribute({
+      values: function (text, cb) {
+        getUsernames(text, (users) => cb(users));
+      },
+      lookup: "username",
+      fillAttr: "username",
+      selectClass: "tributehighlight",
+      noMatchTemplate: function (item) {
+        return '<span style:"visibility: hidden;"></span>';
+      },
+      menuItemTemplate: function (item) {
+        return `<div class="p-1">
+							<div class="d-flex align-items-center">
+								<div class="mx-1 mr-2">
+									<img class="rounded-circle" height="30px" width="30px" src="${item.original.image}"/>
+								</div>
+								<div class="name mx-1">
+									<div class="user-username-font d-flex align-items-center">
+										${item.original.username}
+									</div>							
+								</div>
+							</div>
+						</div>`;
+      },
+      selectTemplate: function (item) {
+        return "@" + item.original.username;
+      },
+    });
+
+    var tributeHashTag = new Tribute({
+      trigger: "#",
+      values: function (text, cb) {
+        getHashtags(text, (tags) => cb(tags));
+      },
+      lookup: "name",
+      fillAttr: "name",
+      selectClass: "tributehighlight",
+      noMatchTemplate: function (item) {
+        return '<span style:"visibility: hidden;"></span>';
+      },
+      menuItemTemplate: function (item) {
+        return (
+          '<div class="p-2"><div class="d-flex"><div class="name mx-1"><div class="h6">#' +
+          item.original.name +
+          "</div></div></div></div>"
+        );
+      },
+      selectTemplate: function (item) {
+        return "#" + item.original.name;
+      },
+    });
+    tributeHashTag.attach(document.getElementById("id_content"));
+    tribute.attach(document.getElementById("id_content"));
+
+    function getUsernames(text, cb) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/get/user/mentions?q=" + text, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onload = function () {
+        var data = JSON.parse(xhr.responseText);
+        if (xhr.readyState === 4 && xhr.status == "200") {
+          cb(data);
+        } else if (xhr.status === 403) {
+          cb([]);
+        }
+      };
+      xhr.send(null);
+    }
+
+    function getHashtags(text, cb) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/taggit/?query=" + text, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onload = function () {
+        var data = JSON.parse(xhr.responseText).tags;
+        console.log(data);
+        if (xhr.readyState === 4 && xhr.status == "200") {
+          cb(data);
+        } else if (xhr.status === 403) {
+          cb([]);
+        }
+      };
+      xhr.send(null);
+    }
+
+    $("#id_content").highlightWithinTextarea({
+      highlight: /(?:(?<mention>@)|(?<hash>#))([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/gi,
+    });
+  });
+</script>
+<style>
+  #id_content {
+    outline: none !important;
+    border: 1px solid rgba(255, 255, 255, 0) !important;
+  }
+  .post-action-buttons .btn-circle {
+	  padding-top: 4px;
+  }
+  #div_id_tags {
+    display: none;
+  }
+  #id_title {
+    padding-left: 0px;
+    background-color: transparent !important;
+  }
+  .hwt-container {
+    width: 100% !important;
+  }
+  #preview-selected > img {
+    margin-top: 10px !important;
+  }
+  .selectize-input.items .item {
+    margin-top: -3px !important;
+  }
+  .tribute-container {
+    margin-top: 3px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid rgba(158, 158, 158, 0.459);
+  }
+  .tribute-container ul li {
+    background-color: white;
+  }
+  .hwt-backdrop mark {
+    position: relative;
+    z-index: 1000;
+  }
+  #div_id_content textarea {
+    position: relative;
+    z-index: 1;
+  }
+  .dz-image-preview {
+	border: none !important;
+	position: relative;
+  }
+  .dz-image-preview img {
+	  border-radius: 8px;
+  }
+  .dz-image-preview .dz-remove {
+	content: "&times";
+	display:block;
+	position:absolute;
+	text-decoration: none;
+	top:3px;
+	right:3px;
+	font-size: 21px;
+	background: rgb(238, 238, 238);
+	color: rgb(63, 63, 63);
+	border-radius: 50%;
+	padding-left: 8px;
+	padding-right:8px;
+	overflow:hidden;
+  }
+  .dz-image-preview .dz-remove:hover{
+	  opacity: 0.65;
+  }
+  .hwt-highlights mark {
+    color: #487be0 !important;
+    background-color: white;
+  }
+  .darkmode--activated .hwt-highlights mark {
+    background-color: #1b1b1b !important;
+  }
+.post-action-buttons button {
+  padding: 7px 7px; 
+  border-radius: 25px; 
+  font-size: 10px; 
+  text-align: center; 
+}
+.post-action-buttons button:hover {
+  background-color: #487be011;
+}
+</style>

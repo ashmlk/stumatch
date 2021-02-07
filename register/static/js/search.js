@@ -84,7 +84,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click','._rmvsrtus', function (e){
-      var csrftoken = getCookie('csrftoken');
+      //var csrftoken = getCookie('csrftoken');
       e.preventDefault();
       e.stopImmediatePropagation();
       var btn = $(this)

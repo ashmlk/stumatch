@@ -17,7 +17,7 @@ from django.contrib.postgres.search import (
     SearchVector,
     TrigramSimilarity,
 )
-from register.mentions import send_mention_notifications, delete_mention_notifications
+from register.mentions import send_mention_notifications, delete_mention_notifications, update_mention_notifications
 from home.algo import get_uni_info
 from django.db.models import Q, F, Count, Avg, FloatField
 from itertools import chain, groupby
@@ -87,6 +87,11 @@ def async_send_mention_notifications(self, sender_id, post_id):
 def async_delete_mention_notifications(self, sender_id, post_id, content):
     delete_mention_notifications(sender_id=sender_id, post_id=post_id, content=content)
 
+@shared_task(bind=True)
+def async_update_mention_notifications(self, post_id, old_content):
+    update_mention_notifications(post_id=post_id, old_content=old_content)    
+
+
 
 @shared_task(bind=True)
 def universities_list_page_items(self):
@@ -108,7 +113,6 @@ def universities_list_page_items(self):
     except Exception as e:
         return e
     return True
-
 
 
 @shared_task(bind=True)
@@ -157,15 +161,6 @@ def add_course_to_prof(self, prof_id, course_obj_id):
         return e
     return True
 
-@shared_task(bind=True)
-def adjust_course_average(self, course_id):
-    try:
-        course = Course.objects.get(id=course_id)
-        a = adjust_course_avg_hash(course)
-        return a
-    except Exception as e:
-        return e
-    return True
 
 @shared_task(bind=True)
 def user_get_or_set_top_school_courses(self, user_id):
@@ -214,12 +209,4 @@ def set_course_objects_top_courses(self, university):
         return e
     return True
         
-@shared_task(bind=True)
-def update_course_reviews(self, course_id, order=None):
-    try:
-        course = Course.objects.get(id=course_id)
-        update_course_reviews_cache(course, order)
-    except Exception as e:
-        return "Error while updating course reviews cache - " + str(e)
-    return True
     

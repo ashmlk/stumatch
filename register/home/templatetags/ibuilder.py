@@ -91,5 +91,6 @@ def get_dict_item(dictionary, key):
 @register.filter
 def mention_urlize(value):
 
-    new_string = re.sub(r"\B@(?<!@@)(\w{1,31})", r'<a href="/u/\1">\g<0></a>', value)
+    new_string = re.sub(r"(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)", r'<a class="card-link" href="/u/\1">\g<0></a>', value)
+    new_string = re.sub(r"(?:#)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)", r'<a class="card-link" href="/posts/tag/\1">\g<0></a>', value)
     return new_string
