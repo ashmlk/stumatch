@@ -932,10 +932,10 @@ def comment_delete(request, hid):
 
 
 @login_required
-def post_like_list(request, guid_url):
+def post_liked_by(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
-    post_likes_list = post.likes.all()
+    post_likes_list = post.likes.all().order_by('username')
     page = request.GET.get("page", 1)
     paginator = Paginator(post_likes_list, 10)
     try:

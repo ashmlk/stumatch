@@ -122,11 +122,14 @@
                 </button>
               </div>
             </div>
+            <div class="post-show-liked-by" data-url="{% url 'home:post-liked-by' post.guid_url %}">
+              Show likes
+            </div>
             <div class="post-counts px-2">
               <div class="d-flex mb-1">
                 <div class="like-count-ctr">
                   {% if post.likes.count != 0 %}
-                  <span class="like-count small text-muted-jc ml-1">
+                  <span class="like-count small text-muted-jc ml-1 underline-text post-show-liked-by " data-url="{% url 'home:post-liked-by' post.guid_url %}">
                     {{ post.likes.count|num_format }} Likes
                   </span> 
                   {% endif %}

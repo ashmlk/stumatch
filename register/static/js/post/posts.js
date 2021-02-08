@@ -275,7 +275,6 @@ $(document).ready(function () {
 
   $(document).on("click", ".post-comment-like-btn", function (e) {
     let commentLikeBtn = $(this);
-    e.stopImmediatePropagation();
     e.preventDefault();
     $.ajax({
         type:"POST",
@@ -298,19 +297,19 @@ $(document).ready(function () {
     });
   });
 
-  $(document).on("click", ".post-comment-dropdown-options-btn", function (e) {
-    let commentLikeBtn = $(this);
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    $.ajax({
+  $(document).on("click", ".dropdown .post-comment-dropdown-options-btn", function (e) {
+    console.log('clicked')
+    let commentOptionBtn = $(this);
+    if(!$(commentOptionBtn).hasClass('options-shown')){
+      $.ajax({
         type:"GET",
         dataType: 'json',
         url: $(this).attr("data-url"),     
         success: function (data) {
-          let dropdownMenu = $(commentLikeBtn).siblings('.dropdown-menu');
+          let dropdownMenu = $(commentOptionBtn).siblings('.dropdown-menu');
           let actionBtns = '';
           if(data.viewer_can_delete){
-              actionBtns = `<button class="small dropdown-item post-comment-delete-btn"
+              actionBtns = `<button class="small dropdown-item post-comment-delete-btn no-outline"
               data-url="${data.comment_delete_url}"><svg class="bi mr-1 bi-trash" width="1em"
                 height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -320,7 +319,7 @@ $(document).ready(function () {
               </svg>Delete</button>`;
             }
           if(data.viewer_can_report){
-            actionBtns += `<button class="small dropdown-item show-report-form"
+            actionBtns += `<button class="small dropdown-item show-report-form  no-outline"
             data-url="${data.report_by_user_url}?t=cmnt&hid=${data.comment_hashed_id}"><svg
               width="1em" height="1em" viewBox="0 0 16 16" class="bi mr-1 bi-flag" fill="currentColor"
               xmlns="http://www.w3.org/2000/svg">
@@ -329,12 +328,18 @@ $(document).ready(function () {
               d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z" />
             </svg>Report</button>`
           }
-          dropdownMenu.prepend(actionBtns)
+          $(dropdownMenu).prepend(actionBtns)
         },
         error: function(rs, e){
             console.log(rs.responeText);
         },
-    });
+      });
+      $(commentOptionBtn).addClass('options-shown');
+    } else {
+      console.log('return true')
+      return true;
+    }
+    
   });
 
   let commentCurrentlyOnAction = null;
@@ -440,7 +445,8 @@ $(document).ready(function () {
     let tempDataText = $(this).find('.replies-count-text').text();
     $(this).find('.replies-count-text').text($(this).attr('data-reply-count'));
     $(this).attr('data-reply-count', tempDataText);
-    $(repliesContainer).find('div:not(:first-child)').toggle();
+    $(repliesContainer).find('.comment-object').toggle();
+    $(repliesContainer).find('.view-replies-btn-ctr.more').toggle();
   })
 
 
@@ -468,7 +474,23 @@ $(document).ready(function () {
     } else {
       postComment(commentBox=undefined, form=$(this));
     }
-  })
+  });
+
+  $(document).on("click", ".post-show-liked-by", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $.ajax({
+      url: $(this).attr("data-url"),
+      type: "GET",
+      dataType: "json",
+      beforeSend: function () {
+        $("#modal-post-list").modal("show");
+      },
+      success: function (data) {
+        $("#modal-post-list .modal-content").html(data.html);
+      },
+    });
+  });
 
   function scrollToCommentBox() {
     $('html,body').animate({
@@ -548,7 +570,7 @@ $(document).ready(function () {
                   <div class="comment-actions">
                     <div class="d-flex align-items-center">
                       <div class="comment-time font-auto-xl ml-1 d-flex align-items-bottom">
-                        <span class="btn p-0 no-outline border-0">
+                        <span class="btn p-0 no-outline border-0 no-click">
                           <span class="font-auto-xl text-muted-jc">
                             ${comment.timestamp}
                           </span>                
@@ -718,18 +740,7 @@ $(document).on("click", ".p_ico", function (event) {
 
 
 $(document).ready(function () {
-  $(".post-ctr").on("click", ".show-likes", function (e) {
-    e.preventDefault();
-    $.ajax({
-      url: $(this).data("url"),
-      type: "get",
-      dataType: "json",
-      success: function (data) {
-        $("#modal-post-list .modal-content").html(data.html);
-        $("#modal-post-list").modal("show");
-      },
-    });
-  });
+  
   $(".post-ctr").on("click", ".show-comments", function (e) {
     e.preventDefault();
     $.ajax({

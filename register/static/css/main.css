@@ -1019,37 +1019,22 @@ input[type="email"]{
 }
 
 .post-ctr .comment-object .comment-options-ctr {
-  visibility: hidden;
   display: inline-block !important;
 }
-.comment-items.hover > div:not(.comment-user-body) {
-  visibility: visible !important;
+
+.post-ctr .comment-object .comment-options-ctr .post-comment-dropdown-options-btn {
+  visibility: hidden;
 }
 
-.comment-items{
-  margin-bottom: -25px;
-}
-.comment-items .comment-user-body{
-  margin-bottom: 25px;
+.no-click {
+  cursor: default;
 }
 
-.comment-content {
-  position: relative;
-}
-
-.comment-items {
-  position: relative;
-  z-index: 1;
-  background: none !important;
-}
-
-.comment-actions {
-  position: relative;
-  z-index: 1000 !important;
-  display: inline-block;
+.no-click:hover{
+  cursor: default;
 }
 
 
-.comment-items:hover > div:not(.comment-user-body) {
+.comment-items:hover > div:not(.comment-user-body) .post-comment-dropdown-options-btn  {
   visibility: visible !important;
 }

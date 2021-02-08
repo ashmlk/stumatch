@@ -24,7 +24,7 @@ urlpatterns = [
     ),
     path("post/<str:guid_url>/like/", views.post_like, name="post-like"),
     path("post/<str:guid_url>/update/", views.post_update, name="post-update"),
-    path("post/<str:guid_url>/likes/", views.post_like_list, name="post-like-list"),
+    path("post/<str:guid_url>/liked_by/", views.post_liked_by, name="post-liked-by"),
     path(
         "post/<str:guid_url>/list/comments",
         views.post_comments,
