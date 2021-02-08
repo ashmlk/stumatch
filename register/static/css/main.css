@@ -1022,7 +1022,34 @@ input[type="email"]{
   visibility: hidden;
   display: inline-block !important;
 }
+.comment-items.hover > div:not(.comment-user-body) {
+  visibility: visible !important;
+}
 
-.post-ctr .comment-object:hover .comment-options-ctr{
-  visibility: visible;
+.comment-items{
+  margin-bottom: -25px;
+}
+.comment-items .comment-user-body{
+  margin-bottom: 25px;
+}
+
+.comment-content {
+  position: relative;
+}
+
+.comment-items {
+  position: relative;
+  z-index: 1;
+  background: none !important;
+}
+
+.comment-actions {
+  position: relative;
+  z-index: 1000 !important;
+  display: inline-block;
+}
+
+
+.comment-items:hover > div:not(.comment-user-body) {
+  visibility: visible !important;
 }

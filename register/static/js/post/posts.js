@@ -262,6 +262,8 @@ $(document).ready(function () {
     getComments(url=$('#post-comments-single-view').attr('data-url'))
   }
 
+
+
   $(document).on('click', '.view-more-comments-btn', function (){
     getComments(url=$(this).attr('data-url'));
     $(this).closest('div').remove();
@@ -493,7 +495,9 @@ $(document).ready(function () {
   function swapCommentViewerButton(comment, replyCount){
     let commentReplyViewerBtn = $(comment).siblings('.view-replies-btn-ctr:not(.more)');
     if(commentReplyViewerBtn.length){
-      if($(commentReplyViewerBtn).find('.replies-count-text').text() == 'Hide replies'){
+      if(replyCount == 0){ // if there aren't any replies - remove show/more replies button
+        $(comment).siblings('.view-replies-btn-ctr').remove();
+      } else if($(commentReplyViewerBtn).find('.replies-count-text').text() == 'Hide replies'){
         console.log(`View replies (${replyCount})`)
         $(commentReplyViewerBtn).find('button').attr('data-reply-count',`View replies (${replyCount})`);
       } else {
@@ -502,21 +506,21 @@ $(document).ready(function () {
     } 
   }
 
-  function createCommentObj(comment){
+  function createCommentObj(comment, isReply){
     let likedClass = viewRepliesButton = null;  
     comment.viewer_has_liked ? likedClass = "text-red-jc" : likedClass = "text-muted-jc";
     comment.has_replies ? viewRepliesButton = createViewRepliesButton(comment.hashed_id, comment.replies_count) : viewRepliesButton = '';
     let commentObj = `
-          <div class="comment-object my-1">
+          <div class="comment-object my-1 is-reply-${isReply}">
             <div class="comment-ctr d-flex">
               <div class="user-image mr-1">
                 <div class="commentor-image">
                   <img class="rounded-circle" src="${comment.name_image_url}" width="30px" height="30px">
                 </div>
               </div>
-              <div class="w-100">
-                <div class="d-flex justify-content-between">
-                  <div class="d-flex">  
+              <div class="w-100 comment-content">
+                <div class="d-flex justify-content-between comment-items">
+                  <div class="d-flex comment-user-body">  
                     <span class="commenter-username mx-1">
                       <a href="/u/${comment.name_username}/" class="text-dark">
                         <span class="commenter-username-font">
@@ -617,7 +621,7 @@ $(document).ready(function () {
         let comments = data['comments']
         for(i in comments){
           let comment = comments[i]
-          let commentObj = createCommentObj(comment)
+          let commentObj = createCommentObj(comment,isReply)
           $(parentContainer).append(commentObj)
         }
         if(!isReply){
