@@ -38,9 +38,10 @@ $(document).ready(function () {
 			return '#' + item.original.name ;
 		},
 	});
+	
 	tributeHashTag.attach(document.getElementById("id_content"));
 	tribute.attach(document.getElementById("id_content"));
-	
+	tribute.attach(document.getElementById("id_content"));
 
 	function getUsernames(text, cb){
 		var xhr = new XMLHttpRequest();

@@ -22,6 +22,7 @@ urlpatterns = [
     path(
         "post/comment/<str:hid>/like/", views.comment_like, name="comment-like"
     ),
+    path("post/<str:guid_url>/bookmark/", views.post_bookmark, name="post-bookmark"),
     path("post/<str:guid_url>/like/", views.post_like, name="post-like"),
     path("post/<str:guid_url>/update/", views.post_update, name="post-update"),
     path("post/<str:guid_url>/liked_by/", views.post_liked_by, name="post-liked-by"),
@@ -29,11 +30,6 @@ urlpatterns = [
         "post/<str:guid_url>/list/comments",
         views.post_comments,
         name="post-comments",
-    ),
-    path(
-        "post/<str:guid_url>/comments/",
-        views.post_comment_list,
-        name="post-comment-list",
     ),
     path("post/<str:guid_url>/delete/", views.post_delete, name="post-delete"),
     path(

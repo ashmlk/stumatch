@@ -1001,8 +1001,8 @@ input[type="email"]{
 }
 
 .like-count-ctr .like-count::after{
-  content: "·";
-  margin: 0px 2px 0px 2px;
+  content: " ";
+  margin: 0px 3px 0px 3px;
 }
 
 .underline-text:hover{
@@ -1017,7 +1017,9 @@ input[type="email"]{
 .fade-text:hover {
   opacity: 0.7;
 }
-
+.post-ctr {
+  max-width: 620px !important;
+}
 .post-ctr .comment-object .comment-options-ctr {
   display: inline-block !important;
 }
@@ -1037,4 +1039,46 @@ input[type="email"]{
 
 .comment-items:hover > div:not(.comment-user-body) .post-comment-dropdown-options-btn  {
   visibility: visible !important;
+}
+
+.tribute-container {
+  margin-top: 3px;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid rgba(158, 158, 158, 0.459);
+}
+.tribute-container ul li {
+  background-color: white;
+}
+.hwt-backdrop mark {
+  position: relative;
+  z-index: 1000;
+}
+
+.hwt-content :not(mark){
+  color: #fff;
+}
+.hwt-highlights mark {
+  color: #487be0 !important;
+  background-color: white;
+}
+
+.hwt-container {
+  width: 100% !important;
+}
+
+#div_id_content textarea {
+  position: relative;
+  z-index: 1;
+}
+
+.comment-textarea .hwt-container {
+font-size: 14px !important;
+}
+
+.post-comment-textarea {
+  position: relative;
+  z-index: 1;
+  word-break: break-all;
+  
 }

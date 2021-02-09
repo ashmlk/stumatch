@@ -1,4 +1,4 @@
-<form class="accept-reject-friend-request"  method="POST">
+<form class="accept-reject-friend-request" method="POST">
     {% csrf_token %}
     <button  data-url="{% url 'main:accept-reject-friend-request' hid=user.get_hashid s=0 %}" class="btn no-border btn-sm btn-primary accept-reject-btn" type="submit">
         Accept

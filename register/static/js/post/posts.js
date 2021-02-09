@@ -36,6 +36,125 @@ $(document).ready(function () {
     },
   });
 
+
+  $("#id_content").keyup(function() {
+    if(this.value.length > 0 && this.value != "Default value") {
+      $('#sub-etal').attr("disabled", false);
+      $('#sub-etal').prop('disabled', false);
+    } else {
+      $('#sub-etal').attr("disabled", true);
+      $('#sub-etal').prop('disabled', true);
+    }
+  });
+
+  if ($(".darkmode--activated").length) {
+    $("emoji-picker").removeClass("light").addClass("dark");
+  }
+
+  $(".emoji-dropup-menu").on("click", function (e) {
+    e.stopPropagation();
+  });
+
+  $(document).on("click.bs.dropdown", ".emoji-dropdown", (e) => {
+    e.stopPropagation();
+  });
+
+  document
+    .querySelector("emoji-picker")
+    .addEventListener("emoji-click", (e) => {
+      let emoji = e.detail["unicode"];
+      $("#id_content").val($("#id_content").val() + "" + emoji);
+    });
+
+  var tribute = new Tribute({
+    values: function (text, cb) {
+      getUsernames(text, (users) => cb(users));
+    },
+    lookup: "username",
+    fillAttr: "username",
+    selectClass: "tributehighlight",
+    noMatchTemplate: function (item) {
+      return '<span style:"visibility: hidden;"></span>';
+    },
+    menuItemTemplate: function (item) {
+      return `<div class="p-1">
+            <div class="d-flex align-items-center">
+              <div class="mx-1 mr-2">
+                <img class="rounded-circle" height="30px" width="30px" src="${item.original.image}"/>
+              </div>
+              <div class="name mx-1">
+                <div class="user-username-font d-flex align-items-center">
+                  ${item.original.username}
+                </div>							
+              </div>
+            </div>
+          </div>`;
+    },
+    selectTemplate: function (item) {
+      return "@" + item.original.username;
+    },
+  });
+
+  var tributeHashTag = new Tribute({
+    trigger: "#",
+    values: function (text, cb) {
+      getHashtags(text, (tags) => cb(tags));
+    },
+    lookup: "name",
+    fillAttr: "name",
+    selectClass: "tributehighlight",
+    noMatchTemplate: function (item) {
+      return '<span style:"visibility: hidden;"></span>';
+    },
+    menuItemTemplate: function (item) {
+      return (
+        '<div class="p-2"><div class="d-flex"><div class="name mx-1"><div class="h6">#' +
+        item.original.name +
+        "</div></div></div></div>"
+      );
+    },
+    selectTemplate: function (item) {
+      return "#" + item.original.name;
+    },
+  });
+
+  function getUsernames(text, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/get/user/mentions?q=" + text, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function () {
+      var data = JSON.parse(xhr.responseText);
+      if (xhr.readyState === 4 && xhr.status == "200") {
+        cb(data);
+      } else if (xhr.status === 403) {
+        cb([]);
+      }
+    };
+    xhr.send(null);
+  }
+
+  function getHashtags(text, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/taggit/?query=" + text, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function () {
+      var data = JSON.parse(xhr.responseText).tags;
+      console.log(data);
+      if (xhr.readyState === 4 && xhr.status == "200") {
+        cb(data);
+      } else if (xhr.status === 403) {
+        cb([]);
+      }
+    };
+    xhr.send(null);
+  }
+
+  $(".post-comment-textarea").highlightWithinTextarea({
+    highlight: /(?:(?<mention>@))([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/gi,
+  });
+
+  tribute.attach(document.getElementsByClassName('post-comment-textarea'));
+
   $(document).on("click", ".create-post-btn", function (e) {
     e.stopImmediatePropagation();
     var btn = $(this);
@@ -48,6 +167,17 @@ $(document).ready(function () {
       },
       success: function (data) {
         $("#modal-post .modal-content").html(data.html_form);
+        let postSubmitButton = $('#sub-etal');
+        let lenContent = $("#id_content").value;
+        if(lenContent == undefined){
+          $(postSubmitButton).attr("disabled", true);
+          $(postSubmitButton).prop('disabled', true);
+        }
+        tributeHashTag.attach(document.getElementById("id_content"));
+        tribute.attach(document.getElementById("id_content"));
+        $("#id_content").highlightWithinTextarea({
+          highlight: /(?:(?<mention>@)|(?<hash>#))([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/gi,
+        });
       },
     });
     return false;
@@ -132,12 +262,12 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         if (data.has_bookmarked) {
-          bookmarkBtn = `<button class="small dropdown-item post-bookmark-btn" type="submit" data-url="" >
+          bookmarkBtn = `<button class="small dropdown-item post-bookmark-btn no-outline" type="button" data-url="/post/${data.guid_url}/bookmark/" >
 					<svg class="bi mr-1 bi-bookmark-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 					  <path fill-rule="evenodd" d="M3 3a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12l-5-3-5 3V3z"/>
 					</svg>Bookmark</button>`;
         } else if (data.has_bookmarked === false) {
-          bookmarkBtn = `<button class="small dropdown-item post-bookmark-btn" type="submit" data-url="{" >
+          bookmarkBtn = `<button class="small dropdown-item post-bookmark-btn no-outline" type="button" data-url="/post/${data.guid_url}/bookmark/" >
 					<svg class="bi mr-1 bi-bookmark" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 					<path fill-rule="evenodd" d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z"/>
 				  </svg>Bookmark</button>`;
@@ -257,11 +387,35 @@ $(document).ready(function () {
     });
   });
 
+  $(document).on('click', '.post-bookmark-btn', function (e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    let bookmarkBtn = $(this);
+    $.ajax({
+      url: $(this).attr("data-url"),
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: getCookie("csrftoken")
+      },
+      dataType: "json",
+      success: function (data) {
+        if(data.is_bookmarked){
+          $(bookmarkBtn).html(`<svg class="bi mr-1 bi-bookmark-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M3 3a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12l-5-3-5 3V3z"/>
+        </svg>Bookmark`)
+        } else {
+          $(bookmarkBtn).html(`<svg class="bi mr-1 bi-bookmark" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z"/>
+				  </svg>Bookmark`)
+        }
+      },
+    });
+  })
+
   let commentGetUrl = null;
   if($('#post-comments-single-view').length){
     getComments(url=$('#post-comments-single-view').attr('data-url'))
   }
-
 
 
   $(document).on('click', '.view-more-comments-btn', function (){
@@ -269,8 +423,31 @@ $(document).ready(function () {
     $(this).closest('div').remove();
   })
 
+
+  $(".post-comment-textarea").keyup(function() {
+    let commentSubmitButton = $(this).closest('.comment-textarea').siblings('.post-comment-submit-ctr').find('button')
+    if(this.value.length > 0 && (this.value != "Add a comment..." || this.value != "Write your reply...")) {
+      $(commentSubmitButton).attr("disabled", false);
+    } else {
+      $(commentSubmitButton).attr("disabled", true);
+    }
+  });
+
+
+  $(document).on("change", '.post-comment-textarea', function (){
+    resize(this);
+  })
+
+  $(document).on("cut paste drop keydown", '.post-comment-textarea', function (){
+    delayedResize(this);
+  })
+
   $(document).on('click', '.scroll-to-comment-box', function (){
-    scrollToCommentBox()
+    try {
+      scrollToCommentBox()
+    } catch (error) {
+      return true;
+    }
   })
 
   $(document).on("click", ".post-comment-like-btn", function (e) {
@@ -298,7 +475,6 @@ $(document).ready(function () {
   });
 
   $(document).on("click", ".dropdown .post-comment-dropdown-options-btn", function (e) {
-    console.log('clicked')
     let commentOptionBtn = $(this);
     if(!$(commentOptionBtn).hasClass('options-shown')){
       $.ajax({
@@ -342,6 +518,57 @@ $(document).ready(function () {
     
   });
 
+  document.addEventListener('scroll', function (event) {
+    try {
+      if (event.target.classList.contains('scroll-infinite-link')) { // or any other filtering condition        
+          let el = event.target;
+          let toTrigger = $('.'+$(el).attr('data-trigger'))
+          if($(el).scrollTop() >= $(el)[0].scrollHeight - $(el)[0].offsetHeight - 60) {
+            $(toTrigger).click();
+        }
+      }
+    } catch (error) {
+        return true;
+    }
+  }, true);
+
+  $(".post-comments-display").on('DOMNodeRemoved', function(e) {
+    if(!$(this).siblings('.comment-box').hasClass('post-details-single-view')){
+      if($(this).find('.comment-object').length < 2){
+        $(this).siblings('.comment-box').removeClass('border-bottom');
+      }
+    } else {
+      if($(this).find('.comment-object').length < 2){
+        if(e.target.classList.contains('comment-object')){
+          let emptyMessageContainer = `<div class="show-empty-message-ctr">
+          <div class="d-flex justify-content-center pt-2 my-2">
+              <div>
+                  <h6>No comments to show</h6>
+              </div>
+            </div>
+          </div>`
+          $(this).append(emptyMessageContainer);
+        }  
+      }
+    }
+  });
+
+  $(".post-comments-display").on('DOMNodeInserted', function(e) {
+    try {
+      if(e.target.classList.contains('comment-object')){
+        if($(this).siblings('.comment-box').hasClass('post-details-single-view')){
+          if($(this).find('.comment-object').length + 1 > 0){
+            $(this).find('.show-empty-message-ctr').remove();
+          }
+        }
+      } else if(e.target.classList.contains('show-empty-message-ctr')){
+        $(this).find('.comment-list-actions').remove();
+      }
+    } catch (error) {
+        return true;
+    }
+  });
+
   let commentCurrentlyOnAction = null;
 
   $(document).on("click", ".post-comment-delete-btn", function (e) {
@@ -378,12 +605,21 @@ $(document).ready(function () {
           $("#modal-comment-delete").modal("hide");
           $("body").removeClass("modal-open");
           $(".modal-backdrop").remove();
-          let newCount = null;
-          $('#post-detail').length != undefined ? newCount = `${data.post_comment_count} Comments` : newCount = `View ${data.post_comment_count} comments`;
-          $(commentCurrentlyOnAction).siblings('.post-details-view').find('.post-counts').find('.comment-count').html(newCount)
-          swapCommentViewerButton(comment=commentCurrentlyOnAction, replyCount=data['comment_reply_count'])
-          $(commentCurrentlyOnAction).remove();
-          
+          if(data.post_comment_count < 1){
+            (commentCurrentlyOnAction).closest('.post-ctr').find('.post-counts').find('.comment-count-ctr').html('');
+            $(commentCurrentlyOnAction).remove();
+          } else {
+            let newCount = null;      
+            $('#post-detail').length != 0 ? newCount = `${data.post_comment_count} Comments` : newCount = `View ${data.post_comment_count} comments`;
+            let commentCounts = $(commentCurrentlyOnAction).closest('.post-ctr').find('.post-counts');
+            if($(commentCounts).find('.comment-count').length > 0){
+              $(commentCounts).find('.comment-count').html(newCount);
+            } else {
+              $(commentCounts).find('.comment-count-ctr').html(`<a class="comment-count small ml-1 text-muted-jc" href="/post/${data.post_guid_url}/">${newCount}</a>`)
+            }
+            swapCommentViewerButton(comment=commentCurrentlyOnAction, replyCount=data['comment_reply_count']);
+            $(commentCurrentlyOnAction).remove();
+          }
         }
       },
     });
@@ -492,6 +728,43 @@ $(document).ready(function () {
     });
   });
 
+  $(document).on("click", ".post-data-infinite-link", function (e) {
+    var btn = $(this);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    $.ajax({
+      url: $(btn).attr("data-url"),
+      type: "GET",
+      dataType: "json",
+      beforeSend: function () {
+        $(btn).closest(".modal-infinite").append(greySpinnerMed);
+      },
+      success: function (data) {
+        $(btn).closest(".modal-infinite").find('.grey-spinner-md').remove();
+        $(btn).closest(".modal-infinite").find('.list-ctr').append(data.list);
+        $(btn).closest('.scroll-infinite-link')[0].scrollTop -= 100
+        if(data['has_next']){
+          $(btn).attr("data-url",`/post/${data['guid_url']}/liked_by/?page=${data['next_page_number']}`);
+        } else {
+          $(btn).remove();
+        }
+        
+      },
+      error: function (rs, e) {
+        console.log(rs.responeText);
+      },
+    });
+  });
+
+  function resize (textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight+'px';
+  }
+
+  function delayedResize (textarea) {
+    window.setTimeout(resize(textarea), 0);
+  }
+
   function scrollToCommentBox() {
     $('html,body').animate({
       scrollTop: $("#comment-box-jc").offset().top - 150},
@@ -520,7 +793,6 @@ $(document).ready(function () {
       if(replyCount == 0){ // if there aren't any replies - remove show/more replies button
         $(comment).siblings('.view-replies-btn-ctr').remove();
       } else if($(commentReplyViewerBtn).find('.replies-count-text').text() == 'Hide replies'){
-        console.log(`View replies (${replyCount})`)
         $(commentReplyViewerBtn).find('button').attr('data-reply-count',`View replies (${replyCount})`);
       } else {
         $(commentReplyViewerBtn).find('.replies-count-text').text(`View replies (${replyCount})`)
@@ -627,7 +899,7 @@ $(document).ready(function () {
 
   function getComments(url, container) {
     let parentContainer = isReply = null;
-    container === undefined ? commentGetUrl = $('#post-comments-single-view').attr('data-url') : commentGetUrl = url;
+    url === undefined ? commentGetUrl = $('#post-comments-single-view').attr('data-url') : commentGetUrl = url;
     container === undefined ? parentContainer = $('#post-comments-single-view') : parentContainer = $(container);
     parentContainer.hasClass('comment-replies') ? isReply = true : isReply = false;
     $.ajax({
@@ -641,29 +913,41 @@ $(document).ready(function () {
         $(parentContainer).find('.grey-spinner-md').remove();    
         let nextPageButton = null;
         let comments = data['comments']
-        for(i in comments){
-          let comment = comments[i]
-          let commentObj = createCommentObj(comment,isReply)
-          $(parentContainer).append(commentObj)
-        }
-        if(!isReply){
-          if(data.has_next) {
-            let nextPageUrl = url.split('?')[0] + `?page=${data['page_number']+1}`
-            nextPageButton = `<div class="my-1 comment-list-actions"><button data-url="${nextPageUrl}" class="btn no-outline p-0 btn-sm small text-dark font-weight-bold-jc view-more-comments-btn">
-            <span class="underline-text" style="font-size:12px !important;">Load more comments</span></button>
-            <span>.</span><button class="btn btn-sm no-outline p-0 mx-1 small text-dark font-weight-bold-jc scroll-to-comment-box" >
-            <span class="underline-text" style="font-size:12px !important;">Write a comment</span></button></div>` 
+        if(!comments.length < 1){
+          for(i in comments){
+            let comment = comments[i]
+            let commentObj = createCommentObj(comment,isReply)
+            $(parentContainer).append(commentObj)
+          }
+          if(!isReply){
+            if(data.has_next) {
+              let nextPageUrl = url.split('?')[0] + `?page=${data['page_number']+1}`
+              nextPageButton = `<div class="my-1 comment-list-actions"><button data-url="${nextPageUrl}" class="btn no-outline p-0 btn-sm small text-dark font-weight-bold-jc view-more-comments-btn">
+              <span class="underline-text" style="font-size:12px !important;">Load more comments</span></button>
+              <span>.</span><button class="btn btn-sm no-outline p-0 mx-1 small text-dark font-weight-bold-jc scroll-to-comment-box" >
+              <span class="underline-text" style="font-size:12px !important;">Write a comment</span></button></div>` 
+            } else {
+              nextPageButton = `<div class="comment-list-actions my-1"><button class="btn btn-sm no-outline p-0 mx-1 small text-dark font-weight-bold-jc scroll-to-comment-box" >
+              <span class="underline-text" style="font-size:12px !important;">Write a comment</span></button></div>` 
+            }
           } else {
-            nextPageButton = `<div class="comment-list-actions my-1"><button class="btn btn-sm no-outline p-0 mx-1 small text-dark font-weight-bold-jc scroll-to-comment-box" >
-            <span class="underline-text" style="font-size:12px !important;">Write a comment</span></button></div>` 
+            if(data.has_next){
+              let nextPageNumber = `?page=${data['page_number']+1}`
+              nextPageButton = createViewRepliesButton(id=data['parent_hashed_id'], repliesCount=undefined,pageNumber=nextPageNumber)
+            }
           }
+          $(parentContainer).append(nextPageButton)
         } else {
-          if(data.has_next){
-            let nextPageNumber = `?page=${data['page_number']+1}`
-            nextPageButton = createViewRepliesButton(id=data['parent_hashed_id'], repliesCount=undefined,pageNumber=nextPageNumber)
-          }
+          let emptyMessageContainer = `<div class="show-empty-message-ctr">
+          <div class="d-flex justify-content-center pt-2 my-2">
+              <div>
+                  <h6>No comments to show</h6>
+              </div>
+            </div>
+          </div>`
+        $(parentContainer).append(emptyMessageContainer);
         }
-        $(parentContainer).append(nextPageButton)
+
       },
     });
   }
@@ -703,8 +987,13 @@ $(document).ready(function () {
           let firstComment = $(postCommentBox).find('.comment-object:first');
           firstComment.length ? $(commentObj).insertBefore(firstComment) : $(postCommentBox).prepend(commentObj);
           let newCount = null;
-          $('#post-detail').length != undefined ? newCount = `${data.post_comment_count} Comments` : newCount = `View ${data.post_comment_count} comments`;
-          $(postCommentBox).siblings('.post-details-view').find('.post-counts').find('.comment-count').html(newCount)
+          $('#post-detail').length != 0 ? newCount = `${data.post_comment_count} Comments` : newCount = `View ${data.post_comment_count} comments`;
+          let commentCounts = $(postCommentBox).siblings('.post-details-view').find('.post-counts');
+          if($(commentCounts).find('.comment-count').length > 0){
+            $(commentCounts).find('.comment-count').html(newCount);
+          } else {
+            $(commentCounts).find('.comment-count-ctr').html(`<a class="comment-count small ml-1 text-muted-jc" href="/post/${data.post_guid_url}/">${newCount}</a>`)
+          }
         }
 
       },
@@ -713,12 +1002,17 @@ $(document).ready(function () {
         },
     });
   }
+
   function autosize(commentTextArea) {
-            setTimeout(function(){
-                let rows = $(this).val().split("\n");
-            $(this).prop('rows', rows.length);
-            },0);
+    try {
+      setTimeout(function(){
+          let rows = $(commentTextArea).val().split("\n");
+          $(commentTextArea).prop('rows', rows.length);
+        },0);
+    } catch (error) {
+      return true;
     }
+  }
 
 });
 
@@ -809,25 +1103,6 @@ $(document).ready(function () {
       data: $(btn).closest("form").serialize(),
       success: function (data) {
         $(btn).closest(".flw-tag-ctr").html(data.html_form);
-      },
-      error: function (rs, e) {
-        console.log(rs.responeText);
-      },
-    });
-  });
-});
-$(document).ready(function () {
-  $(document).on("click", ".post-comment-infinite-link", function (e) {
-    var btn = $(this);
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    $.ajax({
-      url: $(btn).attr("data-url"),
-      type: "GET",
-      dataType: "json",
-      success: function (data) {
-        $(btn).closest(".modal-infinite").append(data.list);
-        $(btn).remove();
       },
       error: function (rs, e) {
         console.log(rs.responeText);

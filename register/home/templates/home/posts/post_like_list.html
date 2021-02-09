@@ -1,22 +1,28 @@
 {% load static %}
-<div class="modal-header">
-    <h5 class="modal-title" >Likes</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
+<div class="modal-header border-0 py-2 ">
+    <div class="text-center w-100 py-0">
+        <h5 class="modal-title text-center" >Likes</h5>
+    </div>
+    <div style="display: inline-block;">
+        <button type="button" class="close no-outline" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
 </div>
-<div class="modal-infinite modal-body" style="height: 450px;overflow-y: auto; margin-top: -12px;">
-    <div class="list-ctr">
+<div class="modal-infinite modal-body scroll-infinite-link" style="height: 450px;overflow-y: auto;" data-trigger="post-data-infinite-link">
+    <div class="list-ctr px-1">
         {% for user in post_likes %}
-        <div class="row border-bottom">
+        <div class="infinite-tem row mb-1">
             <div class="col-xs m-1">
-                <img class="img-create-post rounded-circle mr-1" style="width: 2.1rem;height: 2.1rem;" src="{{ user.image.url }}">
+                <img class="img-create-post rounded-circle mr-1" style="width: 2.5rem;height: 2.5rem;" src="{{ user.image.url }}">
             </div>
-            <div class="col-xs">
-                <a class="text-dark font-size-smaller" href=" {{ user.get_absolute_url }}" style="font-weight: 500;">{{ user.get_full_name }}</a>
-                <div style="margin-top: -9px;"> 
-                    <span class="text-muted small">@{{ user.username }}</span>
+            <div class="col-xs py-1">
+                <div style="margin-bottom: -4px;">
+                    <a class="text-dark user-username-font" href=" {{ user.get_absolute_url }}">{{ user.get_username }}</a>
                 </div>
+                <div style="margin-top: -4px;">
+                    <span class="text-muted small">{{ user.get_full_name }}</span>
+                </div>     
             </div>
         </div>
         {% empty %}
@@ -24,11 +30,8 @@
             <p class="m-0 small text-muted">No Likes</p>
         </div>
         {% endfor %}
-        {% if post_likes.has_next %}
-            <button type="button" class="btn text-primary no-border no-outline post-comment-infinite-link" data-url="/post/{{ post.guid_url }}/comments/?page={{ post_likes.next_page_number }}">More</button>
-        {% endif %}
     </div>    
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal"  style="border-radius: 20px;">Close</button>
+    {% if post_likes.has_next %}
+        <button type="button" class="btn text-muted-jcno-border no-outline post-data-infinite-link" data-url="/post/{{ post.guid_url }}/liked_by/?page={{ post_likes.next_page_number }}"></button>
+    {% endif %}
 </div>

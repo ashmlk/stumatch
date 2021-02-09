@@ -85,6 +85,8 @@ from home.tasks import (
     async_send_mention_notifications,
     async_delete_mention_notifications,
     async_update_mention_notifications,
+    async_send_mention_notifications_comments,
+    async_delete_mention_notifications_comments,
     add_user_to_course,
     remove_user_from_course,
     add_course_to_prof,
@@ -640,7 +642,6 @@ def post_comment(request, guid_url):
             parent_comment = None
             parent_comment_id = request.POST.get("parent_comment_id", None)
             is_reply = request.POST.get("isReply", "false")
-            print(is_reply)
             if parent_comment_id and is_reply == "true":
                 id = hashids.decode(parent_comment_id)[0]
                 parent_comment = get_object_or_404(Comment, id=id)
@@ -653,7 +654,9 @@ def post_comment(request, guid_url):
             like_count = c if c > 0 else ''
             data['comment'] = json.loads(json.dumps(CommentSerializer(comment).data))
             data['post_comment_count'] = post.comments.filter(reply=None).count()
+            data['post_guid_url'] = guid_url
             # send comment notification 
+            async_send_mention_notifications_comments(comment.name.id, comment.post.id, comment.id)
         else:
             data['error'] = True
             data['error_message'] = "There was an issue posting your comment, please try again"
@@ -700,13 +703,6 @@ def post_like(request, guid_url):
         return JsonResponse(data)
 
 @login_required
-def post_bookmark(request, guid_url):
-    data = dict()
-    post = get_object_or_404(Post, guid_url=guid_url)
-    user = request.user
-    return JsonResponse(data)
-
-@login_required
 def post_dropdown(request, guid_url):
     data = dict()
     post = get_object_or_404(Post, guid_url=guid_url)
@@ -719,9 +715,26 @@ def post_dropdown(request, guid_url):
         else:
             data['report_by_user_url'] = reverse("main:report-object", kwargs={"reporter_id":user.get_hashid()})
         data['post_hashid'] = post.get_hashid()
+        data['guid_url'] = guid_url
         data['has_bookmarked'] = True if BookmarkPost.objects.filter(user=user, obj_id=post.id).exists() else False
         return JsonResponse(data)
-        
+
+@login_required
+def post_bookmark(request, guid_url):
+
+    data = dict()
+    post = get_object_or_404(Post, guid_url=guid_url)
+    if request.method == "POST":
+        user = request.user
+        bookmark, created = BookmarkPost.objects.get_or_create(user=user, obj_id=post.id)
+        if not created:
+            bookmark.delete()
+            data['is_bookmarked'] = False
+        else:
+            data['is_bookmarked'] = True
+
+    return JsonResponse(data)
+
 @login_required
 def comment_options(request, hid):
     data = dict()
@@ -846,7 +859,6 @@ def comment_delete(request, hid):
     comment = get_object_or_404(Comment, id=id)
     if request.method == "POST":
         if comment.name == request.user or request.user == comment.post.author:
-
             try:
                 actor_type = ContentType.objects.get_for_model(Profile)
                 target_type = ContentType.objects.get_for_model(Post)
@@ -915,21 +927,20 @@ def comment_delete(request, hid):
                 print(
                     "There is an with removing notifications for deleting comment on post"
                 )
-
-            comment.delete()
+            async_delete_mention_notifications_comments(comment.name.id, comment.post.id, comment.body)
+            comment_parent = comment.reply
+            comment_post = comment.post
+            comment.delete() 
             data["form_is_valid"] = True
-            data['post_comment_count'] = comment.post.comments.filter(reply=None).count()
-            data['comment_reply_count'] = comment.reply.replies.count()
+            data['comment_reply_count'] = comment_parent.replies.count()  if comment_parent else None           
+            data['post_comment_count'] = comment_post.comments.filter(reply=None).count() 
+            
     else:
         context = {"comment": comment}
         data["html_form"] = render_to_string(
             "home/posts/comment_delete.html", context, request=request
         )
     return JsonResponse(data)
-
-
-""" Method for returning a list of all users who liked a post """
-
 
 @login_required
 def post_liked_by(request, guid_url):
@@ -946,7 +957,7 @@ def post_liked_by(request, guid_url):
         post_likes = paginator.page(paginator.num_pages)
 
     data["list"] = render_to_string(
-        "home/posts/user_like_list.html",
+        "home/posts/post_data_user_list.html",
         {"post_likes": post_likes, "post": post},
         request=request,
     )
@@ -955,39 +966,12 @@ def post_liked_by(request, guid_url):
         {"post_likes": post_likes, "post": post},
         request=request,
     )
-    return JsonResponse(data)
-
-
-""" Method for returning a list of all users who commented on a post """
-
-
-@login_required
-def post_comment_list(request, guid_url):
-
-    data = dict()
-    post = get_object_or_404(Post, guid_url=guid_url)
-
-    page = request.GET.get("page", 1)
-    post_comment_list = post.comments.all()
-
-    paginator = Paginator(post_comment_list, 10)
-    try:
-        post_comments = paginator.page(page)
-    except PageNotAnInteger:
-        post_comments = paginator.page(1)
-    except EmptyPage:
-        post_comments = paginator.page(paginator.num_pages)
-
-    data["list"] = render_to_string(
-        "home/posts/user_comment_list.html",
-        {"post_comments": post_comments, "post": post},
-        request=request,
-    )
-    data["html"] = render_to_string(
-        "home/posts/post_comment_list.html",
-        {"post_comments": post_comments, "post": post},
-        request=request,
-    )
+    data['guid_url'] = guid_url
+    if post_likes.has_next(): 
+        data['has_next'] = True
+        data['next_page_number'] = post_likes.next_page_number()
+    else:
+        data['has_next'] = False
     return JsonResponse(data)
 
 

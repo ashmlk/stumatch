@@ -26,6 +26,8 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'tribute/tribute.css' %}" />
+  <link rel="stylesheet" href="{% static 'highlight-textarea/jquery.highlight-within-textarea.css' %}" />
   <link rel="stylesheet" href="{% static 'EasyAutoComplete/easy-autocomplete.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/post/style.css' %}">
   <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_folder/apple-touch-icon.png' %}">
@@ -70,6 +72,11 @@
       <div class="modal-content"></div>
     </div>
   </div>
+  <div class="modal fade" id="modal-post-list">
+    <div class="modal-dialog modal-dialog-centered  modal-sm" style="overflow-y: initial !important;max-width: 400px;">
+      <div class="modal-content" style="overflow-y: auto;"></div>
+    </div>
+  </div>
   <div class="modal fade" id="modal-post-update">
     <div class="modal-dialog modal-dialog-centered ">
       <div class="modal-content"></div>
@@ -86,6 +93,8 @@
       <div class="modal-content"></div>
     </div>
   </div>
+  <script src="{% static 'highlight-textarea/jquery.highlight-within-textarea.js' %}"></script>
+  <script src="{% static 'tribute/tribute.js' %}"></script>
   <script src="{% static 'initial/initial.js' %}"></script>
   <script src="{% static 'js/index.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
@@ -119,8 +128,6 @@
     })
       
   </script>
-  
-  <!-- Dark mode styling -->
   <style>
     .emoji-dropup .dropdown-menu::after{
       float: left !important;

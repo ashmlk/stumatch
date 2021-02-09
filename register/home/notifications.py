@@ -4,17 +4,6 @@ from django.forms import modelformset_factory
 from .models import (
     Post,
     Comment,
-    Images,
-    Course,
-    Review,
-    Buzz,
-    BuzzReply,
-    Blog,
-    BlogReply,
-    CourseList,
-    CourseListObjects,
-    Professors,
-    CourseObject,
 )
 from main.models import Profile, SearchLog, BookmarkPost
 from .post_guid import uuid2slug, slug2uuid
@@ -33,7 +22,10 @@ from django.contrib.admin.options import get_content_type_for_model
 from django.contrib.contenttypes.models import ContentType
 
 
-def send_comment_notification(user, post, comment):
+def send_comment_notification(user_id, post_id, comment_id):
+    user = Profile.object.get(id=user_id)
+    post = Post.objects.get(id=post_id)
+    comment = Comment.objects.get(id=comment_id)
     if comment.name != post.author:
         if (
             post.author.get_notify
@@ -53,8 +45,11 @@ def send_comment_notification(user, post, comment):
                 action_object=comment,
             )
             
-def send_reply_notification(user, post, reply, parent_comment):
-    comment_qs = parent_comment
+def send_reply_notification(user_id, post_id, reply_id, parent_comment_id):
+    user = Profile.object.get(id=user_id)
+    post = Post.objects.get(id=post_id)
+    reply = Comment.objects.get(id=reply_id)
+    comment_qs = Comment.objects.get(id=parent_comment_id)
     if (
         comment_qs.name.get_notify
         and comment_qs.name.get_post_notify_all
@@ -84,7 +79,7 @@ def send_reply_notification(user, post, reply, parent_comment):
             "CON_POST" + " replied to a comment on your post."
         )  # message_post is sent to the post author of the reply's parent comment
         notify.send(
-            sender=request.user,
+            sender=user,
             recipient=post.author,
             verb=message_post,
             description=description,

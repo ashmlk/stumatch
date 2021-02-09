@@ -1,8 +1,4 @@
 {% load crispy_forms_tags %} {% load static %}
-<link
-  rel="stylesheet"
-  href="{% static 'highlight-textarea/jquery.highlight-within-textarea.css' %}"
-/>
 <form
   method="POST"
   data-url="{% url 'home:post-create' %}"
@@ -115,136 +111,11 @@
   </div>
 </form>
 <script src="{% static 'dropzone/dist/dropzone.js' %}"></script>
-<link rel="stylesheet" href="{% static 'tribute/tribute.css' %}" />
-<script src="{% static 'tribute/tribute.js' %}"></script>
-<script src="{% static 'highlight-textarea/jquery.highlight-within-textarea.js' %}"></script>
 <script src="{% static 'js/post/post-dz.js' %}"></script>
 <script>
   $(document).ready(function () {
     
-    let postSubmitButton = $('#sub-etal');
-    let lenContent = $("#id_content").value;
-    if(lenContent == undefined){
-      $(postSubmitButton).attr("disabled", true);
-      $(postSubmitButton).prop('disabled', true);
-    }
-    $("#id_content").keyup(function() {
-      if(this.value.length > 0 && this.value != "Default value") {
-        $(postSubmitButton).attr("disabled", false);
-        $(postSubmitButton).prop('disabled', false);
-      } else {
-        $(postSubmitButton).attr("disabled", true);
-        $(postSubmitButton).prop('disabled', true);
-      }
-    });
-
-    if ($(".darkmode--activated").length) {
-      $("emoji-picker").removeClass("light").addClass("dark");
-    }
-
-    $(".emoji-dropup-menu").on("click", function (e) {
-      e.stopPropagation();
-    });
-
-    $(document).on("click.bs.dropdown", ".emoji-dropdown", (e) => {
-      e.stopPropagation();
-    });
-
-    document
-      .querySelector("emoji-picker")
-      .addEventListener("emoji-click", (e) => {
-        let emoji = e.detail["unicode"];
-        $("#id_content").val($("#id_content").val() + "" + emoji);
-      });
-
-    var tribute = new Tribute({
-      values: function (text, cb) {
-        getUsernames(text, (users) => cb(users));
-      },
-      lookup: "username",
-      fillAttr: "username",
-      selectClass: "tributehighlight",
-      noMatchTemplate: function (item) {
-        return '<span style:"visibility: hidden;"></span>';
-      },
-      menuItemTemplate: function (item) {
-        return `<div class="p-1">
-							<div class="d-flex align-items-center">
-								<div class="mx-1 mr-2">
-									<img class="rounded-circle" height="30px" width="30px" src="${item.original.image}"/>
-								</div>
-								<div class="name mx-1">
-									<div class="user-username-font d-flex align-items-center">
-										${item.original.username}
-									</div>							
-								</div>
-							</div>
-						</div>`;
-      },
-      selectTemplate: function (item) {
-        return "@" + item.original.username;
-      },
-    });
-
-    var tributeHashTag = new Tribute({
-      trigger: "#",
-      values: function (text, cb) {
-        getHashtags(text, (tags) => cb(tags));
-      },
-      lookup: "name",
-      fillAttr: "name",
-      selectClass: "tributehighlight",
-      noMatchTemplate: function (item) {
-        return '<span style:"visibility: hidden;"></span>';
-      },
-      menuItemTemplate: function (item) {
-        return (
-          '<div class="p-2"><div class="d-flex"><div class="name mx-1"><div class="h6">#' +
-          item.original.name +
-          "</div></div></div></div>"
-        );
-      },
-      selectTemplate: function (item) {
-        return "#" + item.original.name;
-      },
-    });
-    tributeHashTag.attach(document.getElementById("id_content"));
-    tribute.attach(document.getElementById("id_content"));
-
-    function getUsernames(text, cb) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "/get/user/mentions?q=" + text, true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.onload = function () {
-        var data = JSON.parse(xhr.responseText);
-        if (xhr.readyState === 4 && xhr.status == "200") {
-          cb(data);
-        } else if (xhr.status === 403) {
-          cb([]);
-        }
-      };
-      xhr.send(null);
-    }
-
-    function getHashtags(text, cb) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "/taggit/?query=" + text, true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.onload = function () {
-        var data = JSON.parse(xhr.responseText).tags;
-        console.log(data);
-        if (xhr.readyState === 4 && xhr.status == "200") {
-          cb(data);
-        } else if (xhr.status === 403) {
-          cb([]);
-        }
-      };
-      xhr.send(null);
-    }
-
-    $("#id_content").highlightWithinTextarea({
-      highlight: /(?:(?<mention>@)|(?<hash>#))([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/gi,
-    });
+   
   });
 </script>
 <style>
@@ -262,32 +133,14 @@
     padding-left: 0px;
     background-color: transparent !important;
   }
-  .hwt-container {
-    width: 100% !important;
-  }
+
   #preview-selected > img {
     margin-top: 10px !important;
   }
   .selectize-input.items .item {
     margin-top: -3px !important;
   }
-  .tribute-container {
-    margin-top: 3px;
-    background-color: white;
-    border-radius: 8px;
-    border: 1px solid rgba(158, 158, 158, 0.459);
-  }
-  .tribute-container ul li {
-    background-color: white;
-  }
-  .hwt-backdrop mark {
-    position: relative;
-    z-index: 1000;
-  }
-  #div_id_content textarea {
-    position: relative;
-    z-index: 1;
-  }
+
   .dz-image-preview {
 	border: none !important;
 	position: relative;
@@ -313,10 +166,7 @@
   .dz-image-preview .dz-remove:hover{
 	  opacity: 0.65;
   }
-  .hwt-highlights mark {
-    color: #487be0 !important;
-    background-color: white;
-  }
+  
   .darkmode--activated .hwt-highlights mark {
     background-color: #1b1b1b !important;
   }

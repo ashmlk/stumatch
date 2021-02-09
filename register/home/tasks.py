@@ -17,13 +17,14 @@ from django.contrib.postgres.search import (
     SearchVector,
     TrigramSimilarity,
 )
-from register.mentions import send_mention_notifications, delete_mention_notifications, update_mention_notifications
+from register.mentions import send_mention_notifications, delete_mention_notifications, update_mention_notifications, delete_mention_notifications_comments, send_mention_notifications_comments
 from home.algo import get_uni_info
 from django.db.models import Q, F, Count, Avg, FloatField
 from itertools import chain, groupby
 from operator import attrgetter
 from home.redis_handlers import adjust_course_avg_hash, update_course_reviews_cache
 from assets.assets import UNI_LIST, UNIVERSITY_SLUGS
+from .notifications import send_comment_notification, send_reply_notification
 
 redis_cache = caches["default"]
 redis_client = redis_cache.client.get_client()
@@ -90,6 +91,28 @@ def async_delete_mention_notifications(self, sender_id, post_id, content):
 @shared_task(bind=True)
 def async_update_mention_notifications(self, post_id, old_content):
     update_mention_notifications(post_id=post_id, old_content=old_content)    
+
+
+@shared_task(bind=True)
+def async_send_mention_notifications_comments(self, sender_id, post_id, comment_id):
+    send_mention_notifications_comments(sender_id=sender_id, post_id=post_id)
+
+
+@shared_task(bind=True)
+def async_delete_mention_notifications_comments(self, sender_id, post_id, comment_body):
+    delete_mention_notifications_comments(sender_id=sender_id, post_id=post_id, content=content)
+    
+@shared_task(bind=True)
+def async_send_notifications_comments(self, sender_id, post_id, comment_id):
+    send_comment_notification(sender_id=sender_id, post_id=post_id)
+    
+@shared_task(bind=True)
+def async_send_notifications_comments_reply(self, sender_id, post_id, reply_id, parent_comment_id):
+    send_reply_notification(sender_id=sender_id, post_id=post_id
+                               
+@shared_task(bind=True)
+def async_delete_notifications_comments(self, sender_id, post_id, comment_body):
+    delete_mention_notifications(sender_id=sender_id, post_id=post_id, content=content)
 
 
 

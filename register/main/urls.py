@@ -95,7 +95,6 @@ urlpatterns = [
     #path("u/blogs", views.get_user_blogs, name="get_user_blogs"),
     #path("u/courses", views.get_user_courses, name="get_user_courses"),
     path("bookmarks/", views.bookmarks, name="bookmarks"),
-    path("bookmark/<str:hid>/<str:obj_type>/", views.add_bookmark, name="add-bookmark"),
     path("tags/<str:username>/", views.user_tags, name="usertags"),
     path("tags/posts/fav/<slug:slug>", views.f_post_tag, name="fav-post-tag"),
     #path("tags/blogs/fav/<slug:slug>", views.f_blog_tag, name="fav-blog-tag"),

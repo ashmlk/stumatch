@@ -1104,33 +1104,6 @@ def deletion_account(request):
 
 
 @login_required
-def add_bookmark(request, hid, obj_type):
-
-    data = dict()
-    t = obj_type
-    id = hashids.decode(hid)[0]
-    if request.method == "POST":
-        if obj_type == "post":
-            model = BookmarkPost
-        elif obj_type == "blog":
-            model = BookmarkBlog
-        user = auth.get_user(request)
-        bookmark, created = model.objects.get_or_create(user=user, obj_id=id)
-        if not created:
-            bookmark.delete()
-        context = {"hid": hid, "t": t}
-        if obj_type != "blog":
-            data["html_form"] = render_to_string(
-                "main/bookmark/bookmark_dropdown.html", context, request=request
-            )
-        else:
-            data["html_form"] = render_to_string(
-                "main/bookmark/bookmark.html", context, request=request
-            )
-    return JsonResponse(data)
-
-
-@login_required
 def bookmarks(request):
 
     o = request.GET.get("o", "posts")
