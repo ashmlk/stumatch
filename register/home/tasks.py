@@ -108,7 +108,7 @@ def async_send_notifications_comments(self, sender_id, post_id, comment_id):
     
 @shared_task(bind=True)
 def async_send_notifications_comments_reply(self, sender_id, post_id, reply_id, parent_comment_id):
-    send_reply_notification(sender_id=sender_id, post_id=post_id
+    send_reply_notification(sender_id=sender_id, post_id=post_id, reply_id=reply_id, parent_comment_id=parent_comment_id)
                                
 @shared_task(bind=True)
 def async_delete_notifications_comments(self, sender_id, post_id, comment_body):
