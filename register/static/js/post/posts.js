@@ -224,7 +224,7 @@ $(document).ready(function () {
               .closest(".post-details-view")
               .find(".post-counts")
               .find(".like-count-ctr")
-              .html(`<span class="like-count small text-muted-jc ml-1">${data.likescount} Likes</span>`)
+              .html(`<span class="like-count small text-muted-jc ml-1 underline-text post-show-liked-by"  data-url="/post/${data.guid_url}/liked_by/">${data.likescount} Likes </span>`)
           : $(btn)
               .closest(".post-details-view")
               .find(".post-counts")
@@ -532,6 +532,19 @@ $(document).ready(function () {
     }
   }, true);
 
+  if($('#post-detail').length > 0){
+    var topOfOthDiv = $('#post-detail').find('.comment-textarea').offset().top;
+    $(window).scroll(function() {
+        if($(window).scrollTop() > topOfOthDiv) { 
+            $('.scroll-to-comment-box').css({'visibility':'visible'}); 
+        } else {
+          console.log('sefuhwe')
+          $('.scroll-to-comment-box').css({'visibility':'hidden'});
+        }
+    });
+  }
+
+  
   $(".post-comments-display").on('DOMNodeRemoved', function(e) {
     if(!$(this).siblings('.comment-box').hasClass('post-details-single-view')){
       if($(this).find('.comment-object').length < 2){

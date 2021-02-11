@@ -63,6 +63,7 @@ def send_mention_notifications(sender_id, post_id, usernames=None):
                 print(e)
     except Exception as e:
         print(e.__class__)
+        print(e)
 
 def delete_mention_notifications(sender_id, post_id, content, usernames=None):
 
@@ -120,9 +121,9 @@ def update_mention_notifications(post_id, old_content):
 def send_mention_notifications_comments(sender_id, post_id, comment_id):
     try:
         post = Post.objects.get(id=post_id)
-        comment = Commet.object.get(id=comment_id)
+        comment = Comment.objects.get(id=comment_id)
         sender = Profile.objects.get(id=sender_id)
-        usernames = extract(post.content) if usernames == None else usernames
+        usernames = extract(comment.body) 
         actor_type = ContentType.objects.get_for_model(Profile)
         target_type = ContentType.objects.get_for_model(Post)
         # send notifications:
@@ -159,6 +160,7 @@ def send_mention_notifications_comments(sender_id, post_id, comment_id):
                 print(e)
     except Exception as e:
         print(e.__class__)
+        print(e)
         
         
 def delete_mention_notifications_comments(sender_id, post_id, comment_body):
@@ -166,7 +168,7 @@ def delete_mention_notifications_comments(sender_id, post_id, comment_body):
     try:
         post = Post.objects.get(id=post_id)
         sender = Profile.objects.get(id=sender_id)
-        usernames = extract(comment_body) if usernames == None else usernames
+        usernames = extract(comment_body)
         actor_type = ContentType.objects.get_for_model(Profile)
         target_type = ContentType.objects.get_for_model(Post)
         for username in usernames:

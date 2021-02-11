@@ -127,6 +127,18 @@
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
 }
+img.user-photo-md {
+  width: 36px;
+  height: 36px;
+}
+
+img.user-photo-lg {
+  width: 48px;
+  height: 48px;
+}
+
+
+
 .update-form input[type="text"],
 .post-comment-textarea,
 .post-create-form textarea {
@@ -335,11 +347,19 @@ textarea {
   font-size: 11px;
   text-align: center;
 }
-.likeBtn:hover svg {
-  color: rgb(236, 81, 94);
+
+.likeBtn:active {
+  animation-duration: 1000ms;
+  animation-name: like-heart-animation;
+  animation-timing-function: ease-in-out;
 }
-.likeBtn:hover .like-count {
-  color: rgb(236, 81, 94);
+
+@keyframes like-heart-animation{ 
+  0% { opacity:0; transform:scale(0); }
+  15% { opacity:.9; transform:scale(1.6); }
+  30% { transform:scale(.98); }
+  45%,
+  80% { opacity:.9; transform:scale(1.4); }
 }
 
 .mnpglk-active svg {
@@ -970,6 +990,7 @@ input[type="email"]{
 
 .user-username-font {
   font-weight: 500;
+  font-size: 0.95rem;
 }
 .commenter-username-font {
   font-size: 0.93rem !important;
@@ -982,6 +1003,10 @@ input[type="email"]{
 
 .font-auto-sm {
   font-size: 14px !important;
+}
+
+.font-auto-xs {
+  font-size: 0.8rem !important;
 }
 
 .font-auto-xl {
@@ -1000,10 +1025,6 @@ input[type="email"]{
   font-weight: 500;
 }
 
-.like-count-ctr .like-count::after{
-  content: " ";
-  margin: 0px 3px 0px 3px;
-}
 
 .underline-text:hover{
   text-decoration: underline;
@@ -1035,7 +1056,9 @@ input[type="email"]{
 .no-click:hover{
   cursor: default;
 }
-
+.profile-info-div {
+  max-width: 400px !important;
+}
 
 .comment-items:hover > div:not(.comment-user-body) .post-comment-dropdown-options-btn  {
   visibility: visible !important;
@@ -1081,4 +1104,32 @@ font-size: 14px !important;
   z-index: 1;
   word-break: break-all;
   
+}
+
+.like-count-ctr .like-count {
+  display: inline-block;
+}
+
+.post-counts {
+  position: relative;
+}
+
+.like-count-ctr .like-count::after  {
+  position: relative;
+  z-index:1;
+  content: "·";
+  margin: 0px 2px 0px 2px !important;
+  text-decoration: none !important;
+  display: inline-block;
+}
+
+.comment-button-ctr {
+  padding-left: 5px !important; 
+  padding-right: 5px !important; 
+  padding-top: 10px;
+}
+
+.likeBtn {
+  padding-left: 5px !important; 
+  padding-right: 5px !important;
 }

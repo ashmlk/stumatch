@@ -51,10 +51,11 @@ from register.settings.production import sg
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from allauth.account.utils import *
-import time
+import time, json
 from defender.decorators import watch_login
 from .utils import check_username_acceptable, check_email_acceptable
 from helper.generate_user_identity import generate_username
+from .serializers import ProfileSerializer
 
 hashids = Hashids(salt="v2ga hoei232q3r prb23lqep weprhza9", min_length=8)
 
@@ -1383,7 +1384,7 @@ def unblock_user(request, hid):
             Block.objects.remove_block(wants_to_unblock, will_be_unblock)
             return redirect("main:get_user", username=will_be_unblock.username)
 
-
+'''
 @login_required
 def friends_main(request):
 
@@ -1583,7 +1584,7 @@ def user_same_program(request):
     }
 
     return render(request, "main/friends/friends_same_program.html", context)
-
+'''
 
 @login_required
 def user_tags(request, username=None):
@@ -1716,9 +1717,23 @@ def get_user(request, username, obj=None):
         }
         return render(request, "main/userhome/private_user.html", context)
 
+@login_required
+def get_user_info(request, id):
+    data = dict()
+    id = hashids_user.decode(id)[0]
+    user = Profile.objects.get(id=id)
+    viewer =request.user
+    viewer_friend_ids = set([u.id for u in Friend.objects.friends(viewer)])
+    viewer_courses = set([c.course_code for c in viewer.courses.all().order_by('course_code')])
+    serializer_context = {
+        "viewer":viewer,
+        "viewer_university": viewer,
+        "viewer_friend_ids":viewer_friend_ids,
+        "viewer_courses":viewer_courses,
+    }
+    data['user'] = json.loads(json.dumps(ProfileSerializer(user,context=serializer_context).data))
+    return JsonResponse(data)
     
-
-
 @login_required
 def report_object(request, reporter_id):
 

@@ -14,7 +14,7 @@
   }
 
   .post-details-view .post-content-text {
-    font-size: 14px !important;
+    font-size: 0.93rem !important;
   }
   .modal-content {
     min-height: (100vh - 210px);

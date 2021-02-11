@@ -70,6 +70,186 @@ $(document).ready(function () {
       $(this).addClass('mnpglk-active');
       }
     });
+
+    $(document).on("mouseenter",".user-display-info", function() {
+      let offset = $(this).offset();
+      let height = $(this).height();
+      let width = $(this).width();
+      let id = $(this).attr('data-user-id');
+      timer = setTimeout(function() {
+          getUserInfo(id, offset, height, width)
+      }, 1000);
+    });
+
+    $(document).on("mouseleave",".user-display-info", function() {
+      if($(document).find('.profile-info-div:hover').length < 1){
+        timer = setTimeout(function() {
+          $(document).find('.profile-info-div').remove();
+        }, 300);
+      }
+    });
+
+    $(document).on("mouseleave",".profile-info-div", function() {
+      if($(document).find('.user-display-info:hover').length < 1){
+        timer = setTimeout(function() {
+          $(document).find('.profile-info-div').remove();
+        }, 300);
+      }
+ 
+    });
+
+    function createProfileInfo(user){
+      let schoolInfo = mutual_course_info = mutual_friends_info = '';
+      if(user.university.length > 0 || user.program.length > 0){
+        let divider = '';
+        if(user.university.length > 0 && user.program.length > 0){
+          divider = '<span class="text-muted-jc">·</span>';
+        }
+        schoolInfo = `<div class="profile-school-info font-auto-sm mb-2">
+                      <span class="text-muted-jc">
+                        ${user.university}
+                      </span>
+                      ${divider}
+                      <span class="text-muted-jc">
+                        ${user.program}
+                      </span>
+                    </div>`
+      }
+      if(user.mutual_friends_info.count > 0){
+        let mutual_friends_context = 'Friends with ';
+        let mutual_friends_count = user.mutual_friends_info.count;
+        mutual_friends_context += user.mutual_friends_info.usernames[0]
+        if(mutual_friends_count > 1){
+          mutual_friends_context += `, and ${user.mutual_friends_info.count - 1} others`
+        }
+        mutual_friends_info = `<span class="font-auto-xs">${mutual_friends_context}</span>`
+      }
+      if(user.mutual_course_info.count > 0){
+        let mutual_course_context = 'You both take ';
+        let mutual_course_count = user.mutual_course_info.count;
+        mutual_course_context +=  user.mutual_course_info.codes[0]
+        if(mutual_course_count > 1){
+          mutual_course_context += ', and ' + mutual_course_count - 1 + ' more'
+        }
+        mutual_course_info = `<span class="font-auto-xs">${mutual_course_context}</span>`
+      }
+      let profileInfoContainer = `<div class="request-info-profile bg-white border border-r">
+                                    <div class="profile-info px-2 ">
+                                      <div class="d-flex align-items-center">
+                                        <div class="profile-image" style="display: inline-block;">
+                                          <img class="rounded-circle user-photo-lg" src="${user.profile_image_url}">
+                                        </div>
+                                        <div class="px-3 pt-2">
+                                          <div class="profile-username">
+                                            <a class="text-dark" href="${user.profile_absolute_url}">
+                                              <span class="user-username-font">${user.username}</span>
+                                            </a>
+                                          </div>
+                                          ${schoolInfo}
+                                          <div class="personal-detail font-auto-sm">
+                                            <div>
+                                              <span class="text-dark">${user.full_name}</span>
+                                            </div>
+                                            <div>
+                                              <span class="mt-2">${user.bio}</span>
+                                            </div>
+                                          </div>
+                                          <div class="mutual-details text-muted-jc mt-3">
+                                            <div class="mutual-courses" style="display:block;line-height:8px;">
+                                              ${mutual_course_info}
+                                            </div>
+                                            <div class="mutual-friends">
+                                              ${mutual_friends_info}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="profile-counts my-3">
+                                      <div class="border-top border-bottom py-2">
+                                        <div class="d-flex align-items-center row">
+                                          <div class="col-4 profile-info-count">
+                                            <div class="w-100 text-center">
+                                              <div class="item-count">
+                                                <div>
+                                                  <span class="font-weight-bold-jc">
+                                                    ${user.course_count}
+                                                  </span>
+                                                </div>
+                                                <div>
+                                                  <span class="text-muted-jc">
+                                                    courses
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-4 profile-info-count">
+                                            <div class="w-100 text-center">
+                                              <div class="item-count">
+                                                <div>
+                                                  <span class="font-weight-bold-jc">
+                                                    ${user.post_count}
+                                                  </span>
+                                                </div>
+                                                <div>
+                                                  <span class="text-muted-jc">
+                                                    posts
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-4 profile-info-count">
+                                            <div class="w-100 text-center">
+                                              <div class="item-count">
+                                                <div>
+                                                  <span class="font-weight-bold-jc">
+                                                    ${user.friend_count}
+                                                  </span>
+                                                </div>
+                                                <div>
+                                                  <span class="text-muted-jc">
+                                                    friends
+                                                  </span>
+                                                </div> 
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="friendship-action">
+                                      <div class="action-btn-ctr w-100 m-1 p-2">
+                                        <div class="col-12">
+                                          <button class="btn w-100 btn-primary">Add Friend</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>`
+
+      return profileInfoContainer;
+
+    }
+
+    function getUserInfo(id, offset, height, width){
+      var top = offset.top + height + "px";
+      var left = offset.left + "px";
+      $.ajax({
+        url: `/request_info/${id}/`,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          $(document).find('.profile-info-div').remove();
+          let info = createProfileInfo(data.user);
+          let div = `<div class="profile-info-div" style="position:absolute;left:${left};top:${top};">${info}</div>`;
+          $('body').css( {
+            'position': 'relative',
+          });
+          $('body').append($(div));
+        },
+      });
+    }
   });
 
 

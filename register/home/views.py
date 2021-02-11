@@ -87,6 +87,8 @@ from home.tasks import (
     async_update_mention_notifications,
     async_send_mention_notifications_comments,
     async_delete_mention_notifications_comments,
+    async_send_notifications_comments,
+    async_send_notifications_comments_reply,
     add_user_to_course,
     remove_user_from_course,
     add_course_to_prof,
@@ -645,7 +647,6 @@ def post_comment(request, guid_url):
             if parent_comment_id and is_reply == "true":
                 id = hashids.decode(parent_comment_id)[0]
                 parent_comment = get_object_or_404(Comment, id=id)
-                # send reply notification
             comment.name = user
             comment.post = post
             comment.reply = parent_comment
@@ -655,8 +656,10 @@ def post_comment(request, guid_url):
             data['comment'] = json.loads(json.dumps(CommentSerializer(comment).data))
             data['post_comment_count'] = post.comments.filter(reply=None).count()
             data['post_guid_url'] = guid_url
-            # send comment notification 
+            async_send_notifications_comments(sender_id=user.id, post_id=post.id, comment_id=comment.id)
             async_send_mention_notifications_comments(comment.name.id, comment.post.id, comment.id)
+            if is_reply == "true":
+                async_send_notifications_comments_reply(sender_id=user.id, post_id=post.id, reply_id=comment.id, parent_comment_id=parent_comment.id)
         else:
             data['error'] = True
             data['error_message'] = "There was an issue posting your comment, please try again"
@@ -698,7 +701,7 @@ def post_like(request, guid_url):
                     notify.send(
                         sender=user, recipient=post.author, verb=message, target=post
                     )
-
+        data['guid_url'] = guid_url
         data["likescount"] = post.likes.count()
         return JsonResponse(data)
 

@@ -23,7 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 def send_comment_notification(user_id, post_id, comment_id):
-    user = Profile.object.get(id=user_id)
+    user = Profile.objects.get(id=user_id)
     post = Post.objects.get(id=post_id)
     comment = Comment.objects.get(id=comment_id)
     if comment.name != post.author:
@@ -46,7 +46,7 @@ def send_comment_notification(user_id, post_id, comment_id):
             )
             
 def send_reply_notification(user_id, post_id, reply_id, parent_comment_id):
-    user = Profile.object.get(id=user_id)
+    user = Profile.objects.get(id=user_id)
     post = Post.objects.get(id=post_id)
     reply = Comment.objects.get(id=reply_id)
     comment_qs = Comment.objects.get(id=parent_comment_id)
@@ -65,7 +65,7 @@ def send_reply_notification(user_id, post_id, reply_id, parent_comment_id):
             sender=user,
             recipient=comment_qs.name,
             verb=message_comment,
-            description=description,
+            description=reply.body,
             target=post,
             action_object=comment_qs,
         )
@@ -82,7 +82,7 @@ def send_reply_notification(user_id, post_id, reply_id, parent_comment_id):
             sender=user,
             recipient=post.author,
             verb=message_post,
-            description=description,
+            description=reply.body,
             target=post,
             action_object=comment_qs,
         )

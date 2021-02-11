@@ -98,14 +98,14 @@ urlpatterns = [
     path("tags/<str:username>/", views.user_tags, name="usertags"),
     path("tags/posts/fav/<slug:slug>", views.f_post_tag, name="fav-post-tag"),
     #path("tags/blogs/fav/<slug:slug>", views.f_blog_tag, name="fav-blog-tag"),
-    path("friends/", views.friends_main, name="friends-main"),
-    path("find/program/", views.user_same_program, name="find-program"),
-    path("friends/requests/", views.friend_requests, name="friend-requests"),
-    path(
-        "friends/requests/pending/",
-        views.friend_pending_requests,
-        name="friend-pending",
-    ),
+    #path("friends/", views.friends_main, name="friends-main"),
+    #path("find/program/", views.user_same_program, name="find-program"),
+    #path("friends/requests/", views.friend_requests, name="friend-requests"),
+    #path(
+    #    "friends/requests/pending/",
+    #   views.friend_pending_requests,
+    #    name="friend-pending",
+    #),
     path(
         "friends/request/<str:hid>/action/<str:s>",
         views.accept_reject_friend_request,
@@ -125,7 +125,8 @@ urlpatterns = [
         views.delete_notification,
         name="delete-notification",
     ),
-    path("get/user/mentions", views.get_user_mentions, name="get-user-mentions")
+    path("get/user/mentions", views.get_user_mentions, name="get-user-mentions"),
+    path("request_info/<str:id>/", views.get_user_info, name="get-user-info")
     # path('signup/complete',views.user_completesignup,name='user_completesignup'),
     # path('', include('django.contrib.auth.urls')),
 ]
