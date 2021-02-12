@@ -10,7 +10,7 @@ handler404 = "main.views.handle_404"
 
 # removed trailing backslashes
 urlpatterns = [
-    url(r"^home/", views.home, name="home"),
+    path("home/", views.home, name="home"),
     path("posts/trending", views.top_word_posts, name="top-word-post"),
     path("posts/hot/", views.hot_posts, name="hot-posts"),
     path("posts/top/", views.top_posts, name="top-posts"),
@@ -107,30 +107,7 @@ urlpatterns = [
         views.get_course_mutual_students,
         name="course-mutual-students",
     ),
-    # path("blog/", views.blog, name="blog"),
-    # path("blog/create/", views.blog_create, name="blog-create"),
-    # path("blog/view/<str:hid>/<slug:t>/", views.blog_detail, name="blog-detail"),
-    # path("blog/edit/<str:hid>/<slug:t>/", views.blog_update, name="blog-edit"),
-    # path("blog/delete/<str:hid>/<slug:t>/", views.blog_delete, name="blog-delete"),
-    # path("blog/<str:guid_url>/like/", views.blog_like, name="blog-like"),
-    # path(
-    #     "blog/replies/<str:guid_url>/<slug:slug>/",
-    #     views.blog_replies,
-    #     name="blog-replies",
-    # ),
-    # path(
-    #     "blog/replies/<str:guid_url>/<slug:slug>/edit/<str:hid>/",
-    #     views.blog_reply_edit,
-    #     name="blog-reply-edit",
-    # ),
-    # path("blog/like/replies/<str:hid>/", views.blog_reply_like, name="blog-reply-like"),
-    # path(
-    #     "blog/<str:guid_url>/delete/reply/<str:hid>/",
-    #     views.blog_reply_delete,
-    #     name="blog-reply-delete",
-    # ),
-    path("posts/tag/<slug:slug>/", views.tags_post, name="tag-post"),
-    #path("blogs/tag/<slug:slug>/", views.tags_blog, name="tag-blog"),
+    path("posts/tag/<slug:slug>/", views.tags_post, name="tag-post"),  
     path("search", views.search, name="search-all"),
     path("m/search/", views.search_mobile, name="search-mobile"),
     path("search/results/get", views.search_dropdown, name="search-get"),
@@ -158,4 +135,27 @@ urlpatterns = [
         views.course_list_obj_edit_course,
         name="course-list-editcrs",
     ),
+    # path("blog/", views.blog, name="blog"),
+    # path("blog/create/", views.blog_create, name="blog-create"),
+    # path("blog/view/<str:hid>/<slug:t>/", views.blog_detail, name="blog-detail"),
+    # path("blog/edit/<str:hid>/<slug:t>/", views.blog_update, name="blog-edit"),
+    # path("blog/delete/<str:hid>/<slug:t>/", views.blog_delete, name="blog-delete"),
+    # path("blog/<str:guid_url>/like/", views.blog_like, name="blog-like"),
+    # path(
+    #     "blog/replies/<str:guid_url>/<slug:slug>/",
+    #     views.blog_replies,
+    #     name="blog-replies",
+    # ),
+    # path(
+    #     "blog/replies/<str:guid_url>/<slug:slug>/edit/<str:hid>/",
+    #     views.blog_reply_edit,
+    #     name="blog-reply-edit",
+    # ),
+    # path("blog/like/replies/<str:hid>/", views.blog_reply_like, name="blog-reply-like"),
+    # path(
+    #     "blog/<str:guid_url>/delete/reply/<str:hid>/",
+    #     views.blog_reply_delete,
+    #     name="blog-reply-delete",
+    # ),
+    #path("blogs/tag/<slug:slug>/", views.tags_blog, name="tag-blog"),
 ]

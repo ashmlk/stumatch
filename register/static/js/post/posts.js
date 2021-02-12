@@ -829,7 +829,7 @@ $(document).ready(function () {
                 <div class="d-flex justify-content-between comment-items">
                   <div class="d-flex comment-user-body">  
                     <span class="commenter-username mx-1">
-                      <a href="/u/${comment.name_username}/" class="text-dark">
+                      <a href="/u/${comment.name_username}/" class="text-dark user-display-info" data-user-id="${comment.name_hashed_id}">
                         <span class="commenter-username-font">
                           ${comment.name_username}
                           </span>                      

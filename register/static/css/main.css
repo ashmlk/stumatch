@@ -1057,6 +1057,7 @@ input[type="email"]{
   cursor: default;
 }
 .profile-info-div {
+  min-width: 320px;
   max-width: 400px !important;
 }
 
@@ -1132,4 +1133,9 @@ font-size: 14px !important;
 .likeBtn {
   padding-left: 5px !important; 
   padding-right: 5px !important;
+}
+
+.profile-info-div {
+  position:absolute;
+  z-index: 9999;
 }

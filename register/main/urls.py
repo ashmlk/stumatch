@@ -107,13 +107,18 @@ urlpatterns = [
     #    name="friend-pending",
     #),
     path(
+        "friendship/status/<str:hid>/",
+        views.get_friendship_status,
+        name="get-friendship-status",
+    ),
+    path(
         "friends/request/<str:hid>/action/<str:s>",
         views.accept_reject_friend_request,
         name="accept-reject-friend-request",
     ),
     path("friends/<str:hid>/<str:s>/", views.add_remove_friend, name="add-rmv-friend"),
-    path("block/<str:hid>/", views.block_user, name="block-user"),
-    path("unblock/<str:hid>/", views.unblock_user, name="unblock-user"),
+    path("users/block/<str:hid>/", views.block_user, name="block-user"),
+    path("users/unblock/<str:hid>/", views.unblock_user, name="unblock-user"),
     path("your_notifications/", views.get_notifications, name="get-notifications"),
     path(
         "your_notifications/mark_as_read",

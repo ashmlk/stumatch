@@ -1160,172 +1160,90 @@ def f_blog_tag(request, slug):
         )
         return JsonResponse(data)
 
-
+@login_required
+def get_friendship_status(request, hid):
+    data = dict()
+    viewer_is_user = viewer_sent_friend_request = viewer_received_friend_request = viewer_is_friend = viewer_has_blocked = viewer_has_no_relation = False
+    id = hashids_user.decode(hid)[0]
+    other_user = get_object_or_404(Profile, id=id)
+    user = request.user
+    if user == other_user:
+        viewer_is_user = True
+    elif Friend.objects.are_friends(user, other_user):
+        viewer_is_friend = True
+    elif FriendshipRequest.objects.filter(from_user=user, to_user=other_user).exists():
+        viewer_sent_friend_request = True
+    elif FriendshipRequest.objects.filter(from_user=other_user, to_user=user).exists():
+        viewer_received_friend_request = True
+    elif Block.objects.is_blocked(user, other_user):
+        viewer_has_blocked = True
+    else:
+        viewer_has_no_relation = True
+    data['other_user_id'] = hid
+    data['status'] = {
+        "viewer_sent_friend_request":viewer_sent_friend_request,
+        "viewer_received_friend_request":viewer_received_friend_request,
+        "viewer_is_friend":viewer_is_friend,
+        "viewer_has_blocked":viewer_has_blocked,
+        "viewer_has_no_relation":viewer_has_no_relation,
+        "viewer_is_user":viewer_is_user,
+    }
+    return JsonResponse(data)
+    
 @login_required
 def accept_reject_friend_request(request, hid, s):
-
     data = dict()
     id = hashids_user.decode(hid)[0]
     other_user = get_object_or_404(Profile, id=id)
     user = request.user
     if request.method == "POST":
-        actor_type = ContentType.objects.get_for_model(Profile)
-        target_type = ContentType.objects.get_for_model(FriendshipRequest)
         action = int(s)
         is_friend = None
-        if action == 0:  # to accept friend request sent by other_user to user
-            fr = FriendshipRequest.objects.get(from_user=other_user, to_user=user)
-            try:
-                message = "CON_FRRE" + "has sent you a friend request"
-                user.notifications.filter(
-                    actor_content_type__id=actor_type.id,
-                    actor_object_id=other_user.id,
-                    target_content_type__id=target_type.id,
-                    target_object_id=fr.id,
-                    recipient=user,
-                    verb=message,
-                ).delete()
-            except Exception as e:
-                print(e.__class__)
-                print("There was an issue with deleting a friend request")
+        if action == "accept-request":  # to accept friend request sent by other_user to user
             fr.accept()
-            is_friend = True
-            if other_user.get_friendrequestaccepted_notify:
-                message = "CON_FRRE" + "has accepted your friend request"
-                notify.send(sender=user, recipient=other_user, verb=message, target=fr)
 
-        elif action == 1:  # to cancel a request sent by other user to user
+        elif action == "delete-request":  # to cancel a request sent by other_user to user
             if FriendshipRequest.objects.filter(
                 from_user=other_user, to_user=user
             ).exists():
-                fr = FriendshipRequest.objects.get(from_user=other_user, to_user=user)
-                try:
-                    message = "CON_FRRE" + "has sent you a friend request"
-                    user.notifications.filter(
-                        actor_content_type__id=actor_type.id,
-                        actor_object_id=other_user.id,
-                        target_content_type__id=target_type.id,
-                        target_object_id=fr.id,
-                        recipient=user,
-                        verb=message,
-                    ).delete()
-                except Exception as e:
-                    print(e.__class__)
-                    print("There was an issue with deleting a friend request")
                 fr.cancel()
 
-        elif action == 2:  # unblock a user and set the option to option add friend
+        elif action == "unblock-user":  # unblock a user and set the option to option add friend
             if Block.objects.is_blocked(user, other_user):
                 Block.objects.remove_block(user, other_user)
 
-        elif action == 3:  # cancel pending request from user
-
+        elif action == "remove-pending":  # cancel pending request from user
             if FriendshipRequest.objects.filter(
                 from_user=user, to_user=other_user
             ).exists():
-                fr = FriendshipRequest.objects.get(from_user=user, to_user=other_user)
-                try:
-                    message = "CON_FRRE" + "has sent you a friend request"
-                    other_user.notifications.filter(
-                        actor_content_type__id=actor_type.id,
-                        actor_object_id=user.id,
-                        target_content_type__id=target_type.id,
-                        target_object_id=fr.id,
-                        recipient=other_user,
-                        verb=message,
-                    ).delete()
-                except Exception as e:
-                    print(e.__class__)
-                    print("There was an issue with deleting a friend request")
                 fr.cancel()
 
-            if FriendshipRequest.objects.filter(
-                from_user=other_user, to_user=user
-            ).exists():
-                fr = FriendshipRequest.objects.get(from_user=other_user, to_user=user)
-
-                try:
-                    message = "CON_FRRE" + "has sent you a friend request"
-                    other_user.notifications.filter(
-                        actor_content_type__id=actor_type.id,
-                        actor_object_id=other_user.id,
-                        target_content_type__id=target_type.id,
-                        target_object_id=fr.id,
-                        recipient=other_user,
-                        verb=message,
-                    ).delete()
-                except Exception as e:
-                    print(e.__class__)
-                    print("There was an issue with deleting a friend request")
-
-                fr.cancel()
-
-            is_friend = False
-
-        friends_list = Friend.objects.friends(request.user)
-        pending_requests = Friend.objects.sent_requests(user=request.user)
-        requests = Friend.objects.requests(user=request.user)
-        total_friends = len(friends_list)
-        total_requests = len(requests)
-        total_pending = len(Friend.objects.sent_requests(user=request.user))
-        request.session["total_friends"] = total_friends
-        request.session["total_requests"] = total_requests
-        request.session["total_pending"] = total_pending
-
-        data["html_form"] = render_to_string(
-            "main/friends/friend_status.html",
-            {"is_friend": is_friend, "user": other_user},
-            request=request,
-        )
+        data = {
+            "other_user_id":hid,
+        }
         return JsonResponse(data)
 
 
 @login_required
 def add_remove_friend(request, hid, s):
-
+    is_friend = pending = False
     data = dict()
-    # remove friend from request.user to the_user
-    # user recognized by hid
     id = hashids_user.decode(hid)[0]
     other_user = get_object_or_404(Profile, id=id)
     user = request.user
     if request.method == "POST":
-        pending = None
-        is_friend = None
-        action = int(s)
-        if action == 1:
-            # remove friend request from request.user to the_user
+        if action == "remove":
             Friend.objects.remove_friend(user, other_user)
-            is_friend = False
-        elif action == 0:
+        elif action == "add":
             if not FriendshipRequest.objects.filter(
                 from_user=user, to_user=other_user
             ).exists():
                 Friend.objects.add_friend(
                     user, other_user
-                )  # send a friend request to other_user
-                pending = True
-                if other_user.get_friendrequest_notify:
-                    fr = FriendshipRequest.objects.get(
-                        from_user=user, to_user=other_user
-                    )
-                    message = "CON_FRRE" + "has sent you a friend request"
-                    notify.send(
-                        sender=user, recipient=other_user, verb=message, target=fr
-                    )
-
-        friends_list = Friend.objects.friends(request.user)
-        requests = Friend.objects.requests(user=request.user)
-        total_friends = len(friends_list)
-        total_requests = len(requests)
-        request.session["total_friends"] = total_friends
-        request.session["total_requests"] = total_requests
-
-        data["html_form"] = render_to_string(
-            "main/friends/friend_status.html",
-            {"is_friend": is_friend, "pending": pending, "user": other_user},
-            request=request,
-        )
+                )      
+        data = {
+            "other_user_id":hid,
+        }
         return JsonResponse(data)
 
 
@@ -1334,6 +1252,7 @@ def block_user(request, hid):
 
     data = dict()
     id = hashids_user.decode(hid)[0]
+    redirect_to_get_user = request.GET.get('redirect', None)
     wants_to_block = request.user  # request.user submits request to block user
     will_be_blocked = Profile.objects.get(id=id)  # user to be blocked by request.user
     if request.method == "POST":
@@ -1350,20 +1269,16 @@ def block_user(request, hid):
                 from_user=will_be_blocked, to_user=wants_to_block
             )
             fr.delete()
-        elif FriendshipRequest.objects.filter(
+        if FriendshipRequest.objects.filter(
             from_user=wants_to_block, to_user=will_be_blocked
         ).exists():
             fr = FriendshipRequest.objects.get(
                 from_user=wants_to_block, to_user=will_be_blocked
             )
             fr.delete()
-        return redirect("main:get_user", username=will_be_blocked.username)
-    else:
-        data["html_form"] = render_to_string(
-            "main/userhome/block_user_form.html",
-            {"wants_to_block": wants_to_block, "will_be_blocked": will_be_blocked},
-            request=request,
-        )
+    data = {
+            "other_user_id":hid,
+        }
     return JsonResponse(data)
 
 

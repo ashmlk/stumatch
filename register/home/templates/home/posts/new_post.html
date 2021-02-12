@@ -89,7 +89,7 @@
             </div>
             <div class="post-option-action d-flex align-items-center justify-content-start">
               <div class="like-section">
-                  <button class="likeBtn btn btn-md no-outline" type="submit" name="post_guid" value="{{ post.guid_url }}" data-url="{% url 'home:post-like'  post.guid_url %}">
+                  <button class="likeBtn btn btn-md no-outline" type="submit" data-url="{% url 'home:post-like'  post.guid_url %}">
                     {% if request.user in post.likes.all %} 
                       <span class="is-liked text-red-jc" >
                         <svg width="20"  height="20" viewBox="0 0 16 16" class="bi bi-heart-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

@@ -18,7 +18,7 @@
             </div>
             <div class="col-xs py-1">
                 <div style="margin-bottom: -4px;">
-                    <a class="text-dark user-username-font" href=" {{ user.get_absolute_url }}">{{ user.get_username }}</a>
+                    <a class="text-dark user-username-font user-display-info" href=" {{ user.get_absolute_url }}" data-user-id="{{ post.author.get_hashid }}">{{ user.get_username }}</a>
                 </div>
                 <div style="margin-top: -4px;">
                     <span class="text-muted small">{{ user.get_full_name }}</span>

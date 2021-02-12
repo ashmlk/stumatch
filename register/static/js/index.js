@@ -1,5 +1,10 @@
+window.onunload = function () {
+  for (var key in sessionStorage) {
+    if (key.indexOf('profile-info-') !== -1)
+        sessionStorage.removeItem(key);
+  }
+}
 $(document).ready(function () {  
-
     var path = window.location.href;
     var p = window.location.pathname;
     var full_compass = `<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" class="bi bi-compass-fill" viewBox="0 0 16 16">
@@ -39,8 +44,7 @@ $(document).ready(function () {
           }
         }
       })
-
-    
+ 
     $('#add-tagstp').click(function() {
       $('#div_id_tags').show();
     })
@@ -71,29 +75,36 @@ $(document).ready(function () {
       }
     });
 
+    var timer, timerRemove;
+
     $(document).on("mouseenter",".user-display-info", function() {
       let offset = $(this).offset();
       let height = $(this).height();
       let width = $(this).width();
       let id = $(this).attr('data-user-id');
+      if (timer) clearTimeout(timer);
       timer = setTimeout(function() {
           getUserInfo(id, offset, height, width)
       }, 1000);
+
+
     });
 
     $(document).on("mouseleave",".user-display-info", function() {
       if($(document).find('.profile-info-div:hover').length < 1){
-        timer = setTimeout(function() {
+        if (timer) clearTimeout(timer);
+        timerRemove = setTimeout(function() {
           $(document).find('.profile-info-div').remove();
-        }, 300);
+        }, 400);
       }
     });
 
     $(document).on("mouseleave",".profile-info-div", function() {
       if($(document).find('.user-display-info:hover').length < 1){
-        timer = setTimeout(function() {
+        if (timer) clearTimeout(timer);
+        timerRemove = setTimeout(function() {
           $(document).find('.profile-info-div').remove();
-        }, 300);
+        }, 400);
       }
  
     });
@@ -103,14 +114,14 @@ $(document).ready(function () {
       if(user.university.length > 0 || user.program.length > 0){
         let divider = '';
         if(user.university.length > 0 && user.program.length > 0){
-          divider = '<span class="text-muted-jc">·</span>';
+          divider = '<span class="text-dark">·</span>';
         }
-        schoolInfo = `<div class="profile-school-info font-auto-sm mb-2">
-                      <span class="text-muted-jc">
+        schoolInfo = `<div class="profile-school-info font-auto-sm">
+                      <span class="text-dark">
                         ${user.university}
                       </span>
                       ${divider}
-                      <span class="text-muted-jc">
+                      <span class="text-dark">
                         ${user.program}
                       </span>
                     </div>`
@@ -134,27 +145,22 @@ $(document).ready(function () {
         mutual_course_info = `<span class="font-auto-xs">${mutual_course_context}</span>`
       }
       let profileInfoContainer = `<div class="request-info-profile bg-white border border-r">
-                                    <div class="profile-info px-2 ">
-                                      <div class="d-flex align-items-center">
-                                        <div class="profile-image" style="display: inline-block;">
+                                    <div class="profile-info px-2">
+                                      <div class="d-flex align-items-top">
+                                        <div class="profile-image pt-3" style="display: inline-block;">
                                           <img class="rounded-circle user-photo-lg" src="${user.profile_image_url}">
                                         </div>
-                                        <div class="px-3 pt-2">
+                                        <div class="px-3 pt-3">
                                           <div class="profile-username">
-                                            <a class="text-dark" href="${user.profile_absolute_url}">
-                                              <span class="user-username-font">${user.username}</span>
-                                            </a>
+                                            <div style="line-height:8px;">
+                                              <a class="text-dark" href="${user.profile_absolute_url}">
+                                                <span class="user-username-font">${user.username}</span>       
+                                              </a>
+                                            </div>
+                                            <span class="text-muted-jc font-auto-xs">${user.full_name}</span>
                                           </div>
                                           ${schoolInfo}
-                                          <div class="personal-detail font-auto-sm">
-                                            <div>
-                                              <span class="text-dark">${user.full_name}</span>
-                                            </div>
-                                            <div>
-                                              <span class="mt-2">${user.bio}</span>
-                                            </div>
-                                          </div>
-                                          <div class="mutual-details text-muted-jc mt-3">
+                                          <div class="mutual-details text-muted-jc ">
                                             <div class="mutual-courses" style="display:block;line-height:8px;">
                                               ${mutual_course_info}
                                             </div>
@@ -165,8 +171,8 @@ $(document).ready(function () {
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="profile-counts my-3">
-                                      <div class="border-top border-bottom py-2">
+                                    <div class="profile-counts mt-3 mb-2">
+                                      <div class="border-top border-bottom px-2 font-auto-sm py-2">
                                         <div class="d-flex align-items-center row">
                                           <div class="col-4 profile-info-count">
                                             <div class="w-100 text-center">
@@ -219,12 +225,7 @@ $(document).ready(function () {
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="friendship-action">
-                                      <div class="action-btn-ctr w-100 m-1 p-2">
-                                        <div class="col-12">
-                                          <button class="btn w-100 btn-primary">Add Friend</button>
-                                        </div>
-                                      </div>
+                                    <div class="friendship-container w-100 px-1 mb-2" data-uid="${user.id}">
                                     </div>
                                   </div>`
 
@@ -232,26 +233,51 @@ $(document).ready(function () {
 
     }
 
+    function getProfileInfoOnSession(user){
+      let profileInfo;
+      let sessionStorageProfileInfo = sessionStorage[`profile-info-${user.id}`]; 
+      if(sessionStorageProfileInfo === undefined){
+        profileInfo = createProfileInfo(user);
+        sessionStorage.setItem(`profile-info-${id}`, JSON.stringify(user));
+      } else {
+        profileInfo = JSON.parse(sessionStorageProfileInfo);
+      }
+      return profileInfo;
+    }
+
     function getUserInfo(id, offset, height, width){
       var top = offset.top + height + "px";
       var left = offset.left + "px";
-      $.ajax({
-        url: `/request_info/${id}/`,
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-          $(document).find('.profile-info-div').remove();
-          let info = createProfileInfo(data.user);
-          let div = `<div class="profile-info-div" style="position:absolute;left:${left};top:${top};">${info}</div>`;
-          $('body').css( {
-            'position': 'relative',
-          });
-          $('body').append($(div));
-        },
-      });
+      let profileInfo;
+      let sessionStorageProfileInfo = sessionStorage.getItem(`profile-info-${id}`); 
+      if(sessionStorageProfileInfo === undefined || sessionStorageProfileInfo === null){
+        $.ajax({
+          url: `/request_info/${id}/`,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            $(document).find('.profile-info-div').remove();
+            let info = createProfileInfo(data.user);
+            sessionStorage.setItem(`profile-info-${data.user.id}`, JSON.stringify(data.user));
+            let div = `<div class="profile-info-div" style="left:${left};top:${top};">${info}</div>`;
+            $('body').css( {
+              'position': 'relative',
+            });
+            $('body').append($(div));
+          },
+        });
+      } else {
+            profileInfo = JSON.parse(sessionStorageProfileInfo);
+            let info = createProfileInfo(profileInfo)
+            let div = `<div class="profile-info-div" style="left:${left};top:${top};">${info}</div>`;
+            $('body').css( {
+              'position': 'relative',
+            });
+            $('body').append($(div));
+      }
+      
     }
   });
-
 
   var infinite = new Waypoint.Infinite({
     element: $('.infinite-container')[0],
