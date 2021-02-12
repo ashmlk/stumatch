@@ -1197,26 +1197,32 @@ def accept_reject_friend_request(request, hid, s):
     other_user = get_object_or_404(Profile, id=id)
     user = request.user
     if request.method == "POST":
-        action = int(s)
-        is_friend = None
-        if action == "accept-request":  # to accept friend request sent by other_user to user
-            fr.accept()
+        action = s
+        try:
+            fr = FriendshipRequest.objects.filter(
+                    from_user=other_user, to_user=user
+                ).first()
+            if action == "accept-request":  # to accept friend request sent by other_user to user
+                fr.accept()
 
-        elif action == "delete-request":  # to cancel a request sent by other_user to user
-            if FriendshipRequest.objects.filter(
-                from_user=other_user, to_user=user
-            ).exists():
-                fr.cancel()
+            elif action == "delete-request":  # to cancel a request sent by other_user to user
+                if FriendshipRequest.objects.filter(
+                    from_user=other_user, to_user=user
+                ).exists():
+                    fr.cancel()
 
-        elif action == "unblock-user":  # unblock a user and set the option to option add friend
-            if Block.objects.is_blocked(user, other_user):
-                Block.objects.remove_block(user, other_user)
+            elif action == "unblock-user":  # unblock a user and set the option to option add friend
+                if Block.objects.is_blocked(user, other_user):
+                    Block.objects.remove_block(user, other_user)
 
-        elif action == "remove-pending":  # cancel pending request from user
-            if FriendshipRequest.objects.filter(
-                from_user=user, to_user=other_user
-            ).exists():
-                fr.cancel()
+            elif action == "remove-pending":  # cancel pending request from user
+                fr = FriendshipRequest.objects.filter(from_user=user, to_user=other_user).first()
+                if FriendshipRequest.objects.filter(
+                    from_user=user, to_user=other_user
+                ).exists():
+                    fr.cancel()
+        except Exception as e:
+            print(e)
 
         data = {
             "other_user_id":hid,
@@ -1231,6 +1237,7 @@ def add_remove_friend(request, hid, s):
     id = hashids_user.decode(hid)[0]
     other_user = get_object_or_404(Profile, id=id)
     user = request.user
+    action = s
     if request.method == "POST":
         if action == "remove":
             Friend.objects.remove_friend(user, other_user)

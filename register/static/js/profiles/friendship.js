@@ -99,13 +99,13 @@ $(document).ready(function (){
     }
     
     function getRemoveFriendship(id){
-        let url = `friends/${id}/remove/`;
+        let url = `/friends/${id}/remove/`;
         let removeFriendshipButtonContainer = friendshipButtonCreator(url, 'Remove', "btn-default border bg-white text-dark");
         return removeFriendshipButtonContainer;
     }
 
     function getAddUser(id){
-        let url = `friends/${id}/add/`;
+        let url = `/friends/${id}/add/`;
         let addFriendButtonContainer = friendshipButtonCreator(url, 'Add', "btn-primary");
         return addFriendButtonContainer;
     }
@@ -142,7 +142,7 @@ $(document).ready(function (){
         })
     }
 
-    $(document).on('click', '.friendship-action-link.friendship-action-btn', function (){
+    $(document).on('click', '.friendship-action-link .friendship-action-btn', function (){
         let friendShipActionButton  =$(this);
         $.ajax({
             url: $(friendShipActionButton).attr("data-url"),

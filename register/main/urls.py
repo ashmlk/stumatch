@@ -112,7 +112,7 @@ urlpatterns = [
         name="get-friendship-status",
     ),
     path(
-        "friends/request/<str:hid>/action/<str:s>",
+        "friends/request/<str:hid>/action/<str:s>/",
         views.accept_reject_friend_request,
         name="accept-reject-friend-request",
     ),
